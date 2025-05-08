@@ -1,0 +1,9 @@
+.footer {
+  background: #747474;
+  color: white;
+  padding: 20px;
+  z-index: 30;
+}
+p {
+  margin-left: 40px;
+}
