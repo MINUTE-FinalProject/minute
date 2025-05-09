@@ -1,4 +1,10 @@
-header {
+
+.container {
+  background-color: #fff;
+  padding: 20px;
+}
+
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -6,23 +12,16 @@ header {
   flex-wrap: wrap;
 }
 
-.container {
-  background-color: #fff;
-  padding: 20px;
-}
-
-
 .menu {
   font-size: 24px;
   cursor: pointer;
 }
 
-.auth-buttons {
+.authButtons {
   margin: 0 20px;
 }
-
-.auth-buttons button {
-  padding: 6px 12px;
+    
+.authButtons button {
   border: 1px solid #ccc;
   background-color: #fff;
   border-radius: 20px;
@@ -32,19 +31,19 @@ header {
   transition: background-color 0.3s, color 0.3s;
 }
 
-.auth-buttons button:hover {
+.authButtons button:hover {
   background-color: #e0e0e0;
   color: #333;
 }
 
-.search-bar-wrapper {
+.searchBarWrapper {
   display: flex;
   justify-content: center;
   width: 100%;
   margin-top: 10px;
 }
 
-.search-bar {
+.searchBar {
   display: flex;
   align-items: center;
   width: 400px;
@@ -54,11 +53,11 @@ header {
   transition: box-shadow 0.3s ease;
 }
 
-.search-bar:hover {
+.searchBar:hover {
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
-.search-bar input {
+.searchBar input {
   flex: 1;
   padding: 12px 20px;
   border: none;
@@ -68,16 +67,16 @@ header {
   background-color: transparent;
 }
 
-.search-bar input::placeholder {
+.searchBar input::placeholder {
   color: #aaa;
 }
 
-.search-bar input:focus {
+.searchBar input:focus {
   background-color: #f9f9f9;
 }
 
-.search-bar .search-icon {
-  padding: 12px 20px;
+.searchIcon {
+  padding: 8px 18px;
   border: none;
   background-color: transparent;
   cursor: pointer;
@@ -86,7 +85,7 @@ header {
   transition: color 0.3s ease;
 }
 
-.search-bar .search-icon:hover {
+.searchIcon:hover {
   color: #a3bffa;
 }
 
@@ -96,7 +95,7 @@ header {
   gap: 15px;
 }
 
-.grid-item {
+.gridItem {
   background-color: #fff;
   border: 1px solid #ddd;
   padding: 10px;
@@ -105,7 +104,7 @@ header {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.item-content {
+.itemContent {
   padding: 10px;
 }
 
@@ -116,13 +115,13 @@ header {
   border-radius: 4px;
 }
 
-h3 {
+.gridItem h3 {
   margin: 10px 0;
   font-size: 18px;
   color: #333;
 }
 
-p {
+.gridItem p {
   color: #666;
   font-size: 14px;
 }
@@ -143,7 +142,7 @@ p {
   font-size: 14px;
 }
 
-.pagination button.active {
+.active {
   background-color: #d9e6f2;
   border-color: #a3bffa;
 }

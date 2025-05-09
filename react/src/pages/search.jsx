@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './search.css';
+import searchStyle from './search.module.css';
 
 function Search() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -20,37 +20,39 @@ function Search() {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className="container">
-      <header>
-        <div className="menu">≡</div>
-        <div className="auth-buttons">
+    <div className={searchStyle.container}>
+      <header className={searchStyle.header}>
+        <div className={searchStyle.menu}>≡</div>
+        <div className={searchStyle.authButtons}>
           <button>로그인</button>
-          <button>로그아웃</button>
+          <button>회원가입</button>
         </div>
-        <div className="search-bar-wrapper">
-          <div className="search-bar">
+        <div className={searchStyle.searchBarWrapper}>
+          <div className={searchStyle.searchBar}>
             <input type="text" placeholder="검색..." />
-            <button className="search-icon"><img src="/magnifying-glass.png" alt="돋보기" width="20" height="20"/></button>
+            <button className={searchStyle.searchIcon}>
+              <img src="/searchIcon.png" alt="" width="20" height="20" />
+            </button>
           </div>
         </div>
       </header>
-      <div className="grid">
+      <div className={searchStyle.grid}>
         {currentItems.map((item) => (
-          <div key={item.id} className="grid-item">
-            <div className="item-content">
-              <div className="placeholder"></div>
+          <div key={item.id} className={searchStyle.gridItem}>
+            <div className={searchStyle.itemContent}>
+              <div className={searchStyle.placeholder}></div>
               <h3>{item.title}</h3>
               <p>{item.content}</p>
             </div>
           </div>
         ))}
       </div>
-      <div className="pagination">
+      <div className={searchStyle.pagination}>
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
           <button
             key={number}
             onClick={() => paginate(number)}
-            className={currentPage === number ? 'active' : ''}
+            className={currentPage === number ? searchStyle.active : ''}
           >
             {number}
           </button>

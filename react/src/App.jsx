@@ -37,6 +37,8 @@ function App() {
         <Route path="/area" element={<GangwondoPage />} />
 
         <Route path="/mypage" element={<div className="mypage"><Mypage /></div>} />
+        <Route path="/bookmark" element={<div className="bookmark"><Bookmark /></div>} />
+
 
         <Route path="/notice" element={<Notice />} />
 
