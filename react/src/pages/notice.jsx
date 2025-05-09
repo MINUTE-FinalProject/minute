@@ -1,5 +1,5 @@
 import Searchbar from "../common/boardsearchbar"
-import Pagination from "../common/Pagination"
+import Pagination from "../common/pagination"
 import noticeStyle from "./notice.module.css"
 function Notice() {
 

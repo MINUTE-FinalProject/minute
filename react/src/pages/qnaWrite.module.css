@@ -77,10 +77,9 @@
     resize: vertical; /* 세로 크기만 조절 가능하도록 */
   }
   
-  /* 이미지 첨부(img) 영역 */
-  .img {
+  /* 이미지 첨부(img) 영역
+  /* .img {
     /* 특별한 스타일이 현재는 필요 없어 보이지만, 필요시 추가 */
-  }
   
   .imagePreviewContainer {
     display: flex;
