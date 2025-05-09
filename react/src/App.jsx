@@ -33,6 +33,7 @@ import FindPwd2 from "./pages/FindPwd2";
 import SignUpForm2 from "./pages/SignUpForm2";
 import SuccessID from "./pages/SuccessID";
 import SuccessPwd from "./pages/SuccessPwd";
+import Search from './pages/search';
 
 function App() {
 
@@ -51,6 +52,7 @@ function App() {
         <Route path="/mypage" element={<div className="mypage"><Mypage /></div>} />
         <Route path="/calendar" element={<div className="mypage"><Calendarpage /></div>} />
         <Route path="/bookmark" element={<div className="bookmark-wrapper"><Bookmark /></div>} />
+        <Route path="/search" element={<div className="search-wrapper"><Search /></div>} />
 
         <Route path="/notice" element={<Notice />} />
 

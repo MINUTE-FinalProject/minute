@@ -31,7 +31,7 @@ function Search() {
           <div className={searchStyle.searchBar}>
             <input type="text" placeholder="검색..." />
             <button className={searchStyle.searchIcon}>
-              <img src="/searchIcon.png" alt="" width="20" height="20" />
+              <img src="/src/images/searchIcon.png" alt="" width="20" height="20" />
             </button>
           </div>
         </div>
