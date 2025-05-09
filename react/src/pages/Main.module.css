@@ -4,6 +4,7 @@
   background-image: url(../images/main_bg.png);
   background-size: cover;
   background-repeat: no-repeat;
+  background-position: center;
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -11,7 +11,7 @@ function MypageNav() {
         <div className={styles.divStyle}>
             <div className={styles.logo}>
                 <Link to="/">
-                    <img src="/src/images/mypage_logo.png"/>
+                    <img src="/src/images/LO2.png"/>
                 </Link>
             </div>
             <div className={styles.hamburgerContainer}>
