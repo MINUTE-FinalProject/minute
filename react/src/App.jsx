@@ -12,6 +12,7 @@ import QnaWrite from "../../react/src/pages/qnaWrite";
 import Test from "../../react/src/pages/test";
 import './App.css';
 import Layout from "./layouts/Layout";
+import Calendarpage from './pages/Calendarpage';
 import CampingPage from "./pages/CampingPage";
 import GangwondoPage from "./pages/GangwondoPage";
 import HealingPage from "./pages/HealingPage";
