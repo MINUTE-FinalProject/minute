@@ -20,8 +20,9 @@ const Bookmark = () => {
         <section className={bookmarkStyle.bookmarkGrid}>
           <div className={bookmarkStyle.bookmarkItem}>
             <div className={bookmarkStyle.bookmarkCard}>
-              <div className={bookmarkStyle.placeholderImage}></div> {/* Placeholder로 이미지 대신 */}
-              <input type="checkbox" />
+              <div className={bookmarkStyle.placeholderImage}>
+                <input type="checkbox" className={bookmarkStyle.bookmarkCheckbox} />
+              </div>
             </div>
             <div className={bookmarkStyle.bookmarkFooter}>
               <div className={bookmarkStyle.bookmarkTitle}>힐링</div>
