@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './App.css';
 import Layout from "./layouts/Layout";
+import Calendarpage from './pages/Calendarpage';
 import CampingPage from "./pages/CampingPage";
 import GangwondoPage from "./pages/GangwondoPage";
 import HealingPage from "./pages/HealingPage";
@@ -31,6 +32,7 @@ function App() {
           <Route path="/search" element={<div className="search-wrapper"><Search /></div>} />
           <Route path="/bookmark" element={<div className="bookmark-wrapper"><Bookmark /></div>} />
           <Route path="/mypage" element={<div className="mypage"><Mypage /></div>} />
+          <Route path="/calendar" element={<div className="mypage"><Calendarpage /></div>} />
       </Routes>
     </BrowserRouter>
   )

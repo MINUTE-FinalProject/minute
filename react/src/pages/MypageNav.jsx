@@ -1,73 +1,78 @@
 import { useState } from "react";
-import mypagenavStyle from "./MypageNav.module.css";
+import { Link } from "react-router-dom";
+import styles from "./MypageNav.module.css";
 
 function MypageNav() {
-    const [ showSidebar, setShowSidebar] = useState(false);
-    const [showCategorySub, setShowCategorySub] = useState(false);
-    const [showBoardSub, setShowBoardSub] = useState(false);
-
-    const toggleSidebar = () => {
-        setShowSidebar(prev => !prev);
-    };
-    const toggleCategory = () => {
-        setShowCategorySub(prev => !prev);
-    };
-    const toggleBoard = () => {
-        setShowBoardSub(prev => !prev);
-    };
+    const [isOpen, setIsOpen] = useState(false);
+    const [showCategoryMenu, setShowCategoryMenu] = useState(false);
+    const [showBoardMenu, setShowBoardMenu] = useState(false);
 
     return (
-        <div className={mypagenavStyle.contents_wrap}>
-            <div className={mypagenavStyle.divStyle}>
-                <div className={mypagenavStyle.logo}>
-                    <img src="/src/imgs/logo.png"/>
-                </div>
-                <div className={mypagenavStyle.menu} onClick={toggleSidebar}>
-                    <img src="/src/imgs/Menu.png"/>
-                </div>
+        <div className={styles.divStyle}>
+            <div className={styles.logo}>
+                <Link to="/">
+                    <img src="/src/images/mypage_logo.png"/>
+                </Link>
+            </div>
+            <div className={styles.hamburgerContainer}>
+            <div
+                className={styles.hamburgerIcon}
+                onClick={() => setIsOpen(prev => !prev)}
+            >
+                <div className={`${styles.bar} ${isOpen ? styles.open : ""}`} />
+                <div className={`${styles.bar} ${isOpen ? styles.open : ""}`} />
+                <div className={`${styles.bar} ${isOpen ? styles.open : ""}`} />
+            </div>
 
-            </div> 
-                {showSidebar && (
-                    <div className={mypagenavStyle.sideBar}>
-                        <h3 onClick={toggleCategory}>카테고리</h3>
-                        {showCategorySub && (
-                            <ul className={mypagenavStyle.subMenu}>
-                                <li>
-                                    테마파크
-                                </li>
-                                <li>
-                                    캠핑
-                                </li>
-                                <li>
-                                    산
-                                </li>
-                                <li>
-                                    힐링
-                                </li>
-                            </ul>
-                        )}
-                        <hr></hr>
-
-                        <h3 onClick={toggleBoard}>게시판</h3>
-                        {showBoardSub && (
-                            <ul className={mypagenavStyle.subMenu}>
-                                <li>
-                                    공지사항
-                                </li>
-                                <li>
-                                    Q&A
-                                </li>
-                                <li>
-                                    자유게시판
-                                </li>
-                            </ul>
-                        )}
-                        <hr></hr>
-
-                        <h3>월별 추천</h3>
-                        <hr></hr>
+                <nav className={`${styles.menu} ${isOpen ? styles.show : ""}`}>
+                    <div className={styles.menuItem}>
+                    <a href="#" onClick={() => setShowCategoryMenu(prev => !prev)}>
+                        카테고리
+                    </a>
+                    {showCategoryMenu && (
+                        <div className={styles.submenu}>
+                        <Link to="/camping" onClick={() => setIsOpen(false)}>
+                            캠핑
+                        </Link>
+                        <Link to="/healing" onClick={() => setIsOpen(false)}>
+                            힐링
+                        </Link>
+                        <Link to="/mountain" onClick={() => setIsOpen(false)}>
+                            산
+                        </Link>
+                        <Link to="/themepark" onClick={() => setIsOpen(false)}>
+                            테마파크
+                        </Link>
+                        </div>
+                    )}
                     </div>
-                )}
+
+                    <div className={styles.menuItem}>
+                    <a href="#" onClick={() => setShowBoardMenu(prev => !prev)}>
+                        게시판
+                    </a>
+                    {showBoardMenu && (
+                        <div className={styles.submenu}>
+                        <Link to="" onClick={() => setIsOpen(false)}>
+                            공지사항
+                        </Link>
+                        <Link to="" onClick={() => setIsOpen(false)}>
+                            자유게시판
+                        </Link>
+                        <Link to="" onClick={() => setIsOpen(false)}>
+                            Q&A게시판
+                        </Link>
+                        </div>
+                    )}
+                    </div>
+
+                    <div className={styles.menuItem}>
+                    <Link to="" onClick={() => setIsOpen(false)}>
+                        월별추천
+                    </Link>
+                    </div>
+                </nav>
+            </div>
         </div>
     );
 }
