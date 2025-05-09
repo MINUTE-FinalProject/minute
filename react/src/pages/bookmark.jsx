@@ -1,30 +1,31 @@
 import React from 'react';
-import './bookmark.css';
+import bookmarkStyle from './bookmark.module.css';
+
 
 const Bookmark = () => {
   return (
-    <div className="bookmark-container">
-      <aside className="sidebar">
-        <div className="logo"><img src="/logo.png" alt="로고" /></div>
-        <div className="menu-icon">☰</div>
+    <div className={bookmarkStyle.bookmarkContainer}>
+      <aside className={bookmarkStyle.sidebar}>
+        <div className={bookmarkStyle.logo}><img src="/logo.png" alt="로고" /></div>
+        <div className={bookmarkStyle.menuIcon}>☰</div>
       </aside>
-      <main className="main-content">
-        <header className="header">
+      <main className={bookmarkStyle.mainContent}>
+        <header className={bookmarkStyle.header}>
           <h1>BOOKMARK</h1>
-          <div className="buttons">
-            <button className="btn">추가</button>
-            <button className="btn">삭제</button>
+          <div className={bookmarkStyle.buttons}>
+            <button className={bookmarkStyle.btn}>추가</button>
+            <button className={bookmarkStyle.btn}>삭제</button>
           </div>
         </header>
-        <section className="bookmark-grid">
-          <div className="bookmark-item">
-            <div className="bookmark-card">
-              <div className="placeholder-image"></div> {/* Placeholder로 이미지 대신 */}
+        <section className={bookmarkStyle.bookmarkGrid}>
+          <div className={bookmarkStyle.bookmarkItem}>
+            <div className={bookmarkStyle.bookmarkCard}>
+              <div className={bookmarkStyle.placeholderImage}></div> {/* Placeholder로 이미지 대신 */}
               <input type="checkbox" />
             </div>
-            <div className="bookmark-footer">
-              <div className="bookmark-title">힐링</div>
-              <div className="bookmark-options">⋯</div>
+            <div className={bookmarkStyle.bookmarkFooter}>
+              <div className={bookmarkStyle.bookmarkTitle}>힐링</div>
+              <div className={bookmarkStyle.bookmarkOptions}>⋯</div>
             </div>
           </div>
         </section>
