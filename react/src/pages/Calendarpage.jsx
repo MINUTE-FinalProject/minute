@@ -6,7 +6,7 @@ function Calendarpage() {
         <>
             <MypageNav/>
             <div className={calendarpageStyle.contents_wrap}>
-                <h2>4월 22일</h2>
+                <div className={calendarpageStyle.date}>4월 22일</div>
                 <div className={calendarpageStyle.mainBox}>
 
                     <div className={calendarpageStyle.listSection}>
@@ -50,7 +50,7 @@ function Calendarpage() {
                             <li><label><input type="checkbox" /> 충전기 챙기기!!!</label></li>
                             <li><label><input type="checkbox" /> 충전기 챙기기!!!</label></li>
                             <li><label><input type="checkbox" /> 충전기 챙기기!!!</label></li>
-                            <li><label><input type="checkbox" /> 충전기 챙기기!!!</label></li><li><label><input type="checkbox" /> 충전기 챙기기!!!</label></li>
+                            <li><label><input type="checkbox" /> 충전기 챙기기!!!</label></li>
                             <li><label><input type="checkbox" /> 충전기 챙기기!!!</label></li>
                             <li><label><input type="checkbox" /> 충전기 챙기기!!!</label></li>
                             <li><label><input type="checkbox" /> 충전기 챙기기!!!</label></li>
@@ -76,7 +76,7 @@ function Calendarpage() {
                             <li><label><input type="checkbox" /> 충전기 챙기기!!!</label></li>
                             </ul>
                         </div>
-                        <button className={calendarpageStyle.addButton}><img src="/src/imgs/+.png" /></button>
+                        <button className={calendarpageStyle.addButton}><img src="/src/images/+.png" /></button>
                     </div>
 
                     <div className={calendarpageStyle.planSection}>
@@ -147,15 +147,15 @@ function Calendarpage() {
                             <p>13:00 카페 도착</p>
                         </div>
                         <div className={calendarpageStyle.planIcons}>
-                            <button><img src="/src/imgs/save.png" /></button>
-                            <button><img src="/src/imgs/delete.png" /></button>
+                            <button className={calendarpageStyle.saveButton}><img src="/src/images/save.png" /></button>
+                            <button className={calendarpageStyle.deleteButton}><img src="/src/images/delete.png" /></button>
                         </div>
                     </div>
                 </div>
 
                 <div className={calendarpageStyle.navArrows}>
-                    <button className={calendarpageStyle.leftArrow}><img src="/src/imgs/left_arrow.png"/></button>
-                    <button className={calendarpageStyle.rightArrow}><img src="/src/imgs/right_arrow.png"/></button>
+                    <button className={calendarpageStyle.leftArrow}><img src="/src/images/left_arrow.png"/></button>
+                    <button className={calendarpageStyle.rightArrow}><img src="/src/images/right_arrow.png"/></button>
                 </div>
             </div>
         </>
