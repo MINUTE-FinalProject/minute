@@ -20,6 +20,7 @@ import MountainPage from "./pages/MountainPage";
 import Mypage from "./pages/Mypage";
 import ShortsVideoPage from "./pages/ShortsVideoPage";
 import ThemeParkPage from "./pages/ThemeParkPage";
+import Bookmark from './pages/bookmark';
 
 import CheckDelete from "./pages/CheckDelete";
 import CheckInfo from "./pages/CheckInfo";
@@ -47,6 +48,8 @@ function App() {
         <Route path="/area" element={<GangwondoPage />} />
 
         <Route path="/mypage" element={<div className="mypage"><Mypage /></div>} />
+        <Route path="/calendar" element={<div className="mypage"><Calendarpage /></div>} />
+        <Route path="/bookmark" element={<div className="bookmark-wrapper"><Bookmark /></div>} />
 
         <Route path="/notice" element={<Notice />} />
 
