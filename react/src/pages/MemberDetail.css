@@ -1,0 +1,64 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  flex: 1;
+}
+
+.member-detail {
+  flex: 1;
+  padding: 40px;
+}
+
+.member-detail form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 500px;
+}
+
+/* 하나의 줄 */
+.form-row {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 10px;
+}
+
+/* 왼쪽 라벨 텍스트 고정 너비 */
+.form-row label {
+  width: 100px;
+  font-weight: bold;
+}
+
+/* 입력창 기본 */
+.form-row input[type="text"] {
+  padding: 8px 10px;
+  font-size: 14px;
+  flex: 1;
+}
+
+/* 버튼 위치 */
+.form-row button {
+  padding: 6px 10px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* 성별 라디오 버튼 전용 스타일 */
+.form-row .gender-options {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.pink {
+  color: #ff0066;
+}
+h2 {
+  margin-bottom: 50px;
+}
+
+
+
+

@@ -34,6 +34,10 @@ import SignUpForm2 from "./pages/SignUpForm2";
 import SuccessID from "./pages/SuccessID";
 import SuccessPwd from "./pages/SuccessPwd";
 import Search from './pages/search';
+import ManagerUserPage from "./pages/ManagerUserPage";
+import ReportedMembers from "./pages/ReportedMembers";
+import MemberDetail from "./pages/MemberDetail";
+import ManagerMyPage from "./pages/ManagerMyPage";
 
 function App() {
 
@@ -86,6 +90,10 @@ function App() {
         <Route path="/deleteaccount" element={<DeleteAccount/>}/>
         <Route path="/checkinfo" element={<CheckInfo/>}/>
         <Route path="/checkdelete" element={<CheckDelete/>}/>
+        <Route path="/" element={<ManagerUserPage/>}/>
+        <Route path="/reportedmembers" element={<ReportedMembers />} />
+        <Route path="/member-detail/:id" element={<MemberDetail />} />
+        <Route path="/managermypage" element={<ManagerMyPage />} />
 
       </Routes>
     </BrowserRouter>
