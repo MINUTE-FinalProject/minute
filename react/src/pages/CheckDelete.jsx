@@ -40,3 +40,5 @@ function CheckDelete() {
         </div>
     )
 }
+
+export default CheckDelete;
