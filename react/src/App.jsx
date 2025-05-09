@@ -12,7 +12,6 @@ import QnaWrite from "../../react/src/pages/qnaWrite";
 import Test from "../../react/src/pages/test";
 import './App.css';
 import Layout from "./layouts/Layout";
-import Calendarpage from './pages/Calendarpage';
 import CampingPage from "./pages/CampingPage";
 import GangwondoPage from "./pages/GangwondoPage";
 import HealingPage from "./pages/HealingPage";
@@ -21,6 +20,19 @@ import MountainPage from "./pages/MountainPage";
 import Mypage from "./pages/Mypage";
 import ShortsVideoPage from "./pages/ShortsVideoPage";
 import ThemeParkPage from "./pages/ThemeParkPage";
+import Bookmark from './pages/bookmark';
+
+import Calendarpage from "./pages/Calendarpage";
+import CheckDelete from "./pages/CheckDelete";
+import CheckInfo from "./pages/CheckInfo";
+import DeleteAccount from "./pages/DeleteAccount";
+import FailFindID from "./pages/FailFindID";
+import FindID from "./pages/FindID";
+import FindPwd from "./pages/FindPwd";
+import FindPwd2 from "./pages/FindPwd2";
+import SignUpForm2 from "./pages/SignUpForm2";
+import SuccessID from "./pages/SuccessID";
+import SuccessPwd from "./pages/SuccessPwd";
 
 function App() {
 
@@ -37,8 +49,8 @@ function App() {
         <Route path="/area" element={<GangwondoPage />} />
 
         <Route path="/mypage" element={<div className="mypage"><Mypage /></div>} />
-        <Route path="/bookmark" element={<div className="bookmark"><Bookmark /></div>} />
-
+        <Route path="/calendar" element={<div className="mypage"><Calendarpage /></div>} />
+        <Route path="/bookmark" element={<div className="bookmark-wrapper"><Bookmark /></div>} />
 
         <Route path="/notice" element={<Notice />} />
 
@@ -61,6 +73,17 @@ function App() {
         <Route path="/qnaWrite" element={<QnaWrite />} />
 
         <Route path="/qnaEdit" element={<QnaEdit />} />
+
+        <Route path="/findid" element={<FindID/>}/>
+        <Route path="/successid" element={<SuccessID/>}/>
+        <Route path="/successpwd" element={<SuccessPwd/>}/>
+        <Route path="/signupform2" element={<SignUpForm2/>}/>
+        <Route path="/findpwd" element={<FindPwd/>}/>
+        <Route path="/findpwd2" element={<FindPwd2/>}/>
+        <Route path="/failfindid" element={<FailFindID/>}/>
+        <Route path="/deleteaccount" element={<DeleteAccount/>}/>
+        <Route path="/checkinfo" element={<CheckInfo/>}/>
+        <Route path="/checkdelete" element={<CheckDelete/>}/>
 
       </Routes>
     </BrowserRouter>
