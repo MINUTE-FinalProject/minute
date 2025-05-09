@@ -1,0 +1,445 @@
+/* freeboardDetail.module.css */
+
+.loadingContainer,
+.errorContainer {
+  text-align: center;
+  padding: 50px;
+  font-size: 1.2em;
+  color: #555;
+}
+
+.pageContainer {
+  padding: 20px;
+  max-width: 900px;
+  margin: 20px auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  background-color: #f4f6f8;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.boardLinkContainer {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #dfe3e8;
+  text-align: center; /* 자유게시판 문구 중앙 정렬 */
+}
+
+.boardLinkContainer a {
+  text-decoration: none;
+  color: #2c3e50;
+  transition: color 0.2s ease-in-out;
+}
+.boardLinkContainer a:hover {
+  color: #007bff;
+}
+
+.boardLinkContainer h2 {
+  margin: 0;
+  font-size: 2em;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.imageBannerContainer {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.bannerImage {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.postContentContainer {
+  border: 1px solid #dfe3e8;
+  padding: 30px 35px;
+  margin-bottom: 35px;
+  border-radius: 8px;
+  background-color: #fff;
+  position: relative; /* 자식 .postActions 위치 기준 */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+}
+
+.postTitle {
+  font-size: 2.2em;
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #1c2833;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.postMeta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  color: #525f6b;
+  font-size: 0.9em;
+}
+
+.postMeta > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.postAuthor {
+  font-weight: 600;
+  color: #34495e;
+}
+
+.postCreatedAt {
+  color: #7f8c8d;
+  font-size: 0.9em;
+}
+
+.postSubMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ecf0f1;
+  font-size: 0.9em;
+}
+
+.postStats {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #525f6b;
+}
+.postStats span {
+  margin-right: 18px;
+}
+.postStats span:last-child { /* 조회수 뒤에는 간격 불필요 */
+  margin-right: 0;
+}
+
+
+.likeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.4em;
+  padding: 0;
+  vertical-align: middle;
+  color: #7f8c8d; /* 기본 아이콘 색상 (🤍) */
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.likeButton:hover {
+  transform: scale(1.15);
+}
+/* 게시글 좋아요 활성화 시 스타일 */
+.likeButton.liked { /* ❤️ 일 때 */
+  color: #e74c3c; /* 채워진 하트 색상 */
+}
+.likeButton.liked:hover { /* ❤️ 일 때 호버 */
+  color: #c0392b; /* 약간 어둡게 */
+}
+
+
+.reportButton {
+  background-color: #f8f9fa;
+  border: 1px solid #d6dbdf;
+  padding: 5px 12px;
+  font-size: 0.85em;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #495057;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+.reportButton:hover:not(:disabled) { /* 비활성화 아닐 때만 호버 효과 */
+  background-color: #e9ecef;
+  border-color: #b0bac0;
+}
+/* 게시글 신고됨 상태 스타일 */
+.reportButton.reported, /* JS에서 클래스 추가 시 */
+.reportButton:disabled { /* disabled 속성으로도 스타일 적용 */
+  background-color: #e9ecef;
+  color: #6c757d;
+  border-color: #ced4da;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.postBody {
+  min-height: 180px;
+  line-height: 1.75;
+  color: #34495e;
+  font-size: 1.05em;
+  margin-bottom: 25px; /* postActions 와의 간격 */
+}
+.postBody br {
+    content: "";
+    display: block;
+    margin-bottom: 0.6em;
+}
+
+
+.postActions {
+  position: absolute;
+  bottom: 25px;
+  right: 35px;
+  display: flex;
+  gap: 12px;
+}
+
+.actionButton { /* 수정, 삭제 등 공통 버튼 */
+  padding: 7px 15px;
+  border: 1px solid #bdc3c7;
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.actionButton:hover {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.editButton {
+  border-color: #3498db;
+  color: #3498db;
+}
+.editButton:hover {
+  background-color: #3498db;
+  color: white;
+}
+
+.deleteButton {
+  border-color: #e74c3c;
+  color: #e74c3c;
+}
+.deleteButton:hover {
+  background-color: #e74c3c;
+  color: white;
+}
+
+
+.commentInputContainer {
+  display: flex;
+  margin-bottom: 35px;
+  margin-top: 25px;
+  gap: 12px;
+}
+
+.commentTextarea {
+  flex-grow: 1;
+  min-height: 75px;
+  padding: 12px 15px;
+  border: 1px solid #d1d8e0;
+  border-radius: 6px;
+  resize: vertical;
+  font-size: 0.98em;
+  line-height: 1.6;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.commentTextarea:focus {
+  border-color: #007bff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.2);
+}
+
+
+.commentSubmitButton {
+  padding: 0 22px;
+  align-self: stretch;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.98em;
+  transition: background-color 0.2s ease-in-out;
+}
+.commentSubmitButton:hover {
+  background-color: #0056b3;
+}
+
+
+.commentListContainer {
+  margin-top: 35px;
+  background-color: #fff;
+  padding: 25px 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+}
+.commentListContainer h3 {
+  font-size: 1.4em;
+  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ecf0f1;
+  font-weight: 600;
+}
+
+
+.commentItem {
+  border-bottom: 1px solid #f1f3f5;
+  padding: 18px 0;
+}
+.commentItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.commentItem:first-child {
+  padding-top: 0;
+}
+
+
+.commentMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+.commentMeta > div:first-child {
+  display: flex;
+  flex-direction: column;
+}
+
+.commentAuthor {
+  font-weight: 600;
+  color: #34495e;
+  font-size: 0.98em;
+  margin-bottom: 4px;
+}
+
+.commentCreatedAt {
+  color: #95a5a6;
+  font-size: 0.82em;
+}
+
+.commentContent {
+  margin-bottom: 15px;
+  line-height: 1.65;
+  color: #4a6177;
+  font-size: 0.98em;
+  word-break: break-word; /* 긴 단어 자동 줄바꿈 */
+}
+.commentContent br {
+  content: "";
+  display: block;
+  margin-bottom: 0.5em;
+}
+
+.commentEditTextarea { /* 댓글 인라인 수정을 위한 textarea */
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #007bff; /* 수정 중임을 나타내는 테두리 */
+  border-radius: 5px;
+  font-family: inherit; /* 부모 폰트 상속 */
+  font-size: 0.98em; /* .commentContent 와 유사하게 */
+  line-height: 1.65; /* .commentContent 와 유사하게 */
+  resize: vertical; /* 세로 크기만 조절 가능 */
+  box-sizing: border-box; /* padding, border가 width에 포함되도록 */
+  margin-bottom: 15px; /* .commentActions 와의 간격 */
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.commentEditTextarea:focus {
+  outline: none;
+  border-color: #0056b3; /* 포커스 시 테두리 색상 변경 */
+  box-shadow: 0 0 0 0.15rem rgba(0,123,255,.2);
+}
+
+
+.commentActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9em;
+}
+.commentActions > div:first-child { /* 좋아요 버튼 + 카운트 영역 */
+  display: flex;
+  align-items: center;
+}
+
+.commentLikeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 6px 0 0;
+  font-size: 1.25em;
+  color: #95a5a6; /* 댓글 좋아요 아이콘 기본 색상 */
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.commentLikeButton:hover {
+  transform: scale(1.1);
+  color: #e74c3c; /* 댓글 좋아요 아이콘 호버 시 색상 */
+}
+
+
+.commentLikeCount {
+  margin-right: 18px;
+  color: #525f6b;
+  font-size: 0.9em;
+}
+
+.commentDeleteButton { /* 댓글 삭제 버튼 스타일 */
+  padding: 4px 10px;
+  font-size: 0.82em;
+  /* .actionButton, .deleteButton 스타일을 상속받거나 여기서 추가 정의 */
+}
+
+.commentReportButton { /* 댓글 신고 버튼 스타일 */
+  font-size: 0.82em;
+  padding: 4px 10px;
+  /* .reportButton 스타일을 상속받거나 여기서 추가 정의 */
+}
+
+.noComments {
+  text-align: center;
+  color: #7f8c8d;
+  padding: 30px 0;
+  font-size: 0.98em;
+}
+
+.commentPaginationContainer {
+  text-align: center;
+  margin-top: 35px;
+  padding-bottom: 15px;
+}
+
+.paginationButton {
+  margin: 0 5px;
+  padding: 7px 14px;
+  border: 1px solid #d1d8e0;
+  background: white;
+  color: #007bff;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 0.9em;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+.paginationButton:hover {
+  background-color: #f1f3f5;
+  border-color: #adb5bd;
+}
+.paginationButton:disabled {
+  color: #6c757d;
+  cursor: not-allowed;
+  background-color: #e9ecef;
+}
+
+.activePage {
+  font-weight: bold;
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+.activePage:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
