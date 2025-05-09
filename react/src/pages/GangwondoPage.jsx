@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import styles from '../styles/GangwondoPage.module.css';
-import Header from "./Header";
-import RollingCardSlider from "./RollingCardSlider";
 import bg1 from '../images/gangwondo_bg1.png';
 import bg2 from '../images/gangwondo_bg2.png';
 import bg3 from '../images/gangwondo_bg3.png';
+import styles from './GangwondoPage.module.css';
+import Header from "./Header";
+import RollingCardSlider from "./RollingCardSlider";
 
 function GangwondoPage() {
   const images = [bg1,bg2,bg3];

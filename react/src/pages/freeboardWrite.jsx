@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import banner from "../assets/banner.png"; // 실제 경로 확인 필요
+import banner from "../images/banner.png"; // 실제 경로 확인 필요
 import freeboardWriteStyle from './freeboardWrite.module.css';
 
 function FreeboardWrite() {

@@ -1,6 +1,6 @@
-import banner from "../assets/banner.png"
 import Searchbar from "../common/boardsearchbar"
 import Pagination from "../common/pagination"
+import banner from "../images/banner.png"
 import freeBoardStyle from "./freeboard.module.css"
 
 function FreeBoard() {

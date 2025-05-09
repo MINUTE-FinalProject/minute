@@ -1,6 +1,6 @@
-import styles from '../styles/Header.module.css';
-import HamburgerMenu from './HamburgerMenu';
 import { Link } from 'react-router-dom';
+import HamburgerMenu from './HamburgerMenu';
+import styles from './Header.module.css';
 
 function Header() {
   return (

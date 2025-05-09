@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import banner from "../assets/banner.png";
+import banner from "../images/banner.png";
 import freeboardDetailStyle from './freeboardDetail.module.css';
 
 // (실제 앱에서는 Context API, Redux, Zustand 등에서 가져오거나 로그인 시 설정됩니다)

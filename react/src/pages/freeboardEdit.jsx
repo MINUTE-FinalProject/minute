@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'; // useEffect 추가
 import { Link, useParams } // useParams 추가 (게시물 ID를 URL에서 가져오기 위함)
     from 'react-router-dom';
-import banner from "../assets/banner.png"; // 실제 경로 확인 필요
+import banner from "../images/banner.png"; // 실제 경로 확인 필요
 import freeboardEditStyle from './freeboardEdit.module.css';
 
 function FreeboardEdit() {
