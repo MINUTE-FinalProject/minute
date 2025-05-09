@@ -21,6 +21,7 @@ import Mypage from "./pages/Mypage";
 import ShortsVideoPage from "./pages/ShortsVideoPage";
 import ThemeParkPage from "./pages/ThemeParkPage";
 
+import CheckDelete from "./pages/CheckDelete";
 import CheckInfo from "./pages/CheckInfo";
 import DeleteAccount from "./pages/DeleteAccount";
 import FailFindID from "./pages/FailFindID";
