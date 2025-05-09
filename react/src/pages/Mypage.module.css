@@ -1,239 +1,179 @@
-.contents_wrap {
-    position: fixed;                 
-    top: 20px;
-    left: calc(10vh + 20px);
- 
+.container{
     display: flex;
-    justify-content: center;
-    background-color: white;
+    width: 100%;
+    height: 1007px;
+    background-color: #fff;
+    padding: 40px 80px;
     border-radius: 0 10px 10px 0;
-    width: 92%;
-    height: 96%;
 }
-
-/* 전체 묶음 (프로필 + 캘린더 + 리스트 + 메모 + 지도) */
-.all_wrap {
-    display: flex;
-
-    margin-top: 55px;
-}
-
-.profileWrap {
+.leftWrap{
+    width: 60%;
     display: flex;
     flex-direction: column;
 }
-
-.profileSection {
-    width: 1000px;
-    height: 400px;
-    background-color: #f5f5f5;
-    border-radius: 10px;
+.profileWrap{
+    background-color: #F6F6F6;
     display: flex;
     flex-direction: column;
-}
+    border-radius: 20px;
+    padding: 20px;
 
-.profileName{
-    font-weight: 700;
-    margin-top: 30px;
-    margin-left: 110px;
-    font-size: 20px;
 }
-.profileRow{
+.profileContent{
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
+    margin-top: 20px;
     align-items: center;
-    margin-left: 50px;
 }
-.profileEdit{
-    width: 200px;
-    height: 200px;
+.profileNickName{
+    font-size: 16px;
+    color: #000;
+    text-align: left;
+    margin-left: 80px;
+    margin-bottom: 10px;
+}
+.profile{
+    display: flex;
+    flex-direction: column;
+}
+.profileImg{
+    width: 180px;
+    height: 180px;
     border-radius: 50%;
     background-color: #000;
-    margin-top: 20px;
+    overflow: hidden;
+    margin-left: 20px;
 }
-.profileImg {
-  
-  width: 100%;
+.profileImg > img {
+    width: 100%;
 }
-
 .profileInfo{
-    display: flex;
-    flex-direction: column;
-    margin-top: 90px;
-    margin-right: 56px;
-    font-size: large;
-}
-.profileInfo p{
     text-align: right;
-
 }
-
-
-.buttonSection {
-    display: flex;
-    justify-content: space-between;
+.profileInfo > p {
+    margin-top: 10px;
+}
+.profileNavbar{
+    width: 70%;
+    height: 70px;
     background-color: #000;
-    border-radius: 8px;
-    padding: 10px 20px;
-    width: 85%;
-    margin: auto;
-}
-
-.buttonSection button {
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-}
-
-.gridSection{
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    margin-top: 30px;
-}
-
-.calendarBox {
-    width: 400px;
-    height: 275px;
-    background-color: #f5f5f5;
+    color: #fff;
     border-radius: 10px;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    padding-left: 30px;
+    padding-top: 20px;
+}
+.profileNavbar > ul{
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    gap: 70px;
+   
+}
+.profileNavbar > ul > li {
+}
+.planWrap{
+    width: 100%;
+    display: flex;
+}
+.planLeftWrap{
+    width: 50%;
+}
+.calendar{
+    width: 100%;
+    height: 200px;
+    background-color: #f3c6e6;
+    margin-top: 40px;
+    border-radius: 10px;
+    padding: 20px;
+}
+.planList{
+    background-color: #000;
+    color: #fff;
+    height: 200px;
+    margin-top: 40px;
+    padding: 20px;
+    border-radius: 10px;
+}
+.planRightWrap{
+    margin-top: 40px;
+    width: 45%;
+    background-color: #D9D9D9;
+    margin-left: 44px;
+    padding: 20px;
+    border-radius: 10px;
+}
+.planContext{
     
 }
-
-.checklistBox {
-    background-color: black;
-    color: white;
+.rightWrap{
+    width: 36%;
+    background-color: #F6F6F6;
+    margin-left: 50px;
     border-radius: 10px;
-    padding: 20px;
-    margin-top: 20px;
 }
-
-
-.checklistBox ul {
-    
-}
-
-.checklistBox>ul> li {
-    align-items: center;
-    font-size: 14px;
-    display: flex;
-}
-.checklistBox>ul> li>input {
-  width: 20px;
-  height: 20px;
-}
-p {
-    margin-left: 10px !important;
-}
-
-.gridRight {
-    background-color: #f5f5f5;
-    padding: 20px;
-    border-radius: 10px;
-    width: 530px;
-    margin-left: 30px;
-    height: 420px;
-}
-
-.title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.mapBox {
-    width: 500px;
-    background-color: #f5f5f5;
-    border-radius: 10px;
-    padding: 20px;
-    margin-left: 60px;
-    height: 90%;
-}
-
-/* 편집 연필 아이콘 */
-.edit_pencil{
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: #ddd;
-    margin-left: 155px;
-    margin-top: 110px;
-}
-
-.edit_pencil>ul>li{
-    width: 60px;
-    height: 60px;
-    border-radius: 60px;
-    background-color: #ddd;    
-}
-.edit_pencil>ul>li>img{
-    margin-top: 14px;
-    margin-left: 13px;    
-}
-
-.map{
+.mapWrap{  
     position: relative;
+    top: 74px;
+    left: 12px;
+    height: 750px;
 }
+.mapWrap>ul{
 
-.map>ul{
-    margin-top: 80px;
 }
-.map>ul>li{
+.mapWrap>ul>li {
     width: 250px;
 }
-
-.map>ul>li:nth-child(1){
+.mapWrap>ul>li:nth-child(1){
     position: absolute;
     left: 50px;
     top: 23px;
    
 }
-.map>ul>li:nth-child(2){
+.mapWrap>ul>li:nth-child(2){
     position: absolute;
     left: 177px;
     top: -18px;
 }
-.map>ul>li:nth-child(3){
+.mapWrap>ul>li:nth-child(3){
     position: absolute;
     left: 247px;
     top: 190px;
     
 }
-.map>ul>li:nth-child(4){
+.mapWrap>ul>li:nth-child(4){
     position: absolute;
     left: 150px;
     top: 145px;
 }
-.map>ul>li:nth-child(5){
+.mapWrap>ul>li:nth-child(5){
     position: absolute;
     left: 18px;
     top: 168px;
 }
-.map>ul>li:nth-child(6){
+.mapWrap>ul>li:nth-child(6){
     position: absolute;
     left: 56px;
     top: 278px;
 }
-.map>ul>li:nth-child(7){
+.mapWrap>ul>li:nth-child(7){
     position: absolute;
     left: 306px;
     top: 317px;
 }
-.map>ul>li:nth-child(8){
+.mapWrap>ul>li:nth-child(8){
     position: absolute;
     left: 200px;
     top: 324px;
 }
-.map>ul>li:nth-child(9){
+.mapWrap>ul>li:nth-child(9){
     position: absolute;
     left: 32px;
     top: 398px;
 }
 
-.map>ul>li:nth-child(10){
+.mapWrap>ul>li:nth-child(10){
     position: absolute;
     left: 0px;
     top: 565px;
-}
+} 

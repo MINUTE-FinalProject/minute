@@ -18,6 +18,9 @@ body {
 .mypage {
   background-color: #535353;
   height: 100vh;
+  padding-top: 22px;
+  padding-left: 100px;
+  padding-right: 30px;
 }
 
 .app-container {
