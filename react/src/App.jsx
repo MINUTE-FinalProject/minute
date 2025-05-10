@@ -1,34 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './App.css';
 import Layout from "./layouts/Layout";
-<<<<<<< Updated upstream
-import CampingPage from "./pages/CampingPage";
-import GangwondoPage from "./pages/GangwondoPage";
-import HealingPage from "./pages/HealingPage";
-import Main from "./pages/Main";
-import MountainPage from "./pages/MountainPage";
-import Mypage from "./pages/Mypage";
-import ShortsVideoPage from "./pages/ShortsVideoPage";
-import ThemeParkPage from "./pages/ThemeParkPage";
-import Bookmark from './pages/bookmark';
-
-import Calendarpage from "./pages/Calendarpage";
-import CheckDelete from "./pages/CheckDelete";
-import CheckInfo from "./pages/CheckInfo";
-import DeleteAccount from "./pages/DeleteAccount";
-import FailFindID from "./pages/FailFindID";
-import FindID from "./pages/FindID";
-import FindPwd from "./pages/FindPwd";
-import FindPwd2 from "./pages/FindPwd2";
-import SignUpForm2 from "./pages/SignUpForm2";
-import SuccessID from "./pages/SuccessID";
-import SuccessPwd from "./pages/SuccessPwd";
-import Search from './pages/search';
-import ManagerUserPage from "./pages/ManagerUserPage";
-import ReportedMembers from "./pages/ReportedMembers";
-import MemberDetail from "./pages/MemberDetail";
-import ManagerMyPage from "./pages/ManagerMyPage";
-=======
 import Main from "./pages/Main/Main";
 import CampingPage from "./pages/Category/CampingPage";
 import HealingPage from "./pages/Category/HealingPage";
