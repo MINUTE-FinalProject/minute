@@ -1,83 +1,76 @@
 .contents_wrap {
-    position: fixed;                 
-    top: 0;
-    left: calc(10vh + 20px);
-    bottom: 20px;                    
-    margin-top: 20px;
     display: flex;
-    background-color: white;
+    width: 100%;
+    background-color: #fff;
+    padding: 40px 50px;
     border-radius: 0 10px 10px 0;
-    padding: 10px;
+    height: calc(100vh - 42px);
+    margin-top: -1px;
+    overflow: hidden;
     flex-direction: column;
-    width: 92%;
 }
 
-.date{
+.date {
     padding-left: 100px;
     font-size: 30px;
-    margin: auto 0 0 0;
 }
 
+/* flex-wrap으로 대응 */
 .mainBox {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
     padding-left: 100px;
     padding-right: 100px;
+    width: 100%;
     margin: auto;
 }
 
-
-  /* 왼쪽 리스트 영역 */
+/* 리스트 영역 */
 .listSection {
-    width: 60vh;
-    height: 80vh;
+    flex: 1 1 300px;
+    max-width: 600px;
+    min-width: 280px;
+    height: 75vh;
     position: relative;
     background-color: black;
     color: white;
     border: 1px solid #ccc;
     border-radius: 10px 0 0 10px;
 }
-.listTitle{
+
+.listTitle {
     padding: 15px;
-    font-size: 20px;
+    font-size: 15px;
     text-align: center;
-    border-width: 0 0 1px 0;
-    border-color: white;
-    border-style: solid;
+    border-bottom: 1px solid white;
 }
-.listContent{
+
+.listContent {
     padding: 20px;
     height: 60vh;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
-  /* 스크롤바의 폭 너비 */
+
 .listContent::-webkit-scrollbar {
-    width: 10px;  
+    width: 10px;
 }
 
 .listContent::-webkit-scrollbar-thumb {
-    background: white; /* 스크롤바 색상 */
-    border-radius: 10px; /* 스크롤바 둥근 테두리 */
+    background: white;
+    border-radius: 10px;
 }
 
 .listContent::-webkit-scrollbar-track {
-    background: black;  /*스크롤바 뒷 배경 색상*/
+    background: black;
 }
 
-.listContent input{
+.listContent input {
     width: 15px;
     height: 15px;
     margin-right: 10px;
     accent-color: white;
 }
-
-/* .listSection > ul {
-    list-style: none;
-    padding: 10px;
-} 
-
-.listSection > li {
-    margin-bottom: 10px;
-} */
 
 .addButton {
     position: absolute;
@@ -91,43 +84,47 @@
     height: 30px;
 }
 
-  /* 오른쪽 플랜 영역 */
+/* 플랜 영역 */
 .planSection {
-    position: relative;
-    width: 100vh;
+    flex: 2 1 300px;
+    min-width: 280px;
+    height: 75vh;
     background-color: white;
     border: 1px solid #ccc;
     border-radius: 0 10px 10px 0;
+    position: relative;
 }
-.planTitle{
+
+.planTitle {
     padding: 15px;
-    font-size: 20px;
+    font-size: 15px;
     text-align: center;
-    border-width: 0 0 1px 0;
-    border-color: black;
-    border-style: solid;
+    border-bottom: 1px solid black;
 }
-.planText{
+
+.planText {
     height: 60vh;
     padding: 20px;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
-  /* 스크롤바의 폭 너비 */
+
 .planText::-webkit-scrollbar {
-    width: 10px;  
+    width: 10px;
 }
 
 .planText::-webkit-scrollbar-thumb {
-    background: black; /* 스크롤바 색상 */
-    border-radius: 10px; /* 스크롤바 둥근 테두리 */
+    background: black;
+    border-radius: 10px;
 }
 
 .planText::-webkit-scrollbar-track {
-    background: white;  /*스크롤바 뒷 배경 색상*/
+    background: white;
 }
-.planSection p{
+
+.planSection p {
     padding-left: 10px;
 }
+
 .planIcons {
     position: absolute;
     bottom: 15px;
@@ -141,13 +138,17 @@
     width: 30px;
     height: 30px;
 }
+.saveButton
+{
+    margin-right: 10px;
+}
 
-  /* 양쪽 화살표 버튼 */
+/* 화살표 버튼 */
 .navArrows {
     position: absolute;
     top: 50%;
-    left: 0;
-    right: 0;
+    left: 120px;
+    right: 60px;
     display: flex;
     justify-content: space-between;
     padding: 0 30px;
@@ -160,4 +161,3 @@
     cursor: pointer;
     margin: 0;
 }
-

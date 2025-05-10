@@ -43,10 +43,20 @@ function Mypage() {
           <div className={styles.planWrap}>
             <div className={styles.planLeftWrap}>
               <div className={styles.calendar}>달력</div>
-              <div className={styles.planList}>list</div>
+              <div className={styles.planList}>
+                list
+                <button className={styles.editButton}>
+                  <img src="/src/assets/images/edit_white.png" />
+                </button>
+              </div>
             </div>
             <div className={styles.planRightWrap}>
-              <div className={styles.planContext}>일정</div>
+              <div className={styles.planContext}>
+                일정
+                <button className={styles.editButton}>
+                  <img src="/src/assets/images/edit_black.png" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
