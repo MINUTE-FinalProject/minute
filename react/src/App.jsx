@@ -35,7 +35,6 @@ import CheckInfo from "./pages/Auth/CheckInfo";
 import CheckDelete from "./pages/Auth/CheckDelete";
 import Test from "./pages/test";
 import LoginPage from "./pages/auth/LoginPage";
->>>>>>> Stashed changes
 
 function App() {
 
@@ -88,10 +87,10 @@ function App() {
         <Route path="/deleteaccount" element={<DeleteAccount/>}/>
         <Route path="/checkinfo" element={<CheckInfo/>}/>
         <Route path="/checkdelete" element={<CheckDelete/>}/>
-        <Route path="/" element={<ManagerUserPage/>}/>
+        {/* <Route path="/" element={<ManagerUserPage/>}/>
         <Route path="/reportedmembers" element={<ReportedMembers />} />
         <Route path="/member-detail/:id" element={<MemberDetail />} />
-        <Route path="/managermypage" element={<ManagerMyPage />} />
+        <Route path="/managermypage" element={<ManagerMyPage />} /> */}
 
       </Routes>
     </BrowserRouter>
