@@ -11,16 +11,20 @@ html,
 body {
   margin: 0;
   padding: 0;
-  width: 100%;
+  /* width: 100%; */
   height: 100%;
 }
-
+.container {
+  min-height: 100vh;
+  box-sizing: border-box;
+}
 .mypage {
   background-color: #535353;
   height: 100vh;
   padding-top: 22px;
   padding-left: 100px;
   padding-right: 30px;
+  overflow: hidden;
 }
 
 .app-container {

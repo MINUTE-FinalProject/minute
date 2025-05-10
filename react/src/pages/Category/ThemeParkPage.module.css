@@ -1,0 +1,32 @@
+.container {
+  position: relative;
+  min-height: 100vh;
+  background-image: url(../../assets/images/themepark.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 150px;
+}
+
+.videoList {
+  position: absolute;
+  top: 600px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.videoList ul {
+  display: flex;
+  gap: 20px;
+}
+
+.videoList li {
+  width: 200px;
+  height: 300px;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  list-style: none;
+}

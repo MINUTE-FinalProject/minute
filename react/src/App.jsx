@@ -1,17 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import FreeBoard from "../../react/src/pages/freeBoard";
-import FreeboardDetail from "../../react/src/pages/freeboardDetail";
-import FreeboardEdit from "../../react/src/pages/freeboardEdit";
-import FreeboardWrite from "../../react/src/pages/freeboardWrite";
-import Notice from "../../react/src/pages/notice";
-import NoticeDetail from "../../react/src/pages/noticeDetail";
-import Qna from "../../react/src/pages/qna";
-import QnaDetail from "../../react/src/pages/qnaDetail";
-import QnaEdit from "../../react/src/pages/qnaEdit";
-import QnaWrite from "../../react/src/pages/qnaWrite";
-import Test from "../../react/src/pages/test";
 import './App.css';
 import Layout from "./layouts/Layout";
+<<<<<<< Updated upstream
 import CampingPage from "./pages/CampingPage";
 import GangwondoPage from "./pages/GangwondoPage";
 import HealingPage from "./pages/HealingPage";
@@ -34,6 +24,46 @@ import SignUpForm2 from "./pages/SignUpForm2";
 import SuccessID from "./pages/SuccessID";
 import SuccessPwd from "./pages/SuccessPwd";
 import Search from './pages/search';
+import ManagerUserPage from "./pages/ManagerUserPage";
+import ReportedMembers from "./pages/ReportedMembers";
+import MemberDetail from "./pages/MemberDetail";
+import ManagerMyPage from "./pages/ManagerMyPage";
+=======
+import Main from "./pages/Main/Main";
+import CampingPage from "./pages/Category/CampingPage";
+import HealingPage from "./pages/Category/HealingPage";
+import MountainPage from "./pages/Category/MountainPage";
+import ThemeParkPage from "./pages/Category/ThemeParkPage";
+import ShortsVideoPage from "./pages/Shorts/ShortsVideoPage";
+import GangwondoPage from "./pages/Area/GangwondoPage";
+import Mypage from "./pages/Mypage/Mypage";
+import Calendarpage from "./pages/Calendar/Calendarpage";
+import Bookmark from "./pages/Bookmark/bookmark";
+import Search from "./pages/Bookmark/search";
+import Notice from "./pages/Notice/notice";
+import NoticeDetail from "./pages/Notice/noticeDetail";
+import FreeBoard from "./pages/Board/freeBoard";
+import FreeboardDetail from "./pages/Board/freeboardDetail";
+import FreeboardWrite from "./pages/Board/freeboardWrite";
+import FreeboardEdit from "./pages/Board/freeboardEdit";
+import Qna from "./pages/QnA/qna";
+import QnaDetail from "./pages/QnA/qnaDetail";
+import QnaWrite from "./pages/QnA/qnaWrite";
+import QnaEdit from "./pages/QnA/qnaEdit";
+import FindID from "./pages/Auth/FindID";
+import SuccessID from "./pages/Auth/SuccessID";
+import SuccessPwd from "./pages/Auth/SuccessPwd";
+// import SignUpForm from "./pages/Auth/SignUpForm";  빨간줄 오류
+import SignUpForm from "./pages/Auth/SignUpForm2";
+import FindPwd from "./pages/Auth/FindPwd";
+import FindPwd2 from "./pages/Auth/FindPwd2";
+import FailFindID from "./pages/Auth/FailFindID";
+import DeleteAccount from "./pages/Auth/DeleteAccount";
+import CheckInfo from "./pages/Auth/CheckInfo";
+import CheckDelete from "./pages/Auth/CheckDelete";
+import Test from "./pages/test";
+import LoginPage from "./pages/auth/LoginPage";
+>>>>>>> Stashed changes
 
 function App() {
 
@@ -41,7 +71,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />} />
-        <Route index element={<Main />} />
+        <Route index element={<Main/>} />
         <Route path="/camping" element={<CampingPage />} />
         <Route path="/healing" element={<HealingPage />} />
         <Route path="/mountain" element={<MountainPage />} />
@@ -75,17 +105,21 @@ function App() {
         <Route path="/qnaWrite" element={<QnaWrite />} />
 
         <Route path="/qnaEdit" element={<QnaEdit />} />
-
+        <Route path="/login" element={<LoginPage/>}/>
         <Route path="/findid" element={<FindID/>}/>
         <Route path="/successid" element={<SuccessID/>}/>
         <Route path="/successpwd" element={<SuccessPwd/>}/>
-        <Route path="/signupform2" element={<SignUpForm2/>}/>
+        <Route path="/signupform" element={<SignUpForm/>}/>
         <Route path="/findpwd" element={<FindPwd/>}/>
         <Route path="/findpwd2" element={<FindPwd2/>}/>
         <Route path="/failfindid" element={<FailFindID/>}/>
         <Route path="/deleteaccount" element={<DeleteAccount/>}/>
         <Route path="/checkinfo" element={<CheckInfo/>}/>
         <Route path="/checkdelete" element={<CheckDelete/>}/>
+        <Route path="/" element={<ManagerUserPage/>}/>
+        <Route path="/reportedmembers" element={<ReportedMembers />} />
+        <Route path="/member-detail/:id" element={<MemberDetail />} />
+        <Route path="/managermypage" element={<ManagerMyPage />} />
 
       </Routes>
     </BrowserRouter>
