@@ -1,9 +1,0 @@
-@font-face {
-    font-family: "NotoSans-Medium";
-    font-weight: normal;
-    src: url("minute-login\src\fonts\NotoSans-Medium.ttf") format("truetype");
-  }
-  
-  body {
-    font-family: "NotoSans-Medium";
-  }
