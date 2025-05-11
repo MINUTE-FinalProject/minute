@@ -5,7 +5,6 @@ import GangwondoPage from "./pages/Area/GangwondoPage";
 import FindID from "./pages/Auth/FindID";
 import SuccessID from "./pages/Auth/SuccessID";
 import SuccessPwd from "./pages/Auth/SuccessPwd";
-import FreeBoard from "./pages/Board/freeBoard";
 import FreeboardDetail from "./pages/Board/freeboardDetail";
 import FreeboardEdit from "./pages/Board/freeboardEdit";
 import FreeboardWrite from "./pages/Board/freeboardWrite";
@@ -38,7 +37,7 @@ import FindPwd from "./pages/Auth/FindPwd";
 import FindPwd2 from "./pages/Auth/FindPwd2";
 import LoginPage from "./pages/auth/LoginPage";
 import SignUpForm from "./pages/Auth/SignUpForm2";
-import Test from "./pages/Board/test";
+import FreeBoard from "./pages/Board/freeBoard";
 
 function App() {
 
@@ -64,8 +63,6 @@ function App() {
         <Route path="/noticeDetail" element={<NoticeDetail />} />
 
         <Route path="/freeboard" element={<FreeBoard />} />
-
-        <Route path="/test" element={<Test />} />
 
         <Route path="/freeboardDetail" element={<FreeboardDetail />} />
 
