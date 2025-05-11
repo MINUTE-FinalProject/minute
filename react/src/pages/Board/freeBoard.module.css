@@ -40,11 +40,6 @@
   color: inherit;
 }
 
-/* 일반 링크 호버 시 밑줄 (버튼 스타일 링크 제외) */
-:global(a):not(.write-button):hover {
-  text-decoration: underline;
-}
-
 /* 활성화된 상태 클래스 (페이지네이션 등에 사용) */
 .active {
   background-color: #007bff;
