@@ -1,7 +1,7 @@
 
 import React from "react";
-import Header from "../components/Header";
-import Sidebar from "../components/Sidebar";
+import Header from "../../components/Header/Header";
+// import Sidebar from "../components/Sidebar";
 import "./ManagerUserPage.css";
 
 //임시데이터
