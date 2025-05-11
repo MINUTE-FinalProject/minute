@@ -38,7 +38,7 @@ import FindPwd from "./pages/Auth/FindPwd";
 import FindPwd2 from "./pages/Auth/FindPwd2";
 import LoginPage from "./pages/auth/LoginPage";
 import SignUpForm from "./pages/Auth/SignUpForm2";
-import Test from "./pages/test";
+import Test from "./pages/Board/test";
 
 function App() {
 

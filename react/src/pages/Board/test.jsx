@@ -1,6 +1,6 @@
 import { useState } from "react"; // useState import 확인
 import { Link } from "react-router-dom";
-import banner from "../assets/images/banner.png";
+import banner from "../../assets/images/banner.png";
 import testStyle from "./test.module.css";
 
 function Test() {
