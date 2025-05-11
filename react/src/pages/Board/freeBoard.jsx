@@ -3,6 +3,13 @@ import { Link } from "react-router-dom";
 import banner from "../../assets/images/banner.png";
 import FreeBoardStyle from "./freeBoard.module.css";
 
+import reportOffIcon from "../../assets/images/able-alarm.png"; // 신고 안된 상태 아이콘
+import likeOffIcon from "../../assets/images/b_thumbup.png"; //좋아요 안된 상태 아이콘
+import reportOnIcon from "../../assets/images/disable-alarm.png"; //신고 된 상태 아이콘
+import likeOnIcon from "../../assets/images/thumbup.png"; //좋아요 된 상태 아이콘
+
+import searchButtonIcon from "../../assets/images/search_icon.png";
+
 function FreeBoard() {
   // --- 상태 추가 ---
   const [activeTab, setActiveTab] = useState("all"); // 'all' 또는 'myPosts'
@@ -91,11 +98,15 @@ function FreeBoard() {
             aria-label="게시글 검색"
           />
           <button
-            className={`${FreeBoardStyle["search-button"]} ${FreeBoardStyle["control-element"]}`}
-            aria-label="검색"
-          >
-            <span>🔍</span>
-          </button>
+              className={`${FreeBoardStyle["search-button"]} ${FreeBoardStyle["control-element"]}`}
+              aria-label="검색"
+            >
+              <img
+                src={searchButtonIcon} // src: 방금 import한 이미지 변수를 사용합니다.
+                alt="검색 아이콘"   // alt: 이미지에 대한 설명을 제공합니다.
+                className={FreeBoardStyle["search-button-icon"]} // className: CSS 스타일링을 위한 클래스입니다.
+              />
+            </button>
         </div>
       </div>
 
@@ -133,22 +144,35 @@ function FreeBoard() {
                   }`}
                   onClick={handleLikeToggle}
                   aria-pressed={isLiked}
-                  aria-label={`...`}
+                  aria-label={isLiked ? "좋아요 취소" : "좋아요"}
                 >
-                  <span>👍</span>
+                  <img
+                    src={isLiked ? likeOnIcon : likeOffIcon}
+                    alt={isLiked ? "좋아요 된 상태" : "좋아요 안된 상태"}
+                    // 이미지 크기 등 스타일 조정을 위해 클래스 추가 (CSS에서 정의 필요)
+                    className={FreeBoardStyle["button-icon"]}
+                  />
                 </button>
                 <span className={FreeBoardStyle["like-count"]}>111</span>
               </td>
               <td>
                 <button
                   className={`${FreeBoardStyle["report-button"]} ${
+                    // isReported가 true일 때 .toggled 클래스 추가 (CSS에서 활용 가능)
                     isReported ? FreeBoardStyle.toggled : ""
                   }`}
-                  onClick={handleReportToggle}
-                  aria-pressed={isReported}
-                  aria-label={`...`}
+                  onClick={handleReportToggle} // 비활성화되면 클릭 이벤트는 발생하지 않음
+                  aria-pressed={isReported} // "눌린 상태"를 나타낼 수 있음
+                  // --- 수정된 부분 ---
+                  disabled={isReported} // isReported가 true이면 버튼 비활성화
+                  aria-label={isReported ? "신고됨" : "신고하기"} // 상태에 따라 레이블 변경
+                  // ------------------
                 >
-                  <span>🚩</span>
+                  <img
+                    src={isReported ? reportOnIcon : reportOffIcon} // isReported가 true일 때 reportOnIcon(disable-alarm.png) 표시
+                    alt={isReported ? "신고 된 상태 (비활성화)" : "신고 안된 상태"}
+                    className={FreeBoardStyle["button-icon"]}
+                  />
                 </button>
               </td>
             </tr>
