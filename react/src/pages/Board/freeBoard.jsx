@@ -41,21 +41,19 @@ function FreeBoard() {
         <nav className={FreeBoardStyle["board-navigation"]}>
           {/* 버튼 className 및 onClick 수정 */}
           <button
-            className={`${FreeBoardStyle["nav-button"]} ${
-              activeTab === "all"
+            className={`${FreeBoardStyle["nav-button"]} ${activeTab === "all"
                 ? FreeBoardStyle["active-tab"]
                 : FreeBoardStyle["inactive-tab"]
-            }`}
+              }`}
             onClick={() => handleTabClick("all")} // 클릭 시 상태 변경
           >
             전체 목록
           </button>
           <button
-            className={`${FreeBoardStyle["nav-button"]} ${
-              activeTab === "myPosts"
+            className={`${FreeBoardStyle["nav-button"]} ${activeTab === "myPosts"
                 ? FreeBoardStyle["active-tab"]
                 : FreeBoardStyle["inactive-tab"]
-            }`}
+              }`}
             onClick={() => handleTabClick("myPosts")} // 클릭 시 상태 변경
           >
             내 글
@@ -98,15 +96,15 @@ function FreeBoard() {
             aria-label="게시글 검색"
           />
           <button
-              className={`${FreeBoardStyle["search-button"]} ${FreeBoardStyle["control-element"]}`}
-              aria-label="검색"
-            >
-              <img
-                src={searchButtonIcon} // src: 방금 import한 이미지 변수를 사용합니다.
-                alt="검색 아이콘"   // alt: 이미지에 대한 설명을 제공합니다.
-                className={FreeBoardStyle["search-button-icon"]} // className: CSS 스타일링을 위한 클래스입니다.
-              />
-            </button>
+            className={`${FreeBoardStyle["search-button"]} ${FreeBoardStyle["control-element"]}`}
+            aria-label="검색"
+          >
+            <img
+              src={searchButtonIcon} // src: 방금 import한 이미지 변수를 사용합니다.
+              alt="검색 아이콘"   // alt: 이미지에 대한 설명을 제공합니다.
+              className={FreeBoardStyle["search-button-icon"]} // className: CSS 스타일링을 위한 클래스입니다.
+            />
+          </button>
         </div>
       </div>
 
@@ -139,9 +137,8 @@ function FreeBoard() {
               <td>111</td>
               <td>
                 <button
-                  className={`${FreeBoardStyle["like-button"]} ${
-                    isLiked ? FreeBoardStyle.toggled : ""
-                  }`}
+                  className={`${FreeBoardStyle["like-button"]} ${isLiked ? FreeBoardStyle.toggled : ""
+                    }`}
                   onClick={handleLikeToggle}
                   aria-pressed={isLiked}
                   aria-label={isLiked ? "좋아요 취소" : "좋아요"}
@@ -160,13 +157,13 @@ function FreeBoard() {
                   className={`${FreeBoardStyle["report-button"]} ${
                     // isReported가 true일 때 .toggled 클래스 추가 (CSS에서 활용 가능)
                     isReported ? FreeBoardStyle.toggled : ""
-                  }`}
+                    }`}
                   onClick={handleReportToggle} // 비활성화되면 클릭 이벤트는 발생하지 않음
                   aria-pressed={isReported} // "눌린 상태"를 나타낼 수 있음
                   // --- 수정된 부분 ---
                   disabled={isReported} // isReported가 true이면 버튼 비활성화
                   aria-label={isReported ? "신고됨" : "신고하기"} // 상태에 따라 레이블 변경
-                  // ------------------
+                // ------------------
                 >
                   <img
                     src={isReported ? reportOnIcon : reportOffIcon} // isReported가 true일 때 reportOnIcon(disable-alarm.png) 표시
@@ -198,7 +195,10 @@ function FreeBoard() {
           </div>
         </div>
         <div className={FreeBoardStyle["write-button-container"]}>
-          <Link to="/write" className={FreeBoardStyle["write-button"]}>
+          <Link
+            to="/freeboardWrite" /* <<-- 이 경로가 "/freeboardWrite"로 되어 있는지 확인! */
+            className={FreeBoardStyle["write-button"]}
+          >
             작성
           </Link>
         </div>
