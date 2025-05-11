@@ -1,355 +1,396 @@
 /* test.module.css */
 
 /* --- 기본 설정 --- */
-:global(body) { /* 전역 선택자 사용 */
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f8f9fa;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased; /* 폰트 부드럽게 */
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  /* --- 버튼 및 링크 기본 스타일 --- */
-  
-  /* 네비게이션 탭 외 다른 버튼들의 기본 스타일 (:where로 우선순위 관리) */
-  :where(.pagination button, .search-button, .write-button) {
-    cursor: pointer;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    padding: 5px 10px;
-    border-radius: 4px;
-    margin: 0 2px;
-    font-size: 14px;
-    text-align: center;
-    vertical-align: middle;
-    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-  }
-  :where(.pagination button, .search-button, .write-button):hover {
-    background-color: #e9ecef;
-    border-color: #adb5bd;
-  }
-  
-  /* Link 컴포넌트 (<a> 태그) 기본 스타일 */
-  :global(a) {
-    text-decoration: none;
-    color: inherit;
-  }
-  
-  /* 일반 링크 호버 시 밑줄 (버튼 스타일 링크 제외) */
-  :global(a):not(.write-button):hover {
-    text-decoration: underline;
-  }
-  
-  /* 활성화된 상태 클래스 (페이지네이션 등에 사용) */
-  .active {
-    background-color: #007bff;
-    color: white;
-    border-color: #007bff;
-    font-weight: bold;
-  }
-  .active:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
-  }
-  
-  /* --- 레이아웃 및 컴포넌트 스타일 --- */
-  
-  /* 메인 컨테이너 */
-  .board-container {
-    max-width: 1200px;
-    /* 1200,1320,1400 */
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #fff;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  }
-  
-  /* 헤더: 중앙 정렬 */
-  .board-header {
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .board-header h1 {
-    margin: 0 0 10px 0;
-    font-size: 24px;
-    font-weight: 600;
-  }
-  
-  .board-title-link {
-    color: #343a40;
-  }
-  .board-title-link:hover {
-    text-decoration: none; /* 제목은 호버 시 밑줄 제거 */
-    color: #0056b3;
-  }
-  
-  .board-navigation {
-    margin-top: 5px;
-  }
-  
-  /* 네비게이션 탭 버튼 기본 스타일 */
-  .nav-button {
-    background: none;
-    border: none;
-    border-top: 3px solid transparent; /* 상단 투명 테두리 공간 확보 */
-    padding: 8px 12px; /* 내부 여백 */
-    margin: 0 5px;
-    font-size: 16px;
-    font-weight: 500;
-    color: #495057;
-    cursor: pointer;
-    transition: opacity 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-  }
-  .nav-button:hover {
-      opacity: 0.8; /* 기본 호버 효과는 약간 투명도 변경 */
-      background: none;
-  }
-  
-  /* 활성 탭 스타일 */
-  .active-tab {
-    border-top: 3px solid #FF69B4; /* 상단 핑크색 테두리 */
-    font-weight: 600;
-    color: #343a40; /* 활성 탭 글자색 */
-    opacity: 1;
-  }
-  
-  /* 비활성 탭 스타일 */
-  .inactive-tab {
-    opacity: 0.6; /* 투명도 적용 */
-    border-top: 3px solid transparent;
-  }
-  .inactive-tab:hover {
-      opacity: 0.8; /* 비활성 탭 호버 시 약간 진하게 */
-      color: #343a40; /* 호버 시 글자색 살짝 진하게 */
-  }
-  
-  
-  /* 배너 */
-  .board-banner {
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  .board-banner img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 4px;
-    display: block; /* 이미지 하단 여백 제거 */
-    margin: 0 auto;
-  }
-  
-  /* 컨트롤 영역 */
-  .board-controls {
-    display: flex;
-    flex-wrap: wrap; /* 작은 화면 대응 */
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px; /* 컨트롤 요소들 사이 간격 */
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: #f8f9fa;
-    border-radius: 4px;
-  }
-  
-  .controls-left {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px; /* 정렬, 타입 요소 간 간격 */
-  }
-  
-  .search-area {
-    display: flex;
-    align-items: center;
-  }
-  
-  /* Select, Input 공통 스타일 */
-  .control-element {
-    padding: 6px 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    height: 34px;
-    box-sizing: border-box;
-    vertical-align: middle;
-  }
-  
-  .sort-select,
-  .type-select {
-      /* 특별한 스타일 필요 시 추가 */
-  }
-  
-  .search-input {
-    width: 200px; /* 필요시 조정 */
-    margin-left: 8px; /* 검색 버튼과의 간격 */
-  }
-  
-  .search-button {
-    background-color: white;
-    color: white;
-    border-color: #6c757d;
-    padding: 5px 10px; /* 기본 버튼 패딩 사용 */
-    margin-left: 4px;
-  }
-  .search-button:hover {
-    background-color: #5a6268;
-    border-color: #5a6268;
-  }
-  
-/* --- 검색 버튼 아이콘 스타일 (이 부분을 추가/수정하세요) --- */
-.search-button-icon {
-  width: 16px;  /* 예시: 이미지 너비를 16px로 설정 */
-  height: 16px; /* 예시: 이미지 높이를 16px로 설정 */
-  display: block; /* 이미지가 너비/높이 값을 정확히 갖도록 함 */
+:global(body) {
+  /* 전역 선택자 사용 */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f9fa;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  /* 폰트 부드럽게 */
+  -moz-osx-font-smoothing: grayscale;
 }
 
-  /* 게시글 리스트 테이블 */
-  .board-list-container {
-    margin-bottom: 20px;
-    overflow-x: auto; /* 작은 화면 스크롤 */
-  }
-  
-  .board-table {
-    width: 100%;
-    min-width: 700px; /* 테이블 최소 너비 */
-    border-collapse: collapse;
-    font-size: 14px;
-    border-top: 2px solid #343a40;
-  }
-  
-  .board-table th,
-  .board-table td {
-    border-bottom: 1px solid #dee2e6;
-    padding: 10px 8px;
-    text-align: center;
-    vertical-align: middle;
-  }
-  
-  .board-table th {
-    background-color: #f8f9fa;
-    font-weight: 600;
-    color: #495057;
-  }
-  
-  /* 테이블 데이터 행 호버 효과 */
-  .board-table tbody tr:hover {
-    background-color: #fcf0f5; /* 연핑크 */
-    cursor: pointer;
-  }
-  
-  .board-table .post-title {
-    text-align: left;
-  }
-  .board-table .post-title a {
-    color: #000000;
-  }
-  .board-table .post-title a:hover {
-    text-decoration: underline;
-    color: #000000;
-  }
-  
-  /* 좋아요/신고 버튼 */
-  .like-button,
-  .report-button {
-    background: none;
-    border: none;
-    padding: 0 4px;
-    font-size: 16px;
-    cursor: pointer;
-    color: #6c757d;
-    vertical-align: middle; /* 아이콘/텍스트 세로 정렬 */
-    width: 30px;  /* 원하는 공통 아이콘 너비 */
-    height: 30px; /* 원하는 공통 아이콘 높이 */
-  }
-  .like-button:hover,
-  .report-button:hover {
-    opacity: 0.7;
-  }
-  
-  /* 토글 상태 클래스 (선택 사항) */
-  .toggled {
-    /* font-weight: bold; */ /* 예시: 토글 시 굵게 */
-  }
-  
-  /* aria-pressed 상태 시각적 피드백 */
-  .like-button[aria-pressed="true"] {
-    color: #007bff; /* 활성 좋아요 색상 */
-  }
-  .report-button[aria-pressed="true"] {
-    color: #dc3545; /* 활성 신고 색상 */
-  }
-  
-  .like-count {
-    margin-left: 4px;
-    font-size: 13px;
-    color: #666;
-    vertical-align: middle;
-  }
-  
-  /* 하단 영역 */
-  .board-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px solid #eee;
-  }
-  
-  /* 페이지네이션 래퍼 (중앙 정렬용) */
-  .pagination-wrapper {
-    flex-grow: 1; /* 남은 공간 차지 */
-    display: flex;
-    justify-content: center;
-  }
-  
-  /* 페이지네이션 자체 */
-  .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .pagination button {
-    margin: 0 3px;
-    min-width: 32px;
-    height: 32px;
-    padding: 0; /* 패딩 제거하고 크기로 조절 */
-    display: inline-flex; /* 내부 컨텐츠 정렬 */
-    justify-content: center;
-    align-items: center;
-  }
-  
-  /* 작성 버튼 컨테이너 */
-  .write-button-container {
-    /* 필요시 스타일 추가 */
-  }
-  
-  /* 작성 버튼 (Link 스타일링) */
-  .write-button {
-    display: inline-flex; /* 내부 텍스트 정렬 */
-    align-items: center;
-    justify-content: center;
-    background-color: #000000;
-    color: white;
-    border: 1px solid #000000;
-    padding: 8px 15px; /* 패딩 조정 */
-    border-radius: 4px;
-    text-decoration: none; /* 링크 밑줄 제거 */
-    font-weight: 500;
-  }
-  .write-button:hover {
-    background-color: #333333; /* 호버 시 배경색 변경 */
-    border-color: #333333;    /* 호버 시 테두리색도 일치 (선택 사항) */
-    /* opacity: 0.8; */
-    color: white;
-    text-decoration: none;
-  }
+/* --- 버튼 및 링크 기본 스타일 --- */
+
+/* 네비게이션 탭 외 다른 버튼들의 기본 스타일 (:where로 우선순위 관리) */
+:where(.pagination button, .search-button, .write-button) {
+  cursor: pointer;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  margin: 0 2px;
+  font-size: 14px;
+  text-align: center;
+  vertical-align: middle;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+:where(.pagination button, .search-button, .write-button):hover {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+}
+
+/* Link 컴포넌트 (<a> 태그) 기본 스타일 */
+:global(a) {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 일반 링크 호버 시 밑줄 (버튼 스타일 링크 제외) */
+:global(a):not(.write-button):hover {
+  text-decoration: underline;
+}
+
+/* 활성화된 상태 클래스 (페이지네이션 등에 사용) */
+.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+  font-weight: bold;
+}
+
+.active:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+/* --- 레이아웃 및 컴포넌트 스타일 --- */
+
+/* 메인 컨테이너 */
+.board-container {
+  max-width: 1200px;
+  /* 1200,1320,1400 */
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* 헤더: 중앙 정렬 */
+.board-header {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.board-header h1 {
+  margin: 0 0 10px 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.board-title-link {
+  color: #343a40;
+}
+
+.board-title-link:hover {
+  text-decoration: none;
+  /* 제목은 호버 시 밑줄 제거 */
+  color: #0056b3;
+}
+
+.board-navigation {
+  margin-top: 5px;
+}
+
+/* 네비게이션 탭 버튼 기본 스타일 */
+.nav-button {
+  background: none;
+  border: none;
+  border-top: 3px solid transparent;
+  /* 상단 투명 테두리 공간 확보 */
+  padding: 8px 12px;
+  /* 내부 여백 */
+  margin: 0 5px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #495057;
+  cursor: pointer;
+  transition: opacity 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-button:hover {
+  opacity: 0.8;
+  /* 기본 호버 효과는 약간 투명도 변경 */
+  background: none;
+}
+
+/* 활성 탭 스타일 */
+.active-tab {
+  border-top: 3px solid #FF69B4;
+  /* 상단 핑크색 테두리 */
+  font-weight: 600;
+  color: #343a40;
+  /* 활성 탭 글자색 */
+  opacity: 1;
+}
+
+/* 비활성 탭 스타일 */
+.inactive-tab {
+  opacity: 0.6;
+  /* 투명도 적용 */
+  border-top: 3px solid transparent;
+}
+
+.inactive-tab:hover {
+  opacity: 0.8;
+  /* 비활성 탭 호버 시 약간 진하게 */
+  color: #343a40;
+  /* 호버 시 글자색 살짝 진하게 */
+}
+
+
+/* 배너 */
+.board-banner {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.board-banner img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  display: block;
+  /* 이미지 하단 여백 제거 */
+  margin: 0 auto;
+}
+
+/* 컨트롤 영역 */
+.board-controls {
+  display: flex;
+  flex-wrap: wrap;
+  /* 작은 화면 대응 */
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  /* 컨트롤 요소들 사이 간격 */
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.controls-left {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  /* 정렬, 타입 요소 간 간격 */
+}
+
+.search-area {
+  display: flex;
+  align-items: center;
+}
+
+/* Select, Input 공통 스타일 */
+.control-element {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  height: 34px;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+.sort-select,
+.type-select {
+  /* 특별한 스타일 필요 시 추가 */
+}
+
+.search-input {
+  width: 200px;
+  /* 필요시 조정 */
+  margin-left: 8px;
+  /* 검색 버튼과의 간격 */
+}
+
+.search-button {
+  background-color: white;
+  color: white;
+  border-color: #6c757d;
+  padding: 5px 10px;
+  /* 기본 버튼 패딩 사용 */
+  margin-left: 4px;
+}
+
+.search-button:hover {
+  background-color: #5a6268;
+  border-color: #5a6268;
+}
+
+/* --- 검색 버튼 아이콘 스타일 (이 부분을 추가/수정하세요) --- */
+.search-button-icon {
+  width: 16px;
+  /* 예시: 이미지 너비를 16px로 설정 */
+  height: 16px;
+  /* 예시: 이미지 높이를 16px로 설정 */
+  display: block;
+  /* 이미지가 너비/높이 값을 정확히 갖도록 함 */
+}
+
+/* 게시글 리스트 테이블 */
+.board-list-container {
+  margin-bottom: 20px;
+  overflow-x: auto;
+  /* 작은 화면 스크롤 */
+}
+
+.board-table {
+  width: 100%;
+  min-width: 700px;
+  /* 테이블 최소 너비 */
+  border-collapse: collapse;
+  font-size: 14px;
+  border-top: 2px solid #343a40;
+}
+
+.board-table th,
+.board-table td {
+  border-bottom: 1px solid #dee2e6;
+  padding: 10px 8px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.board-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+}
+
+/* 테이블 데이터 행 호버 효과 */
+.board-table tbody tr:hover {
+  background-color: #fcf0f5;
+  /* 연핑크 */
+  cursor: pointer;
+}
+
+.board-table .post-title {
+  text-align: left;
+}
+
+.board-table .post-title a {
+  color: #000000;
+}
+
+.board-table .post-title a:hover {
+  text-decoration: underline;
+  color: #000000;
+}
+
+/* 좋아요/신고 버튼 */
+.like-button,
+.report-button {
+  background: none;
+  border: none;
+  padding: 0 4px;
+  /* 현재 패딩. 아이콘 정렬에 따라 조절 가능 */
+  cursor: pointer;
+  vertical-align: middle;
+  width: 30px;
+  /* 버튼 전체 크기 */
+  height: 30px;
+  /* 버튼 전체 크기 */
+  /* 아이콘을 중앙에 배치하려면 flex 속성 추가 고려 */
+  /* display: inline-flex; */
+  /* align-items: center; */
+  /* justify-content: center; */
+}
+
+.like-button:hover,
+.report-button:hover {
+  opacity: 0.7;
+}
+
+/* 토글 상태 클래스 (선택 사항) */
+.toggled {
+  /* font-weight: bold; */
+  /* 예시: 토글 시 굵게 */
+}
+
+.like-count {
+  margin-left: 4px;
+  font-size: 13px;
+  color: #666;
+  vertical-align: middle;
+}
+
+/* 하단 영역 */
+.board-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+/* 페이지네이션 래퍼 (중앙 정렬용) */
+.pagination-wrapper {
+  flex-grow: 1;
+  /* 남은 공간 차지 */
+  display: flex;
+  justify-content: center;
+}
+
+/* 페이지네이션 자체 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination button {
+  margin: 0 3px;
+  min-width: 32px;
+  height: 32px;
+  padding: 0;
+  /* 패딩 제거하고 크기로 조절 */
+  display: inline-flex;
+  /* 내부 컨텐츠 정렬 */
+  justify-content: center;
+  align-items: center;
+}
+
+/* 작성 버튼 컨테이너 */
+.write-button-container {
+  /* 필요시 스타일 추가 */
+}
+
+/* 작성 버튼 (Link 스타일링) */
+.write-button {
+  display: inline-flex;
+  /* 내부 텍스트 정렬 */
+  align-items: center;
+  justify-content: center;
+  background-color: #000000;
+  color: white;
+  border: 1px solid #000000;
+  padding: 8px 15px;
+  /* 패딩 조정 */
+  border-radius: 4px;
+  text-decoration: none;
+  /* 링크 밑줄 제거 */
+  font-weight: 500;
+}
+
+.write-button:hover {
+  background-color: #333333;
+  /* 호버 시 배경색 변경 */
+  border-color: #333333;
+  /* 호버 시 테두리색도 일치 (선택 사항) */
+  /* opacity: 0.8; */
+  color: white;
+  text-decoration: none;
+}

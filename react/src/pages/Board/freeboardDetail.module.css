@@ -10,7 +10,7 @@
 
 .pageContainer {
   padding: 20px;
-  max-width: 900px;
+  max-width: 1200px;
   margin: 20px auto;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   background-color: #f4f6f8;
@@ -127,46 +127,54 @@
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1.4em;
   padding: 0;
   vertical-align: middle;
-  color: #7f8c8d; /* 기본 아이콘 색상 (🤍) */
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition: transform 0.2s ease; /* color transition 제거 */
 }
 .likeButton:hover {
   transform: scale(1.15);
 }
-/* 게시글 좋아요 활성화 시 스타일 */
-.likeButton.liked { /* ❤️ 일 때 */
-  color: #e74c3c; /* 채워진 하트 색상 */
-}
-.likeButton.liked:hover { /* ❤️ 일 때 호버 */
-  color: #c0392b; /* 약간 어둡게 */
-}
-
 
 .reportButton {
-  background-color: #f8f9fa;
-  border: 1px solid #d6dbdf;
-  padding: 5px 12px;
-  font-size: 0.85em;
-  border-radius: 5px;
+  background: none; /* 배경 제거 */
+  border: none;     /* 테두리 제거 */
+  padding: 4px;   /* 아이콘 주변 최소한의 여백 (0으로 하거나 아이콘 크기에 맞춰 조절) */
   cursor: pointer;
-  color: #495057;
-  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+  /* color: #495057; */ /* 아이콘 이미지 자체 색상을 사용하므로 이 속성은 불필요할 수 있음 */
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; /* 호버 효과를 위한 transition */
+  vertical-align: middle; /* 주변 텍스트나 요소와의 수직 정렬 */
+
+  /* 아이콘을 버튼 중앙에 배치하고 버튼 크기를 아이콘에 맞추기 위한 스타일 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* 아이콘 크기에 맞춰 버튼의 전체 크기를 좋아요 버튼과 유사하게 설정 (예시) */
+  /* width: 30px;  */
+  /* height: 30px; */
+  /* line-height: 0; */ /* 아이콘만 있을 경우 불필요한 line-height 제거 */
 }
 .reportButton:hover:not(:disabled) { /* 비활성화 아닐 때만 호버 효과 */
-  background-color: #e9ecef;
-  border-color: #b0bac0;
+  /* background-color: #e9ecef; */ /* 배경이 없으므로 제거 */
+  /* border-color: #b0bac0; */   /* 테두리가 없으므로 제거 */
+  opacity: 0.7; /* 예시: 아이콘에 마우스 올렸을 때 살짝 투명해지는 효과 */
+  transform: scale(1.1); /* 예시: 아이콘 살짝 확대 (좋아요 버튼과 유사하게) */
 }
 /* 게시글 신고됨 상태 스타일 */
 .reportButton.reported, /* JS에서 클래스 추가 시 */
 .reportButton:disabled { /* disabled 속성으로도 스타일 적용 */
-  background-color: #e9ecef;
-  color: #6c757d;
-  border-color: #ced4da;
+  /* background-color: #e9ecef; */ /* 배경이 없으므로 제거 */
+  /* color: #6c757d; */
+  /* border-color: #ced4da; */
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 0.5; /* 기존보다 좀 더 투명하게 하여 비활성 상태 강조 */
+  transform: none; /* 호버 시 확대 효과가 남아있을 수 있으므로 초기화 */
+}
+
+/* 아이콘 자체의 크기는 .buttonIcon 클래스에서 설정합니다. */
+.buttonIcon {
+  width: 30px;  /* 예시 크기, 좋아요 아이콘과 맞추세요 */
+  height: 30px; /* 예시 크기, 좋아요 아이콘과 맞추세요 */
+  display: block;
 }
 
 .postBody {
@@ -195,7 +203,7 @@
   padding: 7px 15px;
   border: 1px solid #bdc3c7;
   border-radius: 5px;
-  background-color: #fff;
+  background-color: #000000;
   cursor: pointer;
   font-size: 0.9em;
   font-weight: 500;
@@ -207,21 +215,21 @@
 }
 
 .editButton {
-  border-color: #3498db;
-  color: #3498db;
+  border-color: #000000;
+  color: #ffffff;
 }
 .editButton:hover {
-  background-color: #3498db;
+  background-color: #333333;
   color: white;
 }
 
 .deleteButton {
-  border-color: #e74c3c;
-  color: #e74c3c;
+  border-color: #000000;
+  color: #ffffff;
 }
 .deleteButton:hover {
-  background-color: #e74c3c;
-  color: white;
+  background-color: #333333;
+  color: rgb(255, 255, 255);
 }
 
 
@@ -253,7 +261,7 @@
 .commentSubmitButton {
   padding: 0 22px;
   align-self: stretch;
-  background-color: #007bff;
+  background-color: #000000;
   color: white;
   border: none;
   border-radius: 6px;
@@ -263,7 +271,7 @@
   transition: background-color 0.2s ease-in-out;
 }
 .commentSubmitButton:hover {
-  background-color: #0056b3;
+  background-color: #333333;
 }
 
 
