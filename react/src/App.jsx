@@ -45,17 +45,14 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<Main/>} />
+          <Route index element={<Main />} />
           <Route path="/camping" element={<CampingPage />} />
           <Route path="/healing" element={<HealingPage />} />
           <Route path="/mountain" element={<MountainPage />} />
           <Route path="/themepark" element={<ThemeParkPage />} />
           <Route path="/shorts" element={<ShortsVideoPage />} />
           <Route path="/area" element={<GangwondoPage />} />
-
-          <Route path="/mypage" element={<div className="mypage"><Mypage /></div>} />
           <Route path="/calendar" element={<div className="mypage"><Calendarpage /></div>} />
-          <Route path="/bookmark" element={<div className="bookmark-wrapper"><Bookmark /></div>} />
           <Route path="/search" element={<div className="search-wrapper"><Search /></div>} />
 
           <Route path="/notice" element={<Notice />} />
@@ -77,22 +74,24 @@ function App() {
           <Route path="/qnaWrite" element={<QnaWrite />} />
 
           <Route path="/qnaEdit" element={<QnaEdit />} />
-        </Route>  
-          <Route path="/login" element={<LoginPage/>}/>
-          <Route path="/findid" element={<FindID/>}/>
-          <Route path="/successid" element={<SuccessID/>}/>
-          <Route path="/successpwd" element={<SuccessPwd/>}/>
-          <Route path="/signupform" element={<SignUpForm/>}/>
-          <Route path="/findpwd" element={<FindPwd/>}/>
-          <Route path="/findpwd2" element={<FindPwd2/>}/>
-          <Route path="/failfindid" element={<FailFindID/>}/>
-          <Route path="/deleteaccount" element={<DeleteAccount/>}/>
-          <Route path="/checkinfo" element={<CheckInfo/>}/>
-          <Route path="/checkdelete" element={<CheckDelete/>}/>
-          <Route path="/admin" element={<ManagerUserPage/>}/>
-          <Route path="/reportedmembers" element={<ReportedMembers />} />
-          <Route path="/member-detail/:id" element={<MemberDetail />} />
-          <Route path="/managermypage" element={<ManagerMyPage />} />
+        </Route>
+        <Route path="/mypage" element={<div className="mypage"><Mypage /></div>} />
+        <Route path="/bookmark" element={<div className="bookmark-wrapper"><Bookmark /></div>} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/findid" element={<FindID />} />
+        <Route path="/successid" element={<SuccessID />} />
+        <Route path="/successpwd" element={<SuccessPwd />} />
+        <Route path="/signupform" element={<SignUpForm />} />
+        <Route path="/findpwd" element={<FindPwd />} />
+        <Route path="/findpwd2" element={<FindPwd2 />} />
+        <Route path="/failfindid" element={<FailFindID />} />
+        <Route path="/deleteaccount" element={<DeleteAccount />} />
+        <Route path="/checkinfo" element={<CheckInfo />} />
+        <Route path="/checkdelete" element={<CheckDelete />} />
+        <Route path="/admin" element={<ManagerUserPage />} />
+        <Route path="/reportedmembers" element={<ReportedMembers />} />
+        <Route path="/member-detail/:id" element={<MemberDetail />} />
+        <Route path="/managermypage" element={<ManagerMyPage />} />
 
       </Routes>
     </BrowserRouter>
