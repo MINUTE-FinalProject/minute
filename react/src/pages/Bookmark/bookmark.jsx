@@ -13,7 +13,7 @@ const Bookmark = () => {
         <header className={bookmarkStyle.header}>
           <h1>BOOKMARK</h1>
           <div className={bookmarkStyle.buttons}>
-            <button className={bookmarkStyle.btn}>추가</button>
+            <button className={bookmarkStyle.btn}>추가1</button>
             <button className={bookmarkStyle.btn}>삭제</button>
           </div>
         </header>
