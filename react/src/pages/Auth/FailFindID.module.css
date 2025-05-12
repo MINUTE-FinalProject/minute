@@ -22,7 +22,7 @@
   .title {
     font-size: 38px;
     font-weight: bold;
-    margin-bottom: 60px;
+    margin-bottom: 30px;
   }
   
   .content {
@@ -33,7 +33,7 @@
   }
   
 
-  .submit_btn {
+  .submitBtn {
     width: 100%;
     background-color: #FF3366;
     color: white;

@@ -4,6 +4,7 @@ body {
 }
 
 .container {
+  padding-top: 80px;
     min-height: 100vh;
     background-color: white;
     display: flex;
@@ -11,7 +12,7 @@ body {
   }
   
   
-  .form-wrapper {
+  .formWrapper {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -27,7 +28,7 @@ body {
     margin-bottom: 24px;
   }
   
-  .progress-bar {
+  .progressBar {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -41,7 +42,7 @@ body {
     background-color: #d1d5db;
   }
   
-  .circle.active {
+  .circleActive {
     background-color: #FF3366;
   }
   
@@ -71,26 +72,26 @@ body {
     color: #111;
   }
   
-  .text_box {
+  .textBox {
     width: 100%;
     border: 1px solid #000;
     border-radius: 4px;
-    padding: 8px 12px;
+    padding: 10px 12px;
     outline: none;
     box-sizing: border-box;
     margin-top: 3px;
   }
   
-  .submit_btn {
+  .submitBtn {
     width: 100%;
     background-color: #b0b0b0;
     color: white;
-    padding: 8px;
+    padding: 10px;
     margin-top: 18px;
     border-radius: 4px;
     border: none;
     box-sizing: border-box;
-    height: 38.72px;
+    height: 43.72px;
     font-size: 14px;
   }
 
@@ -101,7 +102,7 @@ body {
     border-radius: 4px;
     font-size: 14px;
     color: #666666;
-    padding: 8px 12px;
+    padding: 10px 12px;
     margin-left: 50px;
     margin-top: 3px;
   }
@@ -114,25 +115,25 @@ body {
     flex-direction: column;
   }
  
-  .gender-group {
+  .genderGroup {
     display: flex;
     align-items: center;
     gap: 20px;
     margin-top: 7px;
   }
   
-  .gender-option {
+  .genderOption {
     display: flex;
     align-items: center;
     font-size: 14px;
     gap: 8px;
   }
   
-  .hidden-radio {
+  .hiddenRadio {
     display: none;
   }
   
-  .gender-indicator {
+  .genderIndicator {
     display: inline-block;
     width: 14px;
     height: 14px;
@@ -140,20 +141,20 @@ body {
     border: 2px solid #ccc;
   }
   
-  .gender-indicator.selected {
+  .genderIndicator.selected {
     background-color: #FF3366;
     border-color: #FF3366;
   }
   
   
-  .checkbox-group {
+  .checkboxGroup {
     font-size: 14px;
   }
   
   .agreebox {
     background-color: #b0b0b0;
     color: white;
-    padding: 8px;
+    padding: 10px;
     border-radius: 2px;
     display: flex;
     align-items: center;
