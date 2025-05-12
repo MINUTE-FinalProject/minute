@@ -1,16 +1,18 @@
 import Pagination from "../../components/pagination/pagination";
 import qnaStyle from "./qna.module.css";
 
+import searchButtonIcon from "../../assets/images/search_icon.png";
+
 function Qna() {
 
     return (
         <div className={qnaStyle.background}>
-    
+
             {/* 제목 섹션: className={qnaStyle.title} 유지 */}
             <div className={qnaStyle.title}>
                 <h1>Q&A</h1>
             </div>
-    
+
             {/* 검색창 섹션: className={qnaStyle.searchbar} 유지 */}
             <div className={qnaStyle.searchbar}>
                 {/* 날짜 선택 버튼들 */}
@@ -25,9 +27,15 @@ function Qna() {
                 {/* 검색 입력창 */}
                 <input type="text" placeholder="검색어를 입력하세요" />
                 {/* 검색 버튼 (돋보기 아이콘은 텍스트 또는 이미지로 대체 가능) */}
-                <button type="button">🔍</button>
+                <button type="button" className={qnaStyle.searchIconButton}>
+                    <img
+                        src={searchButtonIcon}
+                        alt="검색"
+                        className={qnaStyle.searchButtonIcon} /* 아이콘 이미지 스타일용 클래스 */
+                    />
+                </button>
             </div>
-    
+
             {/* Q&A 목록 테이블 섹션: className={qnaStyle.table} 유지 */}
             <table className={qnaStyle.table}>
                 <thead>
@@ -79,12 +87,12 @@ function Qna() {
                     {/* 실제 데이터에 따라 추가적인 행들이 여기에 들어갑니다. */}
                 </tbody>
             </table>
-    
+
             {/* 글쓰기 버튼 섹션: className={qnaStyle.wirte} 유지 */}
             <div className={qnaStyle.write}>
                 <button>작성</button>
             </div>
-    
+
             {/* 페이지네이션 섹션: className={qnaStyle.Pagination} 유지 */}
             <div className={qnaStyle.pagination}>
                 <Pagination /> {/* 이 컴포넌트는 이미 import 되어 있다고 가정합니다. */}
