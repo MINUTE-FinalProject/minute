@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'; // Link import 추가
 import Pagination from "../../components/pagination/pagination";
 import qnaStyle from "./qna.module.css";
 
@@ -90,7 +91,10 @@ function Qna() {
 
             {/* 글쓰기 버튼 섹션: className={qnaStyle.wirte} 유지 */}
             <div className={qnaStyle.write}>
-                <button>작성</button>
+                {/* 기존 <button>을 <Link> 컴포넌트로 변경 */}
+                <Link to="/qnawrite" className={qnaStyle.writeButton}> {/* 클래스명 변경 또는 CSS 수정 필요 */}
+                    작성
+                </Link>
             </div>
 
             {/* 페이지네이션 섹션: className={qnaStyle.Pagination} 유지 */}

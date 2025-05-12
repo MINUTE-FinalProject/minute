@@ -242,22 +242,28 @@
 }
 
 /* qna.module.css */
-.write button {
+.writeButton {
+    display: inline-block;
+    /* Link(a 태그)는 기본적으로 인라인이므로, 패딩 등을 제대로 적용하기 위해 변경 */
     padding: 10px 20px;
     background-color: #333;
     color: #fff;
+    text-decoration: none;
+    /* 링크 밑줄 제거 */
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
     font-weight: bold;
     transition: background-color 0.2s ease-in-out;
-    /* 부드러운 배경색 변경 효과 */
 }
 
-.write button:hover {
+.writeButton:hover {
     background-color: #555;
-    /* 호버 시 약간 밝은 검은색 (또는 원하는 색상) */
+    color: #fff;
+    /* 호버 시 글자색 유지 (선택 사항) */
+    text-decoration: none;
+    /* 호버 시 밑줄 없음 유지 */
 }
 
 /* 페이지네이션 섹션 */

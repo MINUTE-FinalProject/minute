@@ -15,7 +15,7 @@
     width: 100%;
     max-width: 800px; /* contentArea와 너비를 맞추거나 조절 */
     margin-bottom: 20px;
-    text-align: left;
+    text-align: center;
   }
   
   .title h1 {
