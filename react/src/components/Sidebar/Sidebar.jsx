@@ -1,5 +1,5 @@
 // components/Sidebar.js
-import "./Sidebar.css";
+import "./Sidebar.module.css";
 
 const Sidebar = () => {
   const menus = [

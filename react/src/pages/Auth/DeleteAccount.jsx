@@ -1,4 +1,4 @@
-import './DeleteAccount.css';
+import './DeleteAccount.module.css';
 
 function DeleteAccount() {
     return(

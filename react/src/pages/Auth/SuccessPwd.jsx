@@ -1,4 +1,4 @@
-import './FindPwd.css';
+import './FindPwd.module.css';
 
 function SuccessPwd() {
     return (

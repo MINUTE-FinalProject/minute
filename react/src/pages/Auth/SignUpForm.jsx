@@ -1,5 +1,4 @@
-import React from "react";
-import "./SignUpForm.css";
+import "./SignUpForm.module.css";
 
 function SignUpForm() {
   return (

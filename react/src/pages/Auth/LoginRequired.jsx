@@ -1,5 +1,4 @@
-import React from "react";
-import "./LoginRequired.css";
+import "./LoginRequired.module.css";
 
 const LoginRequired = () => {
   return (

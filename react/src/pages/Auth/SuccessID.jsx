@@ -1,4 +1,4 @@
-import './SuccessID.css';
+import './SuccessID.module.css';
 
 
 function SuccessID() {

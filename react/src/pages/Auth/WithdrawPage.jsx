@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import "./WithdrawPage.css";
+import { useState } from "react";
+import "./WithdrawPage.module.css";
 
 const WithdrawPage = () => {
   const [agreed, setAgreed] = useState(false);
