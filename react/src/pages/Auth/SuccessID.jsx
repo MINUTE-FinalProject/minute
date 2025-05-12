@@ -14,7 +14,8 @@ function SuccessID() {
         <h1 className="content2">yujin881023</h1>
 
         <button className="submit_btn">Login</button>
-        <button className="pwd_btn">비밀번호 찾기</button>
+        <button className="pwd_btn">비밀번호 찾기11</button>
+
       </div>
 
       <div className='footer'>
