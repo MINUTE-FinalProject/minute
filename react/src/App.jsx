@@ -75,23 +75,19 @@ function App() {
           <Route path="bookmark" element={<Bookmark />} />
           <Route path="search" element={<Search />} />
 
-          {/* Note: className="mainContentWithFixedHeader"
-            should now be applied within Notice.js, FreeBoard.js components,
-            or managed by the Layout component if it's a global style.
-          */}
-          <Route path="notice" element={<Notice />} />
-          <Route path="noticeDetail" element={<NoticeDetail />} /> {/* Consider /notice/:id */}
+          <Route path="notice" element={<div className="mainContentWithFixedHeader"><Notice /></div>} />
+          <Route path="noticeDetail" element={<div className="mainContentWithFixedHeader"><NoticeDetail /></div>} /> {/* Consider /notice/:id */}
 
-          <Route path="freeboard" element={<FreeBoard />} />
-          <Route path="freeboardDetail" element={<FreeboardDetail />} /> {/* Consider /freeboard/:id */}
-          <Route path="freeboardWrite" element={<FreeboardWrite />} />
-          <Route path="FreeboardEdit" element={<FreeboardEdit />} /> {/* Consider /freeboard/edit/:id */}
+          <Route path="freeboard" element={<div className="mainContentWithFixedHeader"><FreeBoard /></div>} />
+          <Route path="freeboardDetail" element={<div className="mainContentWithFixedHeader"><FreeboardDetail /></div>} /> {/* Consider /freeboard/:id */}
+          <Route path="freeboardWrite" element={<div className="mainContentWithFixedHeader"><FreeboardWrite /></div>} />
+          <Route path="FreeboardEdit" element={<div className="mainContentWithFixedHeader"><FreeboardEdit /></div>} /> {/* Consider /freeboard/edit/:id */}
 
-          <Route path="qna" element={<Qna />} />
-          <Route path="qnaDetail" element={<QnaDetail />} /> {/* Consider /qna/:id */}
-          <Route path="qnaWrite" element={<QnaWrite />} />
-          <Route path="qnaEdit" element={<QnaEdit />} /> {/* Consider /qna/edit/:id */}
-          
+          <Route path="qna" element={<div className="mainContentWithFixedHeader"><Qna /></div>} />
+          <Route path="qnaDetail" element={<div className="mainContentWithFixedHeader"><QnaDetail /></div>} /> {/* Consider /qna/:id */}
+          <Route path="qnaWrite" element={<div className="mainContentWithFixedHeader"><QnaWrite /></div>} />
+          <Route path="qnaEdit" element={<div className="mainContentWithFixedHeader"><QnaEdit /></div>} /> {/* Consider /qna/edit/:id */}
+
           {/* Admin pages - using the main Layout for now */}
           <Route path="admin" element={<ManagerUserPage />} />
           <Route path="reportedmembers" element={<ReportedMembers />} />
