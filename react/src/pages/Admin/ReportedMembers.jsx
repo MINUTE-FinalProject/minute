@@ -1,7 +1,6 @@
-import React from "react";
 import Header from "../../components/Header/Header";
-// import Sidebar from "../components/Sidebar";
-import "./ReportedMembers.css";
+import Sidebar from "../../components/Sidebar/Sidebar";
+import "./ReportedMembers.module.css";
 
 const ReportedMembers = () => {
   const members = [

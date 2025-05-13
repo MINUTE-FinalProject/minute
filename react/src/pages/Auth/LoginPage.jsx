@@ -1,5 +1,4 @@
-import React from "react";
-import "./LoginPage.css";
+import "./LoginPage.module.css";
 
 const LoginPage = () => {
   return (

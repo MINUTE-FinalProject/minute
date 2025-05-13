@@ -1,8 +1,7 @@
 
-import React from "react";
 import Header from "../../components/Header/Header";
-// import Sidebar from "../components/Sidebar";
-import "./MemberDetail.css";
+import Sidebar from "../../components/Sidebar/Sidebar";
+import "./MemberDetail.module.css";
 
 const MemberDetail = () => {
   return (

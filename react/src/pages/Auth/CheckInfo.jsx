@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import './SignUpForm2.css';
+import { useState } from 'react';
+import './SignUpForm2.module.css';
 
 function CheckInfo() {
 const [gender, setGender] = useState('');

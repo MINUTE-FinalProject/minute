@@ -312,7 +312,7 @@ function Calendarpage() {
               </ul>
             </div>
             <button className={calendarpageStyle.addButton}>
-              <img src="/src/images/+.png" />
+              <img src="/src/assets/images/+.png" />
             </button>
           </div>
 
@@ -385,10 +385,10 @@ function Calendarpage() {
             </div>
             <div className={calendarpageStyle.planIcons}>
               <button className={calendarpageStyle.saveButton}>
-                <img src="/src/images/save.png" />
+                <img src="/src/assets/images/save.png" />
               </button>
               <button className={calendarpageStyle.deleteButton}>
-                <img src="/src/images/delete.png" />
+                <img src="/src/assets/images/delete.png" />
               </button>
             </div>
           </div>
@@ -396,10 +396,10 @@ function Calendarpage() {
 
         <div className={calendarpageStyle.navArrows}>
           <button className={calendarpageStyle.leftArrow}>
-            <img src="/src/images/left_arrow.png" />
+            <img src="/src/assets/images/left_arrow.png" />
           </button>
           <button className={calendarpageStyle.rightArrow}>
-            <img src="/src/images/right_arrow.png" />
+            <img src="/src/assets/images/right_arrow.png" />
           </button>
         </div>
       </div>

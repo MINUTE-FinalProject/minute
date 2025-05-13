@@ -1,4 +1,4 @@
-import './FailFindID.css';
+import './FailFindID.module.css';
 
 function FailFindID() {
   return (

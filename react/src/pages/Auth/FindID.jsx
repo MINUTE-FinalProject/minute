@@ -1,4 +1,4 @@
-import './FindID.css';
+import './FindID.module.css';
 
 function FindID() {
   return (
