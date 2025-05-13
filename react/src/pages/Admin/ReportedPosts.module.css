@@ -1,0 +1,220 @@
+/* ReportedPosts.module.css */
+
+/* --- 기본 Admin 레이아웃 --- */
+.container {
+  display: flex;
+  flex-direction: row;
+  margin-top: 45px; /* 고정 헤더 높이에 따라 조절 */
+  min-height: calc(100vh - 45px);
+}
+
+.reportedPostsContent {
+  margin-left: 230px; /* Sidebar 너비 (실제 값으로 조절) */
+  margin-top: 20px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  flex: 1;
+  padding: 30px 35px;
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.pageTitle {
+  font-size: 2.2em;
+  font-weight: 600;
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #dfe3e8;
+}
+
+/* --- 탭 컨테이너 및 버튼 --- */
+.tabContainer {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 0px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.tabButton {
+  padding: 10px 20px;
+  font-size: 0.95em;
+  font-weight: 500;
+  border: none; 
+  border-bottom: 3px solid transparent;
+  background-color: transparent;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+  margin-right: 8px;
+}
+.tabButton:last-child {
+    margin-right: 0;
+}
+.tabButton:hover {
+  color: #000;
+}
+.tabButton.activeTab {
+  color: #007bff; /* 활성 탭 색상 (예: 파란색) */
+  border-bottom-color: #007bff;
+  font-weight: 600;
+}
+
+/* --- 필터 바 --- */
+.filterBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 25px;
+  padding: 15px;
+  background-color: #333;
+  border-radius: 6px;
+}
+
+.filterInput,
+.filterSelect,
+.filterSearchInput {
+  padding: 8px 12px;
+  border: 1px solid #555;
+  background-color: #f0f0f0;
+  color: #333;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+.filterSearchInput {
+  flex-grow: 1;
+}
+.filterSelect {
+  min-width: 120px;
+}
+
+.filterSearchButton {
+  padding: 0;
+  width: 34px;
+  height: 34px;
+  background-color: #555;
+  border: 1px solid #555;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.filterSearchButton:hover {
+  background-color: #777;
+}
+.filterSearchIcon {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+/* --- 신고 목록 테이블 --- */
+.reportsTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  border-top: 2px solid #343a40;
+}
+
+.reportsTable th,
+.reportsTable td {
+  border-bottom: 1px solid #dee2e6;
+  padding: 10px 8px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 0.85em;
+  word-break: break-word;
+}
+
+.reportsTable th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  white-space: nowrap;
+}
+
+.reportsTable .titleColumn,
+.reportsTable .contentSnippetCell {
+  text-align: left;
+  min-width: 250px; 
+}
+
+.contentLink {
+  text-decoration: none;
+  color: #007bff;
+}
+.contentLink:hover {
+  text-decoration: underline;
+  color: #0056b3;
+}
+
+.reportsTable tbody tr:hover td {
+  background-color: #f0f4f8; 
+}
+
+/* 숨김상태 버튼 스타일 */
+.statusButton {
+  display: inline-block;
+  padding: 5px 12px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.statusPublic { /* 공개 상태 */
+  background-color: #d4edda; /* 연한 초록색 배경 */
+  color: #155724;       /* 진한 초록색 글자 */
+  border-color: #c3e6cb;
+}
+.statusPublic:hover {
+  background-color: #c3e6cb;
+}
+
+.statusHidden { /* 숨김 상태 */
+  background-color: #f8d7da; /* 연한 빨간색 배경 */
+  color: #721c24;       /* 진한 빨간색 글자 */
+  border-color: #f5c6cb;
+}
+.statusHidden:hover {
+  background-color: #f5c6cb;
+}
+
+/* --- 페이지네이션 --- */
+.pagination {
+  margin-top: 30px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+.pagination button {
+  margin: 0;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #333;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: background-color 0.2s ease-in-out;
+}
+.pagination button:hover {
+  background-color: #f0f0f0;
+}
+.pagination .active {
+  font-weight: bold;
+  background-color: #333;
+  color: #fff;
+  border-color: #333;
+}

@@ -61,6 +61,7 @@ import ManagerQnaWrtie from "./pages/Admin/ManagerQnaWrite";
 import ManagerUserPage from './pages/Admin/ManagerUserPage';
 import MemberDetail from './pages/Admin/MemberDetail';
 import ReportedMembers from './pages/Admin/ReportedMembers';
+import ReportedPosts from "./pages/Admin/ReportedPosts";
 
 function App() {
   return (
@@ -138,6 +139,8 @@ function App() {
         <Route path="/managerQnaEdit" element={<ManagerQnaEdit />} />
 
         <Route path="/managerQnaWrite" element={<ManagerQnaWrtie />} />
+
+        <Route path="/reportedposts" element={<ReportedPosts />} />
 
 
       </Routes>
