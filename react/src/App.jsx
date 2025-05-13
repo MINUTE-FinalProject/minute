@@ -47,7 +47,17 @@ import SuccessID from "./pages/Auth/SuccessID";
 import SuccessPwd from "./pages/Auth/SuccessPwd";
 
 // Admin Page Components
+import ManagerFreeboard from "./pages/Admin/ManagerFreeboard";
+import ManagerFreeboardDetail from "./pages/Admin/ManagerFreeboardDetail";
 import ManagerMyPage from './pages/Admin/ManagerMyPage';
+import ManagerNotice from "./pages/Admin/ManagerNotice";
+import ManagerNoticeDetail from "./pages/Admin/ManagerNoticeDetail";
+import ManagerNoticeEdit from "./pages/Admin/ManagerNoticeEdit";
+import ManagerNoticeWrite from "./pages/Admin/ManagerNoticeWrite";
+import ManagerQna from "./pages/Admin/ManagerQna";
+import ManagerQnaDetail from "./pages/Admin/ManagerQnaDetail";
+import ManagerQnaEdit from "./pages/Admin/ManagerQnaEdit";
+import ManagerQnaWrtie from "./pages/Admin/ManagerQnaWrite";
 import ManagerUserPage from './pages/Admin/ManagerUserPage';
 import MemberDetail from './pages/Admin/MemberDetail';
 import ReportedMembers from './pages/Admin/ReportedMembers';
@@ -108,6 +118,27 @@ function App() {
         <Route path="/deleteaccount" element={<DeleteAccount />} />
         <Route path="/checkinfo" element={<CheckInfo />} />
         <Route path="/checkdelete" element={<CheckDelete />} />
+
+        <Route path="/managerFreeboard" element={<ManagerFreeboard />} />
+
+        <Route path="/managerFreeboardDetail" element={<ManagerFreeboardDetail />} />
+
+        <Route path="/managerNotice" element={<ManagerNotice />} />
+
+        <Route path="/managerNoticeDetail" element={<ManagerNoticeDetail />} />
+
+        <Route path="/managerNoticeEdit" element={<ManagerNoticeEdit />} />
+
+        <Route path="/managerNoticeWrite" element={<ManagerNoticeWrite />} />
+
+        <Route path="/managerQna" element={<ManagerQna />} />
+
+        <Route path="/managerQnaDetail" element={<ManagerQnaDetail />} />
+
+        <Route path="/managerQnaEdit" element={<ManagerQnaEdit />} />
+
+        <Route path="/managerQnaWrite" element={<ManagerQnaWrtie />} />
+
 
       </Routes>
     </BrowserRouter>
