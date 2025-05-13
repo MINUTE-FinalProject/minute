@@ -14,7 +14,7 @@ import SignUpForm from "./pages/Auth/SignUpForm";
 import SignUpForm2 from "./pages/Auth/SignUpForm2";
 import SuccessID from "./pages/Auth/SuccessID";
 import SuccessPwd from "./pages/Auth/SuccessPwd";
-import FreeBoard from "./pages/Board/freeBoard";
+import Freeboard from "./pages/Board/freeBoard";
 import FreeboardDetail from "./pages/Board/freeboardDetail";
 import FreeboardEdit from "./pages/Board/freeboardEdit";
 import FreeboardWrite from "./pages/Board/freeboardWrite";
@@ -34,9 +34,10 @@ import QnaDetail from "./pages/QnA/qnaDetail";
 import QnaEdit from "./pages/QnA/qnaEdit";
 import QnaWrite from "./pages/QnA/qnaWrite";
 import ShortsVideoPage from "./pages/Shorts/ShortsVideoPage";
-import Test from "./pages/test";
 
-import ManagerUserPage from "./pages/Admin/ManagerUserPage";
+import ManagerUserPage from './pages/Admin/ManagerUserPage';
+
+
 
 
 
@@ -63,9 +64,7 @@ function App() {
 
         <Route path="/noticeDetail" element={<NoticeDetail />} />
 
-        <Route path="/freeboard" element={<FreeBoard />} />
-
-        <Route path="/test" element={<Test />} />
+          <Route path="/freeboard" element={<Freeboard />} />
 
         <Route path="/freeboardDetail" element={<FreeboardDetail />} />
 
@@ -116,7 +115,7 @@ function App() {
           <Route path="/qnaWrite" element={<QnaWrite />} />
 
           <Route path="/qnaEdit" element={<QnaEdit />} />
-        
+       
         <Route path="/mypage" element={<div className="mypage"><Mypage /></div>} />
         <Route path="/bookmark" element={<div className="bookmark-wrapper"><Bookmark /></div>} />
         <Route path="/login" element={<LoginPage />} />
@@ -132,6 +131,8 @@ function App() {
         <Route path="/checkdelete" element={<CheckDelete />} />
         <Route path="/admin" element={<ManagerUserPage />} />
 
+
+        
       </Routes>
     </BrowserRouter>
   )
