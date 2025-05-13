@@ -7,6 +7,7 @@ import SignUpForm from "./pages/Auth/SignUpForm";
 import SignUpForm2 from "./pages/Auth/SignUpForm2";
 import SuccessID from "./pages/Auth/SuccessID";
 import SuccessPwd from "./pages/Auth/SuccessPwd";
+import Freeboard from "./pages/Board/freeBoard";
 import FreeboardDetail from "./pages/Board/freeboardDetail";
 import FreeboardEdit from "./pages/Board/freeboardEdit";
 import FreeboardWrite from "./pages/Board/freeboardWrite";
@@ -61,7 +62,7 @@ function App() {
 
           <Route path="/noticeDetail" element={<NoticeDetail />} />
 
-          <Route path="/freeboard" element={<FreeBoard />} />
+          <Route path="/freeboard" element={<Freeboard />} />
 
           <Route path="/freeboardDetail" element={<FreeboardDetail />} />
 
@@ -76,7 +77,7 @@ function App() {
           <Route path="/qnaWrite" element={<QnaWrite />} />
 
         <Route path="/qnaEdit" element={<QnaEdit />} />
-        
+        </Route>
         <Route path="/login" element={<LoginPage/>}/>
         <Route path="/loginrequired" element={<LoginRequired/>}/>
         <Route path="/findid" element={<FindID/>}/>
@@ -97,7 +98,7 @@ function App() {
         <Route path="/member-detail/:id" element={<MemberDetail />} />
         <Route path="/managermypage" element={<ManagerMyPage />} />
 
-        </Route>
+        
       </Routes>
     </BrowserRouter>
   )
