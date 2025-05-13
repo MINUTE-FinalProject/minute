@@ -142,6 +142,24 @@
 }
 
 
+
+.planRightWrap {
+  width: 40%;
+  background-color: #d9d9d9;
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.planContext {
+  text-align: center;
+}
+
+
 .rightWrap {
   flex: 0 0 30%;
   background-color: #ddd;

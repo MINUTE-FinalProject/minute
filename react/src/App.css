@@ -18,7 +18,7 @@ body {
   min-height: 100vh;
   box-sizing: border-box;
 }
-.mypage {
+.mypage1 {
   background-color: #535353;
   height: 100vh;
   padding-top: 22px;
@@ -43,4 +43,8 @@ body {
   background-color: #fff;
   padding: 0;
   font-family: 'Arial', sans-serif;
+}
+
+.mainContentWithFixedHeader {
+  padding-top: 50px; /* 헤더 높이 + 여유 공간 */
 }
