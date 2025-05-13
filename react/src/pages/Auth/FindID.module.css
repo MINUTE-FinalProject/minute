@@ -1,6 +1,5 @@
  
  .container {
-    padding-top: 80px;
     min-height: 100vh;
     background-color: white;
     flex-direction: column;
@@ -18,12 +17,12 @@
   
   
   .title {
-    font-size: 40px;
+    font-size: 30px;
     font-weight: bold;
     margin-bottom: 24px;
   }
   
-  .progressBar {
+  .progress-bar {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -62,30 +61,30 @@
     color: #374151;
   }
   
-  .textBox {
+  .text_box {
     width: 100%;
     border: 1px solid #9ca3af;
     border-radius: 4px;
-    padding: 10px 12px;
+    padding: 8px 12px;
     margin-bottom: 30px;
     outline: none;
     box-sizing: border-box;
   }
 
-  .textBox2 {
+  .text_box2 {
     width: 100%;
     border: 1px solid #9ca3af;
     border-radius: 4px;
-    padding: 10px 12px;
+    padding: 8px 12px;
     outline: none;
     box-sizing: border-box;
   }
   
-  .submitBtn {
+  .submit_btn {
     width: 100%;
     background-color: #b0b0b0;
     color: white;
-    padding: 10px;
+    padding: 8px;
     margin-top: 30px;
     border-radius: 4px;
     border: none;

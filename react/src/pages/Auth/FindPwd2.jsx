@@ -1,35 +1,30 @@
-import img from '../../assets/images/key.png';
-import Footer from '../../components/Footer/Footer';
-import Header from '../../components/Header/Header';
-import styles from './FindPwd.module.css';
+import './FindPwd.module.css';
 
 function FindPwd2() {
     return (
-        <>
-        <Header/>
-        <div className={styles.containerf}>
-         
+        <div className="container">
+            <div className="header">
 
-            <div className={styles.boxf}>
-                <div className={styles.keyimgf}>
-                    <img className={styles.keyimg1f} src={img}/>
+            </div>
+
+            <div className="box">
+                <div className='keyimg'>
+                    <img className='keyimg1' src='img/key.png'/>
                 </div>
                 
-                <h1 className={styles.titlef}>New Password</h1>
+                <h1 className="title">New Password</h1>
                 
-                <form className={styles.formf}>
-                    <label className={styles.labelf}>pw</label>
-                    <input type="text" id="name" className={styles.text_boxf} />
+                <form className="form">
+                    <label className="label">pw</label>
+                    <input type="text" id="name" className="text_box" />
 
-                    <label className={styles.labelf}>check pw</label>
-                    <input type="text" id="text" className={styles.text_boxf} />
+                    <label className="label">check pw</label>
+                    <input type="text" id="text" className="text_box" />
             
-                    <button className={styles.submit_btnf}>Reset Password</button>
+                    <button className="submit_btn">Reset Password</button>
                 </form>
             </div>
         </div>
-        <Footer/>
-        </>
     );
 }
 

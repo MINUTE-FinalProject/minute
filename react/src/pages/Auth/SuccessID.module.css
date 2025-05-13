@@ -45,7 +45,7 @@
   }
   
 
-  .submitBtn {
+  .submit_btn {
     width: 100%;
     background-color: #FF3366;
     color: white;
@@ -58,7 +58,7 @@
     height: 53.33px;
   }
   
-  .pwdBtn {
+  .pwd_btn {
     width: 100%;
     background-color: #000000;
     color: white;
