@@ -94,6 +94,12 @@ function App() {
         <Route path="/deleteaccount" element={<DeleteAccount/>}/>
         <Route path="/checkinfo" element={<CheckInfo/>}/>
         <Route path="/checkdelete" element={<CheckDelete/>}/>
+
+        {/* <Route path="/" element={<ManagerUserPage/>}/>
+        <Route path="/reportedmembers" element={<ReportedMembers />} />
+        <Route path="/member-detail/:id" element={<MemberDetail />} />
+        <Route path="/managermypage" element={<ManagerMyPage />} /> */}
+
         
         <Route path="/admin" element={<ManagerUserPage/>}/>
 
