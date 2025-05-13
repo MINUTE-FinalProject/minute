@@ -5,7 +5,6 @@ import './App.css'; // App.css는 전역 스타일을 위해 유지합니다.
 import Layout from "./layouts/Layout";
 
 // Page Components
-import GangwondoPage from "./pages/Area/GangwondoPage";
 import CampingPage from "./pages/Category/CampingPage";
 import HealingPage from "./pages/Category/HealingPage";
 import MountainPage from "./pages/Category/MountainPage";
@@ -65,7 +64,6 @@ function App() {
           <Route path="mountain" element={<MountainPage />} />
           <Route path="themepark" element={<ThemeParkPage />} />
           <Route path="shorts" element={<ShortsVideoPage />} />
-          <Route path="area" element={<GangwondoPage />} />
 
           {/* Note: className="mypage", "bookmark-wrapper" etc. 
             should now be applied within Mypage.js, Bookmark.js components respectively.
