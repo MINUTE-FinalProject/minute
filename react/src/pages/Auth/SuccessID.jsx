@@ -1,27 +1,28 @@
-import Footer from '../../components/Footer/Footer';
-import Header from '../../components/Header/Header';
-import styles from './SuccessID.module.css';
+import './SuccessID.module.css';
 
 
 function SuccessID() {
   return (
-    <>
-    <Header/>
-    <div className={styles.container}>
-    
-      <div className={styles.wrapper}>
-        <h1 className={styles.title}>아이디 찾기 성공!</h1>
-
-        <h1 className={styles.content}>회원님의 아이디</h1>
-        <h1 className={styles.content2}>yujin881023</h1>
-
-        <button className={styles.submitBtn}>Login</button>
-        <button className={styles.pwdBtn}>비밀번호 찾기</button>
+    <div className="container">
+      <div className="header">
 
       </div>
+      <div className="wrapper">
+        <h1 className="title">아이디 찾기 성공!</h1>
+
+        <h1 className="content">회원님의 아이디</h1>
+        <h1 className="content2">yujin881023</h1>
+
+        <button className="submit_btn">Login</button>
+        <button className="pwd_btn">비밀번호 찾기11</button>
+
+      </div>
+
+      <div className='footer'>
+
+      </div>
+
     </div>
-    <Footer/>
-    </>
   );
 }
 

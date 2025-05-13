@@ -1,61 +1,57 @@
 import { useState } from "react";
-import Footer from "../../components/Footer/Footer";
-import Header from "../../components/Header/Header";
-import styles from "./SignUpForm2.module.css";
+import "./SignUpForm2.module.css";
 
 function SignUpForm2() {
   const [gender, setGender] = useState("");
   return (
-     <>
-    <Header/>
-    <div className={styles.container}>
-      <div className={styles.header}></div>
-      <div className={styles.formWrapper}>
-        <h1 className={styles.title}>Sign Up</h1>
+    <div className="container">
+      <div className="header"></div>
+      <div className="form-wrapper">
+        <h1 className="title">Sign Up</h1>
 
-        <div className={styles.progressBar}>
-                  <div className={styles.circle}></div>
-                  <div className={styles.line}></div>
-                  <div className={styles.circleActive}></div>
-                  <div className={styles.line}></div>
-                  <div className={styles.circle}></div>
-                </div>
+        <div className="progress-bar">
+          <div className="circle" />
+          <div className="line" />
+          <div className="circle active" />
+          <div className="line" />
+          <div className="circle" />
+        </div>
 
-        <form className={styles.form}>
-          <label className={styles.label}>name</label>
-          <input type="text" id="name" className={styles.textBox} />
+        <form className="form">
+          <label className="label">name</label>
+          <input type="text" id="name" className="text_box" />
         </form>
-        <form className={styles.form}>
-          <label className={styles.label}>gender</label>
-          <div className={styles.genderGroup}>
-            <label className={styles.genderOption}>
+        <form className="form">
+          <label className="label">gender</label>
+          <div className="gender-group">
+            <label className="gender-option">
               <input
                 type="radio"
                 name="gender"
                 value="male"
                 checked={gender === "male"}
                 onChange={() => setGender("male")}
-                className={styles.hiddenRadio}
+                className="hidden-radio"
               />
               <span
-                className={`${styles.genderIndicator} ${
+                className={`gender-indicator ${
                   gender === "male" ? "selected" : ""
                 }`}
               />
               Men
             </label>
 
-            <label className={styles.genderOption}>
+            <label className="gender-option">
               <input
                 type="radio"
                 name="gender"
                 value="female"
                 checked={gender === "female"}
                 onChange={() => setGender("female")}
-                className={styles.hiddenRadio}
+                className="hidden-radio"
               />
               <span
-                className={`${styles.genderIndicator} ${
+                className={`gender-indicator ${
                   gender === "female" ? "selected" : ""
                 }`}
               />
@@ -64,57 +60,55 @@ function SignUpForm2() {
           </div>
         </form>
 
-        <form className={styles.form}>
-          <label className={styles.label}>phone</label>
-          <input type="text" id="phone" className={styles.textBox} />
+        <form className="form">
+          <label className="label">phone</label>
+          <input type="text" id="phone" className="text_box" />
         </form>
 
-        <form className={styles.form}>
-          <label className={styles.label}>email</label>
-          <input type="email" id="email" className={styles.textBox} />
+        <form className="form">
+          <label className="label">email</label>
+          <input type="email" id="email" className="text_box" />
         </form>
 
-        <form className={styles.form}>
-          <label className={styles.label}>nickname</label>
-          <input type="text" id="nickname" className={styles.textBox} />
+        <form className="form">
+          <label className="label">nickname</label>
+          <input type="text" id="nickname" className="text_box" />
         </form>
 
-        <form className={styles.form}>
-          <label className={styles.label}>birth</label>
-          <input type="text" id="birth" className={styles.textBox} />
+        <form className="form">
+          <label className="label">birth</label>
+          <input type="text" id="birth" className="text_box" />
         </form>
 
-        <form className={styles.form}>
-          <div className={styles.checkboxGroup}>
+        <form className="form">
+          <div className="checkbox-group">
             <label>
               <input type="checkbox" />
               약관전체동의
             </label>
           </div>
 
-          <div className={styles.agreebox}>
+          <div className="agreebox">
             <input type="checkbox" />
-            &nbsp;&nbsp;(필수) <span className={styles.arrow}>▼</span>
+            &nbsp;&nbsp;(필수) <span className="arrow">▼</span>
           </div>
-          <div className={styles.agreebox}>
+          <div className="agreebox">
             <input type="checkbox" />
-            &nbsp;&nbsp;(필수) <span className={styles.arrow}>▼</span>
+            &nbsp;&nbsp;(필수) <span className="arrow">▼</span>
           </div>
-          <div className={styles.agreebox}>
+          <div className="agreebox">
             <input type="checkbox" />
-            &nbsp;&nbsp;(선택) 마케팅 수신 동의 <span className={styles.arrow}>▼</span>
+            &nbsp;&nbsp;(선택) 마케팅 수신 동의 <span className="arrow">▼</span>
           </div>
         </form>
 
-        <form className={styles.form}>
-          <button className={styles.submitBtn}>다음</button>
+        <form className="form">
+          <button className="submit_btn">다음</button>
         </form>
 
-        
+        <div className="footer"></div>
       </div>
     </div>
-    <Footer/>
-    </>
   );
 }
 

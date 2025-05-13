@@ -1,5 +1,5 @@
  
- .containerf {
+ .container {
     min-height: 100vh;
     background-color: white;
     flex-direction: column;
@@ -8,7 +8,7 @@
     display: flex;
   }
   
-  .boxf {
+  .box {
     border: 1px solid #000;
     border-radius: 7px;
     display: flex;
@@ -21,20 +21,20 @@
   }
   
   
-  .titlef {
+  .title {
     font-size: 30px;
     font-weight: bold;
     margin-bottom: 24px;
   }
 
-  .title2f {
+  .title2 {
     font-size: 28px;
     font-weight: bold;
     margin-bottom: 0px;
     margin-top: 40px;
   }
 
-  .title3f {
+  .title3 {
     font-size: 17px;
     font-weight: normal;
     margin-bottom: 80px;
@@ -42,7 +42,7 @@
   }
   
   
-  .formf {
+  .form {
     width: 100%;
     max-width: 430px;
     display: flex;
@@ -50,13 +50,13 @@
     
   }
   
-  .labelf {
+  .label {
     display: block;
     margin-bottom: 4px;
     color: #374151;
   }
   
-  .text_boxf {
+  .text_box {
     width: 100%;
     border: 1px solid #9ca3af;
     border-radius: 4px;
@@ -66,7 +66,7 @@
     box-sizing: border-box;
   }
   
-  .submit_btnf {
+  .submit_btn {
     width: 100%;
     background-color: #b0b0b0;
     color: white;
@@ -91,12 +91,12 @@
     height: 43px;
   }
   
-  .keyimgf {
+  .keyimg {
     width: 70px;
     height: 70px;
   }
 
-  .keyimg1f {
+  .keyimg1 {
     width: 70px;
     height: 70px;
   }

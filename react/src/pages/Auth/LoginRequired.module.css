@@ -1,4 +1,4 @@
-.container {
+.login_required_container {
     min-height: 100vh;
     background-color: white;
     display: flex;
@@ -10,19 +10,19 @@
     font-family: sans-serif;
   }
   
-  .logo {
+  .login_required_logo {
     font-size: 35px;
     font-weight: bold;
     margin-bottom: 20px;
   }
   
  
-  .title {
+  .login_required_title {
     font-size: 30px;
     margin-bottom: 40px;
   }
   
-  .box {
+  .login_required_box {
     border: 1px solid #ddd;
     background-color: #f8f8f8;
     padding: 16px;
@@ -32,7 +32,7 @@
     width: 400px;
   }
   
-  .button {
+  .login_required_button {
     width: 434px;
     background-color: #ff3366;
     color: white;
