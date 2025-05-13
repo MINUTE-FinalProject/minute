@@ -1,27 +1,26 @@
-import './FindPwd.css';
+import keyImage from '../../assets/images/key.png';
+import Header from "../../components/Header/Header";
+import styles from './FindPwd.module.css';
 
 function FindPwd() {
     return (
-        <div className="container">
-            <div className="header">
-
-            </div>
-
-            <div className="box">
-                <div className='keyimg'>
-                    <img className='keyimg1' src='img/key.png'/>
+        <div className={styles.containerf}>
+            <Header />
+            <div className={styles.boxf}>
+                <div className={styles.keyimgf}>
+                    <img className={styles.keyimg1f} src={keyImage} alt="key image" />
                 </div>
                 
-                <h1 className="title">Forget Password?</h1>
+                <h1 className={styles.titlef}>Forget Password?</h1>
                 
-                <form className="form">
-                    <label className="label">id</label>
-                    <input type="text" id="name" className="text_box" />
+                <form className={styles.formf}>
+                    <label className={styles.labelf}>id</label>
+                    <input type="text" id="name" className={styles.text_boxf} />
 
-                    <label className="label">본인확인 질문 : "~~~"</label>
-                    <input type="text" id="text" className="text_box" />
+                    <label className={styles.labelf}>본인확인 질문 : "~~~"</label>
+                    <input type="text" id="text" className={styles.text_boxf} />
             
-                    <button className="submit_btn">Next</button>
+                    <button className={styles.submit_btnf}>Next</button>
                 </form>
             </div>
         </div>

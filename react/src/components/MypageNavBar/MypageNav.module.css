@@ -1,5 +1,4 @@
 .divStyle {
-  /* width: 10vh; */
   width: 80px;
   background-color: black;
   border-radius: 10px 0 0 10px;
@@ -7,40 +6,45 @@
   left: 20px;
   top: 20px;
   bottom: 20px;
-  z-index: 30;
+  z-index: 1000; /* z-index 높여 충돌 방지 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
 }
+
 .logo {
   width: 25px;
-  margin: 20px auto;
   cursor: pointer;
+  margin-bottom: 30px;
 }
 
 .hamburgerContainer {
-  position: relative;
+  cursor: pointer;
 }
 
 .hamburgerIcon {
-  width: 25px;
   display: flex;
   flex-direction: column;
   gap: 5px;
-  cursor: pointer;
-  margin: auto;
 }
 
 .bar {
   height: 3px;
+  width: 25px;
   background-color: white;
   border-radius: 2px;
-  transition: all 0.3s ease;
-  z-index: 30;
+  transition: all 0.3s ease-in-out;
 }
+
 .bar:nth-child(1).open {
   transform: rotate(45deg) translate(5px, 5px);
 }
+
 .bar:nth-child(2).open {
   opacity: 0;
 }
+
 .bar:nth-child(3).open {
   transform: rotate(-45deg) translate(6px, -6px);
 }
@@ -48,39 +52,55 @@
 .menu {
   position: fixed;
   top: 20px;
-  /* left: calc(10vh + 20px); */
-  left: calc(80px + 20px);
-  width: 12%;
-  z-index: 1000;
+  left: 100px; /* 80px(사이드바) + 20px 여백 */
+  width: 200px;
   bottom: 20px;
   background-color: rgba(42, 42, 42, 0.65);
   backdrop-filter: blur(8px);
+  border-radius: 0 10px 10px 0;
   display: none;
   flex-direction: column;
-  gap: 10px;
   padding-top: 65px;
   text-align: center;
-  border-radius: 0 10px 10px 0;
 }
 
 .menu.show {
   display: flex;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .menu a {
   text-decoration: none;
   color: white;
 }
+
 .menuItem {
-  position: relative;
   color: white;
+  padding: 10px 0;
 }
+
 .submenu {
+  display: none;
   flex-direction: column;
   border-bottom: 1px solid white;
-  margin: auto;
   width: 80%;
+  margin: auto;
   font-size: 14px;
+}
+
+.menuItem:hover .submenu {
+  display: flex;
 }
 
 .submenu a {
@@ -92,13 +112,4 @@
 
 .submenu a:hover {
   color: #ff3366;
-}
-
-.menuItem:hover .submenu {
-  display: flex;
-}
-
-.menuItem a {
-  padding: 10px 0;
-  display: block;
 }
