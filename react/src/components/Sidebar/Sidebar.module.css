@@ -1,9 +1,11 @@
 .sidebar {
+  position: fixed;
   width: 200px;
   height: 100vh;
   background-color: #1e1e1e;
   color: white;
   padding-top: 20px;
+  
 }
 
 .sidebar ul {

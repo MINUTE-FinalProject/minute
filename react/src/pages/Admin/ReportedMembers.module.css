@@ -1,17 +1,25 @@
+.container {
+  display: flex; 
+  flex-direction: row; 
+  margin-top: 45px;
+}
 
-.reported-content {
+.reportedContent {
+  margin-left: 230px;
+  margin-top: 10px;
   flex: 1;
   padding: 40px;
+  max-width: 1000px;
 }
-.filter-bar {
+.filterBar {
   display: flex;
   gap: 10px;
   margin-bottom: 20px;
 }
-.filter-bar input[type="text"],
-.filter-bar input[type="date"],
-.filter-bar select,
-.type-btn {
+.filterBar input[type="text"],
+.filterBar input[type="date"],
+.filterBar select,
+.typeBtn {
   padding: 10px;
   border: none;
   background: #fff;
@@ -57,5 +65,5 @@ th, td {
 
 .title1 {
   margin-bottom: 20px;
-  font-size: 30px;
+  font-size: 40px;
 }
