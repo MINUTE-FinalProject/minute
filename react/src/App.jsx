@@ -55,17 +55,17 @@ function App() {
           <Route path="/calendar" element={<div className="mypage"><Calendarpage /></div>} />
           <Route path="/search" element={<div className="search-wrapper"><Search /></div>} />
 
-          <Route path="/notice" element={<Notice />} />
+          <Route path="/notice" element={<div className="mainContentWithFixedHeader"><Notice /></div>} />
 
-          <Route path="/noticeDetail" element={<NoticeDetail />} />
+          <Route path="/noticeDetail" element={<div className="mainContentWithFixedHeader"><NoticeDetail /></div>} />
 
-          <Route path="/freeboard" element={<FreeBoard />} />
+          <Route path="/freeboard" element={<div className="mainContentWithFixedHeader"><FreeBoard /></div>} />
 
-          <Route path="/freeboardDetail" element={<FreeboardDetail />} />
+          <Route path="/freeboardDetail" element={<div className="mainContentWithFixedHeader"><FreeboardDetail /></div>} />
 
-          <Route path="/freeboardWrite" element={<FreeboardWrite />} />
+          <Route path="/freeboardWrite" element={<div className="mainContentWithFixedHeader"><FreeboardWrite /></div>} />
 
-          <Route path="/freeboardEdit" element={<FreeboardEdit />} />
+          <Route path="/freeboardEdit" element={<div className="mainContentWithFixedHeader"><FreeboardEdit /></div>} />
 
           <Route path="/qna" element={<Qna />} />
 
@@ -75,7 +75,7 @@ function App() {
 
           <Route path="/qnaEdit" element={<QnaEdit />} />
         </Route>
-        <Route path="/mypage" element={<div className="mypage"><Mypage /></div>} />
+        <Route path="/mypage" element={<div className="mypage1"><Mypage /></div>} />
         <Route path="/bookmark" element={<div className="bookmark-wrapper"><Bookmark /></div>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/findid" element={<FindID />} />
