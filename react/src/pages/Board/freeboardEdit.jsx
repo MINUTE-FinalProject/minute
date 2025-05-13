@@ -54,7 +54,7 @@ function FreeboardEdit() {
             <div className={freeboardEditStyle.title}>
                 {/* Link 컴포넌트를 사용하여 자유게시판으로 이동 가능하게 */}
                 <Link to={freeboardPath} className={freeboardEditStyle.titleLink}>
-                    <h1>자유게시판 (게시물 수정)</h1>
+                    <h1>자유게시판</h1>
                 </Link>
             </div>
 

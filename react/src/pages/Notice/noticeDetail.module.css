@@ -1,58 +1,142 @@
+/* noticeDetail.module.css */
+
 .background {
-    background-color: #ffffff;
+    background-color: #f4f6f8; /* 페이지 전체 배경은 연한 회색 유지 */
     display: flex;
     flex-direction: column;
     align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    /* 고정 헤더 사용 시 헤더 높이만큼 추가 패딩 필요
+       예: padding-top: 70px; (기존 20px + 헤더높이 50px) */
 }
 
-.title {
+.title { /* "공지사항" 제목을 감싸는 div */
+    width: 100%;
+    max-width: 800px; /* .contentArea와 너비를 맞추거나 조절 */
     text-align: center;
-    margin-bottom: 1vh;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #dfe3e8; /* QnA 페이지와 유사한 구분선 */
 }
 
+.titleLink { /* "공지사항" 텍스트 링크 */
+    text-decoration: none;
+    color: #2c3e50; /* QnA 페이지와 유사한 색상 */
+    transition: color 0.2s ease-in-out;
+}
+.titleLink:hover {
+    color: #007bff; /* QnA 페이지와 유사한 호버 색상 */
+    text-decoration: none;
+}
+.titleLink h1 { /* 실제 "공지사항" 텍스트 */
+    font-size: 2.2em; /* QnA 페이지 제목과 유사한 크기 */
+    font-weight: 600;
+    margin: 0;
+}
+
+/* 메인 콘텐츠 영역 - 연회색 배경, 상단 핑크 테두리 (기존 스타일 유지) */
 .contentArea {
     background-color: #EDEDED;
-    width: 60%;
-    margin: auto;
-    display: flex;
+    width: 100%; /* .background의 자식이므로, 너비는 .background에 의해 제어됨 */
+    max-width: 800px; /* 자유게시판 작성페이지와 유사한 너비 (조절 가능) */
+    /* margin: auto; /* .background가 align-items:center 이므로 불필요할 수 있음 */
+    display: flex; /* 내부 .content를 감싸기 위함 */
     flex-direction: column;
-    border-top: 2px solid #FF3366;
-    padding: 20px 0;
+    border-top: 3px solid #FF3366; /* 상단 핑크색 테두리 두께 증가 */
+    padding: 20px; /* .content 와의 간격을 위해 내부 패딩 추가 */
+    border-radius: 8px; /* 바깥쪽 컨테이너에도 약간의 둥근 모서리 */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07); /* 바깥쪽 컨테이너에도 약간의 그림자 */
 }
 
+/* 실제 공지 내용이 담길 흰색 박스 (자유게시판 상세 내용 영역처럼) */
 .content {
-    width: 90%;
-    margin: auto;
+    width: 100%; /* .contentArea 내부에서 꽉 차도록 */
+    margin: 0; /* auto 제거 또는 0으로 */
+    background-color: #ffffff; /* 흰색 배경 */
+    border: 1px solid #d1d5db; /* 옅은 테두리 */
+    border-radius: 6px;       /* 둥근 모서리 */
+    padding: 25px 30px;       /* 내부 충분한 여백 */
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05); /* 부드러운 내부 그림자 */
 }
 
+/* 공지 정보 바 (중요, 제목, 작성자, 조회수, 날짜 등) */
 .info {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
+    justify-content: space-between; /* 왼쪽, 오른쪽 그룹 분리 */
+    align-items: flex-start; /* 상단 정렬 */
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0; /* 구분선 */
+    gap: 15px; /* infoLeft와 infoRight 사이 간격 */
 }
 
 .infoLeft {
     display: flex;
-    align-items: center;
-    gap: 15px;
+    flex-direction: column; /* 중요 태그와 제목을 세로로 배치 */
+    align-items: flex-start;
+    gap: 8px; /* 중요 태그와 제목 사이 간격 */
 }
 
-.infoLeft span:first-child {
+.importantTag { /* "중요" 태그 스타일 (공지사항 목록의 .importantTag 와 유사하게) */
+    display: inline-block;
     background-color: #FF3366;
     color: #ffffff;
-    padding: 3px 8px;
-    border-radius: 4px;
+    padding: 4px 10px;
+    border-radius: 12px; /* 알약 모양 */
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.postTitleText { /* 제목 텍스트를 위한 클래스 */
+    font-size: 1.6em; /* 제목 폰트 크기 */
+    font-weight: 600;
+    color: #333;
+    line-height: 1.3;
 }
 
 .infoRight {
     display: flex;
-    gap: 20px;
+    flex-direction: column; /* 세로로 나열 */
+    align-items: flex-end; /* 오른쪽 정렬 */
+    gap: 5px; /* 각 정보 사이 간격 */
+    font-size: 0.85em;
+    color: #555;
+}
+.infoRight span { /* 개별 항목 */
+    white-space: nowrap;
+}
+.author { /* 작성자 */
+    /* 추가 스타일 필요시 */
+}
+.views { /* 조회수 */
+    /* 추가 스타일 필요시 */
+}
+.createdAt { /* 작성일 */
+    /* 추가 스타일 필요시 */
 }
 
+
+/* 공지 내용 텍스트 영역 */
 .textbox {
-    background-color: white;
-    padding: 20px;
-    min-height: 200px;
-    line-height: 1.6;
+    background-color: transparent; /* .content의 흰색 배경을 사용하므로 투명하게 */
+    padding: 0; /* .content에서 패딩을 관리하므로 여기선 제거 */
+    margin-top: 10px; /* 정보 바와의 간격 */
+    min-height: 200px; /* 최소 높이 */
+    line-height: 1.7;  /* 줄 간격 */
+    font-size: 1em;
+    color: #343a40;
+}
+
+.textbox p { /* 만약 내용이 p태그로 감싸져 있다면 */
+    margin: 0 0 1em 0; /* 단락 간 간격 */
+}
+.textbox p:last-child {
+    margin-bottom: 0;
+}
+.textbox br { /* JSX에서 <br/> 사용 시 스타일 */
+    content: "";
+    display: block;
+    margin-bottom: 0.6em;
 }
