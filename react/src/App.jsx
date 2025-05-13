@@ -64,27 +64,29 @@ function App() {
         <Route path="/bookmark" element={<div className="bookmark-wrapper"><Bookmark /></div>} />
         <Route path="/search" element={<div className="search-wrapper"><Search /></div>} />
 
-        <Route path="/notice" element={<Notice />} />
+        <Route path="/notice" element={<div className="mainContentWithFixedHeader"><Notice /></div>} />
 
         <Route path="/noticeDetail" element={<NoticeDetail />} />
+        <Route path="/notice" element={<div className="mainContentWithFixedHeader"><NoticeDetail /></div>} />
 
         <Route path="/freeboard" element={<FreeBoard />} />
+        <Route path="/notice" element={<div className="mainContentWithFixedHeader"><FreeBoard /></div>} />
 
 
 
-        <Route path="/freeboardDetail" element={<FreeboardDetail />} />
+        <Route path="/notice" element={<div className="mainContentWithFixedHeader"><FreeboardDetail /></div>} />
 
-        <Route path="/freeboardWrite" element={<FreeboardWrite />} />
+        <Route path="/notice" element={<div className="mainContentWithFixedHeader"><FreeboardWrite /></div>} />
 
-        <Route path="/freeboardEdit" element={<FreeboardEdit />} />
+        <Route path="/notice" element={<div className="mainContentWithFixedHeader"><FreeboardEdit /></div>} />
 
-        <Route path="/qna" element={<Qna />} />
+        <Route path="/notice" element={<div className="mainContentWithFixedHeader"><Qna /></div>} />
 
-        <Route path="/qnaDetail" element={<QnaDetail />} />
+        <Route path="/notice" element={<div className="mainContentWithFixedHeader"><QnaDetail /></div>} />
 
-        <Route path="/qnaWrite" element={<QnaWrite />} />
+        <Route path="/notice" element={<div className="mainContentWithFixedHeader"><QnaWrite /></div>} />
 
-        <Route path="/qnaEdit" element={<QnaEdit />} />
+        <Route path="/notice" element={<div className="mainContentWithFixedHeader"><QnaEdit /></div>} />
         
         <Route path="/login" element={<LoginPage/>}/>
         <Route path="/loginrequired" element={<LoginRequired/>}/>
