@@ -1,0 +1,104 @@
+.divStyle {
+  /* width: 10vh; */
+  width: 80px;
+  background-color: black;
+  border-radius: 10px 0 0 10px;
+  position: fixed;
+  left: 20px;
+  top: 20px;
+  bottom: 20px;
+  z-index: 30;
+}
+.logo {
+  width: 25px;
+  margin: 20px auto;
+  cursor: pointer;
+}
+
+.hamburgerContainer {
+  position: relative;
+}
+
+.hamburgerIcon {
+  width: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  margin: auto;
+}
+
+.bar {
+  height: 3px;
+  background-color: white;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  z-index: 30;
+}
+.bar:nth-child(1).open {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+.bar:nth-child(2).open {
+  opacity: 0;
+}
+.bar:nth-child(3).open {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+.menu {
+  position: fixed;
+  top: 20px;
+  /* left: calc(10vh + 20px); */
+  left: calc(80px + 20px);
+  width: 12%;
+  z-index: 1000;
+  bottom: 20px;
+  background-color: rgba(42, 42, 42, 0.65);
+  backdrop-filter: blur(8px);
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 65px;
+  text-align: center;
+  border-radius: 0 10px 10px 0;
+}
+
+.menu.show {
+  display: flex;
+}
+
+.menu a {
+  text-decoration: none;
+  color: white;
+}
+.menuItem {
+  position: relative;
+  color: white;
+}
+.submenu {
+  flex-direction: column;
+  border-bottom: 1px solid white;
+  margin: auto;
+  width: 80%;
+  font-size: 14px;
+}
+
+.submenu a {
+  padding: 10px 0;
+  text-decoration: none;
+  color: white;
+  display: block;
+}
+
+.submenu a:hover {
+  color: #ff3366;
+}
+
+.menuItem:hover .submenu {
+  display: flex;
+}
+
+.menuItem a {
+  padding: 10px 0;
+  display: block;
+}

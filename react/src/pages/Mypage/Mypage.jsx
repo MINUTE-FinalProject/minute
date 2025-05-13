@@ -47,7 +47,7 @@ function Mypage() {
                 list
                 <button className={styles.editButton}>
                   <Link to="/calendar">
-                    <img src="/src/assets/images/edit_black.png" />
+                    <img src="/src/assets/images/edit_white.png" />
                   </Link>
                 </button>
               </div>
@@ -57,7 +57,7 @@ function Mypage() {
                 일정
                 <button className={styles.editButton}>
                   <Link to="/calendar">
-                    <img src="/src/assets/images/edit_white.png" />
+                    <img src="/src/assets/images/edit_black.png" />
                   </Link>
                 </button>
               </div>

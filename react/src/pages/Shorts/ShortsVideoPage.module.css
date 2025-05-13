@@ -1,0 +1,125 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 5%;
+  width: 100%;
+}
+.searchbar {    
+ display: flex;
+ align-items: center;
+ align-self: center;
+ justify-content: center;
+ margin-bottom: 20px;
+ padding: 0;
+}
+.searchInput {
+  border: none;
+  height: 40px;
+  width: 500px;
+  border-radius: 20px;
+  background-color: #fff;
+  padding-left: 10px;
+  background-image: url('../../assets/images/searchIcon.png');
+  background-size: 25px;
+  background-repeat: no-repeat;
+  background-position: bottom 7px right 15px;
+  border: 1px solid #ddd;
+  outline: none;
+  padding-left: 20px;
+}
+input:hover{
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1), 0 3px 6px rgba(0,0,0,0.1);
+}
+.searchButton {
+ width: 55px;
+ height: 35px;
+ border-radius: 5px;
+ border: none;
+ display: flex;
+ align-items: center;
+ justify-content: center;  
+}
+.searchIcon {
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+}
+.mainContent {
+ display: flex;
+ flex-direction: row;
+ justify-content: center;
+ align-items: center;
+ width: 100%;
+}
+.contentWrap {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.shortVideo {
+  width: 450px;
+  height: 780px;
+  background-color: #d9d9d9;
+  border-radius: 10px;
+}
+
+.reactionWrap {
+  display: flex;
+}
+.reactionWrap > ul {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.reactionWrap > ul > li {
+  width: 56px;
+  height: 56px;
+  border-radius: 50px;
+  background: #f5f5f5;
+  margin-left: 30px;
+  margin-bottom: 30px;
+}
+.reactionWrap > ul > li > img {
+  width: 30px;
+  height: 30px;
+  margin-left: 14px;
+  margin-top: 13px;
+  cursor: pointer;
+}
+.arrowWrap {
+ display: flex;
+ flex-direction: column;
+ justify-content: center;
+ position: absolute;
+ right: 50px;
+ top: 50%;
+ transform: translateY(-50%);
+}
+.arrowWrap >ul >li {
+  width: 56px;
+  height: 56px;
+  border-radius: 50px;
+  background-color: #f5f5f5;
+  margin-top: 20px;
+  cursor: pointer;
+}
+.arrowWrap >ul >li:hover{
+  background-color: #ddd;
+}
+.arrowTop{
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  margin-bottom: 60px;
+  margin-left: 16px;
+  margin-top: 13px;
+}
+.arrowBottom{
+  width: 25px;
+  height: 25px;
+  transform: rotate(180deg);
+  cursor: pointer;
+  margin-left: 16px;
+  margin-top: 18px;
+}
