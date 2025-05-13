@@ -101,10 +101,10 @@ function App() {
         <Route path="/checkinfo" element={<CheckInfo/>}/>
         <Route path="/checkdelete" element={<CheckDelete/>}/>
         
-        <Route path="/admin" element={<ManagerUserPage/>}/>
+        <Route path="/admin" element={<ManagerMyPage/>}/>
         <Route path="/reportedmembers" element={<ReportedMembers />} />
         <Route path="/member-detail/:id" element={<MemberDetail />} />
-        <Route path="/managermypage" element={<ManagerMyPage />} />
+        <Route path="/manageruserpage" element={<ManagerUserPage />} />
 
       </Routes>
     </BrowserRouter>
