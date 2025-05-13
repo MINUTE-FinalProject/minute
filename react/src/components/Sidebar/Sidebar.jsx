@@ -1,5 +1,5 @@
 // components/Sidebar.js
-import "./Sidebar.module.css";
+import styles from "./Sidebar.module.css";
 
 const Sidebar = () => {
   const menus = [
@@ -12,7 +12,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className="sidebar">
+    <aside className={styles.sidebar}>
       <ul>
         {menus.map((menu, index) => (
           <li key={index} className={menu === "신고회원 관리" ? "active" : ""}>

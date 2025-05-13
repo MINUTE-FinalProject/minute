@@ -1,5 +1,5 @@
 
-.login-wrap {
+.loginWrap {
     position: relative;
     width: 100%;
     height: 100vh;
@@ -26,7 +26,7 @@
     height: 100%;
     object-fit: cover;
   }
-  .login-box {
+  .loginBox {
     display: flex;
     flex-direction: column;
     align-items: center;
