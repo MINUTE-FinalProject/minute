@@ -11,8 +11,11 @@ function Layout(){
             <main className={layoutStyle.mainContentWithFixedHeader}>
                 <Outlet/>
             </main>
+            
             <Footer/>
         </>
     )
+
+    
 }
 export default Layout;

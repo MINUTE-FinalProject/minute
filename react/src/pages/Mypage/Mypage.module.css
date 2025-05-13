@@ -1,11 +1,9 @@
 .container {
   display: flex;
-  width: 100%;
   background-color: #fff;
-  padding: 40px 50px;
   border-radius: 0 10px 10px 0;
-  height: calc(100vh - 42px);
-  margin-top: -1px;
+  margin-left: 100px;
+  margin-top: 60px;
   overflow: hidden;
 }
 
@@ -15,21 +13,26 @@
   flex: 0 0 60%;
   min-width: 300px;
   height: 100%;
+  margin-top: 19px;
 }
+
 .profileWrap {
   background-color: #f6f6f6;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
+  padding: 20px;
+  margin-bottom: 20px;
 }
+
 .profileContent {
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap;
   align-items: center;
   width: 80%;
-  margin: 20px auto;
+  margin: 0 auto;
 }
+
 .profileNickName {
   font-size: 16px;
   color: #000;
@@ -37,12 +40,14 @@
   margin-left: 80px;
   margin-bottom: 10px;
 }
+
 .profile {
   display: flex;
   flex-direction: column;
   text-align: center;
   min-width: 200px;
 }
+
 .profileImg {
   width: 180px;
   height: 180px;
@@ -51,16 +56,20 @@
   overflow: hidden;
   margin-left: 20px;
 }
-.profileImg > img {
+
+.profileImg>img {
   width: 100%;
 }
+
 .profileInfo {
   text-align: right;
-  margin-right: 20px;
 }
-.profileInfo > p {
+
+.profileInfo>p {
   margin-top: 10px;
+  color: #000;
 }
+
 .profileNavbar {
   width: 80%;
   background-color: #000;
@@ -69,28 +78,28 @@
   margin: 20px auto;
   padding: 15px 10px;
 }
-.profileNavbar > ul {
+
+.profileNavbar>ul {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   gap: 70px;
 }
-.profileNavbar > ul > li {
+
+.profileNavbar>ul>li {
   white-space: nowrap;
   font-size: 1rem;
   cursor: pointer;
   text-align: center;
 }
+
 .planWrap {
   width: 100%;
   display: flex;
   flex-direction: row;
-  margin-top: 30px;
   gap: 30px;
-  height: 100%;
-  overflow-y: auto;
 }
+
 .planLeftWrap {
   width: 60%;
   min-width: 300px;
@@ -98,113 +107,138 @@
 
 .calendar {
   width: 100%;
-  height: 250px;
+  height: 200px;
   background-color: #f3c6e6;
   border-radius: 10px;
   padding: 20px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
 }
+
 .planList {
+  width: 100%;
+  height: 200px;
   background-color: #000;
   color: #fff;
-  height: 263px;
-  margin-top: 30px;
-  padding: 20px;
   border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
 }
+
 .planRightWrap {
   width: 40%;
-  height: 100%;
   background-color: #d9d9d9;
-  padding: 20px;
   border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .planContext {
+  text-align: center;
 }
+
 .rightWrap {
-  flex: 0 0 40%;
-  background-color: #f6f6f6;
-  margin-left: 30px;
+  flex: 0 0 30%;
+  background-color: #ddd;
+  margin-left: 75px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
+  margin-top: 20px;
+
 }
+
 .mapWrap {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(4, 1fr);
   position: relative;
-  height: 750px;
+  height: 773px;
   width: 100%;
-  margin: 0 auto;
+  margin-top: 15px;
 }
-.mapWrap > ul {
+
+.mapWrap>ul {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 20px;
   justify-content: center;
   align-items: center;
 }
-.mapWrap > ul > li {
+
+.mapWrap>ul>li {
   max-width: 250px;
   width: 100%;
 }
 
-.mapWrap > ul > li img {
+.mapWrap>ul>li img {
   width: 100%;
   height: auto;
 }
 
-.mapWrap > ul > li:nth-child(1) {
+/* 지도 위치는 이미지와 동일하게 유지 */
+.mapWrap>ul>li:nth-child(1) {
   position: absolute;
   left: 50px;
   top: 23px;
 }
-.mapWrap > ul > li:nth-child(2) {
+
+.mapWrap>ul>li:nth-child(2) {
   position: absolute;
   left: 177px;
   top: -18px;
 }
-.mapWrap > ul > li:nth-child(3) {
+
+.mapWrap>ul>li:nth-child(3) {
   position: absolute;
   left: 247px;
   top: 190px;
 }
-.mapWrap > ul > li:nth-child(4) {
+
+.mapWrap>ul>li:nth-child(4) {
   position: absolute;
   left: 150px;
   top: 145px;
 }
-.mapWrap > ul > li:nth-child(5) {
+
+.mapWrap>ul>li:nth-child(5) {
   position: absolute;
   left: 18px;
   top: 168px;
 }
-.mapWrap > ul > li:nth-child(6) {
+
+.mapWrap>ul>li:nth-child(6) {
   position: absolute;
   left: 56px;
   top: 278px;
 }
-.mapWrap > ul > li:nth-child(7) {
+
+.mapWrap>ul>li:nth-child(7) {
   position: absolute;
   left: 306px;
   top: 317px;
 }
-.mapWrap > ul > li:nth-child(8) {
+
+.mapWrap>ul>li:nth-child(8) {
   position: absolute;
   left: 200px;
   top: 324px;
 }
-.mapWrap > ul > li:nth-child(9) {
+
+.mapWrap>ul>li:nth-child(9) {
   position: absolute;
   left: 32px;
   top: 398px;
 }
 
-.mapWrap > ul > li:nth-child(10) {
+.mapWrap>ul>li:nth-child(10) {
   position: absolute;
   left: 0px;
   top: 565px;

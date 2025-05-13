@@ -8,6 +8,7 @@ function MypageNav() {
     const [showBoardMenu, setShowBoardMenu] = useState(false);
 
     return (
+        <>
         <div className={styles.divStyle}>
             <div className={styles.logo}>
                 <Link to="/">
@@ -74,6 +75,7 @@ function MypageNav() {
                 </nav>
             </div>
         </div>
+        </>
     );
 }
 

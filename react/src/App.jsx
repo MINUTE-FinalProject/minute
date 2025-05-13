@@ -75,7 +75,7 @@ function App() {
 
           <Route path="/qnaEdit" element={<QnaEdit />} />
         </Route>
-        <Route path="/mypage" element={<div className="mypage"><Mypage /></div>} />
+        <Route path="/mypage" element={<div className="mypage1"><Mypage /></div>} />
         <Route path="/bookmark" element={<div className="bookmark-wrapper"><Bookmark /></div>} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/findid" element={<FindID />} />

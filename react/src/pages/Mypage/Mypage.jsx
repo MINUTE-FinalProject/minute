@@ -1,11 +1,17 @@
 import { Link } from "react-router-dom";
 import MypageNav from "../../components/MypageNavBar/MypageNav";
 import styles from "./Mypage.module.css";
+import { useState } from "react";
+import Header from "../../components/Header/Header";
 
 function Mypage() {
+    const [isOpen, setIsOpen] = useState(false);
+      const [showCategoryMenu, setShowCategoryMenu] = useState(false);
+      const [showBoardMenu, setShowBoardMenu] = useState(false);
+  
   return (
     <>
-      <MypageNav />
+    <Header/>
       <div className={styles.container}>
         <div className={styles.leftWrap}>
           <div className={styles.profileWrap}>
