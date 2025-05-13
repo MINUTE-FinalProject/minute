@@ -26,10 +26,7 @@ import QnaEdit from "./pages/QnA/qnaEdit";
 import QnaWrite from "./pages/QnA/qnaWrite";
 import ShortsVideoPage from "./pages/Shorts/ShortsVideoPage";
 
-import ManagerMyPage from './pages/Admin/ManagerMyPage';
 import ManagerUserPage from './pages/Admin/ManagerUserPage';
-import MemberDetail from './pages/Admin/MemberDetail';
-import ReportedMembers from './pages/Admin/ReportedMembers';
 
 import CheckDelete from "./pages/Auth/CheckDelete";
 import CheckInfo from "./pages/Auth/CheckInfo";
@@ -118,7 +115,7 @@ function App() {
           <Route path="/qnaWrite" element={<QnaWrite />} />
 
           <Route path="/qnaEdit" element={<QnaEdit />} />
-        </Route>
+       
         <Route path="/mypage" element={<div className="mypage"><Mypage /></div>} />
         <Route path="/bookmark" element={<div className="bookmark-wrapper"><Bookmark /></div>} />
         <Route path="/login" element={<LoginPage />} />
