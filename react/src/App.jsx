@@ -100,7 +100,7 @@ function App() {
 
           <Route path="/noticeDetail" element={<div className="mainContentWithFixedHeader"><NoticeDetail /></div>} />
 
-          <Route path="/freeboard" element={<div className="mainContentWithFixedHeader"><FreeBoard /></div>} />
+          <Route path="/freeboard" element={<div className="mainContentWithFixedHeader"><Freeboard /></div>} />
 
           <Route path="/freeboardDetail" element={<div className="mainContentWithFixedHeader"><FreeboardDetail /></div>} />
 
