@@ -22,11 +22,6 @@ function Search() {
   return (
     <div className={searchStyle.container}>
       <header className={searchStyle.header}>
-        <div className={searchStyle.menu}>≡</div>
-        <div className={searchStyle.authButtons}>
-          <button>로그인</button>
-          <button>회원가입</button>
-        </div>
         <div className={searchStyle.searchBarWrapper}>
           <div className={searchStyle.searchBar}>
             <input type="text" placeholder="검색..." />

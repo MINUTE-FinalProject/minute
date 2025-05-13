@@ -41,6 +41,8 @@ import LoginPage from "./pages/auth/LoginPage";
 import LoginRequired from "./pages/Auth/LoginRequired";
 import SignupComplete from "./pages/Auth/SignUpComplete";
 
+
+
 function App() {
 
   return (
@@ -56,6 +58,7 @@ function App() {
           <Route path="/area" element={<GangwondoPage />} />
           <Route path="/calendar" element={<div className="mypage"><Calendarpage /></div>} />
           <Route path="/search" element={<div className="search-wrapper"><Search /></div>} />
+
 
           <Route path="/notice" element={<Notice />} />
 
@@ -93,9 +96,43 @@ function App() {
         <Route path="/checkdelete" element={<CheckDelete/>}/>
         
         <Route path="/admin" element={<ManagerUserPage/>}/>
-        <Route path="/reportedmembers" element={<ReportedMembers />} />
-        <Route path="/member-detail/:id" element={<MemberDetail />} />
-        <Route path="/managermypage" element={<ManagerMyPage />} />
+
+
+          <Route path="/notice" element={<Notice />} />
+
+          <Route path="/noticeDetail" element={<NoticeDetail />} />
+
+          <Route path="/freeboard" element={<FreeBoard />} />
+
+          <Route path="/freeboardDetail" element={<FreeboardDetail />} />
+
+          <Route path="/freeboardWrite" element={<FreeboardWrite />} />
+
+          <Route path="/freeboardEdit" element={<FreeboardEdit />} />
+
+          <Route path="/qna" element={<Qna />} />
+
+          <Route path="/qnaDetail" element={<QnaDetail />} />
+
+          <Route path="/qnaWrite" element={<QnaWrite />} />
+
+          <Route path="/qnaEdit" element={<QnaEdit />} />
+        </Route>
+        <Route path="/mypage" element={<div className="mypage"><Mypage /></div>} />
+        <Route path="/bookmark" element={<div className="bookmark-wrapper"><Bookmark /></div>} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/findid" element={<FindID />} />
+        <Route path="/successid" element={<SuccessID />} />
+        <Route path="/successpwd" element={<SuccessPwd />} />
+        <Route path="/signupform" element={<SignUpForm />} />
+        <Route path="/findpwd" element={<FindPwd />} />
+        <Route path="/findpwd2" element={<FindPwd2 />} />
+        <Route path="/failfindid" element={<FailFindID />} />
+        <Route path="/deleteaccount" element={<DeleteAccount />} />
+        <Route path="/checkinfo" element={<CheckInfo />} />
+        <Route path="/checkdelete" element={<CheckDelete />} />
+        <Route path="/admin" element={<ManagerUserPage />} />
+
 
         </Route>
       </Routes>
