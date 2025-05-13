@@ -1,22 +1,28 @@
-import React from "react";
-import "./LoginPage.css";
+import img from '../../assets/images/key.png';
+import Footer from '../../components/Footer/Footer';
+import Header from '../../components/Header/Header';
+import styles from "./LoginPage.module.css";
 
 const LoginPage = () => {
   return (
-    <div className="login-wrap">
-        <div className="keyimg">
-        <img className="img1" src="../../assets/images/login.png" alt="Login Background" />
+    <>
+    <Header/>
+    <div className={styles.loginWrap}>
+        <div className={styles.keyimg}>
+        <img className={styles.img1} src={img} alt="Login Background" />
       </div>
-      <div className="login-box">
-        <h1 className="logo">MIN:UTE</h1>
-        <input type="text" placeholder="UserName" className="input" />
-        <input type="password" placeholder="Password" className="input" />
-        <button className="btn">Login</button>
-        <div className="links">
+      <div className={styles.loginBox}>
+        <h1 className={styles.logo}>MIN:UTE</h1>
+        <input type="text" placeholder="UserName" className={styles.input} />
+        <input type="password" placeholder="Password" className={styles.input} />
+        <button className={styles.btn}>Login</button>
+        <div className={styles.links}>
           <a href="#">아이디찾기</a> | <a href="#">비밀번호찾기</a> | <a href="#">회원가입</a>
         </div>
       </div>
     </div>
+    <Footer/>
+    </>
   );
 };
 

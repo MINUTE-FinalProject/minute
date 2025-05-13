@@ -1,7 +1,6 @@
-import React from "react";
 import Header from "../../components/Header/Header";
-// import Sidebar from "../components/Sidebar";
-import "./ReportedMembers.css";
+import Sidebar from "../../components/Sidebar/Sidebar";
+import styles from "./ReportedMembers.module.css"; // Correct CSS Module import
 
 const ReportedMembers = () => {
   const members = [
@@ -17,15 +16,15 @@ const ReportedMembers = () => {
   return (
     <>
       <Header />
-      <div className="container">
+      <div className={styles.container}>
         <Sidebar />
-        <main className="reported-content">
-          <h2 className="title1">신고관리</h2>
-          <div className="filter-bar">
+        <main className={styles.reportedContent}>
+          <h2 className={styles.title1}>신고관리</h2>
+          <div className={styles.filterBar}>
             <input type="date" />
             <input type="date" />
             <select><option>정렬순▼</option></select>
-            <button className="type-btn">타입</button>
+            <button className={styles.typeBtn}>타입</button>
             <input type="text" placeholder="검색" />
           </div>
           <table>
@@ -36,17 +35,21 @@ const ReportedMembers = () => {
             </thead>
             <tbody>
               {members.map((m) => (
-                <tr key={m.no} className={m.no % 2 === 0 ? "gray" : ""}>
+                <tr key={m.no} className={m.no % 2 === 0 ? styles.gray : ""}>
                   <td>{m.no}</td><td>{m.count}</td><td>{m.id}</td><td>{m.position}</td>
                   <td>{m.title}</td><td>{m.content}</td><td>{m.date}</td>
-                  <td><button className={`status ${m.status === "정지" ? "stop" : "wait"}`}>{m.status}</button></td>
+                  <td>
+                    <button className={`${styles.status} ${m.status === "정지" ? styles.stop : styles.wait}`}>
+                      {m.status}
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <div className="pagination">
+          <div className={styles.pagination}>
             <button>&lt;</button>
-            <button className="active">1</button>
+            <button className={styles.active}>1</button>
             <button>2</button>
             <button>3</button>
             <button>&gt;</button>
