@@ -1,36 +1,31 @@
 .contents_wrap {
     display: flex;
-    width: 100%;
-    background-color: #fff;
-    padding: 40px 50px;
-    border-radius: 0 10px 10px 0;
-    height: calc(100vh - 42px);
-    margin-top: -1px;
-    overflow: hidden;
     flex-direction: column;
+    min-height: 100vh;
+    /* padding-left: 100px; */
+    background-color: #fff;
+    margin-top: 45px;
+    box-sizing: border-box;
+    position: relative;
 }
 
 .date {
-    padding-left: 100px;
+    padding-left: 150px;
+    margin-top: 20px;
     font-size: 30px;
 }
 
 /* flex-wrap으로 대응 */
 .mainBox {
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
-    padding-left: 100px;
-    padding-right: 100px;
-    width: 100%;
+    width: 80%;
     margin: auto;
 }
 
 /* 리스트 영역 */
 .listSection {
     flex: 1 1 300px;
-    max-width: 600px;
-    min-width: 280px;
     height: 75vh;
     position: relative;
     background-color: black;
@@ -40,7 +35,7 @@
 }
 
 .listTitle {
-    padding: 15px;
+    padding: 10px;
     font-size: 15px;
     text-align: center;
     border-bottom: 1px solid white;
@@ -48,7 +43,7 @@
 
 .listContent {
     padding: 20px;
-    height: 60vh;
+    height: 50vh;
     overflow-y: auto;
 }
 
@@ -96,14 +91,14 @@
 }
 
 .planTitle {
-    padding: 15px;
+    padding: 10px;
     font-size: 15px;
     text-align: center;
     border-bottom: 1px solid black;
 }
 
 .planText {
-    height: 60vh;
+    height: 50vh;
     padding: 20px;
     overflow-y: auto;
 }
@@ -147,11 +142,10 @@
 .navArrows {
     position: absolute;
     top: 50%;
-    left: 120px;
-    right: 60px;
+    left: 55px;
+    right: 55px;
     display: flex;
     justify-content: space-between;
-    padding: 0 30px;
 }
 
 .leftArrow,

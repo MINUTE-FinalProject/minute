@@ -4,7 +4,6 @@ import calendarpageStyle from "./Calendarpage.module.css";
 function Calendarpage() {
   return (
     <>
-      <MypageNav />
       <div className={calendarpageStyle.contents_wrap}>
         <div className={calendarpageStyle.date}>4월 22일</div>
         <div className={calendarpageStyle.mainBox}>
@@ -365,15 +364,6 @@ function Calendarpage() {
               <p>1차 07:00 여행 시작</p>
               <p>2차 11:00 비빔밥 집 도착</p>
               <p>13:00 카페 도착</p>
-              <p>부산 여행</p>
-              <p>1차 07:00 여행 시작</p>
-              <p>2차 11:00 비빔밥 집 도착</p>
-              <p>13:00 카페 도착</p>
-              <p>부산 여행</p>
-              <p>1차 07:00 여행 시작</p>
-              <p>2차 11:00 비빔밥 집 도착</p>
-              <p>13:00 카페 도착</p>
-
               <p>부산 여행</p>
               <p>1차 07:00 여행 시작</p>
               <p>2차 11:00 비빔밥 집 도착</p>
