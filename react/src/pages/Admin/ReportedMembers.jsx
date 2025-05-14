@@ -8,19 +8,20 @@ import styles from "./ReportedMembers.module.css";
 const generateInitialReportedMembers = (count = 37) => {
     const items = [];
     const userIds = ["yujin0712", "hodu1030", "mad09", "cjak3974", "qowui08", "akn45", "dgvv123", "newUser1", "vipUser"];
-    const positions = ["게시판", "댓글", "프로필", "채팅"];
-    const statuses = ["정지", "대기"]; // "경고" 상태 제거
+    // "위치"는 "게시판", "댓글", "문의사항"만 사용하도록 수정
+    const positions = ["게시판", "댓글", "문의사항"]; 
+    const statuses = ["정지", "대기"]; 
     for (let i = 0; i < count; i++) {
         items.push({
             reportEntryId: `rep-${i + 1}`,
             no: count - i,
             count: Math.floor(Math.random() * 10) + 1,
             id: userIds[i % userIds.length],
-            position: positions[i % positions.length],
+            position: positions[i % positions.length], // 수정된 positions 배열 사용
             title: `관련 컨텐츠 제목 또는 요약 ${i + 1}`,
             content: `신고 내용 상세 또는 사유 ${i + 1}`,
             date: `2025.05.${String(20 - (i % 20)).padStart(2, '0')}`,
-            status: statuses[i % statuses.length], // 정지 또는 대기
+            status: statuses[i % statuses.length], 
         });
     }
     return items;
@@ -52,18 +53,20 @@ const ReportedMembers = () => {
     const handleStatusChange = (reportEntryId) => {
         const updateLogic = (prevMembers) => prevMembers.map(member => {
             if (member.reportEntryId === reportEntryId) {
-                // "정지" 상태면 "대기"로, "대기" 상태면 "정지"로 토글
                 return { ...member, status: member.status === "정지" ? "대기" : "정지" };
             }
             return member;
         });
 
         setAllReportedMembers(updateLogic);
-        setMembersToDisplay(updateLogic); // 보여지는 목록도 바로 업데이트
+        setMembersToDisplay(updateLogic); 
         
-        const changedMember = allReportedMembers.find(m => m.reportEntryId === reportEntryId);
-        if (changedMember) {
-             console.log(`Status changed for report entry ID: ${reportEntryId} to ${changedMember.status === "정지" ? "대기" : "정지"}`);
+        const changedMember = allReportedMembers.find(m => m.reportEntryId === reportEntryId); // 이 시점에서는 allReportedMembers가 아직 이전 상태일 수 있습니다.
+                                                                                             // 정확한 변경 후 상태를 보려면 업데이트된 상태를 기준으로 찾아야 합니다.
+                                                                                             // 또는 단순히 토글된 상태를 직접 사용합니다.
+        if (changedMember) { // changedMember가 존재하고, 그 상태가 토글될 것이므로
+             const newStatus = changedMember.status === "정지" ? "대기" : "정지";
+             console.log(`Status changed for report entry ID: ${reportEntryId} to ${newStatus}`);
             // TODO: 실제 API 호출로 서버에 상태 업데이트
         }
     };
@@ -97,7 +100,7 @@ const ReportedMembers = () => {
                                         <td>
                                             <button 
                                                 className={`${styles.status} ${
-                                                    m.status === "정지" ? styles.stop : styles.wait // "경고" 상태 로직 제거
+                                                    m.status === "정지" ? styles.stop : styles.wait
                                                 }`}
                                                 onClick={() => handleStatusChange(m.reportEntryId)}
                                                 title={`클릭하여 상태 변경: ${m.status}`}

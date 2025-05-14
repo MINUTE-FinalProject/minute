@@ -6,13 +6,12 @@ import styles from './Sidebar.module.css';
 const Sidebar = () => {
     // 메뉴 데이터를 객체 배열로 변경하여 경로와 아이콘도 함께 관리
     const menus = [
-        { name: "회원 관리", path: "/admin/members", icon: "👤" /* <FaUserFriends /> */ },
-        { name: "신고회원 관리", path: "/admin/reported-members", icon: "🔔" /* <FaBell /> */ },
-        { name: "문의 관리", path: "/admin/qna-management", icon: "❓" /* <FaQuestionCircle /> */ },
-        { name: "공지사항 관리", path: "/admin/notice-management", icon: "📢" /* <FaBullhorn /> */ },
-        { name: "게시판 관리", path: "/admin/board-management", icon: "📋" /* <FaClipboardList /> */ }, // 신고글 관리와 자유게시판을 포함하는 상위 메뉴일 수 있음
-        { name: "신고글 관리", path: "/admin/reported-posts", icon: "📝" /* <FaEdit /> */ },
-        { name: "자유게시판", path: "/admin/freeboard", icon: "✍️" /* <FaEdit /> */ },
+        { name: "회원 관리", path: "/admin", icon: "👤" /* <FaUserFriends /> */ },
+        { name: "신고회원 관리", path: "/reportedmembers", icon: "🔔" /* <FaBell /> */ },
+        { name: "문의 관리", path: "/managerQna", icon: "❓" /* <FaQuestionCircle /> */ },
+        { name: "공지사항 관리", path: "/managerNotice", icon: "📢" /* <FaBullhorn /> */ },
+        { name: "신고글 관리", path: "/reportedposts", icon: "📝" /* <FaEdit /> */ },
+        { name: "자유게시판", path: "/managerFreeboard", icon: "✍️" /* <FaEdit /> */ },
     ];
 
     return (
