@@ -1,3 +1,4 @@
+import MypageNav from '../../components/MypageNavBar/MypageNav';
 import qnaWriteStyle from './qnaWrite.module.css';
 // React Router를 사용한다면 Link를 import 하세요.
 // import { Link } from 'react-router-dom';
@@ -19,7 +20,11 @@ function QnaWrite() {
 
     return (
         // <form onSubmit={handleSubmit}> {/* 전체를 form으로 감쌀 경우 */}
-        <div className={qnaWriteStyle.background}>
+        <>
+          <MypageNav/>
+         <div className={qnaWriteStyle.layout}>
+            <div className={qnaWriteStyle.container}>
+                 <div className={qnaWriteStyle.background}>
 
             <div className={qnaWriteStyle.title}>
                 {/* Q&A 문구를 클릭하면 Q&A로 가는 리다이렉트 기능 */}
@@ -122,6 +127,10 @@ function QnaWrite() {
                 </div>
             </div>
         </div>
+            </div>
+            </div>
+        </>
+       
         // </form>
     );
 }

@@ -27,7 +27,7 @@ import SeoulPage from "./pages/Area/SeoulPage";
 import Bookmark from "./pages/Bookmark/bookmark";
 import Search from "./pages/Bookmark/search";
 import Calendarpage from "./pages/Calendar/Calendarpage";
-import Mypage from "./pages/Mypage/Mypage";
+import Mypage from "./pages/Mypage/Mypage2";
 
 import Notice from "./pages/Notice/notice";
 import NoticeDetail from "./pages/Notice/noticeDetail";
@@ -106,7 +106,7 @@ function App() {
           {/* Note: className="mypage", "bookmark-wrapper" etc. 
             should now be applied within Mypage.js, Bookmark.js components respectively.
           */}
-          <Route path="mypage" element={<Mypage />} />
+         
           <Route path="calendar" element={<Calendarpage />} />
           <Route path="bookmark" element={<Bookmark />} />
           <Route path="search" element={<Search />} />
@@ -119,10 +119,7 @@ function App() {
           <Route path="freeboardWrite" element={<div className="mainContentWithFixedHeader"><FreeboardWrite /></div>} />
           <Route path="FreeboardEdit" element={<div className="mainContentWithFixedHeader"><FreeboardEdit /></div>} /> {/* Consider /freeboard/edit/:id */}
 
-          <Route path="qna" element={<div className="mainContentWithFixedHeader"><Qna /></div>} />
-          <Route path="qnaDetail" element={<div className="mainContentWithFixedHeader"><QnaDetail /></div>} /> {/* Consider /qna/:id */}
-          <Route path="qnaWrite" element={<div className="mainContentWithFixedHeader"><QnaWrite /></div>} />
-          <Route path="qnaEdit" element={<div className="mainContentWithFixedHeader"><QnaEdit /></div>} /> {/* Consider /qna/edit/:id */}
+         
 
           {/* Admin pages - using the main Layout for now */}
           <Route path="admin" element={<ManagerUserPage />} />
@@ -143,9 +140,15 @@ function App() {
           <Route path="/deleteaccount" element={<DeleteAccount />} />
           <Route path="/checkinfo" element={<CheckInfo />} />
           <Route path="/checkdelete" element={<CheckDelete />} />
-        
-        
+    
         </Route>
+
+          <Route path="mypage" element={<div className="mypage1"><Mypage/></div>} />
+           <Route path="qna" element={<div className="mypage1"><Qna /></div>} />
+          <Route path="qnaDetail" element={<div className="mypage1"><QnaDetail /></div>} /> {/* Consider /qna/:id */}
+          <Route path="qnaWrite" element={<div className="mypage1"><QnaWrite /></div>} />
+          <Route path="qnaEdit" element={<div className="mypage1"><QnaEdit /></div>} /> {/* Consider /qna/edit/:id */}
+
 
         {/* --- Routes that DO NOT use the main Layout (e.g., Auth pages) --- */}
         
