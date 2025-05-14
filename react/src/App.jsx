@@ -59,6 +59,7 @@ import SuccessID from "./pages/Auth/SuccessID";
 import SuccessPwd from "./pages/Auth/SuccessPwd";
 
 // Admin Page Components
+import NotFound from "./pages/404";
 import ManagerFreeboard from "./pages/Admin/ManagerFreeboard";
 import ManagerFreeboardDetail from "./pages/Admin/ManagerFreeboardDetail";
 import ManagerMyPage from './pages/Admin/ManagerMyPage';
@@ -172,6 +173,8 @@ function App() {
         <Route path="/managerQnaWrite" element={<ManagerQnaWrtie />} />
 
         <Route path="/reportedposts" element={<ReportedPosts />} />
+
+        <Route path="/*" element={<NotFound />} />
 
 
       </Routes>
