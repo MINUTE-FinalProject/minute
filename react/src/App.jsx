@@ -74,7 +74,7 @@ function App() {
           <Route path="healing" element={<HealingPage />} />
           <Route path="mountain" element={<MountainPage />} />
           <Route path="themepark" element={<ThemeParkPage />} />
-          <Route path="shorts" element={<ShortsVideoPage />} />
+     
 
           {/* Note: className="mypage", "bookmark-wrapper" etc. 
             should now be applied within Mypage.js, Bookmark.js components respectively.
@@ -102,23 +102,27 @@ function App() {
           <Route path="reportedmembers" element={<ReportedMembers />} />
           <Route path="member-detail/:id" element={<MemberDetail />} /> {/* Using path parameter :id */}
           <Route path="managermypage" element={<ManagerMyPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/loginrequired" element={<LoginRequired />} />
+          <Route path="/findid" element={<FindID />} />
+          <Route path="/successid" element={<SuccessID />} />
+          <Route path="/successpwd" element={<SuccessPwd />} />
+          <Route path="/signupform" element={<SignUpForm />} />
+          <Route path="/signupform2" element={<SignUpForm2 />} />
+          <Route path="/signupcomplete" element={<SignupComplete />} />
+          <Route path="/findpwd" element={<FindPwd />} />
+          <Route path="/findpwd2" element={<FindPwd2 />} />
+          <Route path="/failfindid" element={<FailFindID />} />
+          <Route path="/deleteaccount" element={<DeleteAccount />} />
+          <Route path="/checkinfo" element={<CheckInfo />} />
+          <Route path="/checkdelete" element={<CheckDelete />} />
+        
+        
         </Route>
 
         {/* --- Routes that DO NOT use the main Layout (e.g., Auth pages) --- */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/loginrequired" element={<LoginRequired />} />
-        <Route path="/findid" element={<FindID />} />
-        <Route path="/successid" element={<SuccessID />} />
-        <Route path="/successpwd" element={<SuccessPwd />} />
-        <Route path="/signupform" element={<SignUpForm />} />
-        <Route path="/signupform2" element={<SignUpForm2 />} />
-        <Route path="/signupcomplete" element={<SignupComplete />} />
-        <Route path="/findpwd" element={<FindPwd />} />
-        <Route path="/findpwd2" element={<FindPwd2 />} />
-        <Route path="/failfindid" element={<FailFindID />} />
-        <Route path="/deleteaccount" element={<DeleteAccount />} />
-        <Route path="/checkinfo" element={<CheckInfo />} />
-        <Route path="/checkdelete" element={<CheckDelete />} />
+        
+        <Route path="shorts" element={<ShortsVideoPage />} />
 
         <Route path="/managerFreeboard" element={<ManagerFreeboard />} />
 

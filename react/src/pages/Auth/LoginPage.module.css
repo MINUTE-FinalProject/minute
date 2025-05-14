@@ -1,15 +1,13 @@
 
-.loginWrap {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
-  
+  .loginWrap {
+  position: relative;
+  width: 100%;
+  height: 100vh; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
 
   .keyimg {
     position: absolute;
@@ -30,14 +28,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 40px 30px;
+    /* padding: 40px 30px; */
     border-radius: 10px;
-    width: 280px;
+    width: 350px;
   }
   
 
   .logo {
-    font-size: 24px;
+    font-size: 36px;
     font-weight: bold;
     color: white;
     margin-bottom: 30px;

@@ -1,24 +1,26 @@
-import Footer from "../../components/Footer/Footer";
-import Header from "../../components/Header/Header";
 import SearchBar from "../../components/MainSearchBar/SearchBar";
 import styles from './MountainPage.module.css';
 
 function MountainPage(){
   return (
-    <>
-      <Header />
+   <>
       <div className={styles.container}>
         <SearchBar />
+        <div className={styles.videoList}>
+          <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+          </ul>
+        </div>
       </div>
-      <div className={styles.videoList}>
-        <ul>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-        </ul>
-      </div>
-      <Footer/>
     </>
   );
 }

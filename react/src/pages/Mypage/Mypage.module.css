@@ -1,8 +1,8 @@
 .container {
  display: flex;
   background-color: #fff;
-  /* margin-left: 100px; */
   margin-top: 45px;
+  margin-bottom: 20px;
   min-height: 88vh;
   height: auto;
   width: 100%;
@@ -149,14 +149,14 @@
   flex: 0 0 30%;
   background-color: #ddd;
   margin-left: 75px;
+   margin-top: 20px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 878px;
-  margin-top: 20px;
-   position: relative;
+  position: relative;
 
 }
 
@@ -165,8 +165,12 @@
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(4, 1fr);
   width: 100%;
-  margin-top: 15px;
+  position: relative;
+  min-height: 600px; 
+  margin-top: -114px;
+  margin-left: 70px;
 }
+
 
 .mapWrap>ul {
   display: grid;

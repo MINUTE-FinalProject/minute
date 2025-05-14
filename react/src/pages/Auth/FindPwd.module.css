@@ -1,12 +1,17 @@
  
- .containerf {
-    min-height: 100vh;
+.pageWrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+   flex: 1; 
     background-color: white;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     display: flex;
+    flex-direction: column;
   }
+
   
   .boxf {
     border: 1px solid #000;
@@ -18,6 +23,7 @@
     padding: 16px;
     width: 550px;
     height: 500px;
+    margin: auto;
   }
   
   

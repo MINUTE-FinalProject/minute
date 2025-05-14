@@ -1,11 +1,8 @@
-import Footer from "../../components/Footer/Footer";
-import Header from "../../components/Header/Header";
 import styles from "./SignUpForm.module.css";
 
 function SignUpForm() {
   return (
-    <>
-    <Header/>
+    <div className={styles.pageWrapper}>
     <div className={styles.container}>
 
       <div className={styles.formWrapper}>
@@ -39,8 +36,7 @@ function SignUpForm() {
         </form>
       </div>
     </div>
-    <Footer/>
-    </>
+    </div>
   );
 }
 export default SignUpForm;

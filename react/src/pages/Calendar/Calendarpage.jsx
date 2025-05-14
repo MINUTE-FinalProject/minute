@@ -1,10 +1,8 @@
-import MypageNav from "../../components/MypageNavBar/MypageNav";
 import calendarpageStyle from "./Calendarpage.module.css";
 
 function Calendarpage() {
   return (
     <>
-      <MypageNav />
       <div className={calendarpageStyle.contents_wrap}>
         <div className={calendarpageStyle.date}>4월 22일</div>
         <div className={calendarpageStyle.mainBox}>

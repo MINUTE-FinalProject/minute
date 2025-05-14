@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Header from '../../components/Header/Header';
 import bookmarkStyle from './bookmark.module.css';
 
 const Bookmark = () => {
@@ -103,8 +102,6 @@ const Bookmark = () => {
   };
 
   return (
-    <>
-    <Header/>
     <div className={bookmarkStyle.container}>
       <div className={bookmarkStyle.navWrap}>
       </div>
@@ -231,7 +228,6 @@ const Bookmark = () => {
         )}
       </main>
     </div>
-    </>
   );
 };
 

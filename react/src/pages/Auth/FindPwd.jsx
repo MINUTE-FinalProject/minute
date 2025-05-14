@@ -1,11 +1,10 @@
 import keyImage from '../../assets/images/key.png';
-import Header from "../../components/Header/Header";
 import styles from './FindPwd.module.css';
 
 function FindPwd() {
     return (
-        <div className={styles.containerf}>
-            <Header />
+    <div className={styles.pageWrapper}>
+        <div className={styles.container}>
             <div className={styles.boxf}>
                 <div className={styles.keyimgf}>
                     <img className={styles.keyimg1f} src={keyImage} alt="key image" />
@@ -24,6 +23,7 @@ function FindPwd() {
                 </form>
             </div>
         </div>
+    </div>
     );
 }
 

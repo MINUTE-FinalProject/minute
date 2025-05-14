@@ -1,12 +1,10 @@
-import Header from "../../components/Header/Header";
 import styles from "./SignUpForm.module.css";
 
 const SignupComplete = () => {
 
   return (
-    <>
-    <Header/>
-    <div className={styles.container2}>
+    <div className={styles.pageWrapper}>
+    <div className={styles.container}>
   
       <div className={styles.content2}>
         <h1 className={styles.title2}>Sign Up</h1>
@@ -27,7 +25,7 @@ const SignupComplete = () => {
         <button className={styles.loginButton}>Login</button>
       </div>
     </div>
-    </>
+    </div>
   );
 };
 
