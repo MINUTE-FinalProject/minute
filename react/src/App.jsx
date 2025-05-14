@@ -76,6 +76,21 @@ function App() {
           <Route path="themepark" element={<ThemeParkPage />} />
           <Route path="shorts" element={<ShortsVideoPage />} />
 
+          <Route path="area">
+            <Route index element={<GangwondoPage />} />
+            <Route path="gangwondo" element={<GangwondoPage />} />
+            <Route path="gyeonggido" element={<GyeonggidoPage />} />
+            <Route path="chungcheongbuk" element={<ChungcheongbukPage />} />
+            <Route path="chungcheongnam" element={<ChungcheongnamPage />} />
+            <Route path="jeollabuk" element={<JeollabukPage />} />
+            <Route path="jeollanam" element={<JeollanamPage />} />
+            <Route path="gyeongsangbuk" element={<GyeongsangbukPage />} />
+            <Route path="gyeongsangnam" element={<GyeongsangnamPage />} />
+            <Route path="jeju" element={<JejuPage />} />
+            <Route path="busan" element={<BusanPage />} />
+            <Route path="seoul" element={<SeoulPage />} />
+          </Route>
+
           {/* Note: className="mypage", "bookmark-wrapper" etc. 
             should now be applied within Mypage.js, Bookmark.js components respectively.
           */}
