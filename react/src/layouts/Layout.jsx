@@ -1,14 +1,15 @@
 import { Outlet } from "react-router-dom";
 import Footer from "../components/Footer/Footer";
 import Header from "../components/Header/Header";
+import styles from "./Layout.module.css";
 
 
 function Layout(){
     return(
         <>
-        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <div className={styles.layoutStyle}>
             <Header/>
-                <main style={{ flex: 1,overflowY: "auto"}}>
+                <main style={{ flex: 1}}>
                     <Outlet/>
                 </main>
             <Footer/>

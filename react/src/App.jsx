@@ -162,7 +162,6 @@ function App() {
           <Route path="member-detail/:id" element={<MemberDetail />} />{" "}
           {/* Using path parameter :id */}
           <Route path="managermypage" element={<ManagerMyPage />} />
-          <Route path="/login" element={<LoginPage />} />
           <Route path="/loginrequired" element={<LoginRequired />} />
           <Route path="/findid" element={<FindID />} />
           <Route path="/successid" element={<SuccessID />} />
@@ -236,6 +235,7 @@ function App() {
         />{" "}
         {/* Consider /qna/edit/:id */}
         {/* --- Routes that DO NOT use the main Layout (e.g., Auth pages) --- */}
+        <Route path="/login" element={<LoginPage />} />
         <Route path="shorts" element={<ShortsVideoPage />} />
         <Route path="/managerFreeboard" element={<ManagerFreeboard />} />
         <Route

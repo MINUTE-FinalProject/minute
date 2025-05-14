@@ -9,12 +9,13 @@
   margin-bottom: 20px;
   margin-right: 20px;
   margin-left: 100px;
-  width: calc(100% - 120px); 
-  height: calc(100vh - 41px); 
+  width: calc(100% - 120px);
+  height: calc(100vh - 41px);
   box-sizing: border-box;
-  scrollbar-width: none; 
+  scrollbar-width: none;
   padding-left: 30px;
   border-radius: 0 10px 10px 0;
+  padding-top: 15px;
 }
 
 .container::-webkit-scrollbar {
@@ -68,19 +69,41 @@
   height: 180px;
   border-radius: 50%;
   background-color: #000;
-  overflow: hidden;
+  overflow: visible;
   margin-left: 20px;
+  position: relative;
 }
-
-.profileImg>img {
+.profileImg > img {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.profileEdit {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ddd;
+  position: absolute;
+  bottom: 2px;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 20;
+  cursor: pointer;
+}
+.profileEdit > img {
+  width: 20px;
+  object-fit: cover;
 }
 
 .profileInfo {
   text-align: right;
 }
 
-.profileInfo>p {
+.profileInfo > p {
   margin-top: 10px;
   color: #000;
 }
@@ -94,14 +117,14 @@
   padding: 15px 10px;
 }
 
-.profileNavbar>ul {
+.profileNavbar > ul {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 70px;
 }
 
-.profileNavbar>ul>li {
+.profileNavbar > ul > li {
   white-space: nowrap;
   font-size: 1rem;
   cursor: pointer;
@@ -160,7 +183,7 @@
   flex: 0 0 30%;
   background-color: #ddd;
   margin-left: 75px;
-   margin-top: 20px;
+  margin-top: 20px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -168,7 +191,6 @@
   align-items: center;
   height: 860px;
   position: relative;
-
 }
 
 .mapWrap {
@@ -177,13 +199,12 @@
   grid-template-rows: repeat(4, 1fr);
   width: 100%;
   position: relative;
-  min-height: 600px; 
+  min-height: 600px;
   margin-top: -114px;
   margin-left: 14px;
 }
 
-
-.mapWrap>ul {
+.mapWrap > ul {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 20px;
@@ -191,137 +212,134 @@
   align-items: center;
 }
 
-.mapWrap>ul>li {
+.mapWrap > ul > li {
   max-width: 250px;
   width: 100%;
 }
 
-.mapWrap>ul>li img {
+.mapWrap > ul > li img {
   width: 100%;
   height: auto;
 }
 
 /* 지도 위치는 이미지와 동일하게 유지 */
-.mapWrap>ul>li:nth-child(1) {
+.mapWrap > ul > li:nth-child(1) {
   position: absolute;
   left: 50px;
   top: 23px;
 }
 
-.mapWrap>ul>li:nth-child(2) {
+.mapWrap > ul > li:nth-child(2) {
   position: absolute;
   left: 177px;
   top: -18px;
 }
 
-.mapWrap>ul>li:nth-child(3) {
+.mapWrap > ul > li:nth-child(3) {
   position: absolute;
   left: 247px;
   top: 190px;
 }
 
-.mapWrap>ul>li:nth-child(4) {
+.mapWrap > ul > li:nth-child(4) {
   position: absolute;
   left: 150px;
   top: 145px;
 }
 
-.mapWrap>ul>li:nth-child(5) {
+.mapWrap > ul > li:nth-child(5) {
   position: absolute;
   left: 18px;
   top: 168px;
 }
 
-.mapWrap>ul>li:nth-child(6) {
+.mapWrap > ul > li:nth-child(6) {
   position: absolute;
   left: 56px;
   top: 278px;
 }
 
-.mapWrap>ul>li:nth-child(7) {
+.mapWrap > ul > li:nth-child(7) {
   position: absolute;
   left: 306px;
   top: 317px;
 }
 
-.mapWrap>ul>li:nth-child(8) {
+.mapWrap > ul > li:nth-child(8) {
   position: absolute;
   left: 200px;
   top: 324px;
 }
 
-.mapWrap>ul>li:nth-child(9) {
+.mapWrap > ul > li:nth-child(9) {
   position: absolute;
   left: 32px;
   top: 398px;
 }
 
-.mapWrap>ul>li:nth-child(10) {
+.mapWrap > ul > li:nth-child(10) {
   position: absolute;
   left: 0px;
   top: 565px;
 }
 @media (max-width: 1919px) {
   .container {
-    overflow-y: auto; 
+    overflow-y: auto;
   }
-   .mapWrap{
+  .mapWrap {
     margin-left: -90px;
   }
 }
-@media (min-width: 1401px ) and (max-width:1600px) {
-    .leftWrap{
+@media (min-width: 1401px) and (max-width: 1600px) {
+  .leftWrap {
     margin-left: 0px;
     flex: 0 0 55%;
   }
-  .rightWrap{
+  .rightWrap {
     margin-left: 30px;
     flex: 00 40%;
   }
   .mapWrap {
-      margin-left: -26px;
-   }
-  
-
+    margin-left: -26px;
+  }
 }
-@media (min-width: 1201px ) and (max-width:1400px) {
-  .leftWrap{
+@media (min-width: 1201px) and (max-width: 1400px) {
+  .leftWrap {
     margin-left: 0px;
     flex: 0 0 55%;
   }
-  .rightWrap{
+  .rightWrap {
     margin-left: 30px;
     flex: 00 40%;
   }
   .mapWrap {
-      margin-left: -115px;
-   }
-   .profileNavbar>ul{
+    margin-left: -115px;
+  }
+  .profileNavbar > ul {
     gap: 50px;
   }
-  
 }
-@media (min-width: 1101px ) and (max-width:1200px) {
+@media (min-width: 1101px) and (max-width: 1200px) {
   .container {
-    overflow-y: auto; 
+    overflow-y: auto;
   }
   .leftWrap {
     margin-left: 0;
     flex: 0 0 50%;
   }
-  .rightWrap{
+  .rightWrap {
     flex: 00 44%;
     margin-left: 28px;
   }
-  .mapWrap{
+  .mapWrap {
     margin-left: -114px;
   }
-  .profileNavbar>ul{
+  .profileNavbar > ul {
     gap: 36px;
   }
 }
 
-@media (min-width: 768px) and (max-width: 1100px)   {
+@media (min-width: 768px) and (max-width: 1100px) {
   .layout {
     display: flex;
     flex-direction: column;
@@ -331,8 +349,8 @@
     margin-right: 0;
     width: 90%;
     margin-top: 20px;
-    height: calc(100vh - 41px); 
-    overflow-y: auto; 
+    height: calc(100vh - 41px);
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
   }
@@ -340,12 +358,12 @@
     flex: 0 0 100%;
     min-width: 0;
   }
-  .profileWrap{
+  .profileWrap {
     display: flex;
     flex-direction: row;
     width: 97%;
   }
-  .profileNavbar{
+  .profileNavbar {
     height: 60px;
     margin-top: 50px;
     margin-left: 20px;
@@ -363,7 +381,7 @@
     width: 120px;
     height: 120px;
   }
-  .profile{
+  .profile {
     min-width: 100px;
   }
   .profileInfo {
@@ -371,7 +389,7 @@
     margin-top: 50px;
     margin-right: 18px;
   }
- 
+
   .profileNavbar > ul {
     gap: 15px;
   }
@@ -379,7 +397,7 @@
     display: flex;
     width: 97%;
   }
-  .planleftWrap{
+  .planleftWrap {
     display: flex;
     flex-direction: column;
   }
@@ -394,7 +412,7 @@
     width: 93%;
     margin-top: -170px;
   }
-  .mapWrap{
+  .mapWrap {
     margin-left: 200px;
   }
   .mapWrap > ul {
@@ -402,8 +420,8 @@
   }
 }
 
-@media (max-width: 767px){
-   .layout {
+@media (max-width: 767px) {
+  .layout {
     display: flex;
     flex-direction: column;
   }
@@ -412,8 +430,8 @@
     margin-right: 0;
     width: 90%;
     margin-top: 20px;
-    height: calc(100vh - 41px); 
-    overflow-y: auto; 
+    height: calc(100vh - 41px);
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
   }
@@ -421,12 +439,12 @@
     flex: 0 0 100%;
     min-width: 0;
   }
-  .profileWrap{
+  .profileWrap {
     display: flex;
     flex-direction: row;
     width: 97%;
   }
-  .profileNavbar{
+  .profileNavbar {
     height: 60px;
     margin-right: 20px;
     margin-top: 50px;
@@ -444,7 +462,26 @@
     width: 120px;
     height: 120px;
   }
-  .profile{
+  .profileEdit {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ddd;
+    position: absolute;
+    bottom: -2px;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 20;
+    cursor: pointer;
+  }
+  .profileEdit > img {
+    width: 15px;
+    object-fit: cover;
+  }
+  .profile {
     min-width: 100px;
   }
   .profileInfo {
@@ -452,7 +489,7 @@
     margin-top: 50px;
     margin-right: 18px;
   }
- 
+
   .profileNavbar > ul {
     gap: 15px;
   }
@@ -460,9 +497,8 @@
     display: flex;
     width: 97%;
   }
-  
- 
-  .planleftWrap{
+
+  .planleftWrap {
     display: flex;
     flex-direction: column;
   }
@@ -477,7 +513,7 @@
     width: 93%;
     margin-top: -170px;
   }
-  .mapWrap{
+  .mapWrap {
     margin-left: 78px;
   }
   .mapWrap > ul {
