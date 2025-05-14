@@ -1,7 +1,7 @@
+import bg1 from "../../assets/images/gangwondo_bg1.jpg";
+import bg2 from "../../assets/images/gangwondo_bg2.jpg";
+import bg3 from "../../assets/images/gangwondo_bg3.jpg";
 import RegionPage from "./RegionPage";
-import bg1 from "../../assets/images/Gyeonggido_bg1.png";
-import bg2 from "../../assets/images/Gyeonggido_bg2.png";
-import bg3 from "../../assets/images/gangwondo_bg3.png";
 
 
 function GyeonggidoPage() {
