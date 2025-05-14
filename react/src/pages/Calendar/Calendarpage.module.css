@@ -1,3 +1,25 @@
+.layout {
+  display: flex;
+}
+
+.container {
+  display: flex;
+  background-color: #fff;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  margin-left: 100px;
+  width: calc(100% - 120px);
+  height: calc(100vh - 41px);
+  box-sizing: border-box;
+  scrollbar-width: none;
+  padding-left: 30px;
+  border-radius: 0 10px 10px 0;
+}
+
+.container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari 스크롤바 숨김 */
+}
 .contents_wrap {
     display: flex;
     width: 100%;
@@ -5,7 +27,6 @@
     padding: 40px 50px;
     border-radius: 0 10px 10px 0;
     height: calc(100vh - 42px);
-    margin-top: -1px;
     overflow: hidden;
     flex-direction: column;
 }

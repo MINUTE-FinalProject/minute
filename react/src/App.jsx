@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import './App.css'; // App.css는 전역 스타일을 위해 유지합니다.
+import "./App.css"; // App.css는 전역 스타일을 위해 유지합니다.
 
 // Layout Component
 import Layout from "./layouts/Layout";
@@ -62,7 +62,7 @@ import SuccessPwd from "./pages/Auth/SuccessPwd";
 import NotFound from "./pages/404";
 import ManagerFreeboard from "./pages/Admin/ManagerFreeboard";
 import ManagerFreeboardDetail from "./pages/Admin/ManagerFreeboardDetail";
-import ManagerMyPage from './pages/Admin/ManagerMyPage';
+import ManagerMyPage from "./pages/Admin/ManagerMyPage";
 import ManagerNotice from "./pages/Admin/ManagerNotice";
 import ManagerNoticeDetail from "./pages/Admin/ManagerNoticeDetail";
 import ManagerNoticeEdit from "./pages/Admin/ManagerNoticeEdit";
@@ -71,9 +71,9 @@ import ManagerQna from "./pages/Admin/ManagerQna";
 import ManagerQnaDetail from "./pages/Admin/ManagerQnaDetail";
 import ManagerQnaEdit from "./pages/Admin/ManagerQnaEdit";
 import ManagerQnaWrtie from "./pages/Admin/ManagerQnaWrite";
-import ManagerUserPage from './pages/Admin/ManagerUserPage';
-import MemberDetail from './pages/Admin/MemberDetail';
-import ReportedMembers from './pages/Admin/ReportedMembers';
+import ManagerUserPage from "./pages/Admin/ManagerUserPage";
+import MemberDetail from "./pages/Admin/MemberDetail";
+import ReportedMembers from "./pages/Admin/ReportedMembers";
 import ReportedPosts from "./pages/Admin/ReportedPosts";
 
 function App() {
@@ -87,9 +87,7 @@ function App() {
           <Route path="healing" element={<HealingPage />} />
           <Route path="mountain" element={<MountainPage />} />
           <Route path="themepark" element={<ThemeParkPage />} />
-     
-
-           <Route path="area">
+          <Route path="area">
             <Route index element={<GangwondoPage />} />
             <Route path="gangwondo" element={<GangwondoPage />} />
             <Route path="gyeonggido" element={<GyeonggidoPage />} />
@@ -103,29 +101,66 @@ function App() {
             <Route path="busan" element={<BusanPage />} />
             <Route path="seoul" element={<SeoulPage />} />
           </Route>
-
           {/* Note: className="mypage", "bookmark-wrapper" etc. 
             should now be applied within Mypage.js, Bookmark.js components respectively.
           */}
-         
-          <Route path="calendar" element={<Calendarpage />} />
-          <Route path="bookmark" element={<Bookmark />} />
           <Route path="search" element={<Search />} />
-
-          <Route path="notice" element={<div className="mainContentWithFixedHeader"><Notice /></div>} />
-          <Route path="noticeDetail" element={<div className="mainContentWithFixedHeader"><NoticeDetail /></div>} /> {/* Consider /notice/:id */}
-
-          <Route path="freeboard" element={<div className="mainContentWithFixedHeader"><FreeBoard /></div>} />
-          <Route path="freeboardDetail" element={<div className="mainContentWithFixedHeader"><FreeboardDetail /></div>} /> {/* Consider /freeboard/:id */}
-          <Route path="freeboardWrite" element={<div className="mainContentWithFixedHeader"><FreeboardWrite /></div>} />
-          <Route path="FreeboardEdit" element={<div className="mainContentWithFixedHeader"><FreeboardEdit /></div>} /> {/* Consider /freeboard/edit/:id */}
-
-         
-
+          <Route
+            path="notice"
+            element={
+              <div className="mainContentWithFixedHeader">
+                <Notice />
+              </div>
+            }
+          />
+          <Route
+            path="noticeDetail"
+            element={
+              <div className="mainContentWithFixedHeader">
+                <NoticeDetail />
+              </div>
+            }
+          />{" "}
+          {/* Consider /notice/:id */}
+          <Route
+            path="freeboard"
+            element={
+              <div className="mainContentWithFixedHeader">
+                <FreeBoard />
+              </div>
+            }
+          />
+          <Route
+            path="freeboardDetail"
+            element={
+              <div className="mainContentWithFixedHeader">
+                <FreeboardDetail />
+              </div>
+            }
+          />{" "}
+          {/* Consider /freeboard/:id */}
+          <Route
+            path="freeboardWrite"
+            element={
+              <div className="mainContentWithFixedHeader">
+                <FreeboardWrite />
+              </div>
+            }
+          />
+          <Route
+            path="FreeboardEdit"
+            element={
+              <div className="mainContentWithFixedHeader">
+                <FreeboardEdit />
+              </div>
+            }
+          />{" "}
+          {/* Consider /freeboard/edit/:id */}
           {/* Admin pages - using the main Layout for now */}
           <Route path="admin" element={<ManagerUserPage />} />
           <Route path="reportedmembers" element={<ReportedMembers />} />
-          <Route path="member-detail/:id" element={<MemberDetail />} /> {/* Using path parameter :id */}
+          <Route path="member-detail/:id" element={<MemberDetail />} />{" "}
+          {/* Using path parameter :id */}
           <Route path="managermypage" element={<ManagerMyPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/loginrequired" element={<LoginRequired />} />
@@ -141,46 +176,82 @@ function App() {
           <Route path="/deleteaccount" element={<DeleteAccount />} />
           <Route path="/checkinfo" element={<CheckInfo />} />
           <Route path="/checkdelete" element={<CheckDelete />} />
-    
         </Route>
-
-          <Route path="mypage" element={<div className="mypage1"><Mypage/></div>} />
-           <Route path="qna" element={<div className="mypage1"><Qna /></div>} />
-          <Route path="qnaDetail" element={<div className="mypage1"><QnaDetail /></div>} /> {/* Consider /qna/:id */}
-          <Route path="qnaWrite" element={<div className="mypage1"><QnaWrite /></div>} />
-          <Route path="qnaEdit" element={<div className="mypage1"><QnaEdit /></div>} /> {/* Consider /qna/edit/:id */}
-
-
+        <Route
+          path="mypage"
+          element={
+            <div className="mypage1">
+              <Mypage />
+            </div>
+          }
+        />
+        <Route
+          path="calendar"
+          element={
+            <div className="mypage1">
+              <Calendarpage />
+            </div>
+          }
+        />
+        <Route
+          path="bookmark"
+          element={
+            <div className="mypage1">
+              <Bookmark />
+            </div>
+          }
+        />
+        <Route
+          path="qna"
+          element={
+            <div className="mypage1">
+              <Qna />
+            </div>
+          }
+        />
+        <Route
+          path="qnaDetail"
+          element={
+            <div className="mypage1">
+              <QnaDetail />
+            </div>
+          }
+        />{" "}
+        {/* Consider /qna/:id */}
+        <Route
+          path="qnaWrite"
+          element={
+            <div className="mypage1">
+              <QnaWrite />
+            </div>
+          }
+        />
+        <Route
+          path="qnaEdit"
+          element={
+            <div className="mypage1">
+              <QnaEdit />
+            </div>
+          }
+        />{" "}
+        {/* Consider /qna/edit/:id */}
         {/* --- Routes that DO NOT use the main Layout (e.g., Auth pages) --- */}
-        
         <Route path="shorts" element={<ShortsVideoPage />} />
-
         <Route path="/managerFreeboard" element={<ManagerFreeboard />} />
-
-        <Route path="/managerFreeboardDetail" element={<ManagerFreeboardDetail />} />
-
+        <Route
+          path="/managerFreeboardDetail"
+          element={<ManagerFreeboardDetail />}
+        />
         <Route path="/managerNotice" element={<ManagerNotice />} />
-
         <Route path="/managerNoticeDetail" element={<ManagerNoticeDetail />} />
-
         <Route path="/managerNoticeEdit" element={<ManagerNoticeEdit />} />
-
         <Route path="/managerNoticeWrite" element={<ManagerNoticeWrite />} />
-
         <Route path="/managerQna" element={<ManagerQna />} />
-
         <Route path="/managerQnaDetail" element={<ManagerQnaDetail />} />
-
         <Route path="/managerQnaEdit" element={<ManagerQnaEdit />} />
-
         <Route path="/managerQnaWrite" element={<ManagerQnaWrtie />} />
-
         <Route path="/reportedposts" element={<ReportedPosts />} />
-
         <Route path="/*" element={<NotFound />} />
-
-
-
       </Routes>
     </BrowserRouter>
   );
