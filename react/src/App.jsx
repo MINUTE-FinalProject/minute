@@ -12,6 +12,18 @@ import ThemeParkPage from "./pages/Category/ThemeParkPage";
 import Main from "./pages/Main/Main";
 import ShortsVideoPage from "./pages/Shorts/ShortsVideoPage";
 
+import BusanPage from "./pages/Area/BusanPage";
+import ChungcheongbukPage from "./pages/Area/ChungcheongbukPage";
+import ChungcheongnamPage from "./pages/Area/ChungcheongnamPage";
+import GangwondoPage from "./pages/Area/GangwondoPage";
+import GyeonggidoPage from "./pages/Area/GyeonggidoPage";
+import GyeongsangbukPage from "./pages/Area/GyeongsangbukPage";
+import GyeongsangnamPage from "./pages/Area/GyeongsangnamPage";
+import JejuPage from "./pages/Area/JejuPage";
+import JeollabukPage from "./pages/Area/JeollabukPage";
+import JeollanamPage from "./pages/Area/JeollanamPage";
+import SeoulPage from "./pages/Area/SeoulPage";
+
 import Bookmark from "./pages/Bookmark/bookmark";
 import Search from "./pages/Bookmark/search";
 import Calendarpage from "./pages/Calendar/Calendarpage";
@@ -75,6 +87,21 @@ function App() {
           <Route path="mountain" element={<MountainPage />} />
           <Route path="themepark" element={<ThemeParkPage />} />
      
+
+           <Route path="area">
+            <Route index element={<GangwondoPage />} />
+            <Route path="gangwondo" element={<GangwondoPage />} />
+            <Route path="gyeonggido" element={<GyeonggidoPage />} />
+            <Route path="chungcheongbuk" element={<ChungcheongbukPage />} />
+            <Route path="chungcheongnam" element={<ChungcheongnamPage />} />
+            <Route path="jeollabuk" element={<JeollabukPage />} />
+            <Route path="jeollanam" element={<JeollanamPage />} />
+            <Route path="gyeongsangbuk" element={<GyeongsangbukPage />} />
+            <Route path="gyeongsangnam" element={<GyeongsangnamPage />} />
+            <Route path="jeju" element={<JejuPage />} />
+            <Route path="busan" element={<BusanPage />} />
+            <Route path="seoul" element={<SeoulPage />} />
+          </Route>
 
           {/* Note: className="mypage", "bookmark-wrapper" etc. 
             should now be applied within Mypage.js, Bookmark.js components respectively.
