@@ -4,6 +4,7 @@ import styles from "./LoginRequired.module.css";
 const LoginRequired = () => {
   return (
     <div className={styles.container}>
+      <div className={styles.boxf}>
       <h1 className={styles.logo}>MIN:UTE</h1>
       <div className={styles.keyimg}>
             <img className={styles.img1} src={img}/>
@@ -14,6 +15,7 @@ const LoginRequired = () => {
         MIN:UTE 에 가입하여 다양한 서비스를 이용하세요.</p>
       </div>
       <button className={styles.button}>Login</button>
+    </div>
     </div>
   );
 };

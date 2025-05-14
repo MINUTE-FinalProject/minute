@@ -19,14 +19,15 @@
     justify-content: center;
     padding: 16px;
     width: 100%;
-    max-width: 590px;
+    width: 550px;
+    height: 500px;
   }
   
   
   .title {
-    font-size: 38px;
+    font-size: 30px;
     font-weight: bold;
-    margin-bottom: 60px;
+    margin-bottom: 24px;
   }
   
   .content {
@@ -37,10 +38,10 @@
   }
 
   .content2 {
-    font-size: 43px;
+    font-size: 25px;
     color: #6B6B6B;
     font-weight: normal;
-    margin-bottom: 70px;
+    margin-bottom: 50px;
     margin-top: 10px;
   }
   
@@ -54,8 +55,8 @@
     border-radius: 5px;
     border: none;
     box-sizing: border-box;
-    font-size: 23px;
-    height: 53.33px;
+    font-size: 20px;
+    height: 43px;
   }
   
   .pwdBtn {
@@ -67,7 +68,8 @@
     border-radius: 5px;
     border: none;
     box-sizing: border-box;
-    font-size: 23px;
+    font-size: 20px;
+    height: 43px;
   }
 
 
