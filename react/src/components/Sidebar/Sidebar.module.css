@@ -1,75 +1,75 @@
 /* Sidebar.module.css */
 .sidebar {
-    width: 230px; /* 너비는 필요에 따라 조절 */
-    min-height: 100vh; /* 최소 화면 높이. Header가 fixed가 아닐 경우 고려 */
-    /* Header가 fixed (높이 45px 가정)이고 Sidebar가 그 아래부터 시작한다면:
-    min-height: calc(100vh - 45px);
-    position: sticky; /* 또는 fixed */
-    top: 45px; /* Header 높이만큼 */
-    left: 0;
+    width: 230px; /* 사이드바 너비 (필요에 따라 조절) */
     background-color: #1e1e1e; /* 어두운 배경 */
-    color: #e0e0e0; /* 기본 텍스트 색상 (흰색보다 약간 부드럽게) */
-    padding-top: 20px;
+    color: #e0e0e0; /* 기본 텍스트 색상 */
+    padding-top: 20px; /* 사이드바 상단 내부 여백 */
     box-sizing: border-box; /* 패딩, 테두리가 너비/높이에 포함되도록 */
-    /* position: fixed; */ /* 만약 화면에 고정시키고 싶다면 */
-    /* top: 0; */ /* Header가 없다면 top: 0, 있다면 Header 높이만큼 */
-    /* left: 0; */
-    /* height: 100%; */ /* 부모 요소가 높이를 제대로 잡고 있다면 100%도 가능 */
+
+    /* --- Sticky positioning --- */
+    position: sticky;   /* 스크롤 시 고정 */
+    top: 45px;          /* 화면 상단에서 헤더 높이(45px 가정)만큼 떨어진 위치에 고정 */
+                        /* !!! 중요: 실제 헤더 높이로 이 값을 수정해주세요 !!! */
+    left: 0;            /* 화면 왼쪽에 붙도록 설정 */
+    height: calc(100vh - 45px); /* 화면 전체 높이에서 헤더 높이(45px 가정)를 뺀 만큼 사이드바 높이 설정 */
+                                /* !!! 중요: 실제 헤더 높이로 이 값을 수정해주세요 !!! */
+    overflow-y: auto;   /* 사이드바 내용이 지정된 height보다 길 경우 내부 스크롤 생성 */
 }
 
 .logoArea {
-    padding: 0 20px 20px 20px; /* 로고 영역 패딩 */
+    padding: 0 20px 20px 20px; /* 로고 영역 패딩 (좌우 20px, 하단 20px) */
     text-align: center; /* 로고 텍스트 중앙 정렬 */
-    margin-bottom: 10px; /* 메뉴와의 간격 */
-    border-bottom: 1px solid #333; /* 구분선 */
+    margin-bottom: 10px; /* 메뉴 목록과의 간격 */
+    border-bottom: 1px solid #333; /* 로고 영역과 메뉴 목록 구분선 */
 }
 
 .logoText {
     font-size: 1.5em;
     font-weight: bold;
-    color: #fff;
+    color: #fff; /* 로고 텍스트 색상 */
 }
 
 .menuList {
-    list-style: none;
+    list-style: none; /* 기본 리스트 스타일 제거 */
     padding: 0;
     margin: 0;
 }
 
 .menuItem {
-    /* 각 li에 직접적인 스타일보다 NavLink에 집중 */
+    /* 각 li 요소에 직접적인 스타일보다 NavLink (a 태그)에 집중 */
 }
 
 .menuLink {
     display: flex; /* 아이콘과 텍스트를 가로로 배치 */
     align-items: center; /* 수직 중앙 정렬 */
-    padding: 15px 25px; /* 패딩 조정 (아이콘 공간 고려) */
-    text-decoration: none;
-    color: #e0e0e0; /* 기본 링크 색상 */
-    transition: background-color 0.2s ease, color 0.2s ease;
-    border-left: 3px solid transparent; /* 활성 상태 표시를 위한 공간 */
+    padding: 15px 25px; /* 메뉴 링크 내부 패딩 */
+    text-decoration: none; /* 텍스트 밑줄 제거 */
+    color: #e0e0e0; /* 기본 링크 텍스트 색상 */
+    transition: background-color 0.2s ease, color 0.2s ease; /* 부드러운 색상 변경 효과 */
+    border-left: 3px solid transparent; /* 활성 상태 표시를 위한 왼쪽 테두리 공간 (평소엔 투명) */
 }
 
 .menuLink:hover {
-    background-color: #2a2a2a; /* 호버 시 배경색 */
-    color: #ffffff; /* 호버 시 텍스트 색상 */
+    background-color: #2a2a2a; /* 마우스 호버 시 배경색 */
+    color: #ffffff; /* 마우스 호버 시 텍스트 색상 */
 }
 
-.activeMenuItem { /* NavLink의 isActive prop으로 적용될 클래스 */
+/* NavLink의 isActive prop으로 적용될 클래스 */
+.activeMenuItem {
     background-color: #333333; /* 활성 메뉴 배경색 */
     color: #ffffff; /* 활성 메뉴 텍스트 색상 */
     font-weight: 600; /* 활성 메뉴 폰트 굵게 */
-    border-left: 3px solid #FF3366; /* 활성 메뉴 왼쪽에 핑크색 바 (예시) */
+    border-left: 3px solid #FF3366; /* 활성 메뉴 왼쪽에 표시될 색상 바 */
 }
 
 .menuIcon {
     margin-right: 12px; /* 아이콘과 텍스트 사이 간격 */
-    font-size: 1.1em; /* 아이콘 크기 (텍스트 이모지 기준) */
-    display: inline-block;
-    width: 20px; /* 아이콘 공간 확보 */
-    text-align: center;
+    font-size: 1.1em; /* 아이콘 크기 (텍스트 이모지 사용 시 적절히 조절) */
+    display: inline-block; /* 아이콘이 공간을 차지하도록 */
+    width: 20px; /* 아이콘 너비 고정 (정렬을 위해) */
+    text-align: center; /* 아이콘 내부 중앙 정렬 (이모지 등이 약간 틀어질 경우 사용) */
 }
 
 .menuText {
-    font-size: 0.95em;
+    font-size: 0.95em; /* 메뉴 텍스트 크기 */
 }
