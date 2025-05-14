@@ -1,12 +1,25 @@
 
-.container {
+/* .container {
   width: 100%;
   min-height: 100vh;
   background-color: #d9d9d9;
   display: flex;
   justify-content: center;
   align-items: center;
+} */
+.pageWrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
+
+.container {
+   /* flex: 1;  */
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+  }
 
 .box {
   background-color: white;

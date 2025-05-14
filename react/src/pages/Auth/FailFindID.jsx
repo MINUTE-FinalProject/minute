@@ -1,13 +1,9 @@
-import Footer from '../../components/Footer/Footer';
-import Header from '../../components/Header/Header';
 import styles from './FailFindID.module.css';
 
 function FailFindID() {
   return (
-    <>
-    <Header/>
+ 
     <div className={styles.container}>
-      
       <div className={styles.wrapper}>
         <h1 className={styles.title}>아이디 찾기</h1>
 
@@ -18,8 +14,6 @@ function FailFindID() {
         <button className={styles.submitBtn}>아이디 찾기</button>
       </div>
     </div>
-    <Footer/>
-    </>
   );
 }
 

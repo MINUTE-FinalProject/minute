@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import searchStyle from './search.module.css';
 
 function Search() {
@@ -26,7 +26,7 @@ function Search() {
           <div className={searchStyle.searchBar}>
             <input type="text" placeholder="검색..." />
             <button className={searchStyle.searchIcon}>
-              <img src="/src/images/searchIcon.png" alt="" width="20" height="20" />
+              <img src="/src/assets/images/searchIcon.png" alt="" width="20" height="20" />
             </button>
           </div>
         </div>

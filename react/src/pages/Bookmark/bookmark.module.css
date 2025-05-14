@@ -4,15 +4,9 @@
   width: 100%;
   height: 100vh;
   background-color: #fff;
-  overflow-y: auto; /* 전체가 함께 스크롤 */
+  overflow-y: auto;
+  /* 전체가 함께 스크롤 */
   border-radius: 10px;
-}
-
-/* 내비게이션 래퍼 */
-.navWrap {
-  flex: 0 0 80px; /* 고정 너비 */
-  background-color: black;
-  border-radius: 10px 0 0 10px;
 }
 
 /* 메인 콘텐츠 */
@@ -20,7 +14,8 @@
   flex: 1;
   padding: 30px;
   background-color: #fff;
-  overflow-y: auto; /* 필요 시 내부 스크롤 */
+  overflow-y: auto;
+  /* 필요 시 내부 스크롤 */
   display: flex;
   flex-direction: column;
 }
@@ -31,12 +26,14 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  padding-top: 20px;
 }
 
 .header h1 {
   font-size: 32px;
   font-weight: bold;
   margin: 0;
+  padding-left: 65px;
 }
 
 /* 버튼 스타일 */
@@ -58,7 +55,8 @@
 }
 
 .btn:hover {
-  background-color: #f0f0f0;
+  background-color: #333333;
+  color: white;
 }
 
 /* 북마크 그리드 */
@@ -78,6 +76,8 @@
   display: flex;
   flex-direction: column;
   transition: transform 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+
 }
 
 .bookmarkItem:hover {
@@ -98,6 +98,7 @@
   position: relative;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
+
 }
 
 .bookmarkCheckbox {

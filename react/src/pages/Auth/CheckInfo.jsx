@@ -1,13 +1,10 @@
 import { useState } from 'react';
-import Header from "../../components/Header/Header";
 import styles from './CheckInfo.module.css';
 
 function CheckInfo() {
   const [gender, setGender] = useState('');
 
   return (
-    <>
-    <Header />
     <div className={styles.container}>
       
       <div className={styles.formWrapper}>
@@ -94,7 +91,6 @@ function CheckInfo() {
         <div className={styles.footer}></div>
       </div>
     </div>
-    </>
   );
 }
 

@@ -32,6 +32,7 @@
   }
   .textbox {
     display: flex;
+    margin-top: 10px;
   }
   .searchIcon {
     width: 22px;

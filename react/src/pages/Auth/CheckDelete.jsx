@@ -2,6 +2,7 @@ import styles from "./CheckDelete.module.css";
 
 function CheckDelete() {
     return (
+        <div className={styles.pageWrapper}>
         <div className={styles.container}>
             <div className={styles.header}></div>
             <div className={styles.box}>
@@ -44,6 +45,7 @@ function CheckDelete() {
 
                 <button className={styles.da_btn}>회원 탈퇴</button>
             </div>
+        </div>
         </div>
     );
 }

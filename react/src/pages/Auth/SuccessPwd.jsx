@@ -1,13 +1,10 @@
 import img from '../../assets/images/key.png';
-import Footer from '../../components/Footer/Footer';
-import Header from '../../components/Header/Header';
 import styles from './FindPwd.module.css';
 
 function SuccessPwd() {
     return (
-        <>
-        <Header/>
-        <div className={styles.containerf}>
+         <div className={styles.pageWrapper}>
+        <div className={styles.container}>
      
             <div className={styles.boxf}>
                 <div className={styles.keyimgf}>
@@ -22,8 +19,7 @@ function SuccessPwd() {
                 </form>
             </div>
         </div>
-        <Footer/>
-        </>
+        </div>
     );
 }
 

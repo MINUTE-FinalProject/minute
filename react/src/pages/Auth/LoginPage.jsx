@@ -1,12 +1,9 @@
-import img from '../../assets/images/loginimg.png';
-import Footer from '../../components/Footer/Footer';
-import Header from '../../components/Header/Header';
+
+import img from '../../assets/images/loginBg.png';
 import styles from "./LoginPage.module.css";
 
 const LoginPage = () => {
   return (
-    <>
-    <Header/>
     <div className={styles.loginWrap}>
         <div className={styles.keyimg}>
         <img className={styles.img1} src={img} alt="Login Background" />
@@ -23,8 +20,6 @@ const LoginPage = () => {
         </div>
       </div>
     </div>
-    <Footer/>
-    </>
   );
 };
 

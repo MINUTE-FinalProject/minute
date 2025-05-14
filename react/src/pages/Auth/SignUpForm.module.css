@@ -1,10 +1,15 @@
+.pageWrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .container {
-    min-height: 100vh;
+   flex: 1; 
     background-color: white;
     display: flex;
     flex-direction: column;
   }
-  
 
   .formWrapper {
     flex: 1;
@@ -83,12 +88,7 @@
     box-sizing: border-box;
   }
   
-  .container {
-    min-height: 100vh;
-    background-color: white;
-    display: flex;
-    flex-direction: column;
-  }
+
  
   .genderGroup {
     display: flex;
@@ -138,17 +138,6 @@
   .agreebox .arrow {
     font-size: 16px;
     margin-left: auto;
-  }
-
-  
-
-
-.container2 {
-    font-family: sans-serif;
-    background-color: white;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
   }
   
   .content2 {

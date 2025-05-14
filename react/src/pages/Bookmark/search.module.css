@@ -1,14 +1,14 @@
 
 .container {
   background-color: #fff;
-  padding: 20px;
+  padding: 100px;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 50px;
   flex-wrap: wrap;
 }
 

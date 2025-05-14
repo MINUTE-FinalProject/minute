@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import bookmarkStyle from './bookmark.module.css';
-import MypageNav from "../../components/MypageNavBar/MypageNav";
 
 const Bookmark = () => {
   const [folders, setFolders] = useState([]);
@@ -105,7 +104,6 @@ const Bookmark = () => {
   return (
     <div className={bookmarkStyle.container}>
       <div className={bookmarkStyle.navWrap}>
-        <MypageNav />
       </div>
       <main className={bookmarkStyle.mainContent}>
         <header className={bookmarkStyle.header}>

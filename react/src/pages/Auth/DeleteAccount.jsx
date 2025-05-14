@@ -1,12 +1,8 @@
 import img from '../../assets/images/ex1.jpg';
-import Footer from '../../components/Footer/Footer';
-import Header from '../../components/Header/Header';
 import styles from './DeleteAccount.module.css';
 
 function DeleteAccount() {
     return(
-      <>
-      <Header/>
     <div className={styles.container}>
       <div className={styles.header}>
 
@@ -30,8 +26,6 @@ function DeleteAccount() {
         <button className={styles.submitBtnD}>회원 탈퇴</button>
       </div>
     </div>
-    <Footer/>
-    </>
     );
 } 
 

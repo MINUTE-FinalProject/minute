@@ -1,11 +1,8 @@
-import Footer from '../../components/Footer/Footer';
-import Header from '../../components/Header/Header';
 import styles from './FindID.module.css';
 
 function FindID() {
   return (
-    <>
-    <Header/>
+    <div className={styles.pageWrapper}>
     <div className={styles.container}>
         
       <div className={styles.wrapper}>
@@ -28,8 +25,7 @@ function FindID() {
 
       </div>
     </div>
-    <Footer/>
-    </>
+    </div>
   );
 }
 

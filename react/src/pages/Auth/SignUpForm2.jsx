@@ -1,13 +1,9 @@
 import { useState } from "react";
-import Footer from "../../components/Footer/Footer";
-import Header from "../../components/Header/Header";
 import styles from "./SignUpForm2.module.css";
 
 function SignUpForm2() {
   const [gender, setGender] = useState("");
   return (
-     <>
-    <Header/>
     <div className={styles.container}>
       <div className={styles.header}></div>
       <div className={styles.formWrapper}>
@@ -113,8 +109,6 @@ function SignUpForm2() {
         
       </div>
     </div>
-    <Footer/>
-    </>
   );
 }
 
