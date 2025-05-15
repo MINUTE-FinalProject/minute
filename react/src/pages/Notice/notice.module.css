@@ -130,3 +130,9 @@
     background-color: #ffe0e9; /* 예시: 약간 더 진한 핑크 */
     cursor: pointer;
 }
+
+.paginationWrapper {
+  margin-top: 30px; /* 테이블과의 간격 */
+  display: flex;
+  justify-content: center; /* 페이지네이션 컴포넌트 중앙 정렬 */
+}
