@@ -1,60 +1,43 @@
 /* 전체 레이아웃 */
 .layout {
   display: flex;
+  background-color: #535353;
+  height: 100vh;
 }
 
 .container {
   display: flex;
-  background-color: #fff;
   margin-top: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 60px;
   margin-right: 20px;
   margin-left: 100px;
   width: calc(100% - 120px);
-  height: calc(100vh - 41px);
+  height: calc(100vh - 40px);
   box-sizing: border-box;
-  scrollbar-width: none;
-  padding-left: 30px;
   border-radius: 0 10px 10px 0;
-}
-
-.container::-webkit-scrollbar {
-  display: none; /* Chrome, Safari 스크롤바 숨김 */
 }
 
 .container2 {
   display: flex;
   width: 100%;
-  background-color: #fff;
   overflow-y: auto;
-  /* 전체가 함께 스크롤 */
-  border-radius: 10px;
-}
-
-.container {
-  display: flex;
-  background-color: #fff;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  margin-right: 20px;
-  margin-left: 100px;
-  width: calc(100% - 120px);
-  height: calc(100vh - 41px);
-  box-sizing: border-box;
-  scrollbar-width: none;
-  padding-left: 30px;
-  border-radius: 0 10px 10px 0;
+  border-bottom-right-radius: 10px;
 }
 
 /* 메인 콘텐츠 */
 .mainContent {
   flex: 1;
   padding: 30px;
-  background-color: #fff;
+  background-color: #f5f3e9; /* 베이지색 배경 */
   overflow-y: auto;
-  /* 필요 시 내부 스크롤 */
   display: flex;
   flex-direction: column;
+  border-top-right-radius: 10px;
+  font-size: 12px;
+}
+
+.mainContent h2{
+  margin-bottom: 20px;
 }
 
 /* 헤더 스타일 */
@@ -63,14 +46,12 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  padding-top: 20px;
 }
 
 .header h1 {
   font-size: 32px;
   font-weight: bold;
   margin: 0;
-  padding-left: 65px;
 }
 
 /* 버튼 스타일 */
@@ -87,23 +68,43 @@
   border-radius: 5px;
   font-size: 14px;
   white-space: nowrap;
-  line-height: 1;
   transition: background-color 0.2s;
 }
 
 .btn:hover {
-  background-color: #333333;
+  background-color: #333;
   color: white;
+}
+
+.btn:disabled {
+  background-color: #f0f0f0;
+  color: #999;
+  cursor: not-allowed;
+  border: 1px solid #ccc;
 }
 
 /* 북마크 그리드 */
 .bookmarkGrid {
-  margin-top: 40px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 24px;
+  flex: 1;
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  min-height: 300px;
+  border: 1px solid #333;
+  row-gap: 30px;
+  column-gap: 20px;
+  grid-template-columns: repeat(7, minmax(200px, 1fr));
+  justify-items: center;
+  overflow-y: auto;
 }
 
+.emptyState {
+  width: 100%;
+  height: 100%;
+}
+
+/* 북마크 아이템 (폴더가 있을 경우) */
 .bookmarkItem {
   width: 160px;
   height: 200px;
@@ -167,6 +168,7 @@
   cursor: pointer;
 }
 
+/* 모달 스타일 */
 .modalOverlay {
   position: fixed;
   top: 0;
