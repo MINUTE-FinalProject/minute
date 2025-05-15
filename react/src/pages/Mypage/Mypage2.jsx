@@ -1,8 +1,13 @@
+import { useState } from 'react';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 import { Link } from "react-router-dom";
 import MypageNav from "../../components/MypageNavBar/MypageNav";
+import './MyCalendar.css';
 import styles from "./Mypage.module.css";
 
 function Mypage2() {
+  const [value, onChange] = useState(new Date());
   return (
     <>
     <MypageNav/>
@@ -15,9 +20,6 @@ function Mypage2() {
                 <h1 className={styles.profileNickName}>SuMinJi</h1>
                 <div className={styles.profileImg}>
                   <img src="/src/assets/images/cute.png" alt="프로필 이미지" />
-                   <div className={styles.profileEdit}>
-                      <img src="/src/assets/images/edit_pencil.png" alt="프로필 편집 이미지" />
-                   </div>
                 </div>
               </div>
               <div className={styles.profileInfo}>
@@ -46,9 +48,18 @@ function Mypage2() {
           </div>
           <div className={styles.planWrap}>
             <div className={styles.planLeftWrap}>
-              <div className={styles.calendar}>달력</div>
+              <div className={styles.calendar}>
+                <Calendar
+                  locale="en"
+                  onChange={onChange}
+                  value={value}
+                  next2Label={null}
+                  prev2Label={null}
+                  showNeighboringMonth={false}
+                />
+              </div>
               <div className={styles.planList}>
-                list
+                Check-List
                 <button className={styles.editButton}>
                   <Link to="/calendar">
                     <img src="/src/assets/images/edit_white.png" alt="list"/>
@@ -58,7 +69,7 @@ function Mypage2() {
             </div>
             <div className={styles.planRightWrap}>
               <div className={styles.planContext}>
-                일정
+                Plan
                 <button className={styles.editButton}>
                   <Link to="/calendar">
                     <img src="/src/assets/images/edit_black.png" alt="일정 수정"/>
