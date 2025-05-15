@@ -1,11 +1,9 @@
 import { Link } from "react-router-dom";
-import MypageNav from "../../components/MypageNavBar/MypageNav";
 import styles from "./Mypage.module.css";
 
 function Mypage() {
   return (
     <>
-      <MypageNav />
       <div className={styles.container}>
         <div className={styles.leftWrap}>
           <div className={styles.profileWrap}>
@@ -47,7 +45,7 @@ function Mypage() {
                 list
                 <button className={styles.editButton}>
                   <Link to="/calendar">
-                    <img src="/src/assets/images/edit_white.png" />
+                    <img src="/src/assets/images/edit_white.png" alt="list"/>
                   </Link>
                 </button>
               </div>
@@ -57,7 +55,7 @@ function Mypage() {
                 일정
                 <button className={styles.editButton}>
                   <Link to="/calendar">
-                    <img src="/src/assets/images/edit_black.png" />
+                    <img src="/src/assets/images/edit_black.png" alt="일정 수정"/>
                   </Link>
                 </button>
               </div>
@@ -68,34 +66,34 @@ function Mypage() {
           <div className={styles.mapWrap}>
             <ul>
               <li>
-                <img src="/src/assets/images/1.png" alt="" />
+                <img src="/src/assets/images/1.png" alt="맵 1" />
               </li>
               <li>
-                <img src="/src/assets/images/2.png" alt="" />
+                <img src="/src/assets/images/2.png" alt="맵 2" />
               </li>
               <li>
-                <img src="/src/assets/images/3.png" alt="" />
+                <img src="/src/assets/images/3.png" alt="맵 3" />
               </li>
               <li>
-                <img src="/src/assets/images/4.png" alt="" />
+                <img src="/src/assets/images/4.png" alt="맵 4" />
               </li>
               <li>
-                <img src="/src/assets/images/5.png" alt="" />
+                <img src="/src/assets/images/5.png" alt="맵 5" />
               </li>
               <li>
-                <img src="/src/assets/images/6.png" alt="" />
+                <img src="/src/assets/images/6.png" alt="맵 6" />
               </li>
               <li>
-                <img src="/src/assets/images/7.png" alt="" />
+                <img src="/src/assets/images/7.png" alt="맵 7" />
               </li>
               <li>
-                <img src="/src/assets/images/8.png" alt="" />
+                <img src="/src/assets/images/8.png" alt="맵 8" />
               </li>
               <li>
-                <img src="/src/assets/images/9.png" alt="" />
+                <img src="/src/assets/images/9.png" alt="맵 9" />
               </li>
               <li>
-                <img src="/src/assets/images/10.png" alt="" />
+                <img src="/src/assets/images/10.png" alt="맵 10" />
               </li>
             </ul>
           </div>

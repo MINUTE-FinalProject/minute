@@ -1,11 +1,14 @@
+.pageWrapper {
+  /* min-height: 100vh; */
+  display: flex;
+  flex-direction: column;
+}
 
 .container {
-  width: 100%;
-  min-height: 100vh;
-  background-color: #d9d9d9;
+  background-color: white;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  margin: 150px auto 0;
 }
 
 .box {
@@ -63,8 +66,8 @@
 }
 
 .da_btn {
-display: flex;
-justify-content: center;
+  display: flex;
+  justify-content: center;
   align-items: center;
   background-color: #d9d9d9;
   color: #000;

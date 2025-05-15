@@ -1,5 +1,6 @@
 import React from 'react'; // React import 추가 (습관적으로)
 import { Link } from 'react-router-dom'; // Link와 useParams 추가
+import MypageNav from '../../components/MypageNavBar/MypageNav';
 import qnaDetailStyle from './qnaDetail.module.css';
 // import banner from "../../assets/images/banner.png"; // 배너 이미지가 필요하다면 주석 해제 및 경로 확인
 
@@ -29,7 +30,11 @@ function QnaDetail() {
 
     return (
         // 페이지 전체를 감싸는 가장 큰 div
-        <div className={qnaDetailStyle.background}>
+        <>
+         <MypageNav/>
+         <div className={qnaDetailStyle.layout}>
+            <div className={qnaDetailStyle.container}>
+                <div className={qnaDetailStyle.background}>
 
             {/* Q&A 문구를 클릭하면 Q&A 목록으로 이동 */}
             {/* CSS 모듈의 .qnaLinkContainer 와 .qnaLink 스타일 적용 */}
@@ -96,6 +101,9 @@ function QnaDetail() {
             {/* --- 관리자 답변 영역 끝 --- */}
 
         </div>
+            </div>
+        </div>
+        </>
     );
 }
 

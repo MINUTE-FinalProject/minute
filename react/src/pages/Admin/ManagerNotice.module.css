@@ -1,0 +1,243 @@
+/* ManagerNotice.module.css */
+
+/* --- 전체 레이아웃 --- */
+.container {
+  display: flex;
+  flex-direction: row;
+  margin-top: 45px; /* 고정 헤더 높이에 따라 조절 (Header 컴포넌트 높이) */
+  background-color: #f4f6f8; /* 전체 Admin 페이지의 연한 배경색 (선택 사항) */
+  min-height: calc(100vh - 45px); /* 헤더 제외한 전체 높이 */
+}
+
+.managerContent { /* Sidebar를 제외한 메인 콘텐츠 영역 */
+  flex: 1; /* Sidebar 제외한 나머지 공간 모두 차지 */
+  margin: 20px; /* Sidebar 및 가장자리와의 여백 */
+  padding: 30px 35px;
+  background-color: #ffffff; /* 콘텐츠 영역은 흰색 배경 (카드 형태) */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* --- 페이지 제목 --- */
+.pageTitle { /* "공지사항" */
+  font-size: 2.2em; /* 다른 관리자 페이지 제목과 통일 */
+  font-weight: 600;
+  color: #2c3e50;
+  margin-top: 0; /* Sidebar 와의 간격은 .managerContent margin-top 으로 조절 */
+  margin-bottom: 30px; /* 필터바와의 간격 */
+  /* text-align: center; */ /* 이미지는 좌측 정렬로 보임 */
+}
+
+/* --- 필터 바 --- */
+.filterBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 25px;
+  padding: 15px;
+  background-color: #2c3e50; /* 이미지 상 어두운 필터 바 배경 */
+  border-radius: 6px;
+}
+
+.filterDate,
+.filterSearchInput {
+  padding: 8px 12px;
+  border: 1px solid #ced4da; /* 연한 테두리 */
+  background-color: #ffffff; /* 흰색 배경 */
+  color: #333;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+.filterDate {
+  width: 150px; /* 날짜 입력창 너비 */
+}
+.searchContainer { /* 검색 입력창과 버튼을 묶는 컨테이너 */
+  display: flex;
+  flex-grow: 1; /* 남은 공간 차지 */
+}
+.filterSearchInput {
+  flex-grow: 1;
+  border-right: none; /* 버튼과 자연스럽게 이어지도록 */
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.filterSearchButton {
+  padding: 0;
+  width: 40px; /* 버튼 너비 */
+  height: 36px; /* 입력창 높이에 맞춤 (패딩 8*2 + 글자 14 + 테두리 1*2 근사치) */
+  background-color: #ffffff; /* 입력창과 같은 배경 */
+  border: 1px solid #ced4da;
+  border-left: none; /* 입력창과 자연스럽게 이어지도록 */
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.filterSearchButton:hover {
+  background-color: #f8f9fa;
+}
+.filterSearchIcon {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+/* --- 콘텐츠 부제목 --- */
+.subTitle { /* "공지사항 목록" */
+  font-size: 1.4em;
+  font-weight: 600;
+  color: #333;
+  margin-top: 20px; /* 필터바와의 간격 */
+  margin-bottom: 15px;
+}
+
+/* --- 테이블 --- */
+.noticeTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+
+.noticeTable thead th {
+  background-color: #f8f9fa; /* 테이블 헤더 배경 */
+  padding: 12px 10px;
+  text-align: center;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6; /* 헤더와 본문 구분선 */
+}
+/* 제목 컬럼만 왼쪽 정렬 */
+.noticeTable th.titleColumn,
+.noticeTable td.tableTitleContent {
+  text-align: left;
+}
+/* 체크박스, NO 컬럼 너비 조절 */
+.noticeTable th:first-child, .noticeTable td:first-child { width: 5%; } /* 체크박스 */
+.noticeTable th:nth-child(2), .noticeTable td:nth-child(2) { width: 8%; } /* NO */
+.noticeTable th:nth-child(3) { width: auto; } /* 제목 - 자동 너비 */
+.noticeTable th:nth-child(4) { width: 15%; } /* 작성일 */
+.noticeTable th:nth-child(5) { width: 20%; } /* 수정/삭제 */
+
+
+.noticeTable tbody td {
+  padding: 10px;
+  border-bottom: 1px solid #e9ecef; /* 행 구분선 */
+  vertical-align: middle;
+}
+
+.noticeTable tbody tr:hover td {
+  background-color: #f1f9ff; /* 연한 하늘색 호버 (자유게시판 연핑크와는 다르게) */
+}
+
+/* 중요 공지 행 스타일 */
+.importantRow {
+  background-color: #fff5f5; /* 매우 연한 핑크/빨강 배경 */
+}
+.importantRow td {
+  font-weight: 500;
+}
+
+.importantTag { /* "중요" 알약 스타일 */
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 0.8em;
+  font-weight: bold;
+  color: white;
+  background-color: #dc3545; /* 이미지상 핑크/빨강 계열 */
+  border-radius: 10px;
+}
+
+.titleLink { /* 테이블 내 제목 링크 */
+  text-decoration: none;
+  color: #007bff; /* 링크 색상 */
+}
+.titleLink:hover {
+  text-decoration: underline;
+}
+
+/* 테이블 내 수정/삭제 버튼 */
+.actionButton {
+  padding: 4px 10px;
+  font-size: 0.85em;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 0 3px;
+  transition: background-color 0.2s, border-color 0.2s;
+  border: 1px solid #ced4da; /* 기본 테두리 */
+}
+.editButton {
+  background-color: #6c757d; /* 수정 버튼 회색 계열 */
+  color: white;
+  border-color: #6c757d;
+}
+.editButton:hover {
+  background-color: #5a6268;
+  border-color: #545b62;
+}
+.deleteButton {
+  background-color: #e9ecef; /* 삭제 버튼 더 연한 회색 또는 흰색 */
+  color: #495057;
+  border-color: #ced4da;
+}
+.deleteButton:hover {
+  background-color: #dae0e5;
+  border-color: #b1bbc4;
+}
+
+/* --- 하단 액션 버튼 (작성 버튼) --- */
+.bottomActions {
+  display: flex;
+  justify-content: flex-end; /* 버튼 오른쪽 정렬 */
+  margin-top: 20px; /* 테이블과의 간격 */
+}
+.writeButton { /* 작성 버튼 스타일 (다른 메인 actionButton들과 유사하게) */
+  padding: 8px 18px;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  background-color: #000000; /* 검은색 배경 */
+  color: white;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+.writeButton:hover {
+  background-color: #333333;
+  border-color: #333333;
+}
+
+/* --- 페이지네이션 --- */
+.pagination {
+  margin-top: 30px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+.pagination button {
+  margin: 0;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #333;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+.pagination button:hover {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+}
+.pagination button.active { /* 현재 페이지 버튼 */
+  font-weight: bold;
+  background-color: #555; /* 이미지 참고 어두운 활성 버튼 */
+  color: #fff;
+  border-color: #555;
+}

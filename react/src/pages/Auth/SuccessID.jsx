@@ -1,12 +1,8 @@
-import Footer from '../../components/Footer/Footer';
-import Header from '../../components/Header/Header';
 import styles from './SuccessID.module.css';
 
 
 function SuccessID() {
   return (
-    <>
-    <Header/>
     <div className={styles.container}>
     
       <div className={styles.wrapper}>
@@ -20,8 +16,6 @@ function SuccessID() {
 
       </div>
     </div>
-    <Footer/>
-    </>
   );
 }
 

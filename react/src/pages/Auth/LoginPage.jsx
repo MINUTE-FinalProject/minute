@@ -1,28 +1,31 @@
-import img from '../../assets/images/key.png';
-import Footer from '../../components/Footer/Footer';
-import Header from '../../components/Header/Header';
+import { Link } from "react-router-dom";
+import img from "../../assets/images/loginBg.png";
 import styles from "./LoginPage.module.css";
 
 const LoginPage = () => {
   return (
-    <>
-    <Header/>
     <div className={styles.loginWrap}>
-        <div className={styles.keyimg}>
+      <div className={styles.backImg}>
         <img className={styles.img1} src={img} alt="Login Background" />
       </div>
       <div className={styles.loginBox}>
         <h1 className={styles.logo}>MIN:UTE</h1>
-        <input type="text" placeholder="UserName" className={styles.input} />
-        <input type="password" placeholder="Password" className={styles.input} />
-        <button className={styles.btn}>Login</button>
+        <div className="formGroup">
+          <input type="text" placeholder="UserName" className={styles.input} />
+          <input
+            type="password"
+            placeholder="Password"
+            className={styles.input}
+          />
+          <button className={styles.btn}>Login</button>
+        </div>
         <div className={styles.links}>
-          <a href="#">아이디찾기</a> | <a href="#">비밀번호찾기</a> | <a href="#">회원가입</a>
+          <Link to="/findid">아이디찾기</Link> |{" "}
+          <Link to="/findpwd">비밀번호찾기</Link> |{" "}
+          <Link to="/SignUpForm">회원가입</Link>
         </div>
       </div>
     </div>
-    <Footer/>
-    </>
   );
 };
 

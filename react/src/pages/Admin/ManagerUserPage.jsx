@@ -44,7 +44,8 @@ const ManagerUserPage = () => {
                   <td>{row.content}</td>
                   <td>{row.date}</td>
                   <td>
-                    <button className={row.status === "처리" ? styles.pending : styles.done}>
+                    
+                    <button className={`${styles.status} ${row.status === "처리" ? styles.pending : styles.done}`}>
                       {row.status}
                     </button>
                   </td>
@@ -52,6 +53,13 @@ const ManagerUserPage = () => {
               ))}
             </tbody>
           </table>
+          <div className={styles.pagination}>
+                      <button>&lt;</button>
+                      <button className={styles.active}>1</button>
+                      <button>2</button>
+                      <button>3</button>
+                      <button>&gt;</button>
+                    </div>
         </section>
       </div>
     </div>
