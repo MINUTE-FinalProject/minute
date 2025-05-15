@@ -110,25 +110,21 @@ function ReportedPosts() {
                             댓글
                         </button>
                     </div>
-
-                    <div className={styles.filterBar}>
-                        <input type="date" className={styles.filterInput} aria-label="시작일"/>
-                        <input type="date" className={styles.filterInput} aria-label="종료일"/>
-                        <select className={styles.filterSelect} aria-label="숨김상태 필터">
-                            <option value="">숨김상태▼</option>
-                            <option value="public">공개</option>
-                            <option value="hidden">숨김</option>
-                        </select>
-                        <select className={styles.filterSelect} aria-label="정렬순서">
-                            <option value="">정렬순▼</option>
-                            <option value="reportCount_desc">신고횟수 많은 순</option>
-                            <option value="date_desc">최근 작성일 순</option>
-                        </select>
-                        <input type="text" placeholder="ID, 닉네임, 제목/내용 검색" className={styles.filterSearchInput} />
-                        <button type="button" className={styles.filterSearchButton} aria-label="검색">
-                            <img src={searchButtonIcon} alt="검색" className={styles.filterSearchIcon} />
-                        </button>
-                    </div>
+                    
+                 <div className={styles.filterBar}>
+                                            <input type="date" className={styles.filterElement} />
+                                            <span className={styles.dateSeparator}>~</span>
+                                            <input type="date" className={styles.filterElement} />
+                                            <select className={styles.filterElement}>
+                                                <option value="all">상태 (전체)</option>
+                                                <option value="answered">답변완료</option>
+                                                <option value="unanswered">미답변</option>
+                                            </select>
+                                            <input type="text" placeholder="검색어를 입력하세요" className={`${styles.filterElement} ${styles.filterSearchInput}`} />
+                                            <button type="button" className={styles.filterSearchButton}>
+                                                <img src={searchButtonIcon} alt="검색" className={styles.searchIcon} />
+                                            </button>
+                                        </div>
 
                     <table className={styles.reportsTable}>
                         <thead>

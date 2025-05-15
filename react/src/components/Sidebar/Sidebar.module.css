@@ -64,13 +64,13 @@
 }
 
 .menuIcon {
-    margin-right: 12px; /* 아이콘과 텍스트 사이 간격 */
-    font-size: 1.1em; /* 아이콘 크기 (텍스트 이모지 사용 시 적절히 조절) */
+    margin-right: 15px; /* 아이콘과 텍스트 사이 간격 */
+    font-size: 18px; /* 아이콘 크기 (텍스트 이모지 사용 시 적절히 조절) */
     display: inline-block; /* 아이콘이 공간을 차지하도록 */
     width: 20px; /* 아이콘 너비 고정 (정렬을 위해) */
     text-align: center; /* 아이콘 내부 중앙 정렬 (이모지 등이 약간 틀어질 경우 사용) */
 }
 
 .menuText {
-    font-size: 0.95em; /* 메뉴 텍스트 크기 */
+    font-size: 18px; /* 메뉴 텍스트 크기 */
 }

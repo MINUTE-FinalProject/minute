@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'; // useEffect 추가
 import { Link } from 'react-router-dom';
+import searchButtonIcon from "../../assets/images/search_icon.png";
 import styles from './ManagerFreeboard.module.css';
 
 // Pagination 컴포넌트 임포트 (경로는 프로젝트 구조에 맞게 확인해주세요)
@@ -9,7 +10,6 @@ import Pagination from '../../components/Pagination/Pagination';
 import reportOffIcon from "../../assets/images/able-alarm.png";
 import likeOffIcon from "../../assets/images/b_thumbup.png";
 import reportOnIcon from "../../assets/images/disable-alarm.png";
-import searchButtonIcon from "../../assets/images/search_icon.png";
 import likeOnIcon from "../../assets/images/thumbup.png";
 
 // 예시 데이터 (실제로는 API를 통해 받아옵니다)
@@ -103,23 +103,18 @@ function ManagerFreeboard() {
                             신고된 글
                         </button>
                     </div>
-
-                    <div className={styles.filterBar}>
-                        <input type="date" className={styles.filterInput} />
-                        <input type="date" className={styles.filterInput} />
-                        <select className={styles.filterSelect}>
-                            <option value="">최신순▼</option>
-                            <option value="latest">최신순</option>
-                            <option value="views">조회순</option>
-                        </select>
-                        <select className={styles.filterSelect}>
-                            <option value="">신고순▼</option> {/* 이 필터가 '정렬순'으로 되어있어 '신고순'으로 변경 */}
-                            <option value="likes">좋아요순</option>
-                            <option value="reports">신고순</option>
-                        </select>
-                        <input type="text" placeholder="검색어를 입력하세요" className={styles.filterSearchInput} />
+                  <div className={styles.filterBar}>
+                    <input type="date" className={styles.filterElement} />
+                    <span className={styles.dateSeparator}>~</span>
+                    <input type="date" className={styles.filterElement} />
+                    <select className={styles.filterElement}>
+                        <option value="all">상태 (전체)</option>
+                        <option value="answered">답변완료</option>
+                        <option value="unanswered">미답변</option>
+                    </select>
+                    <input type="text" placeholder="검색어를 입력하세요" className={`${styles.filterElement} ${styles.filterSearchInput}`} />
                         <button type="button" className={styles.filterSearchButton}>
-                            <img src={searchButtonIcon} alt="검색" className={styles.filterSearchIcon} />
+                        <img src={searchButtonIcon} alt="검색" className={styles.searchIcon} />
                         </button>
                     </div>
 

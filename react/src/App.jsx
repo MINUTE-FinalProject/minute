@@ -71,10 +71,11 @@ import ManagerNoticeWrite from "./pages/Admin/ManagerNoticeWrite";
 import ManagerQna from "./pages/Admin/ManagerQna";
 import ManagerQnaDetail from "./pages/Admin/ManagerQnaDetail";
 import ManagerQnaEdit from "./pages/Admin/ManagerQnaEdit";
+import ManagerUsers from "./pages/Admin/ManagerUsers";
 
 import ManagerQnaWrite from "./pages/Admin/ManagerQnaWrite";
-import ManagerUserPage from './pages/Admin/ManagerUserPage';
 import MemberDetail from './pages/Admin/MemberDetail';
+import ReportedMemberDetail from './pages/Admin/ReportedMemberDetail';
 import ReportedMembers from './pages/Admin/ReportedMembers';
 
 import ReportedPosts from "./pages/Admin/ReportedPosts";
@@ -120,7 +121,8 @@ function App() {
           {/* ▼▼▼ 관리자 페이지 그룹: AdminLayout 적용 ▼▼▼ */}
           <Route path="admin" element={<AdminLayout />}>
             <Route index element={<ManagerMyPage />} />
-            <Route path="users" element={<ManagerUserPage />} /> {/* 명시적으로 /admin/users */}
+            <Route path="users" element={<ManagerUsers />} />
+            <Route path="reportedmember-detail/:id" element={<ReportedMemberDetail />} /> {/* 명시적으로 /admin/users */}
             <Route path="reportedmembers" element={<ReportedMembers />} />
             <Route path="member-detail/:id" element={<MemberDetail />} />
 

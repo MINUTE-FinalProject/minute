@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import searchButtonIcon from "../../assets/images/search_icon.png";
 import styles from './ManagerNotice.module.css';
 
+
 // Pagination 컴포넌트 임포트
 import Pagination from '../../components/Pagination/Pagination';
 
@@ -115,15 +116,19 @@ function ManagerNotice() {
                     <h1 className={styles.pageTitle}>공지사항 관리</h1>
 
                     <div className={styles.filterBar}>
-                        <input type="date" className={styles.filterDate} />
-                        <input type="date" className={styles.filterDate} />
-                        <div className={styles.searchContainer}>
-                            <input type="text" placeholder="검색어를 입력하세요" className={styles.filterSearchInput} />
-                            <button type="button" className={styles.filterSearchButton}>
-                                <img src={searchButtonIcon} alt="검색" className={styles.filterSearchIcon} />
-                            </button>
-                        </div>
-                    </div>
+                                            <input type="date" className={styles.filterElement} />
+                                            <span className={styles.dateSeparator}>~</span>
+                                            <input type="date" className={styles.filterElement} />
+                                            <select className={styles.filterElement}>
+                                                <option value="all">상태 (전체)</option>
+                                                <option value="answered">답변완료</option>
+                                                <option value="unanswered">미답변</option>
+                                            </select>
+                                            <input type="text" placeholder="검색어를 입력하세요" className={`${styles.filterElement} ${styles.filterSearchInput}`} />
+                                            <button type="button" className={styles.filterSearchButton}>
+                                                <img src={searchButtonIcon} alt="검색" className={styles.searchIcon} />
+                                            </button>
+                                        </div>
 
                     <h2 className={styles.subTitle}>공지사항 목록</h2>
 
