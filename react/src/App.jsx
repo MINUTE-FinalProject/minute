@@ -91,6 +91,8 @@ function App() {
           <Route path="mountain" element={<MountainPage />} />
           <Route path="themepark" element={<ThemeParkPage />} />
 
+          <Route path="search" element={<div className="mypage1"><Search /></div>} />
+         
           <Route path="area">
             <Route index element={<GangwondoPage />} />
             <Route path="gangwondo" element={<GangwondoPage />} />
@@ -115,18 +117,12 @@ function App() {
           <Route path="freeboardWrite" element={<div className="mainContentWithFixedHeader"><FreeboardWrite /></div>} />
           <Route path="freeboardEdit/:id" element={<div className="mainContentWithFixedHeader"><FreeboardEdit /></div>} /> {/* :id 파라미터 추가 권장 */}
 
-          <Route path="qna" element={<div className="mainContentWithFixedHeader"><Qna /></div>} />
-          <Route path="qnaDetail/:id" element={<div className="mainContentWithFixedHeader"><QnaDetail /></div>} /> {/* :id 파라미터 추가 권장 */}
-          <Route path="qnaWrite" element={<div className="mainContentWithFixedHeader"><QnaWrite /></div>} />
-          <Route path="qnaEdit/:id" element={<div className="mainContentWithFixedHeader"><QnaEdit /></div>} /> {/* :id 파라미터 추가 권장 */}
-
           {/* ▼▼▼ 관리자 페이지 그룹: AdminLayout 적용 ▼▼▼ */}
           <Route path="admin" element={<AdminLayout />}>
             <Route index element={<ManagerMyPage />} />
             <Route path="users" element={<ManagerUserPage />} /> {/* 명시적으로 /admin/users */}
             <Route path="reportedmembers" element={<ReportedMembers />} />
             <Route path="member-detail/:id" element={<MemberDetail />} />
-            
 
             <Route path="managerFreeboard" element={<ManagerFreeboard />} />
             <Route path="managerFreeboardDetail/:id" element={<ManagerFreeboardDetail />} /> {/* :id 파라미터 추가 권장 */}
@@ -148,7 +144,7 @@ function App() {
 
           {/* 인증 관련 페이지들은 Layout(헤더/푸터)을 사용하지 않는 경우가 많으므로 밖에 두거나, */}
           {/* 필요하다면 별도의 AuthLayout 등을 구성할 수 있습니다. 현재는 Layout 내에 배치된 것으로 보입니다. */}
-          <Route path="/login" element={<LoginPage />} />
+          
           <Route path="/loginrequired" element={<LoginRequired />} />
           <Route path="/findid" element={<FindID />} />
           <Route path="/successid" element={<SuccessID />} />
@@ -162,6 +158,7 @@ function App() {
           <Route path="/deleteaccount" element={<DeleteAccount />} />
           <Route path="/checkinfo" element={<CheckInfo />} />
           <Route path="/checkdelete" element={<CheckDelete />} />
+        
         </Route>
 
         {/* Bookmark 관련 경로 */}
@@ -169,22 +166,24 @@ function App() {
         <Route path="bookmark/:folderId" element={<div className="mypage1"><Bookmark /> </div>}/>
 
         {/* 마이페이지 관련 경로 */}
-        <Route path="mypage" element={<div className="mypage1"><Mypage /></div>} />
-        <Route path="calendar" element={<div className="mypage1"><Calendarpage /></div>} />
-        <Route path="qna" element={<div className="mypage1"><Qna /></div>} />
-        <Route path="qnaDetail" element={<div className="mypage1"><QnaDetail /></div>} />
-        <Route path="qnaWrite" element={<div className="mypage1"><QnaWrite /></div>} />
-        <Route path="qnaEdit" element={<div className="mypage1"><QnaEdit /></div>} />
-       
+         <Route path="mypage" element={<div className="mypage1"><Mypage /></div>} />
+         <Route path="calendar" element={<div className="mypage1"><Calendarpage /></div>} />
 
+         <Route path="qna" element={<div className="mypage1"><Qna /></div>} />
+
+         <Route path="qnaDetail" element={<div className="mypage1"><QnaDetail /></div>} />
+         <Route path="qnaDetail/:id" element={<div className="mypage1"><QnaDetail /></div>} /> {/* :id 파라미터 추가 권장 */}
+
+         <Route path="qnaWrite" element={<div className="mypage1"><QnaWrite /></div>} />
+
+         <Route path="qnaEdit" element={<div className="mypage1"><QnaEdit /></div>} />
+         <Route path="qnaEdit/:id" element={<div className="mypage1"><QnaEdit /></div>} /> {/* :id 파라미터 추가 권장 */}
+            
+  
         {/* --- Routes that DO NOT use the main Layout (e.g., Auth pages) --- */}
+        <Route path="/login" element={<LoginPage />} />
         <Route path="shorts" element={<ShortsVideoPage />} />
-        <Route path="mypage" element={<div className="mypage1"><Mypage /></div>} />
-        <Route path="calendar" element={<div className="mypage1"><Calendarpage /></div>} />
-        <Route path="bookmark" element={<div className="mypage1"><Bookmark /></div>} />
-        <Route path="search" element={<div className="mypage1"><Search /></div>} />
         <Route path="/*" element={<NotFound />} />
-
       </Routes>
     </BrowserRouter>
   );
