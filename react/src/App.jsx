@@ -145,9 +145,6 @@ function App() {
           <Route path="/checkinfo" element={<CheckInfo />} />
           <Route path="/checkdelete" element={<CheckDelete />} />
         
-        
-        </Route>
-
         {/* --- Routes that DO NOT use the main Layout (e.g., Auth pages) --- */}
         
         <Route path="shorts" element={<ShortsVideoPage />} />
@@ -175,6 +172,9 @@ function App() {
         <Route path="/reportedposts" element={<ReportedPosts />} />
 
         <Route path="/*" element={<NotFound />} />
+        
+        </Route>
+
 
 
 
