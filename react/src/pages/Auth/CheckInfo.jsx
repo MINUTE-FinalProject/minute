@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import img from '../../assets/images/cute.png';
+import img2 from '../../assets/images/edit_pencil.png';
 import styles from './CheckInfo.module.css';
 
 function CheckInfo() {
@@ -9,6 +11,19 @@ function CheckInfo() {
       
       <div className={styles.formWrapper}>
         <h1 className={styles.title}>정보 조회</h1>
+
+        <div className={styles.form}>
+          <label className={styles.label}>my photo</label>
+          <div className={styles.imgWrapper}>
+            <div className={styles.img}>
+              <img className={styles.img2} src={img} alt="프로필" />
+            </div>
+            <div className={styles.profileEdit}>
+              <img src={img2} alt="프로필 편집 아이콘" />
+            </div>
+          </div>
+        </div>
+
 
         <div className={styles.form}>
           <label className={styles.label}>name</label>

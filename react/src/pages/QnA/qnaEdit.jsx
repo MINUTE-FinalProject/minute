@@ -74,7 +74,7 @@ function QnaEdit() {
                         // onChange={(e) => setContent(e.target.value)}
                         placeholder="내용을 입력해주세요."
                         // className={qnaEditStyle.textareaContent} // 필요시 qnaEditStyle.module.css에 개별 스타일 정의
-                        style={{ width: '100%', minHeight: '150px', padding: '8px', boxSizing: 'border-box' }} // CSS 모듈 사용 권장
+                        style={{ width: '100%', minHeight: '200px', padding: '8px', boxSizing: 'border-box' }} // CSS 모듈 사용 권장
                     ></textarea>
                 </div>
 

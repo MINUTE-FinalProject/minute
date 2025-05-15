@@ -1,16 +1,14 @@
 
 import img from "../../assets/images/ex1.jpg";
-import Header from "../../components/Header/Header";
-import Sidebar from "../../components/Sidebar/Sidebar";
 import styles from "./ManagerMyPage.module.css";
 
 const ManagerMyPage = () => {
   return (
     <>
-      <Header />
+
       <div className={styles.container}>
         <div className={styles.main}>
-          <Sidebar />
+
           <main className={styles.mypage}>
             <h2>마이페이지</h2>
             <div className={styles.box}>

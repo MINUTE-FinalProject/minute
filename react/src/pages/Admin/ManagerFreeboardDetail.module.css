@@ -221,3 +221,9 @@
   padding: 30px 0;
   font-size: 0.98em;
 }
+/* 댓글 페이지네이션 래퍼 스타일 (선택 사항) */
+.commentPaginationWrapper {
+  margin-top: 25px; /* 댓글 목록과의 간격 */
+  display: flex;
+  justify-content: center; /* 페이지네이션 컴포넌트 중앙 정렬 */
+}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import styles from "./GangwondoPage.module.css"; // ✅ 올바른 경로
 import Header from "../../components/Header/Header";
+import styles from "./GangwondoPage.module.css"; // ✅ 올바른 경로
 import RollingCardSlider from "./RollingCardSlider";
 
 function RegionPage({ regionName, backgroundImages, cities }) {
@@ -28,10 +28,11 @@ function RegionPage({ regionName, backgroundImages, cities }) {
       <Header />
       <div
         className={styles.container}
-        style={{
-          backgroundImage: selectImage ? `url(${selectImage})` : "none"
-        }}
+        // style={{
+        //   backgroundImage: selectImage ? `url(${selectImage})` : "none"
+        // }}
       >
+        <img src={selectImage} className={styles.containerImg}/>
         <h1>{regionName}</h1>
         <div className={styles.searchbar}>
           <input type="text" className={styles.searchInput} />

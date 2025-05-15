@@ -179,32 +179,17 @@
   vertical-align: middle;
 }
 
-/* 페이지네이션 스타일 (자유게시판과 유사하게) */
+/* 페이지네이션 컨테이너 스타일 (컴포넌트 전체를 중앙 정렬 등) */
 .pagination {
   margin-top: 30px;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
+  display: flex; /* Pagination 컴포넌트를 flex 아이템으로 중앙 정렬하기 위함 */
+  justify-content: center; /* 수평 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 (선택 사항, 컴포넌트 높이가 다를 경우 유용) */
+  /* 기존 text-align: center; 와 gap: 8px; 는 display:flex 사용 시 큰 영향이 없거나,
+     자식 요소가 하나일 경우 gap이 의미 없을 수 있어 정리했습니다. 필요시 추가 가능합니다. */
 }
-.pagination button {
-  margin: 0;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  color: #333;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 14px;
-  transition: background-color 0.2s ease-in-out;
-}
-.pagination button:hover {
-  background-color: #f0f0f0;
-}
-.pagination .active {
-  font-weight: bold;
-  background-color: #333;
-  color: #fff;
-  border-color: #333;
-}
+
+/* 이전 .pagination button, .pagination button:hover, .pagination .active 스타일은 
+  새로운 Pagination 컴포넌트가 자체 CSS 모듈(pagination.module.css)을 사용하므로 삭제되었습니다.
+  Pagination 컴포넌트의 버튼 모양, 색상, 활성 상태 등은 pagination.module.css 에서 관리됩니다.
+*/

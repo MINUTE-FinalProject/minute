@@ -2,8 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import reportOffIcon from '../../assets/images/able-alarm.png'; // 신고 아이콘 (기본)
 import reportOnIcon from '../../assets/images/disable-alarm.png'; // 신고된 아이콘
-import Header from '../../components/Header/Header'; // 실제 Header 컴포넌트 경로
-import Sidebar from '../../components/Sidebar/Sidebar'; // 실제 Sidebar 컴포넌트 경로
 import styles from './ManagerQnaDetail.module.css';
 
 // 예시 데이터 함수 (실제 API 호출로 대체 필요)
@@ -168,10 +166,10 @@ function ManagerQnaDetail() {
 
     return (
         <>
-            <Header />
+
             {/* Sidebar와 메인 콘텐츠를 감싸는 Flex 컨테이너 */}
             <div className={styles.container}>
-                <Sidebar /> {/* Sidebar 컴포넌트 (자체적으로 너비를 가져야 함) */}
+
                 
                 {/* 메인 콘텐츠 영역 */}
                 <main className={styles.detailContent}>

@@ -59,7 +59,7 @@ function QnaWrite() {
                         placeholder="내용을 입력해주세요."
                         // value={content}
                         // onChange={(e) => setContent(e.target.value)}
-                        style={{ width: '100%', minHeight: '150px', padding: '8px', boxSizing: 'border-box' }} // 인라인 스타일 예시, CSS 모듈 권장
+                        style={{ width: '100%', minHeight: '200px', padding: '8px', boxSizing: 'border-box' }} // 인라인 스타일 예시, CSS 모듈 권장
                     ></textarea>
                 </div>
 
