@@ -1,9 +1,8 @@
-/* test.module.css */
+/* freeBoard.module.css */
 
 /* --- 기본 설정 --- */
 :global(body) {
-  /* 전역 선택자 사용 */
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; */ /* 폰트 설정 삭제 또는 주석 처리하여 App.css의 Noto Sans 적용 */
   margin: 0;
   padding: 0;
   background-color: #f8f9fa;
@@ -85,12 +84,13 @@
 
 .board-title-link {
   color: #343a40;
+  transition: color 0.2s ease-in-out; /* 색상 변경 시 부드러운 전환 효과 추가 (선택 사항) */
 }
 
 .board-title-link:hover {
   text-decoration: none;
   /* 제목은 호버 시 밑줄 제거 */
-  color: #0056b3;
+  color: #FF69B4; /* "자유게시판" 문구 호버 시 핑크색으로 변경 */
 }
 
 .board-navigation {
