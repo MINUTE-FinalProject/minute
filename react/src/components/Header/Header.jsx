@@ -1,17 +1,25 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../assets/images/LO3.png";
 import HamburgerMenu from "./HamburgerMenu";
 import HeaderStyle from "./Header.module.css";
 
 function Header() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  // 로고 클릭 시 메뉴바 닫기
+  const handleLogoClick = () => {
+    setIsOpen(false);
+  };
+
   return (
     <div className={HeaderStyle.header}>
       <div className={HeaderStyle.container}>
         <div className={HeaderStyle.icons}>
-          <Link to="/">
+          <Link to="/" onClick={handleLogoClick}>
             <img src={logo} alt="logo" className={HeaderStyle.logo} />
           </Link>
-          <HamburgerMenu />
+          <HamburgerMenu isOpen={isOpen} setIsOpen={setIsOpen} />
         </div>
         <div className={HeaderStyle.auth}>
           <Link to="/login">

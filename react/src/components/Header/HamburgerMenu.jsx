@@ -1,9 +1,8 @@
 import { useState } from "react";
-import styles from "./HamburgerMenu.module.css";
 import { Link } from "react-router-dom";
+import styles from "./HamburgerMenu.module.css";
 
-function HamburgerMenu() {
-  const [isOpen, setIsOpen] = useState(false);
+function HamburgerMenu({ isOpen, setIsOpen }) {
   const [showCategoryMenu, setShowCategoryMenu] = useState(false);
   const [showBoardMenu, setShowBoardMenu] = useState(false);
 
@@ -17,7 +16,7 @@ function HamburgerMenu() {
 
       <nav className={`${styles.menu} ${isOpen ? styles.show : ""}`}>
         <div className={styles.menuItem}>
-          <a href="#" onClick={() => setShowCategoryMenu(!showCategoryMenu)}>
+          <a onClick={() => setShowCategoryMenu(!showCategoryMenu)}>
             카테고리
           </a>
           {showCategoryMenu && (
@@ -30,14 +29,14 @@ function HamburgerMenu() {
           )}
         </div>
         <div className={styles.menuItem}>
-          <a href="#" onClick={() => setShowBoardMenu(!showBoardMenu)}>
+          <a onClick={() => setShowBoardMenu(!showBoardMenu)}>
             게시판
           </a>
           {showBoardMenu && (
             <div className={styles.submenu}>
-              <Link to="/notice">공지사항</Link>
-              <Link to="/freeboard">자유게시판</Link>
-              <Link to="/qna">Q&A게시판</Link>
+              <Link to="/notice" onClick={() => setIsOpen(false)}>공지사항</Link>
+              <Link to="/freeboard" onClick={() => setIsOpen(false)}>자유게시판</Link>
+              <Link to="/qna" onClick={() => setIsOpen(false)}>Q&A게시판</Link>
             </div>
           )}
         </div>
