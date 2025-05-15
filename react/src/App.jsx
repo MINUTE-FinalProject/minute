@@ -50,7 +50,7 @@ import FailFindID from "./pages/Auth/FailFindID";
 import FindID from "./pages/Auth/FindID";
 import FindPwd from "./pages/Auth/FindPwd";
 import FindPwd2 from "./pages/Auth/FindPwd2";
-import LoginPage from "./pages/Auth/LoginPage"; // 경로 대소문자 확인 (Auth)
+import LoginPage from "./pages/Auth/LoginPage";
 import LoginRequired from "./pages/Auth/LoginRequired";
 import SignupComplete from "./pages/Auth/SignUpComplete";
 import SignUpForm from "./pages/Auth/SignUpForm";
@@ -101,9 +101,6 @@ function App() {
             <Route path="busan" element={<BusanPage />} />
             <Route path="seoul" element={<SeoulPage />} />
           </Route>
-          {/* Note: className="mypage", "bookmark-wrapper" etc. 
-            should now be applied within Mypage.js, Bookmark.js components respectively.
-          */}
           <Route path="search" element={<Search />} />
           <Route
             path="notice"
@@ -120,8 +117,7 @@ function App() {
                 <NoticeDetail />
               </div>
             }
-          />{" "}
-          {/* Consider /notice/:id */}
+          />
           <Route
             path="freeboard"
             element={
@@ -137,8 +133,7 @@ function App() {
                 <FreeboardDetail />
               </div>
             }
-          />{" "}
-          {/* Consider /freeboard/:id */}
+          />
           <Route
             path="freeboardWrite"
             element={
@@ -154,13 +149,11 @@ function App() {
                 <FreeboardEdit />
               </div>
             }
-          />{" "}
-          {/* Consider /freeboard/edit/:id */}
+          />
           {/* Admin pages - using the main Layout for now */}
           <Route path="admin" element={<ManagerUserPage />} />
           <Route path="reportedmembers" element={<ReportedMembers />} />
-          <Route path="member-detail/:id" element={<MemberDetail />} />{" "}
-          {/* Using path parameter :id */}
+          <Route path="member-detail/:id" element={<MemberDetail />} />
           <Route path="managermypage" element={<ManagerMyPage />} />
           <Route path="/loginrequired" element={<LoginRequired />} />
           <Route path="/findid" element={<FindID />} />
@@ -176,6 +169,25 @@ function App() {
           <Route path="/checkinfo" element={<CheckInfo />} />
           <Route path="/checkdelete" element={<CheckDelete />} />
         </Route>
+
+        {/* Bookmark 관련 경로 */}
+        <Route
+          path="bookmark"
+          element={
+            <div className="mypage1">
+              <Bookmark />
+            </div>
+          }
+        />
+        <Route
+          path="bookmark/:folderId"
+          element={
+            <div className="mypage1">
+              <Bookmark />
+            </div>
+          }
+        />
+
         <Route
           path="mypage"
           element={
@@ -189,14 +201,6 @@ function App() {
           element={
             <div className="mypage1">
               <Calendarpage />
-            </div>
-          }
-        />
-        <Route
-          path="bookmark"
-          element={
-            <div className="mypage1">
-              <Bookmark />
             </div>
           }
         />
@@ -215,8 +219,7 @@ function App() {
               <QnaDetail />
             </div>
           }
-        />{" "}
-        {/* Consider /qna/:id */}
+        />
         <Route
           path="qnaWrite"
           element={
@@ -232,8 +235,8 @@ function App() {
               <QnaEdit />
             </div>
           }
-        />{" "}
-        {/* Consider /qna/edit/:id */}
+        />
+
         {/* --- Routes that DO NOT use the main Layout (e.g., Auth pages) --- */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="shorts" element={<ShortsVideoPage />} />
