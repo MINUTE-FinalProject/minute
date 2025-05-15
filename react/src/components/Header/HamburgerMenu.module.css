@@ -53,6 +53,7 @@ a {
 }
 .menuItem {
   position: relative;
+  cursor: pointer;
 }
 .submenu {
   flex-direction: column;
