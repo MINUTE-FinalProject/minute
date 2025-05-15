@@ -31,10 +31,10 @@ function Mypage2() {
                   <Link to="/checkinfo">정보수정</Link>
                 </li>
                 <li>
-                  <Link to="/freeboardDetail">내가쓴글</Link>
+                  <Link to="/freeboard">내가쓴글</Link>
                 </li>
                 <li>
-                  <Link to="/qnaDetail">나의문의</Link>
+                  <Link to="/qna">나의문의</Link>
                 </li>
                 <li>
                   <Link to="/bookmark">북마크</Link>
