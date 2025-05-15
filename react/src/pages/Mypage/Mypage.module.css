@@ -15,7 +15,6 @@
   scrollbar-width: none;
   padding-left: 30px;
   border-radius: 0 10px 10px 0;
-  padding-top: 15px;
 }
 
 .container::-webkit-scrollbar {
@@ -161,6 +160,7 @@
   border-radius: 10px;
   padding: 20px;
   box-sizing: border-box;
+  position: relative;
 }
 
 .planRightWrap {
@@ -171,14 +171,17 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  position: relative;
 }
-
-.planContext {
-  text-align: center;
+.editButton{
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin: 0;
+  position: absolute;
+  right: 20px;
+  width: 30px;
 }
-
 .rightWrap {
   flex: 0 0 30%;
   background-color: #ddd;
@@ -190,7 +193,6 @@
   justify-content: center;
   align-items: center;
   height: 860px;
-  position: relative;
 }
 
 .mapWrap {
@@ -520,3 +522,4 @@
     gap: 8px;
   }
 }
+
