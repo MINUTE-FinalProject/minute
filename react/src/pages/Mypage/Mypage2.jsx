@@ -15,9 +15,7 @@ function Mypage2() {
                 <h1 className={styles.profileNickName}>SuMinJi</h1>
                 <div className={styles.profileImg}>
                   <img src="/src/assets/images/cute.png" alt="프로필 이미지" />
-                   <div className={styles.profileEdit}>
-                      <img src="/src/assets/images/edit_pencil.png" alt="프로필 편집 이미지" />
-                   </div>
+                   
                 </div>
               </div>
               <div className={styles.profileInfo}>
