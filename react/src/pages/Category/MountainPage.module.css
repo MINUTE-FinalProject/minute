@@ -1,38 +1,69 @@
 .container {
-   position: relative;
+  position: relative;
   width: 100%;
-  height: 100vh;  
-  background-image: url(../../assets/images/healing.png);
-  background-size: cover;          
-  background-position: top;         
-  background-repeat: no-repeat;     
+  min-height: 100vh;
+  background-image: url(../../assets/images/mountain.png);
+  background-size: cover;
+  background-position: top;
+  background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-bottom: 60px;
 }
 .videoList {
-  position: absolute;
-  top: 70%;
   width: 100%;
-  display: flex;
-  justify-content: center;
-  z-index: 2;
-  padding-bottom: 20px; 
-  max-height: 300px; 
+  margin-top: 520px;
+  padding: 62px;
 }
 
 .videoList ul {
- display: flex;
-  flex-wrap: wrap;       
-  justify-content: space-between; 
-  gap: 20px;             
-  width: 80%;  
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
 }
 
-.videoList li {
-   width: calc(20% - 16px);  
-  height: 350px;
+.videoItem {
+  width: calc(20% - 16px);
+  height: 300px;
+  background-color: rgba(246, 246, 246, 0.9);
+  padding: 15px;
   border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.5);
+  text-align: center;
+  font-size: 16px;
+  color: #000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.videoThumbnail {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.videoTitle {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.loadMoreButton {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #3f3f3f;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.loadMoreButton:hover {
+  background-color: #333;
 }

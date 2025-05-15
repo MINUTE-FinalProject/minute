@@ -1,3 +1,4 @@
+import MypageNav from '../../components/MypageNavBar/MypageNav';
 import qnaEditStyle from './qnaEdit.module.css';
 // React Router를 사용한다면 Link를 import 하세요.
 // import { Link } from 'react-router-dom';
@@ -34,7 +35,11 @@ function QnaEdit() {
 
     return (
         // <form onSubmit={handleUpdateSubmit}> {/* 전체를 form으로 감쌀 경우 */}
-        <div className={qnaEditStyle.background}>
+        <>
+           <MypageNav/>
+         <div className={qnaEditStyle.layout}>
+            <div className={qnaEditStyle.container}>
+                <div className={qnaEditStyle.background}>
 
             <div className={qnaEditStyle.title}>
                 {/* Q&A 문구를 클릭하면 Q&A 목록 페이지로 가는 기능 */}
@@ -145,6 +150,10 @@ function QnaEdit() {
                 </div>
             </div>
         </div>
+            </div>
+         </div>
+        </>
+        
         // </form>
     );
 }

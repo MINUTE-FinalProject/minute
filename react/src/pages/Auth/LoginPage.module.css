@@ -1,55 +1,65 @@
-
-  .loginWrap {
-  position: relative;
+.loginWrap {
   width: 100%;
-  height: 100vh; 
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  position: relative;
+  background-color: #000;
 }
 
-  .keyimg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-  }
-  
-
-  .img1 {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .loginBox {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* padding: 40px 30px; */
-    border-radius: 10px;
-    width: 350px;
-  }
-  
-
-  .logo {
-    font-size: 36px;
-    font-weight: bold;
-    color: white;
-    margin-bottom: 30px;
-  }
-  
-
-  .formGroup {
+.backImg {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  gap: 10px;
+  height: 100%;
+  z-index: 0;
+  filter: brightness(0.6);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  image-rendering: auto;
+}
+
+.img1 {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.loginBox {
+  position: relative;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 40px 30px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.logo {
+  font-size: 36px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 30px;
+}
+
+.formGroup {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .input,
 .btn {
-  display: block;
   width: 100%;
   box-sizing: border-box;
   height: 38px;
@@ -59,33 +69,49 @@
 }
 
 .input {
-  margin-bottom: 10px;
+  width: 100%;
+  height: 42px;
+  margin-bottom: 15px;
+  padding: 0 12px;
+  font-size: 15px;
+  border-radius: 8px;
   border: 1px solid #ccc;
-  margin-bottom: 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  transition: border-color 0.3s ease;
 }
 
 .btn {
-  background-color: #FF3366;
+  height: 42px;
+  background-color: #ff3366;
   border: none;
-  color: white;
+  border-radius: 8px;
+  color: #fff;
   font-weight: bold;
+  font-size: 16px;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-  
-  .links {
-    margin-top: 15px;
-    font-size: 12px;
-    color: white;
-  }
-  
-  .links a {
-    color: white;
-    text-decoration: none;
-    margin: 0 4px;
-  }
-  
-  .links a:hover {
-    text-decoration: underline;
-  }
-  
+.btn:hover {
+  background-color: #e62e5c;
+  transform: translateY(-2px);
+}
+
+.links {
+  margin-top: 20px;
+  font-size: 13px;
+  color: #fff;
+  text-align: center;
+}
+
+.links a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 6px;
+  transition: color 0.3s;
+}
+
+.links a:hover {
+  color: #ffccdd;
+  text-decoration: underline;
+}

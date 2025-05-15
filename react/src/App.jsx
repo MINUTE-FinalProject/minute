@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import './App.css'; // App.css는 전역 스타일을 위해 유지합니다.
+import "./App.css"; // App.css는 전역 스타일을 위해 유지합니다.
 
 // Layout Components
 import AdminLayout from "./layouts/AdminLayout"; // 새로 만든 AdminLayout 임포트
@@ -28,7 +28,7 @@ import SeoulPage from "./pages/Area/SeoulPage";
 import Bookmark from "./pages/Bookmark/bookmark";
 import Search from "./pages/Bookmark/search";
 import Calendarpage from "./pages/Calendar/Calendarpage";
-import Mypage from "./pages/Mypage/Mypage";
+import Mypage from "./pages/Mypage/Mypage2";
 
 import Notice from "./pages/Notice/notice";
 import NoticeDetail from "./pages/Notice/noticeDetail";
@@ -63,7 +63,7 @@ import SuccessPwd from "./pages/Auth/SuccessPwd";
 import NotFound from "./pages/404";
 import ManagerFreeboard from "./pages/Admin/ManagerFreeboard";
 import ManagerFreeboardDetail from "./pages/Admin/ManagerFreeboardDetail";
-import ManagerMyPage from './pages/Admin/ManagerMyPage';
+import ManagerMyPage from "./pages/Admin/ManagerMyPage";
 import ManagerNotice from "./pages/Admin/ManagerNotice";
 import ManagerNoticeDetail from "./pages/Admin/ManagerNoticeDetail";
 import ManagerNoticeEdit from "./pages/Admin/ManagerNoticeEdit";
@@ -71,10 +71,12 @@ import ManagerNoticeWrite from "./pages/Admin/ManagerNoticeWrite";
 import ManagerQna from "./pages/Admin/ManagerQna";
 import ManagerQnaDetail from "./pages/Admin/ManagerQnaDetail";
 import ManagerQnaEdit from "./pages/Admin/ManagerQnaEdit";
+
 import ManagerQnaWrite from "./pages/Admin/ManagerQnaWrite"; // 오타 수정 (Wrtie -> Write)
 import ManagerUserPage from './pages/Admin/ManagerUserPage';
 import MemberDetail from './pages/Admin/MemberDetail';
 import ReportedMembers from './pages/Admin/ReportedMembers';
+
 import ReportedPosts from "./pages/Admin/ReportedPosts";
 
 function App() {
@@ -87,8 +89,8 @@ function App() {
           <Route path="camping" element={<CampingPage />} />
           <Route path="healing" element={<HealingPage />} />
           <Route path="mountain" element={<MountainPage />} />
-          <Route path="themepark" element={<ThemeParkPage />} />
-          
+          <Route path="themepark" element={<ThemeParkPage />} />          
+
           <Route path="area">
             <Route index element={<GangwondoPage />} />
             <Route path="gangwondo" element={<GangwondoPage />} />
@@ -103,6 +105,7 @@ function App() {
             <Route path="busan" element={<BusanPage />} />
             <Route path="seoul" element={<SeoulPage />} />
           </Route>
+
 
           <Route path="mypage" element={<Mypage />} />
           <Route path="calendar" element={<Calendarpage />} />
@@ -170,15 +173,77 @@ function App() {
           <Route path="/checkdelete" element={<CheckDelete />} />
         </Route>
 
-        {/* --- Routes that DO NOT use the main Layout --- */}
-        {/* ShortsVideoPage는 Layout을 사용하지 않는다면 이 위치가 적절합니다. */}
-        <Route path="shorts" element={<ShortsVideoPage />} />
+        {/* Bookmark 관련 경로 */}
+        <Route
+          path="bookmark"
+          element={
+            <div className="mypage1">
+              <Bookmark />
+            </div>
+          }
+        />
+        <Route
+          path="bookmark/:folderId"
+          element={
+            <div className="mypage1">
+              <Bookmark />
+            </div>
+          }
+        />
 
-        {/* 404 Not Found 페이지는 모든 라우트 규칙 가장 마지막에 위치 */}
-        <Route path="/*" element={<NotFound />} /> 
-        {/* 참고: NotFound 페이지도 Layout을 사용하게 하려면 Layout 내부의 마지막에 배치해야 합니다. */}
-        {/* 만약 Layout 바깥에 둔다면, NotFound 페이지는 헤더/푸터 없이 표시됩니다. */}
-        {/* 현재는 Layout 내부에 있으므로 Layout의 헤더/푸터를 가집니다. */}
+        <Route
+          path="mypage"
+          element={
+            <div className="mypage1">
+              <Mypage />
+            </div>
+          }
+        />
+        <Route
+          path="calendar"
+          element={
+            <div className="mypage1">
+              <Calendarpage />
+            </div>
+          }
+        />
+        <Route
+          path="qna"
+          element={
+            <div className="mypage1">
+              <Qna />
+            </div>
+          }
+        />
+        <Route
+          path="qnaDetail"
+          element={
+            <div className="mypage1">
+              <QnaDetail />
+            </div>
+          }
+        />
+        <Route
+          path="qnaWrite"
+          element={
+            <div className="mypage1">
+              <QnaWrite />
+            </div>
+          }
+        />
+        <Route
+          path="qnaEdit"
+          element={
+            <div className="mypage1">
+              <QnaEdit />
+            </div>
+          }
+        />
+
+        {/* --- Routes that DO NOT use the main Layout (e.g., Auth pages) --- */}
+        <Route path="shorts" element={<ShortsVideoPage />} />
+        
+        <Route path="/*" element={<NotFound />} />
 
       </Routes>
     </BrowserRouter>

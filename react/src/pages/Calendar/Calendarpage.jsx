@@ -1,9 +1,13 @@
+import MypageNav from "../../components/MypageNavBar/MypageNav";
 import calendarpageStyle from "./Calendarpage.module.css";
 
 function Calendarpage() {
   return (
     <>
-      <div className={calendarpageStyle.contents_wrap}>
+    <MypageNav />
+      <div className={calendarpageStyle.layout}>
+        <div className={calendarpageStyle.container}>
+          <div className={calendarpageStyle.contents_wrap}>
         <div className={calendarpageStyle.date}>4월 22일</div>
         <div className={calendarpageStyle.mainBox}>
           <div className={calendarpageStyle.listSection}>
@@ -399,6 +403,8 @@ function Calendarpage() {
           <button className={calendarpageStyle.rightArrow}>
             <img src="/src/assets/images/right_arrow.png" />
           </button>
+        </div>
+      </div>
         </div>
       </div>
     </>

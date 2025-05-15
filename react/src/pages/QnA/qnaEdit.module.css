@@ -1,5 +1,26 @@
 /* qnaEditStyle.module.css */
+.layout {
+  display: flex;
+}
 
+.container {
+  display: flex;
+  background-color: #fff;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  margin-left: 100px;
+  width: calc(100% - 120px); 
+  height: calc(100vh - 41px); 
+  box-sizing: border-box;
+  scrollbar-width: none; 
+  padding-left: 30px;
+  border-radius: 0 10px 10px 0;
+}
+
+.container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari 스크롤바 숨김 */
+}
 /* 전체 페이지 배경 및 기본 레이아웃 */
 .background {
     padding: 20px; /* 페이지 가장자리와 contentArea 사이의 여백 */

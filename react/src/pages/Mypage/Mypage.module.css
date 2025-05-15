@@ -1,14 +1,24 @@
+.layout {
+  display: flex;
+}
+
 .container {
- display: flex;
+  display: flex;
   background-color: #fff;
-  margin-top: 45px;
+  margin-top: 20px;
   margin-bottom: 20px;
-  min-height: 88vh;
-  height: auto;
-  width: 100%;
-  padding-left: 100px;
+  margin-right: 20px;
+  margin-left: 100px;
+  width: calc(100% - 120px);
+  height: calc(100vh - 41px);
   box-sizing: border-box;
-  overflow-y: hidden;
+  scrollbar-width: none;
+  padding-left: 30px;
+  border-radius: 0 10px 10px 0;
+}
+
+.container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari 스크롤바 숨김 */
 }
 
 .leftWrap {
@@ -17,7 +27,8 @@
   flex: 0 0 60%;
   min-width: 300px;
   height: 100%;
-  margin-top: 19px;
+  margin-top: 20px;
+  margin-left: 30px;
 }
 
 .profileWrap {
@@ -57,19 +68,41 @@
   height: 180px;
   border-radius: 50%;
   background-color: #000;
-  overflow: hidden;
+  overflow: visible;
   margin-left: 20px;
+  position: relative;
 }
-
-.profileImg>img {
+.profileImg > img {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.profileEdit {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ddd;
+  position: absolute;
+  bottom: 2px;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 20;
+  cursor: pointer;
+}
+.profileEdit > img {
+  width: 20px;
+  object-fit: cover;
 }
 
 .profileInfo {
   text-align: right;
 }
 
-.profileInfo>p {
+.profileInfo > p {
   margin-top: 10px;
   color: #000;
 }
@@ -83,14 +116,14 @@
   padding: 15px 10px;
 }
 
-.profileNavbar>ul {
+.profileNavbar > ul {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 70px;
 }
 
-.profileNavbar>ul>li {
+.profileNavbar > ul > li {
   white-space: nowrap;
   font-size: 1rem;
   cursor: pointer;
@@ -111,7 +144,7 @@
 
 .calendar {
   width: 100%;
-  height: 250px;
+  height: 232px;
   background-color: #f3c6e6;
   border-radius: 10px;
   padding: 20px;
@@ -127,6 +160,7 @@
   border-radius: 10px;
   padding: 20px;
   box-sizing: border-box;
+  position: relative;
 }
 
 .planRightWrap {
@@ -137,27 +171,31 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  position: relative;
 }
 
-.planContext {
-  text-align: center;
-}
 
 .rightWrap {
   flex: 0 0 30%;
   background-color: #ddd;
   margin-left: 75px;
-   margin-top: 20px;
+  margin-top: 20px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 878px;
+  height: 860px;
   position: relative;
-
+}
+.editButton{
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin: 0;
+  position: absolute;
+  width: 30px;
+  right: 20px;
 }
 
 .mapWrap {
@@ -166,13 +204,12 @@
   grid-template-rows: repeat(4, 1fr);
   width: 100%;
   position: relative;
-  min-height: 600px; 
+  min-height: 600px;
   margin-top: -114px;
-  margin-left: 70px;
+  margin-left: 14px;
 }
 
-
-.mapWrap>ul {
+.mapWrap > ul {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 20px;
@@ -180,87 +217,311 @@
   align-items: center;
 }
 
-.mapWrap>ul>li {
+.mapWrap > ul > li {
   max-width: 250px;
   width: 100%;
 }
 
-.mapWrap>ul>li img {
+.mapWrap > ul > li img {
   width: 100%;
   height: auto;
 }
 
 /* 지도 위치는 이미지와 동일하게 유지 */
-.mapWrap>ul>li:nth-child(1) {
+.mapWrap > ul > li:nth-child(1) {
   position: absolute;
   left: 50px;
   top: 23px;
 }
 
-.mapWrap>ul>li:nth-child(2) {
+.mapWrap > ul > li:nth-child(2) {
   position: absolute;
   left: 177px;
   top: -18px;
 }
 
-.mapWrap>ul>li:nth-child(3) {
+.mapWrap > ul > li:nth-child(3) {
   position: absolute;
   left: 247px;
   top: 190px;
 }
 
-.mapWrap>ul>li:nth-child(4) {
+.mapWrap > ul > li:nth-child(4) {
   position: absolute;
   left: 150px;
   top: 145px;
 }
 
-.mapWrap>ul>li:nth-child(5) {
+.mapWrap > ul > li:nth-child(5) {
   position: absolute;
   left: 18px;
   top: 168px;
 }
 
-.mapWrap>ul>li:nth-child(6) {
+.mapWrap > ul > li:nth-child(6) {
   position: absolute;
   left: 56px;
   top: 278px;
 }
 
-.mapWrap>ul>li:nth-child(7) {
+.mapWrap > ul > li:nth-child(7) {
   position: absolute;
   left: 306px;
   top: 317px;
 }
 
-.mapWrap>ul>li:nth-child(8) {
+.mapWrap > ul > li:nth-child(8) {
   position: absolute;
   left: 200px;
   top: 324px;
 }
 
-.mapWrap>ul>li:nth-child(9) {
+.mapWrap > ul > li:nth-child(9) {
   position: absolute;
   left: 32px;
   top: 398px;
 }
 
-.mapWrap>ul>li:nth-child(10) {
+.mapWrap > ul > li:nth-child(10) {
   position: absolute;
   left: 0px;
   top: 565px;
 }
+@media (max-width: 1919px) {
+  .container {
+    overflow-y: auto;
+  }
+  .mapWrap {
+    margin-left: -90px;
+  }
+}
+@media (min-width: 1401px) and (max-width: 1600px) {
+  .leftWrap {
+    margin-left: 0px;
+    flex: 0 0 55%;
+  }
+  .rightWrap {
+    margin-left: 30px;
+    flex: 00 40%;
+  }
+  .mapWrap {
+    margin-left: -26px;
+  }
+}
+@media (min-width: 1201px) and (max-width: 1400px) {
+  .leftWrap {
+    margin-left: 0px;
+    flex: 0 0 55%;
+  }
+  .rightWrap {
+    margin-left: 30px;
+    flex: 00 40%;
+  }
+  .mapWrap {
+    margin-left: -115px;
+  }
+  .profileNavbar > ul {
+    gap: 50px;
+  }
+}
+@media (min-width: 1101px) and (max-width: 1200px) {
+  .container {
+    overflow-y: auto;
+  }
+  .leftWrap {
+    margin-left: 0;
+    flex: 0 0 50%;
+  }
+  .rightWrap {
+    flex: 00 44%;
+    margin-left: 28px;
+  }
+  .mapWrap {
+    margin-left: -114px;
+  }
+  .profileNavbar > ul {
+    gap: 36px;
+  }
+}
 
-@media (max-width: 768px) {
+@media (min-width: 768px) and (max-width: 1100px) {
+  .layout {
+    display: flex;
+    flex-direction: column;
+  }
+  .container {
+    margin-left: 60px;
+    margin-right: 0;
+    width: 90%;
+    margin-top: 20px;
+    height: calc(100vh - 41px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .leftWrap {
+    flex: 0 0 100%;
+    min-width: 0;
+  }
+  .profileWrap {
+    display: flex;
+    flex-direction: row;
+    width: 97%;
+  }
+  .profileNavbar {
+    height: 60px;
+    margin-top: 50px;
+    margin-left: 20px;
+  }
+  .profileContent {
+    flex-direction: row;
+    align-items: center;
+  }
+  .profileNickName {
+    margin-left: 0;
+    text-align: center;
+  }
+  .profileImg {
+    margin-left: 0;
+    width: 120px;
+    height: 120px;
+  }
+  .profile {
+    min-width: 100px;
+  }
+  .profileInfo {
+    text-align: right;
+    margin-top: 50px;
+    margin-right: 18px;
+  }
+
+  .profileNavbar > ul {
+    gap: 15px;
+  }
+  .planWrap {
+    display: flex;
+    width: 97%;
+  }
+  .planleftWrap {
+    display: flex;
+    flex-direction: column;
+  }
+  .planRightWrap {
+    width: 40%;
+    display: flex;
+  }
   .rightWrap {
     flex: 0 0 100%;
-    margin-left: 0;
-    height: auto;
+    margin-left: 30px;
+    min-height: auto;
+    width: 93%;
+    margin-top: -170px;
+  }
+  .mapWrap {
+    margin-left: 200px;
   }
   .mapWrap > ul {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 8px;
   }
-  .mapWrap > ul > li {
-    position: static; /* 절대 위치 제거 */
+}
+
+@media (max-width: 767px) {
+  .layout {
+    display: flex;
+    flex-direction: column;
+  }
+  .container {
+    margin-left: 60px;
+    margin-right: 0;
+    width: 90%;
+    margin-top: 20px;
+    height: calc(100vh - 41px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .leftWrap {
+    flex: 0 0 100%;
+    min-width: 0;
+  }
+  .profileWrap {
+    display: flex;
+    flex-direction: row;
+    width: 97%;
+  }
+  .profileNavbar {
+    height: 60px;
+    margin-right: 20px;
+    margin-top: 50px;
+  }
+  .profileContent {
+    flex-direction: row;
+    align-items: center;
+  }
+  .profileNickName {
+    margin-left: 0;
+    text-align: center;
+  }
+  .profileImg {
+    margin-left: 0;
+    width: 120px;
+    height: 120px;
+  }
+  .profileEdit {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ddd;
+    position: absolute;
+    bottom: -2px;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 20;
+    cursor: pointer;
+  }
+  .profileEdit > img {
+    width: 15px;
+    object-fit: cover;
+  }
+  .profile {
+    min-width: 100px;
+  }
+  .profileInfo {
+    text-align: right;
+    margin-top: 50px;
+    margin-right: 18px;
+  }
+
+  .profileNavbar > ul {
+    gap: 15px;
+  }
+  .planWrap {
+    display: flex;
+    width: 97%;
+  }
+
+  .planleftWrap {
+    display: flex;
+    flex-direction: column;
+  }
+  .planRightWrap {
+    width: 40%;
+    display: flex;
+  }
+  .rightWrap {
+    flex: 0 0 100%;
+    margin-left: 30px;
+    min-height: auto;
+    width: 93%;
+    margin-top: -170px;
+  }
+  .mapWrap {
+    margin-left: 78px;
+  }
+  .mapWrap > ul {
+    gap: 8px;
   }
 }
