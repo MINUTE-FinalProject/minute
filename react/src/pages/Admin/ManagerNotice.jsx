@@ -1,61 +1,118 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react'; // useEffect 추가
 import { Link } from 'react-router-dom';
-import searchButtonIcon from "../../assets/images/search_icon.png"; // 경로 확인
-import Header from '../../components/Header/Header'; // 경로 확인
-import Sidebar from '../../components/Sidebar/Sidebar'; // 경로 확인
+import searchButtonIcon from "../../assets/images/search_icon.png";
 import styles from './ManagerNotice.module.css';
 
-// 예시 데이터: isImportant 속성 사용
-const initialNotices = [
-    { id: 'sticky', no: '중요', title: '이벤트 당첨자 발표 안내 (필독)', date: '2025-04-24', isImportant: true },
-    { id: 1, no: 1, title: '문의 제목 (일반 공지 1)', date: '2025-04-23', isImportant: false },
-    { id: 2, no: 2, title: '문의 제목 (일반 공지 2)', date: '2025-04-22', isImportant: true }, // 예시: 중요 공지
-    { id: 3, no: 3, title: '문의 제목 (일반 공지 3)', date: '2025-04-21', isImportant: false },
-    // ...더 많은 공지사항 데이터
-];
+// Pagination 컴포넌트 임포트
+import Pagination from '../../components/Pagination/Pagination';
+
+// 예시 데이터: isImportant 속성 사용, 데이터 양 증가
+const generateInitialNotices = (count = 35) => { // 35개의 목업 데이터 생성
+    const notices = [];
+    for (let i = 1; i <= count; i++) {
+        const isImportant = i % 7 === 0 || i === 1; // 7의 배수 또는 첫번째 공지를 중요 공지로
+        notices.push({
+            id: i.toString(),
+            no: isImportant ? '중요' : i,
+            title: `공지사항 제목 ${i} ${isImportant ? "(필독 이벤트 관련 중요 안내입니다)" : "(일반 공지 사항)"}`,
+            date: `2025.05.${String(15 - (i % 15)).padStart(2, '0')}`,
+            isImportant: isImportant,
+        });
+    }
+    // 중요 공지를 위로, 그 다음 최신순으로 정렬 (예시)
+    return notices.sort((a, b) => {
+        if (a.isImportant !== b.isImportant) {
+            return a.isImportant ? -1 : 1;
+        }
+        // 날짜 또는 ID로 추가 정렬 가능 (여기서는 ID 역순으로 최신처럼 가정)
+        return parseInt(b.id) - parseInt(a.id); 
+    }).map((notice, index) => ({ // NO 재정렬 (중요 공지 제외)
+        ...notice,
+        no: notice.isImportant ? '중요' : (notices.filter(n => !n.isImportant).findIndex(n => n.id === notice.id) + 1)
+    }));
+};
+
 
 function ManagerNotice() {
-    const [notices, setNotices] = useState(initialNotices);
-    // const [isAllImportant, setIsAllImportant] = useState(false); // 헤더 체크박스용 (선택적 기능)
+    const [allNotices, setAllNotices] = useState([]); // 원본 또는 필터링될 전체 데이터
+    const [noticesToDisplay, setNoticesToDisplay] = useState([]); // 현재 테이블에 표시될 전체 목록 (페이지네이션 전)
 
-    // 각 공지사항의 중요도 상태를 토글하는 함수
+    // --- 페이지네이션 상태 ---
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10; // 페이지 당 공지사항 수
+
+    // 데이터 초기 로드 및 필터/검색 변경 시 업데이트 로직 (예시)
+    useEffect(() => {
+        const loadedNotices = generateInitialNotices();
+        setAllNotices(loadedNotices);
+        // TODO: 여기에 실제 필터링/검색 로직 적용하여 setNoticesToDisplay 호출
+        // 지금은 allNotices를 그대로 사용
+        setNoticesToDisplay(loadedNotices); 
+        setCurrentPage(1); // 데이터 변경 시 1페이지로
+    }, []); // 초기 로드 시 한 번만 실행 (실제로는 필터 조건 변경 시에도 실행)
+
+
     const handleToggleImportant = (id) => {
-        setNotices(
-            notices.map(notice =>
+        // noticesToDisplay 와 allNotices 둘 다 업데이트 필요할 수 있음 (필터 상태에 따라)
+        const updateLogic = (prevNotices) => 
+            prevNotices.map(notice =>
                 notice.id === id ? { ...notice, isImportant: !notice.isImportant } : notice
-            )
-        );
+            );
+        
+        setAllNotices(updateLogic);
+        setNoticesToDisplay(updateLogic); // 현재 보여주는 목록도 바로 갱신
+
         // TODO: API 호출로 서버에 실제 중요도 상태 업데이트
-        console.log(`Notice ID ${id} importance toggled to: ${!notices.find(n => n.id === id)?.isImportant}`);
+        console.log(`Notice ID ${id} importance toggled.`);
     };
 
-    // 헤더 체크박스 핸들러 (선택적: 모든 공지 중요도 일괄 변경 기능)
-    // 현재는 단순히 모든 로컬 상태의 isImportant를 바꾸는 예시입니다.
-    // 실제 사용 시에는 현재 페이지의 공지만 변경하거나, API와 연동해야 합니다.
     const handleToggleAllImportant = (e) => {
         const newImportance = e.target.checked;
-        // setIsAllImportant(newImportance); // 헤더 체크박스 자체의 상태
-        setNotices(notices.map(n => ({ ...n, isImportant: newImportance })));
-        console.log(`All notices importance toggled to: ${newImportance}`);
-        // TODO: API 호출 (일괄 변경은 신중해야 함)
+        // 주의: 이 로직은 현재 noticesToDisplay (페이지네이션 되기 전 목록) 전체에 적용됨
+        // 페이지네이션 된 currentDisplayedNotices에만 적용하려면 로직 수정 필요
+        const updateLogic = (prevNotices) => 
+            prevNotices.map(n => ({ ...n, isImportant: newImportance }));
+
+        setAllNotices(updateLogic);
+        setNoticesToDisplay(updateLogic);
+        console.log(`All displayed notices importance toggled to: ${newImportance}`);
     };
     
-    // 현재 페이지의 모든 아이템이 important인지 확인 (헤더 체크박스 상태 동기화용)
-    const areAllCurrentlyImportant = notices.length > 0 && notices.every(n => n.isImportant);
+    // 헤더 체크박스 상태 결정: 현재 noticesToDisplay 기준
+    const areAllCurrentlyImportant = noticesToDisplay.length > 0 && noticesToDisplay.every(n => n.isImportant);
 
-
-    // TODO: 실제 수정, 삭제, 작성 기능 구현
     const handleEdit = (id) => console.log(`Edit notice: ${id}`);
-    const handleDelete = (id) => console.log(`Delete notice: ${id}`);
-    const handleWriteNew = () => console.log('Navigate to write new notice page');
+    const handleDelete = (id) => {
+        if (window.confirm(`정말로 공지사항(ID: ${id})을 삭제하시겠습니까?`)) {
+            const updateLogic = (prevNotices) => prevNotices.filter(n => n.id !== id);
+            setAllNotices(updateLogic);
+            setNoticesToDisplay(updateLogic);
+            console.log(`Delete notice: ${id}`);
+            // TODO: API로 서버에서 삭제
+        }
+    };
+    const handleWriteNew = () => {
+        // navigate('/admin/notice/write') // 예시: 작성 페이지로 이동
+        console.log('Navigate to write new notice page');
+    }
+
+    // --- 페이지네이션 로직 ---
+    const totalPages = Math.ceil(noticesToDisplay.length / itemsPerPage);
+    const indexOfLastNotice = currentPage * itemsPerPage;
+    const indexOfFirstNotice = indexOfLastNotice - itemsPerPage;
+    const currentDisplayedNotices = noticesToDisplay.slice(indexOfFirstNotice, indexOfLastNotice);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
     return (
         <>
-            <Header />
+
             <div className={styles.container}>
-                <Sidebar />
+
                 <main className={styles.managerContent}>
-                    <h1 className={styles.pageTitle}>공지사항</h1>
+                    <h1 className={styles.pageTitle}>공지사항 관리</h1>
 
                     <div className={styles.filterBar}>
                         <input type="date" className={styles.filterDate} />
@@ -76,9 +133,10 @@ function ManagerNotice() {
                                 <th>
                                     <input
                                         type="checkbox"
-                                        title="모든 공지 중요도 설정/해제"
-                                        checked={areAllCurrentlyImportant} // 모든 항목이 중요하면 체크됨
+                                        title="현재 목록 전체 중요도 설정/해제"
+                                        checked={areAllCurrentlyImportant}
                                         onChange={handleToggleAllImportant}
+                                        disabled={noticesToDisplay.length === 0} // 아이템 없으면 비활성화
                                     />
                                 </th>
                                 <th>NO</th>
@@ -88,42 +146,53 @@ function ManagerNotice() {
                             </tr>
                         </thead>
                         <tbody>
-                            {notices.map((notice) => (
-                                <tr key={notice.id} className={notice.isImportant ? styles.importantRow : ''}>
-                                    <td>
-                                        <input
-                                            type="checkbox"
-                                            checked={notice.isImportant}
-                                            onChange={() => handleToggleImportant(notice.id)}
-                                            title={notice.isImportant ? "중요 공지 해제" : "중요 공지로 설정"}
-                                        />
-                                    </td>
-                                    <td>{notice.isImportant ? <span className={styles.importantTag}>중요</span> : notice.no}</td>
-                                    <td className={styles.tableTitleContent}>
-                                        <Link to={`/notice/${notice.id}`} className={styles.titleLink}> {/* 실제 상세 페이지 경로로 수정 */}
-                                            {notice.title}
-                                        </Link>
-                                    </td>
-                                    <td>{notice.date}</td>
-                                    <td>
-                                        <button onClick={() => handleEdit(notice.id)} className={`${styles.actionButton} ${styles.editButton}`}>수정</button>
-                                        <button onClick={() => handleDelete(notice.id)} className={`${styles.actionButton} ${styles.deleteButton}`}>삭제</button>
-                                    </td>
+                            {currentDisplayedNotices.length > 0 ? (
+                                currentDisplayedNotices.map((notice) => (
+                                    <tr key={notice.id} className={notice.isImportant ? styles.importantRow : ''}>
+                                        <td>
+                                            <input
+                                                type="checkbox"
+                                                checked={notice.isImportant}
+                                                onChange={() => handleToggleImportant(notice.id)}
+                                                title={notice.isImportant ? "중요 공지 해제" : "중요 공지로 설정"}
+                                            />
+                                        </td>
+                                        <td>{notice.isImportant ? <span className={styles.importantTag}>중요</span> : notice.no}</td>
+                                        <td className={styles.tableTitleContent}>
+                                            <Link to={`/admin/notice/${notice.id}`} className={styles.titleLink}> {/* 관리자용 상세 경로 */}
+                                                {notice.title}
+                                            </Link>
+                                        </td>
+                                        <td>{notice.date}</td>
+                                        <td>
+                                            <button onClick={() => handleEdit(notice.id)} className={`${styles.actionButton} ${styles.editButton}`}>수정</button>
+                                            <button onClick={() => handleDelete(notice.id)} className={`${styles.actionButton} ${styles.deleteButton}`}>삭제</button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="5">표시할 공지사항이 없습니다.</td>
                                 </tr>
-                            ))}
+                            )}
                         </tbody>
                     </table>
 
                     <div className={styles.bottomActions}>
-                        <button onClick={handleWriteNew} className={`${styles.actionButton} ${styles.writeButton}`}>작성</button>
+                        {/* Link 컴포넌트나 navigate 함수를 사용하여 작성 페이지로 이동 */}
+                        <Link to="/admin/notice/write" className={`${styles.actionButton} ${styles.writeButton}`}>작성</Link>
                     </div>
-
+                    
+                    {/* 페이지네이션 컴포넌트 적용 */}
+                    {/* styles.pagination 클래스를 가진 div로 한번 감싸서 기존 CSS의 레이아웃(중앙정렬 등)을 활용 */}
                     <div className={styles.pagination}>
-                        <button>&lt;</button>
-                        <button className={styles.active}>1</button>
-                        <button>2</button>
-                        <button>3</button>
-                        <button>&gt;</button>
+                        {totalPages > 0 && (
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={handlePageChange}
+                            />
+                        )}
                     </div>
                 </main>
             </div>

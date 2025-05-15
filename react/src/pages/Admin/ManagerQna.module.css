@@ -52,18 +52,18 @@
     box-sizing: border-box;
 }
 .filterDate { /* 날짜 입력 필드에 .filterElement 적용 */
-    composes: filterElement; /* 다른 클래스 스타일 상속 (선택적) */
+    /* composes: filterElement;  CSS Modules의 composes는 필요하다면 사용 */
     width: 130px;
 }
 .dateSeparator {
     color: #f0f0f0; /* 어두운 배경에 맞춰 밝은 색 */
 }
 .filterSelect { /* select 에 .filterElement 적용 */
-    composes: filterElement;
+    /* composes: filterElement; */
     min-width: 120px;
 }
 .filterSearchInput { /* text input 에 .filterElement 적용하고 추가 스타일 */
-    composes: filterElement;
+    /* composes: filterElement; */
     flex-grow: 1;
 }
 
@@ -171,37 +171,18 @@
     cursor: pointer;
 }
 
-/* 페이지네이션 스타일 */
+/* 페이지네이션 컨테이너 스타일 */
 .pagination {
     margin-top: 30px;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
+    display: flex; /* Pagination 컴포넌트를 flex 아이템으로 만들어 중앙 정렬 */
+    justify-content: center; /* 수평 중앙 정렬 */
+    align-items: center; /* 수직 중앙 정렬 (선택 사항) */
+    /* gap: 8px; - 단일 자식 컴포넌트일 경우 gap은 큰 의미 없음. 필요시 추가 */
+    /* text-align: center; - display: flex 사용 시 불필요 */
 }
-.pagination button {
-    margin: 0;
-    padding: 8px 12px;
-    border: 1px solid #ced4da;
-    background-color: #fff;
-    color: #495057;
-    cursor: pointer;
-    border-radius: 4px;
-    font-size: 14px;
-    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-}
-.pagination button:hover {
-    background-color: #e9ecef;
-    border-color: #adb5bd;
-}
-.pagination .active {
-    font-weight: bold;
-    background-color: #007bff;
-    color: #fff;
-    border-color: #007bff;
-}
-.pagination .active:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
-}
+
+/* 이전에 사용된 .pagination button, .pagination button:hover, 
+  .pagination .active, .pagination .active:hover 스타일은
+  새로운 Pagination 컴포넌트가 자체 CSS 모듈(pagination.module.css)을 사용하므로 삭제되었습니다.
+  Pagination 컴포넌트의 버튼 모양, 색상, 활성 상태 등은 해당 컴포넌트의 CSS에서 관리됩니다.
+*/

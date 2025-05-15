@@ -1,7 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css"; // App.css는 전역 스타일을 위해 유지합니다.
 
-// Layout Component
+// Layout Components
+import AdminLayout from "./layouts/AdminLayout"; // 새로 만든 AdminLayout 임포트
 import Layout from "./layouts/Layout";
 
 // Page Components
@@ -70,10 +71,12 @@ import ManagerNoticeWrite from "./pages/Admin/ManagerNoticeWrite";
 import ManagerQna from "./pages/Admin/ManagerQna";
 import ManagerQnaDetail from "./pages/Admin/ManagerQnaDetail";
 import ManagerQnaEdit from "./pages/Admin/ManagerQnaEdit";
-import ManagerQnaWrtie from "./pages/Admin/ManagerQnaWrite";
-import ManagerUserPage from "./pages/Admin/ManagerUserPage";
-import MemberDetail from "./pages/Admin/MemberDetail";
-import ReportedMembers from "./pages/Admin/ReportedMembers";
+
+import ManagerQnaWrite from "./pages/Admin/ManagerQnaWrite"; // 오타 수정 (Wrtie -> Write)
+import ManagerUserPage from './pages/Admin/ManagerUserPage';
+import MemberDetail from './pages/Admin/MemberDetail';
+import ReportedMembers from './pages/Admin/ReportedMembers';
+
 import ReportedPosts from "./pages/Admin/ReportedPosts";
 
 function App() {
@@ -86,7 +89,8 @@ function App() {
           <Route path="camping" element={<CampingPage />} />
           <Route path="healing" element={<HealingPage />} />
           <Route path="mountain" element={<MountainPage />} />
-          <Route path="themepark" element={<ThemeParkPage />} />
+          <Route path="themepark" element={<ThemeParkPage />} />          
+
           <Route path="area">
             <Route index element={<GangwondoPage />} />
             <Route path="gangwondo" element={<GangwondoPage />} />
@@ -101,60 +105,59 @@ function App() {
             <Route path="busan" element={<BusanPage />} />
             <Route path="seoul" element={<SeoulPage />} />
           </Route>
+
+
+          <Route path="mypage" element={<Mypage />} />
+          <Route path="calendar" element={<Calendarpage />} />
+          <Route path="bookmark" element={<Bookmark />} />
           <Route path="search" element={<Search />} />
-          <Route
-            path="notice"
-            element={
-              <div className="mainContentWithFixedHeader">
-                <Notice />
-              </div>
-            }
-          />
-          <Route
-            path="noticeDetail"
-            element={
-              <div className="mainContentWithFixedHeader">
-                <NoticeDetail />
-              </div>
-            }
-          />
-          <Route
-            path="freeboard"
-            element={
-              <div className="mainContentWithFixedHeader">
-                <FreeBoard />
-              </div>
-            }
-          />
-          <Route
-            path="freeboardDetail"
-            element={
-              <div className="mainContentWithFixedHeader">
-                <FreeboardDetail />
-              </div>
-            }
-          />
-          <Route
-            path="freeboardWrite"
-            element={
-              <div className="mainContentWithFixedHeader">
-                <FreeboardWrite />
-              </div>
-            }
-          />
-          <Route
-            path="FreeboardEdit"
-            element={
-              <div className="mainContentWithFixedHeader">
-                <FreeboardEdit />
-              </div>
-            }
-          />
-          {/* Admin pages - using the main Layout for now */}
-          <Route path="admin" element={<ManagerUserPage />} />
-          <Route path="reportedmembers" element={<ReportedMembers />} />
-          <Route path="member-detail/:id" element={<MemberDetail />} />
-          <Route path="managermypage" element={<ManagerMyPage />} />
+
+          {/* 공지사항, 게시판 등 className="mainContentWithFixedHeader" 사용 부분은 그대로 유지합니다. */}
+          <Route path="notice" element={<div className="mainContentWithFixedHeader"><Notice /></div>} />
+          <Route path="noticeDetail/:id" element={<div className="mainContentWithFixedHeader"><NoticeDetail /></div>} /> {/* :id 파라미터 추가 권장 */}
+
+          <Route path="freeboard" element={<div className="mainContentWithFixedHeader"><FreeBoard /></div>} />
+          <Route path="freeboardDetail/:id" element={<div className="mainContentWithFixedHeader"><FreeboardDetail /></div>} /> {/* :id 파라미터 추가 권장 */}
+          <Route path="freeboardWrite" element={<div className="mainContentWithFixedHeader"><FreeboardWrite /></div>} />
+          <Route path="freeboardEdit/:id" element={<div className="mainContentWithFixedHeader"><FreeboardEdit /></div>} /> {/* :id 파라미터 추가 권장 */}
+
+          <Route path="qna" element={<div className="mainContentWithFixedHeader"><Qna /></div>} />
+          <Route path="qnaDetail/:id" element={<div className="mainContentWithFixedHeader"><QnaDetail /></div>} /> {/* :id 파라미터 추가 권장 */}
+          <Route path="qnaWrite" element={<div className="mainContentWithFixedHeader"><QnaWrite /></div>} />
+          <Route path="qnaEdit/:id" element={<div className="mainContentWithFixedHeader"><QnaEdit /></div>} /> {/* :id 파라미터 추가 권장 */}
+
+          {/* ▼▼▼ 관리자 페이지 그룹: AdminLayout 적용 ▼▼▼ */}
+          <Route path="admin" element={<AdminLayout />}>
+            {/* /admin 경로 접속 시 기본으로 보여줄 페이지 (예: 회원 관리) */}
+            <Route index element={<ManagerUserPage />} /> 
+            {/* 또는 <Route path="users" element={<ManagerUserPage />} /> 등으로 명시적 경로 사용 가능 */}
+            
+            <Route path="users" element={<ManagerUserPage />} /> {/* 명시적으로 /admin/users */}
+            <Route path="reportedmembers" element={<ReportedMembers />} />
+            <Route path="member-detail/:id" element={<MemberDetail />} />
+            <Route path="mypage" element={<ManagerMyPage />} /> {/* /admin/mypage */}
+            
+            <Route path="managerFreeboard" element={<ManagerFreeboard />} />
+            <Route path="managerFreeboardDetail/:id" element={<ManagerFreeboardDetail />} /> {/* :id 파라미터 추가 권장 */}
+            
+            <Route path="managerNotice" element={<ManagerNotice />} />
+            <Route path="managerNoticeDetail/:id" element={<ManagerNoticeDetail />} /> {/* :id 파라미터 추가 권장 */}
+            <Route path="managerNoticeEdit/:id" element={<ManagerNoticeEdit />} /> {/* :id 파라미터 추가 권장 */}
+            <Route path="managerNoticeWrite" element={<ManagerNoticeWrite />} />
+            
+            <Route path="managerQna" element={<ManagerQna />} />
+            <Route path="managerQnaDetail/:id" element={<ManagerQnaDetail />} /> {/* :id 파라미터 추가 권장 */}
+            <Route path="managerQnaEdit/:id" element={<ManagerQnaEdit />} /> {/* :id 파라미터 추가 권장 */}
+            <Route path="managerQnaWrite" element={<ManagerQnaWrite />} />
+            
+            <Route path="reportedposts" element={<ReportedPosts />} />
+            {/* 추가적인 관리자 페이지들은 여기에 계속 정의 */}
+          </Route>
+          {/* ▲▲▲ 관리자 페이지 그룹 끝 ▲▲▲ */}
+
+          {/* 인증 관련 페이지들은 Layout(헤더/푸터)을 사용하지 않는 경우가 많으므로 밖에 두거나, */}
+          {/* 필요하다면 별도의 AuthLayout 등을 구성할 수 있습니다. 현재는 Layout 내에 배치된 것으로 보입니다. */}
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/loginrequired" element={<LoginRequired />} />
           <Route path="/findid" element={<FindID />} />
           <Route path="/successid" element={<SuccessID />} />
@@ -238,23 +241,10 @@ function App() {
         />
 
         {/* --- Routes that DO NOT use the main Layout (e.g., Auth pages) --- */}
-        <Route path="/login" element={<LoginPage />} />
         <Route path="shorts" element={<ShortsVideoPage />} />
-        <Route path="/managerFreeboard" element={<ManagerFreeboard />} />
-        <Route
-          path="/managerFreeboardDetail"
-          element={<ManagerFreeboardDetail />}
-        />
-        <Route path="/managerNotice" element={<ManagerNotice />} />
-        <Route path="/managerNoticeDetail" element={<ManagerNoticeDetail />} />
-        <Route path="/managerNoticeEdit" element={<ManagerNoticeEdit />} />
-        <Route path="/managerNoticeWrite" element={<ManagerNoticeWrite />} />
-        <Route path="/managerQna" element={<ManagerQna />} />
-        <Route path="/managerQnaDetail" element={<ManagerQnaDetail />} />
-        <Route path="/managerQnaEdit" element={<ManagerQnaEdit />} />
-        <Route path="/managerQnaWrite" element={<ManagerQnaWrtie />} />
-        <Route path="/reportedposts" element={<ReportedPosts />} />
+        
         <Route path="/*" element={<NotFound />} />
+
       </Routes>
     </BrowserRouter>
   );

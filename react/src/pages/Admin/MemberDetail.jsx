@@ -1,14 +1,12 @@
 
-import Header from "../../components/Header/Header";
-import Sidebar from "../../components/Sidebar/Sidebar";
 import styles from "./MemberDetail.module.css";
 
 const MemberDetail = () => {
   return (
     <>
-      <Header />
+
       <div className={styles.container}>
-        <Sidebar />
+
         <main className={styles.memberDetail}>
           <h2>회원 관리 상세 - yujin0712</h2>
           <form>
