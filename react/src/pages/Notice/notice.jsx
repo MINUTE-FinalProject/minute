@@ -87,7 +87,10 @@ function Notice() {
     return (
         <div className={noticeStyle.background}>
             <div className={noticeStyle.title}>
-                <h1>공지사항</h1>
+                {/* 아래와 같이 h1을 Link로 감싸줍니다. */}
+                <Link to="/notice" className={noticeStyle.pageTitleLink}>
+                    <h1>공지사항</h1>
+                </Link>
             </div>
             <div className={noticeStyle.contentArea}>
                 <table className={noticeStyle.table}>
