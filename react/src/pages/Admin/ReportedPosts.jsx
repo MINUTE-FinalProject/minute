@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import searchButtonIcon from "../../assets/images/search_icon.png";
-import Header from '../../components/Header/Header';
-import Sidebar from '../../components/Sidebar/Sidebar';
 import styles from './ReportedPosts.module.css';
 
 // Pagination 컴포넌트 임포트
@@ -92,9 +90,9 @@ function ReportedPosts() {
 
     return (
         <>
-            <Header />
+
             <div className={styles.container}>
-                <Sidebar />
+
                 <main className={styles.reportedPostsContent}>
                     <h1 className={styles.pageTitle}>신고된 게시물 관리</h1>
 

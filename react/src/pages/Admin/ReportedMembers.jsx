@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
-import Header from "../../components/Header/Header";
 import Pagination from '../../components/Pagination/Pagination';
-import Sidebar from "../../components/Sidebar/Sidebar";
 import styles from "./ReportedMembers.module.css";
 
 // 목업 데이터 생성 함수 (상태: 정지, 대기만 사용)
@@ -73,9 +71,9 @@ const ReportedMembers = () => {
 
     return (
         <>
-            <Header />
+
             <div className={styles.container}>
-                <Sidebar />
+
                 <main className={styles.reportedContent}>
                     <h2 className={styles.title1}>신고 회원 관리</h2>
                     <div className={styles.filterBar}>

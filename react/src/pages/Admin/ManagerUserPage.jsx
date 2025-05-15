@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react'; // useState, useEffect 임포트
-import Header from "../../components/Header/Header";
-import Sidebar from "../../components/Sidebar/Sidebar";
 import styles from "./ManagerUserPage.module.css";
 
 // Pagination 컴포넌트 임포트
@@ -68,9 +66,9 @@ const ManagerUserPage = () => {
 
     return (
         <div className={styles.container}>
-            <Header />
+
             <div className={styles.main}>
-                <Sidebar />
+
                 <section className={styles.content}>
                     <h1>신고 관리</h1>
                     <h2>신고 내역 상세 { /* - yujin0712 */ }</h2> 

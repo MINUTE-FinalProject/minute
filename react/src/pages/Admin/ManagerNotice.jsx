@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'; // useEffect 추가
 import { Link } from 'react-router-dom';
 import searchButtonIcon from "../../assets/images/search_icon.png";
-import Header from '../../components/Header/Header';
-import Sidebar from '../../components/Sidebar/Sidebar';
 import styles from './ManagerNotice.module.css';
 
 // Pagination 컴포넌트 임포트
@@ -110,9 +108,9 @@ function ManagerNotice() {
 
     return (
         <>
-            <Header />
+
             <div className={styles.container}>
-                <Sidebar />
+
                 <main className={styles.managerContent}>
                     <h1 className={styles.pageTitle}>공지사항 관리</h1>
 

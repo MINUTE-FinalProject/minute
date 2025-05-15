@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import Header from '../../components/Header/Header';
-import Sidebar from '../../components/Sidebar/Sidebar';
 import styles from './ManagerFreeboardDetail.module.css';
 
 // Pagination 컴포넌트 임포트
@@ -130,9 +128,9 @@ function ManagerFreeboardDetail() {
 
     return (
         <>
-            <Header />
+
             <div className={styles.container}>
-                <Sidebar />
+
                 <main className={styles.managerFreeboardDetailContent}>
                     
                     <div className={styles.pageHeader}>

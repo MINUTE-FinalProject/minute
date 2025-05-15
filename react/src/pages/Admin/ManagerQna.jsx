@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom';
 import reportOffIcon from '../../assets/images/able-alarm.png';
 import reportOnIcon from '../../assets/images/disable-alarm.png';
 import searchButtonIcon from '../../assets/images/search_icon.png';
-import Header from '../../components/Header/Header';
-import Sidebar from '../../components/Sidebar/Sidebar';
 import styles from './ManagerQna.module.css';
 
 // Pagination 컴포넌트 임포트
@@ -102,9 +100,9 @@ function ManagerQna() {
 
     return (
         <>
-            <Header />
+
             <div className={styles.container}>
-                <Sidebar />
+
                 <main className={styles.qnaContent}>
                     <h1 className={styles.pageTitle}>문의 관리</h1>
 

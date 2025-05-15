@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom'; // useParams와 useNavigate 추가
-import Header from '../../components/Header/Header'; // 경로 확인 필요
-import Sidebar from '../../components/Sidebar/Sidebar'; // 경로 확인 필요
 import styles from './ManagerNoticeEdit.module.css'; // CSS 모듈 import (오타 수정)
 
 function ManagerNoticeEdit() {
@@ -40,9 +38,9 @@ function ManagerNoticeEdit() {
 
     return (
         <>
-            <Header />
+
             <div className={styles.container}> {/* Sidebar와 메인 콘텐츠를 감싸는 컨테이너 */}
-                <Sidebar />
+
                 <main className={styles.editPageContainer}> {/* 공지사항 수정 페이지 전체 콘텐츠 영역 */}
                     <div className={styles.titleBar}>
                         {/* 페이지 제목 "공지사항" - 클릭 시 목록으로 이동하는 Link 고려 */}

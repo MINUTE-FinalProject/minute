@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react'; // useEffect 추가
 import { Link } from 'react-router-dom';
-import Header from '../../components/Header/Header';
-import Sidebar from '../../components/Sidebar/Sidebar';
 import styles from './ManagerFreeboard.module.css';
 
 // Pagination 컴포넌트 임포트 (경로는 프로젝트 구조에 맞게 확인해주세요)
@@ -85,9 +83,9 @@ function ManagerFreeboard() {
 
     return (
         <>
-            <Header />
+ 
             <div className={styles.container}>
-                <Sidebar />
+
                 <main className={styles.managerFreeboardContent}>
                     <h1 className={styles.pageTitle}>자유게시판 관리</h1>
 
