@@ -122,11 +122,11 @@ function App() {
 
           {/* ▼▼▼ 관리자 페이지 그룹: AdminLayout 적용 ▼▼▼ */}
           <Route path="admin" element={<AdminLayout />}>
-            <Route index element={<ManagerUserPage />} />
+            <Route index element={<ManagerMyPage />} />
             <Route path="users" element={<ManagerUserPage />} /> {/* 명시적으로 /admin/users */}
             <Route path="reportedmembers" element={<ReportedMembers />} />
             <Route path="member-detail/:id" element={<MemberDetail />} />
-            <Route path="mypage" element={<ManagerMyPage />} /> {/* /admin/mypage */}
+            
 
             <Route path="managerFreeboard" element={<ManagerFreeboard />} />
             <Route path="managerFreeboardDetail/:id" element={<ManagerFreeboardDetail />} /> {/* :id 파라미터 추가 권장 */}

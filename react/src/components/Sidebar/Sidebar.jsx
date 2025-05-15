@@ -6,12 +6,12 @@ import styles from './Sidebar.module.css';
 const Sidebar = () => {
     // 메뉴 데이터를 객체 배열로 변경하여 경로와 아이콘도 함께 관리
     const menus = [
-        { name: "회원 관리", path: "/admin", icon: "👤" /* <FaUserFriends /> */ },
-        { name: "신고회원 관리", path: "/reportedmembers", icon: "🔔" /* <FaBell /> */ },
-        { name: "문의 관리", path: "/managerQna", icon: "❓" /* <FaQuestionCircle /> */ },
-        { name: "공지사항 관리", path: "/managerNotice", icon: "📢" /* <FaBullhorn /> */ },
-        { name: "신고글 관리", path: "/reportedposts", icon: "📝" /* <FaEdit /> */ },
-        { name: "자유게시판", path: "/managerFreeboard", icon: "✍️" /* <FaEdit /> */ },
+        { name: "마이페이지", path: "/admin", icon: "👤" /* <FaUserFriends /> */ },
+        { name: "신고회원 관리", path: "/admin/reportedmembers", icon: "🔔" /* <FaBell /> */ },
+        { name: "문의 관리", path: "/admin/managerQna", icon: "❓" /* <FaQuestionCircle /> */ },
+        { name: "공지사항 관리", path: "/admin/managerNotice", icon: "📢" /* <FaBullhorn /> */ },
+        { name: "신고글 관리", path: "/admin/reportedposts", icon: "📝" /* <FaEdit /> */ },
+        { name: "자유게시판", path: "/admin/managerFreeboard", icon: "✍️" /* <FaEdit /> */ },
     ];
 
     return (
