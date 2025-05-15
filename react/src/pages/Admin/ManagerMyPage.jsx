@@ -30,7 +30,7 @@ const ManagerMyPage = () => {
           </main>
         </div>
       </div>
-      <footer>Minute 2025</footer>
+      
 </>
 
   );

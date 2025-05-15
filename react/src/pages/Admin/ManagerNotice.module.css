@@ -19,13 +19,14 @@
 }
 
 /* --- 페이지 제목 --- */
-.pageTitle { /* "공지사항" */
-  font-size: 2.2em; /* 다른 관리자 페이지 제목과 통일 */
-  font-weight: 600;
-  color: #2c3e50;
-  margin-top: 0; /* Sidebar 와의 간격은 .managerContent margin-top 으로 조절 */
-  margin-bottom: 30px; /* 필터바와의 간격 */
-  /* text-align: center; */ /* 이미지는 좌측 정렬로 보임 */
+.pageTitle {
+    font-size: 2.2em;
+    font-weight: 600;
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #dfe3e8;
 }
 
 /* 필터 바 스타일 (어두운 테마 - 신고관리 페이지처럼) */
