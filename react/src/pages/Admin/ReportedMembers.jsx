@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import searchButtonIcon from '../../assets/images/search_icon.png';
 import Pagination from '../../components/Pagination/Pagination';
 import styles from "./ReportedMembers.module.css";
 
+
+
 // 목업 데이터 생성 함수 (상태: 정지, 대기만 사용)
 const generateInitialReportedMembers = (count = 37) => {
+    
+
     const items = [];
     const userIds = ["yujin0712", "hodu1030", "mad09", "cjak3974", "qowui08", "akn45", "dgvv123", "newUser1", "vipUser"];
     // "위치"는 "게시판", "댓글", "문의사항"만 사용하도록 수정
@@ -26,6 +32,7 @@ const generateInitialReportedMembers = (count = 37) => {
 };
 
 const ReportedMembers = () => {
+    const navigate = useNavigate();
     const [allReportedMembers, setAllReportedMembers] = useState([]);
     const [membersToDisplay, setMembersToDisplay] = useState([]);
 
@@ -77,12 +84,19 @@ const ReportedMembers = () => {
                 <main className={styles.reportedContent}>
                     <h2 className={styles.title1}>신고 회원 관리</h2>
                     <div className={styles.filterBar}>
-                        <input type="date" className={styles.filterElement} />
-                        <input type="date" className={styles.filterElement} />
-                        <select className={styles.filterElement}><option>정렬순▼</option></select>
-                        <button className={`${styles.filterElement} ${styles.typeBtn}`}>타입</button>
-                        <input type="text" placeholder="검색" className={`${styles.filterElement} ${styles.filterSearchInput}`} />
-                    </div>
+                                            <input type="date" className={styles.filterElement} />
+                                            <span className={styles.dateSeparator}>~</span>
+                                            <input type="date" className={styles.filterElement} />
+                                            <select className={styles.filterElement}>
+                                                <option value="all">상태 (전체)</option>
+                                                <option value="answered">답변완료</option>
+                                                <option value="unanswered">미답변</option>
+                                            </select>
+                                            <input type="text" placeholder="검색어를 입력하세요" className={`${styles.filterElement} ${styles.filterSearchInput}`} />
+                                            <button type="button" className={styles.filterSearchButton}>
+                                                <img src={searchButtonIcon} alt="검색" className={styles.searchIcon} />
+                                            </button>
+                                        </div>
                     <table>
                         <thead>
                             <tr>
@@ -92,7 +106,8 @@ const ReportedMembers = () => {
                         <tbody>
                             {currentDisplayedMembers.length > 0 ? (
                                 currentDisplayedMembers.map((m) => (
-                                    <tr key={m.reportEntryId}> 
+                                    <tr key={m.reportEntryId}
+                                    onClick={() => navigate(`/admin/reportedmember-detail/${m.id}`)}> 
                                         <td>{m.no}</td><td>{m.count}</td><td>{m.id}</td><td>{m.position}</td>
                                         <td>{m.title}</td><td>{m.content}</td><td>{m.date}</td>
                                         <td>

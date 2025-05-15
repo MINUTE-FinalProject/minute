@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'; // useState, useEffect 임포트
-import styles from "./ManagerUserPage.module.css";
+import styles from "./ReportedMemberDetail.module.css";
 
 // Pagination 컴포넌트 임포트
 import Pagination from '../../components/Pagination/Pagination';
@@ -28,7 +28,7 @@ const generateInitialReportData = (count = 33) => { // 33개의 목업 데이터
 };
 
 
-const ManagerUserPage = () => {
+const ReportedMemberDetail = () => {
     const [allReportItems, setAllReportItems] = useState([]); 
     const [reportsToDisplay, setReportsToDisplay] = useState([]); 
 
@@ -71,7 +71,7 @@ const ManagerUserPage = () => {
 
                 <section className={styles.content}>
                     <h1>신고 관리</h1>
-                    <h2>신고 내역 상세 { /* - yujin0712 */ }</h2> 
+                    <h2>신고 내역 상세-yujin0712</h2> 
                     <table>
                         <thead>
                             <tr>
@@ -130,4 +130,4 @@ const ManagerUserPage = () => {
     );
 };
 
-export default ManagerUserPage;
+export default ReportedMemberDetail;

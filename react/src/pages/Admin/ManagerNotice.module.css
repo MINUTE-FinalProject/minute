@@ -28,63 +28,63 @@
   /* text-align: center; */ /* 이미지는 좌측 정렬로 보임 */
 }
 
-/* --- 필터 바 --- */
+/* 필터 바 스타일 (어두운 테마 - 신고관리 페이지처럼) */
 .filterBar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 25px;
-  padding: 15px;
-  background-color: #2c3e50; /* 이미지 상 어두운 필터 바 배경 */
-  border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    padding: 15px;
+    background-color: #333; /* 어두운 배경 */
+    border-radius: 6px;
 }
 
-.filterDate,
-.filterSearchInput {
-  padding: 8px 12px;
-  border: 1px solid #ced4da; /* 연한 테두리 */
-  background-color: #ffffff; /* 흰색 배경 */
-  color: #333;
-  border-radius: 4px;
-  font-size: 14px;
-  box-sizing: border-box;
+.filterElement { /* input[type=date], select, input[type=text] 공통 스타일 */
+    padding: 8px 12px;
+    border: 1px solid #555;
+    background-color: #f0f0f0; /* 밝은 입력 요소 배경 */
+    color: #333;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
 }
-.filterDate {
-  width: 150px; /* 날짜 입력창 너비 */
+.filterDate { /* 날짜 입력 필드에 .filterElement 적용 */
+    /* composes: filterElement;  CSS Modules의 composes는 필요하다면 사용 */
+    width: 130px;
 }
-.searchContainer { /* 검색 입력창과 버튼을 묶는 컨테이너 */
-  display: flex;
-  flex-grow: 1; /* 남은 공간 차지 */
+.dateSeparator {
+    color: #f0f0f0; /* 어두운 배경에 맞춰 밝은 색 */
 }
-.filterSearchInput {
-  flex-grow: 1;
-  border-right: none; /* 버튼과 자연스럽게 이어지도록 */
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
+.filterSelect { /* select 에 .filterElement 적용 */
+    /* composes: filterElement; */
+    min-width: 120px;
 }
-.filterSearchButton {
-  padding: 0;
-  width: 40px; /* 버튼 너비 */
-  height: 36px; /* 입력창 높이에 맞춤 (패딩 8*2 + 글자 14 + 테두리 1*2 근사치) */
-  background-color: #ffffff; /* 입력창과 같은 배경 */
-  border: 1px solid #ced4da;
-  border-left: none; /* 입력창과 자연스럽게 이어지도록 */
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.filterSearchInput { /* text input 에 .filterElement 적용하고 추가 스타일 */
+    /* composes: filterElement; */
+    flex-grow: 1;
+}
+
+.filterSearchButton { /* 검색 아이콘 버튼 */
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    background-color: #555; /* 어두운 테마에 맞는 버튼 배경 */
+    border: 1px solid #555;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
 }
 .filterSearchButton:hover {
-  background-color: #f8f9fa;
+    background-color: #777;
 }
-.filterSearchIcon {
-  width: 16px;
-  height: 16px;
-  display: block;
+.searchIcon {
+    width: 16px;
+    height: 16px;
+    display: block;
+    filter: brightness(0) invert(1); /* 아이콘이 어두우면 흰색으로 */
 }
 
 /* --- 콘텐츠 부제목 --- */
