@@ -65,85 +65,87 @@ function Qna() {
             <div className={qnaStyle.layout}>
                 {/* .container가 흰색 배경 카드 역할 */}
                 <div className={qnaStyle.container}> 
-                    <div className={qnaStyle.title}>
-                        <Link to="/qna" className={qnaStyle.pageTitleLink}> {/* 페이지 제목 링크 */}
-                            <h1>Q&A</h1>
-                        </Link>
-                    </div>
-
-                    <div className={qnaStyle.searchbar}>
-                        <button type="button">날짜 선택</button>
-                        <button type="button">날짜 선택</button>
-                        <select>
-                            <option value="">상태 (전체)</option>
-                            <option value="completed">완료</option>
-                            <option value="pending">대기</option>
-                        </select>
-                        <input type="text" placeholder="검색어를 입력하세요" />
-                        <button type="button" className={qnaStyle.searchIconButton}>
-                            <img
-                                src={searchButtonIcon}
-                                alt="검색"
-                                className={qnaStyle.searchButtonIcon}
-                            />
-                        </button>
-                    </div>
-
-                    <table className={qnaStyle.table}>
-                        <thead>
-                            <tr>
-                                <th>상태</th>
-                                <th>작성자</th>
-                                <th>제목</th>
-                                <th>날짜</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {currentDisplayedQnaItems.length > 0 ? (
-                                currentDisplayedQnaItems.map(qna => (
-                                    <tr key={qna.id}>
-                                        <td>
-                                            <span 
-                                                className={`${qnaStyle.statusBadge} ${qna.status === '완료' ? qnaStyle.completed : qnaStyle.pending}`}
-                                            >
-                                                {qna.status}
-                                            </span>
-                                        </td>
-                                        <td>{qna.author}</td>
-                                        <td className={qnaStyle.tableTitleCell}>
-                                            {/* 테이블 내부 문의 제목 링크 */}
-                                            <Link to={`/qna/${qna.id}`} className={qnaStyle.titleLink}> 
-                                                {qna.title}
-                                            </Link>
-                                        </td>
-                                        <td>{qna.date}</td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="4">등록된 문의사항이 없습니다.</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-
-                    <div className={qnaStyle.bottomControls}>
-                        <div className={qnaStyle.paginationContainerInBottomControls}>
-                            {totalPages > 1 && (
-                                <Pagination
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    onPageChange={handlePageChange}
-                                />
-                            )}
-                        </div>
-                        <div className={qnaStyle.writeButtonContainerInBottomControls}>
-                            <Link to="/qnaWrite" className={qnaStyle.writeButton}>
-                                작성
+                    <div className={qnaStyle.inner}>
+                        <div className={qnaStyle.title}>
+                            <Link to="/qna" className={qnaStyle.pageTitleLink}> {/* 페이지 제목 링크 */}
+                                <h1>Q&A</h1>
                             </Link>
                         </div>
-                    </div>
-                </div> {/* .container div의 끝 */}
+
+                        <div className={qnaStyle.searchbar}>
+                            <button type="button">날짜 선택</button>
+                            <button type="button">날짜 선택</button>
+                            <select>
+                                <option value="">상태 (전체)</option>
+                                <option value="completed">완료</option>
+                                <option value="pending">대기</option>
+                            </select>
+                                <input type="text" placeholder="검색어를 입력하세요" />
+                                <button type="button" className={qnaStyle.searchIconButton}>
+                                    <img
+                                        src={searchButtonIcon}
+                                        alt="검색"
+                                        className={qnaStyle.searchButtonIcon}
+                                    />
+                                </button>
+                        </div>
+
+                        <table className={qnaStyle.table}>
+                            <thead>
+                                <tr>
+                                    <th>상태</th>
+                                    <th>작성자</th>
+                                    <th>제목</th>
+                                    <th>날짜</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {currentDisplayedQnaItems.length > 0 ? (
+                                    currentDisplayedQnaItems.map(qna => (
+                                        <tr key={qna.id}>
+                                            <td>
+                                                <span 
+                                                    className={`${qnaStyle.statusBadge} ${qna.status === '완료' ? qnaStyle.completed : qnaStyle.pending}`}
+                                                >
+                                                    {qna.status}
+                                                </span>
+                                            </td>
+                                            <td>{qna.author}</td>
+                                            <td className={qnaStyle.tableTitleCell}>
+                                                {/* 테이블 내부 문의 제목 링크 */}
+                                                <Link to={`/qna/${qna.id}`} className={qnaStyle.titleLink}> 
+                                                    {qna.title}
+                                                </Link>
+                                            </td>
+                                            <td>{qna.date}</td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="4">등록된 문의사항이 없습니다.</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+
+                        <div className={qnaStyle.bottomControls}>
+                            <div className={qnaStyle.paginationContainerInBottomControls}>
+                                {totalPages > 1 && (
+                                    <Pagination
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        onPageChange={handlePageChange}
+                                    />
+                                )}
+                            </div>
+                            <div className={qnaStyle.writeButtonContainerInBottomControls}>
+                                <Link to="/qnaWrite" className={qnaStyle.writeButton}>
+                                    작성
+                                </Link>
+                            </div>
+                        </div>
+                        </div>
+                    </div> {/* .container div의 끝 */}
             </div> {/* .layout div의 끝 */}
         </>   
     );
