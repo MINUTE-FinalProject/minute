@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import searchStyle from './search.module.css';
+import Header from '../../components/Header/Header';
+import Footer from '../../components/Footer/Footer';
+
 
 function Search() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -20,40 +23,45 @@ function Search() {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className={searchStyle.container}>
-      <header className={searchStyle.header}>
-        <div className={searchStyle.searchBarWrapper}>
-          <div className={searchStyle.searchBar}>
-            <input type="text" placeholder="검색..." />
-            <button className={searchStyle.searchIcon}>
-              <img src="/src/assets/images/searchIcon.png" alt="" width="20" height="20" />
-            </button>
-          </div>
-        </div>
-      </header>
-      <div className={searchStyle.grid}>
-        {currentItems.map((item) => (
-          <div key={item.id} className={searchStyle.gridItem}>
-            <div className={searchStyle.itemContent}>
-              <div className={searchStyle.placeholder}></div>
-              <h3>{item.title}</h3>
-              <p>{item.content}</p>
+    <>
+      <div className={searchStyle.container}>
+        <Header />
+        <header className={searchStyle.header}>
+          <div className={searchStyle.searchBarWrapper}>
+            <div className={searchStyle.searchBar}>
+              <input type="text" placeholder="검색..." />
+              <button className={searchStyle.searchIcon}>
+                <img src="/src/assets/images/searchIcon.png" alt="" width="20" height="20" />
+              </button>
             </div>
           </div>
-        ))}
+        </header>
+        <div className={searchStyle.grid}>
+          {currentItems.map((item) => (
+            <div key={item.id} className={searchStyle.gridItem}>
+              <div className={searchStyle.itemContent}>
+                <div className={searchStyle.placeholder}></div>
+                <h3>{item.title}</h3>
+                <p>{item.content}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className={searchStyle.pagination}>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+            <button
+              key={number}
+              onClick={() => paginate(number)}
+              className={currentPage === number ? searchStyle.active : ''}
+            >
+              {number}
+            </button>
+          ))}
+        </div>
+
       </div>
-      <div className={searchStyle.pagination}>
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
-          <button
-            key={number}
-            onClick={() => paginate(number)}
-            className={currentPage === number ? searchStyle.active : ''}
-          >
-            {number}
-          </button>
-        ))}
-      </div>
-    </div>
+      <Footer />
+    </>
   );
 }
 
