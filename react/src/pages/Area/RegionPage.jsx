@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import Header from "../../components/Header/Header";
-import styles from "./GangwondoPage.module.css"; // ✅ 올바른 경로
+import styles from "./GangwondoPage.module.css";
 import RollingCardSlider from "./RollingCardSlider";
+// ↓ 이미지 import
+import searchIcon from "../../assets/images/searchIcon.png";
 
 function RegionPage({ regionName, backgroundImages, cities }) {
   const [selectImage, setSelectImage] = useState("");
@@ -26,19 +28,17 @@ function RegionPage({ regionName, backgroundImages, cities }) {
   return (
     <>
       <Header />
-      <div
-        className={styles.container}
-        // style={{
-        //   backgroundImage: selectImage ? `url(${selectImage})` : "none"
-        // }}
-      >
-        <img src={selectImage} className={styles.containerImg}/>
+      <div className={styles.container}>
+        {/* 배경 이미지 */}
+        <img src={selectImage} className={styles.containerImg} alt={`${regionName} 배경`} />
+
         <h1>{regionName}</h1>
         <div className={styles.searchbar}>
           <input type="text" className={styles.searchInput} />
           <button className={styles.searchButton}>
+            {/* import 한 변수로 src 지정 */}
             <img
-              src="/images/search_icon.png"
+              src={searchIcon}
               alt="검색"
               className={styles.searchIcon}
             />

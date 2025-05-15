@@ -196,6 +196,11 @@
   margin-left: 14px;
 }
 
+.linkStyle {
+  text-decoration: none; /* 기본 링크 스타일 제거 */
+  display: block;
+}
+
 .mapWrap > ul {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -204,12 +209,18 @@
   align-items: center;
 }
 
-.mapWrap > ul > li {
+.mapWrap > ul >  li  {
   max-width: 250px;
   width: 100%;
 }
 
-.mapWrap > ul > li img {
+
+.mapWrap > ul > li > a {
+  display: block; 
+  text-decoration: none; 
+}
+
+.mapWrap > ul >li> a > img {
   width: 100%;
   height: auto;
 }
@@ -274,6 +285,8 @@
   left: 0px;
   top: 565px;
 }
+
+
 @media (max-width: 1919px) {
   .container {
     overflow-y: auto;
