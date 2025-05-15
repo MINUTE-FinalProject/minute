@@ -23,20 +23,20 @@
 /* 전체 Q&A 섹션 컨테이너 */
 .background {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1500px;
     /* 예시 최대 너비 */
     margin: 20px auto;
     padding: 20px;
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
     /* 이미지상 Q&A 영역 배경 */
     font-family: Arial, sans-serif;
     /* 예시 폰트 */
     box-sizing: border-box;
-    border: 1px solid #dee2e6;
+    /* border: 1px solid #dee2e6; */
     /* 옅은 회색 테두리 */
-    border-radius: 8px;
+    /* border-radius: 8px; */
     /* 모서리 둥글게 */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); */
 }
 
 /* 제목 ("Q&A") 섹션 */
@@ -51,7 +51,7 @@
 }
 
 .title h1 {
-    font-size: 28px;
+    font-size: 2.5rem;
     /* 예시 폰트 크기 */
     font-weight: bold;
     color: #333;
@@ -296,6 +296,7 @@
     align-items: center;
     gap: 8px;
     /* 페이지 번호 간 간격 */
+    margin-top: 120px;
 }
 
 /* 아래는 Pagination 컴포넌트 내부의 요소들에 대한 일반적인 스타일 예시입니다. */
