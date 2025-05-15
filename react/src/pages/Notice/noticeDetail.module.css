@@ -1,22 +1,24 @@
 /* noticeDetail.module.css */
 
 .background {
-    background-color: #f4f6f8; /* 페이지 전체 배경은 연한 회색 유지 */
+    background-color: #f4f6f8;
     display: flex;
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    padding: 20px;
+    /* padding: 20px; */ /* 이 부분을 주석 처리하거나 아래와 같이 상단 패딩만 제거 */
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    padding-top: 0; /* 상단 패딩을 0으로 설정 */
     box-sizing: border-box;
-    /* 고정 헤더 사용 시 헤더 높이만큼 추가 패딩 필요
-       예: padding-top: 70px; (기존 20px + 헤더높이 50px) */
 }
 
 .title { /* "공지사항" 제목을 감싸는 div */
     width: 100%;
     max-width: 800px; /* .contentArea와 너비를 맞추거나 조절 */
     text-align: center;
-    margin-bottom: 25px;
+    margin-bottom: 15px; /* 기존 25px에서 줄여서 내용과의 간격 조절 */
     padding-bottom: 15px;
     border-bottom: 1px solid #dfe3e8; /* QnA 페이지와 유사한 구분선 */
 }
@@ -27,7 +29,7 @@
     transition: color 0.2s ease-in-out;
 }
 .titleLink:hover {
-    color: #007bff; /* QnA 페이지와 유사한 호버 색상 */
+    color: #FF69B4; /* 호버 시 요청하신 핑크색으로 변경 */
     text-decoration: none;
 }
 .titleLink h1 { /* 실제 "공지사항" 텍스트 */

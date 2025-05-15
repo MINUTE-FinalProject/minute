@@ -34,13 +34,13 @@
     text-decoration: none;
     color: #2c3e50;
     /* 상세 페이지와 동일한 링크 색상으로 변경 */
+    transition: color 0.2s ease-in-out; /* 색상 변경 시 부드러운 전환 효과 추가 (선택 사항) */
 }
 
 /* .titleLink에 마우스를 올렸을 때의 스타일 */
 .titleLink:hover {
   text-decoration: none; /* 호버 시에도 밑줄이 생기지 않도록 명시 */
-  /* 만약 호버 시 색상 변경 등의 다른 효과를 주고 싶다면 여기에 추가 */
-  color: #007bff; /* 예시: 상세 페이지처럼 호버 시 색상 변경
+  color: #FF69B4; /* "자유게시판" 문구 호버 시 핑크색으로 변경 */
 }
 
 .titleLink h1 {

@@ -1,4 +1,4 @@
-/* qnaWriteStyle.module.css */
+/* qnaWrite.module.css */
 .layout {
   display: flex;
 }
@@ -19,141 +19,157 @@
 }
 
 .container::-webkit-scrollbar {
-  display: none; /* Chrome, Safari 스크롤바 숨김 */
+  display: none; 
 }
-/* 전체 페이지 배경 및 기본 레이아웃 */
+
 .background {
-    padding: 20px; /* 페이지 가장자리와 contentArea 사이의 여백 */
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* contentArea를 중앙으로 (가로) */
-    margin: 20px auto;
-  }
-  
-  /* "Q&A" 제목 스타일 */
-  .title {
-    width: 100%;
-    max-width: 800px; /* contentArea와 너비를 맞추거나 조절 */
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  .title h1 {
-    font-size: 2.5rem; /* 이미지 참고하여 크기 조절 */
-    font-weight: bold;
-    color: #333;
-    margin: 0;
-  }
-  
-  /* 내용 입력 전체 영역 (흰색 박스) */
-  .contentArea {
-    padding: 30px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    gap: 25px; /* 각 섹션(info, textbox, img, buttons) 사이의 간격 */
-    width: 1000px;
-    min-width: 800px;
-  }
-  
-  /* 공통 레이블 스타일 */
-  .label {
-    display: block;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #555;
-    margin-bottom: 8px;
-  }
-  
-  /* 제목 입력(info) 및 내용 입력(textbox) 내부 필드 공통 스타일 */
-  .info input[type="text"],
-  .textbox textarea {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #d9d9d9; /* 이미지의 입력 필드 테두리 */
-    border-radius: 4px;
-    background-color: #f9f9f9; /* 이미지의 입력 필드 배경색 */
-    font-size: 1rem;
-    color: #333;
-    box-sizing: border-box;
-    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  }
-  
-  .info input[type="text"]:focus,
-  .textbox textarea:focus {
-    border-color: #4a90e2; /* 포커스 시 테두리 색상 변경 */
-    background-color: #fff;
-    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2); /* 포커스 시 외부 그림자 */
-    outline: none;
-  }
-  
-  /* 내용 입력(textbox)의 textarea 높이 조절 */
-  .textbox textarea {
-    min-height: 180px; /* 이미지 참고하여 높이 조절 */
-    resize: vertical; /* 세로 크기만 조절 가능하도록 */
-  }
-  
-  /* 이미지 첨부(img) 영역
-  /* .img {
-    /* 특별한 스타일이 현재는 필요 없어 보이지만, 필요시 추가 */
-  
-  .imagePreviewContainer {
-    display: flex;
-    gap: 15px; /* 이미지 플레이스홀더 사이의 간격 */
-    flex-wrap: wrap; /* 화면이 작을 경우 다음 줄로 넘김 */
-  }
-  
-  .imagePlaceholder {
-    width: 100px; /* 이미지 참고하여 크기 조절 */
-    height: 100px; /* 정사각형 유지 */
-    background-color: #f0f0f0; /* 이미지의 플레이스홀더 배경색 */
-    border: 1px dashed #ccc; /* 점선 테두리 */
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    color: #777;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-  }
-  
-  .imagePlaceholder:hover {
-    background-color: #e9e9e9;
-    border-color: #bbb;
-  }
-  
-  /* 버튼(buttons) 영역 */
-  .buttons {
-    display: flex;
-    justify-content: flex-end; /* 버튼들을 오른쪽으로 정렬 */
-    gap: 10px; /* 버튼 사이의 간격 */
-    margin-top: 10px; /* 위 요소와의 간격 */
-  }
-  
-  .buttons button {
-    padding: 10px 20px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
-  }
-  
-  /* "업로드" (파일 선택) 버튼과 "작성" 버튼 스타일 (이미지 참고) */
-  .buttons button {
-    background-color: #333A40; /* 이미지의 어두운 버튼 배경색 */
-    color: #ffffff;
-  }
-  
-  .buttons button:hover {
-    opacity: 0.85; /* 호버 시 약간 투명하게 */
-  }
-  
-  /* 플레이스홀더 텍스트 스타일 (선택적) */
-  .info input[type="text"]::placeholder,
-  .textbox textarea::placeholder {
-    color: #999;
-    font-style: italic;
-  }
+  padding: 20px; 
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  margin: 20px auto;
+  width: 100%; /* 추가: .background가 .container 내부에서 너비를 갖도록 */
+}
+ 
+.title {
+  width: 100%;
+  max-width: 800px; 
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* 페이지 제목 링크 (h1을 감싸는 Link) */
+.pageTitleLink {
+  text-decoration: none;
+  color: #333; /* .title h1의 기본 색상과 동일하게 */
+  transition: color 0.2s ease-in-out;
+  display: inline-block; /* 링크 영역을 h1에 맞춤 */
+}
+
+.pageTitleLink:hover {
+  color: #FF69B4; /* 호버 시 핑크색으로 변경 */
+}
+ 
+.title h1 {
+  font-size: 2.5rem; 
+  font-weight: bold;
+  /* color: #333; */ /* 이제 .pageTitleLink에서 색상 관리 */
+  margin: 0;
+}
+ 
+.contentArea {
+  padding: 30px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 25px; 
+  width: 100%; /* 수정: 부모(.background) 너비에 맞춤 */
+  max-width: 1000px; /* 기존 최대 너비 유지 */
+}
+ 
+.label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 8px;
+}
+ 
+/* 제목 입력 필드와 내용 입력 필드에 적용할 클래스 */
+.inputField,
+.textareaField {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #d9d9d9; 
+  border-radius: 4px;
+  background-color: #f9f9f9; 
+  font-size: 1rem;
+  color: #333;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.textareaField {
+  min-height: 180px; 
+  resize: vertical; 
+}
+ 
+.inputField:focus,
+.textareaField:focus {
+  border-color: #4a90e2; 
+  background-color: #fff;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2); 
+  outline: none;
+}
+
+/* (기존) .info input[type="text"], .textbox textarea 선택자들은 위 클래스로 대체 */
+/*
+.info input[type="text"],
+.textbox textarea { ... }
+ 
+.info input[type="text"]:focus,
+.textbox textarea:focus { ... }
+ 
+.textbox textarea { ... }
+*/
+ 
+.imagePreviewContainer {
+  display: flex;
+  gap: 15px; 
+  flex-wrap: wrap; 
+}
+ 
+.imagePlaceholder {
+  width: 100px; 
+  height: 100px; 
+  background-color: #f0f0f0; 
+  border: 1px dashed #ccc; 
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: #777;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+ 
+.imagePlaceholder:hover {
+  background-color: #e9e9e9;
+  border-color: #bbb;
+}
+ 
+.buttons {
+  display: flex;
+  justify-content: flex-end; 
+  gap: 10px; 
+  margin-top: 10px; 
+}
+ 
+.buttons button {
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+  background-color: #333A40; 
+  color: #ffffff;
+}
+ 
+.buttons button:hover {
+  opacity: 0.85; 
+}
+ 
+.info input[type="text"]::placeholder, /* 플레이스홀더 스타일은 유지 */
+.textbox textarea::placeholder { /* 클래스명 변경에 따라 .textareaField::placeholder 로 변경 */
+  color: #999;
+  font-style: italic;
+}
+
+/* textareaField에 대한 플레이스홀더 스타일 (필요시) */
+.textareaField::placeholder {
+  color: #999;
+  font-style: italic;
+}
