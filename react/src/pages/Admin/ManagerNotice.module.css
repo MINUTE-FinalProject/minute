@@ -144,14 +144,20 @@
 }
 
 
+/* ManagerNotice.module.css 파일 내의 .importantTag 부분을 아래와 같이 수정합니다. */
+
 .importantTag {
     display: inline-block;
-    padding: 3px 8px;
-    font-size: 0.8em;
-    font-weight: bold;
-    color: white;
-    background-color: #dc3545;
-    border-radius: 10px;
+    padding: 5px 10px;         /* 패딩을 상하좌우로 약간 더 주어 여유 공간 확보 */
+    font-size: 0.85em;         /* 글자 크기를 다른 상태 버튼들과 유사하게 미세 조정 */
+    font-weight: 600;          /* font-weight: bold; (700) 대신 600 (semi-bold)으로 부드러움 추가 또는 bold 유지 */
+    color: white;              /* 글자색 흰색 유지 */
+    background-color: #dc3545; /* 기존 빨간색 계열 배경색 유지 */
+    border-radius: 12px;       /* 다른 알약 버튼들과 일관된 둥근 모서리 값 */
+    line-height: 1.3;          /* 텍스트의 수직 정렬을 개선 */
+    text-align: center;        /* 텍스트 중앙 정렬 (이미 inline-block에서 잘 동작하지만 명시) */
+    vertical-align: middle;    /* 다른 요소들과 수직 정렬 맞춤 */
+    /* box-shadow: 0 1px 2px rgba(0,0,0,0.1); */ /* 선택 사항: 아주 연한 그림자로 입체감 추가 */
 }
 
 /* 제목 링크 스타일 변경 */
