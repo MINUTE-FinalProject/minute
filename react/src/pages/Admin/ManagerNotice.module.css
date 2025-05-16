@@ -1,24 +1,22 @@
 /* ManagerNotice.module.css */
 
-/* --- 전체 레이아웃 --- */
 .container {
-  display: flex;
-  flex-direction: row;
-  margin-top: 45px; /* 고정 헤더 높이에 따라 조절 (Header 컴포넌트 높이) */
-  background-color: #f4f6f8; /* 전체 Admin 페이지의 연한 배경색 (선택 사항) */
-  min-height: calc(100vh - 45px); /* 헤더 제외한 전체 높이 */
+    display: flex;
+    flex-direction: row;
+    margin-top: 45px;
+    background-color: #f4f6f8;
+    min-height: calc(100vh - 45px);
 }
 
-.managerContent { /* Sidebar를 제외한 메인 콘텐츠 영역 */
-  flex: 1; /* Sidebar 제외한 나머지 공간 모두 차지 */
-  margin: 20px; /* Sidebar 및 가장자리와의 여백 */
-  padding: 30px 35px;
-  background-color: #ffffff; /* 콘텐츠 영역은 흰색 배경 (카드 형태) */
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+.managerContent {
+    flex: 1;
+    margin: 20px;
+    padding: 30px 35px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* --- 페이지 제목 --- */
 .pageTitle {
     font-size: 2.2em;
     font-weight: 600;
@@ -29,47 +27,43 @@
     border-bottom: 1px solid #dfe3e8;
 }
 
-/* 필터 바 스타일 (어두운 테마 - 신고관리 페이지처럼) */
 .filterBar {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 25px;
     padding: 15px;
-    background-color: #333; /* 어두운 배경 */
+    background-color: #333;
     border-radius: 6px;
 }
 
-.filterElement { /* input[type=date], select, input[type=text] 공통 스타일 */
+.filterElement {
     padding: 8px 12px;
     border: 1px solid #555;
-    background-color: #f0f0f0; /* 밝은 입력 요소 배경 */
+    background-color: #f0f0f0;
     color: #333;
     border-radius: 4px;
     font-size: 14px;
     box-sizing: border-box;
 }
-.filterDate { /* 날짜 입력 필드에 .filterElement 적용 */
-    /* composes: filterElement;  CSS Modules의 composes는 필요하다면 사용 */
-    width: 130px;
-}
+
 .dateSeparator {
-    color: #f0f0f0; /* 어두운 배경에 맞춰 밝은 색 */
+    color: #f0f0f0;
 }
-.filterSelect { /* select 에 .filterElement 적용 */
-    /* composes: filterElement; */
-    min-width: 120px;
+
+.filterSelect {
+    min-width: 140px;
 }
-.filterSearchInput { /* text input 에 .filterElement 적용하고 추가 스타일 */
-    /* composes: filterElement; */
+
+.filterSearchInput {
     flex-grow: 1;
 }
 
-.filterSearchButton { /* 검색 아이콘 버튼 */
+.filterSearchButton {
     padding: 0;
     width: 36px;
     height: 36px;
-    background-color: #555; /* 어두운 테마에 맞는 버튼 배경 */
+    background-color: #555;
     border: 1px solid #555;
     border-radius: 4px;
     cursor: pointer;
@@ -85,144 +79,157 @@
     width: 16px;
     height: 16px;
     display: block;
-    filter: brightness(0) invert(1); /* 아이콘이 어두우면 흰색으로 */
+    filter: brightness(0) invert(1);
 }
 
-/* --- 콘텐츠 부제목 --- */
-.subTitle { /* "공지사항 목록" */
-  font-size: 1.4em;
-  font-weight: 600;
-  color: #333;
-  margin-top: 20px; /* 필터바와의 간격 */
-  margin-bottom: 15px;
+.subTitle {
+    font-size: 1.4em;
+    font-weight: 600;
+    color: #333;
+    margin-top: 20px;
+    margin-bottom: 15px;
 }
 
-/* --- 테이블 --- */
 .noticeTable {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9em;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
 }
 
 .noticeTable thead th {
-  background-color: #f8f9fa; /* 테이블 헤더 배경 */
-  padding: 12px 10px;
-  text-align: center;
-  font-weight: 600;
-  color: #495057;
-  border-bottom: 2px solid #dee2e6; /* 헤더와 본문 구분선 */
+    background-color: #f8f9fa;
+    padding: 12px 10px;
+    text-align: center;
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+    vertical-align: middle;
 }
-/* 제목 컬럼만 왼쪽 정렬 */
-.noticeTable th.titleColumn,
-.noticeTable td.tableTitleContent {
-  text-align: left;
+
+.noticeTable th.titleHeaderColumn,
+.noticeTable td.titleDataColumn {
+    text-align: left;
+    padding-left: 15px;
 }
-/* 체크박스, NO 컬럼 너비 조절 */
-.noticeTable th:first-child, .noticeTable td:first-child { width: 5%; } /* 체크박스 */
-.noticeTable th:nth-child(2), .noticeTable td:nth-child(2) { width: 8%; } /* NO */
-.noticeTable th:nth-child(3) { width: auto; } /* 제목 - 자동 너비 */
-.noticeTable th:nth-child(4) { width: 15%; } /* 작성일 */
-.noticeTable th:nth-child(5) { width: 20%; } /* 수정/삭제 */
+
+.noticeTable th:nth-child(1) { width: 8%; }
+.noticeTable th:nth-child(2) { width: 12%; }
+.noticeTable th:nth-child(3) { width: 12%; }
+.noticeTable th:nth-child(4) { width: auto; }
+.noticeTable th:nth-child(5) { width: 12%; }
+.noticeTable th:nth-child(6) { width: 8%; }
+.noticeTable th:nth-child(7) { width: 8%; }
+.noticeTable th:nth-child(8) { width: 8%; }
 
 
 .noticeTable tbody td {
-  padding: 10px;
-  border-bottom: 1px solid #e9ecef; /* 행 구분선 */
-  vertical-align: middle;
+    padding: 10px;
+    border-bottom: 1px solid #e9ecef;
+    vertical-align: middle;
+    text-align: center;
 }
 
 .noticeTable tbody tr:hover td {
-  background-color: #f1f9ff; /* 연한 하늘색 호버 (자유게시판 연핑크와는 다르게) */
+    background-color: #f1f9ff;
 }
 
-/* 중요 공지 행 스타일 */
 .importantRow {
-  background-color: #fff5f5; /* 매우 연한 핑크/빨강 배경 */
+    background-color: #fff5f5;
 }
 .importantRow td {
-  font-weight: 500;
+    font-weight: 500;
+}
+.importantRow .titleLink {
+    font-weight: bold; /* 중요 공지 제목 링크는 계속 굵게 유지 */
 }
 
-.importantTag { /* "중요" 알약 스타일 */
-  display: inline-block;
-  padding: 3px 8px;
-  font-size: 0.8em;
-  font-weight: bold;
-  color: white;
-  background-color: #dc3545; /* 이미지상 핑크/빨강 계열 */
-  border-radius: 10px;
+
+/* ManagerNotice.module.css 파일 내의 .importantTag 부분을 아래와 같이 수정합니다. */
+
+.importantTag {
+    display: inline-block;
+    padding: 5px 10px;         /* 패딩을 상하좌우로 약간 더 주어 여유 공간 확보 */
+    font-size: 0.85em;         /* 글자 크기를 다른 상태 버튼들과 유사하게 미세 조정 */
+    font-weight: 600;          /* font-weight: bold; (700) 대신 600 (semi-bold)으로 부드러움 추가 또는 bold 유지 */
+    color: white;              /* 글자색 흰색 유지 */
+    background-color: #dc3545; /* 기존 빨간색 계열 배경색 유지 */
+    border-radius: 12px;       /* 다른 알약 버튼들과 일관된 둥근 모서리 값 */
+    line-height: 1.3;          /* 텍스트의 수직 정렬을 개선 */
+    text-align: center;        /* 텍스트 중앙 정렬 (이미 inline-block에서 잘 동작하지만 명시) */
+    vertical-align: middle;    /* 다른 요소들과 수직 정렬 맞춤 */
+    /* box-shadow: 0 1px 2px rgba(0,0,0,0.1); */ /* 선택 사항: 아주 연한 그림자로 입체감 추가 */
 }
 
-.titleLink { /* 테이블 내 제목 링크 */
-  text-decoration: none;
-  color: #007bff; /* 링크 색상 */
+/* 제목 링크 스타일 변경 */
+.titleLink {
+    text-decoration: none;
+    color: #333; /* 기본 글자색 검은색 계열로 변경 */
+    font-weight: normal; /* 일반 공지 제목은 기본 두께 */
 }
 .titleLink:hover {
-  text-decoration: underline;
+    text-decoration: underline; /* 밑줄 유지 */
+    color: #000; /* 호버 시 약간 더 진한 검은색 (선택 사항) */
 }
 
-/* 테이블 내 수정/삭제 버튼 */
-.actionButton {
-  padding: 4px 10px;
-  font-size: 0.85em;
-  border-radius: 4px;
-  cursor: pointer;
-  margin: 0 3px;
-  transition: background-color 0.2s, border-color 0.2s;
-  border: 1px solid #ced4da; /* 기본 테두리 */
+.checkboxCell, .actionCell {
+    text-align: center;
 }
+.headerCheckbox {
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+.actionButton {
+    padding: 5px 10px;
+    font-size: 0.85em;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 0 3px;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+    border: 1px solid transparent;
+    min-width: 50px;
+}
+
 .editButton {
-  background-color: #6c757d; /* 수정 버튼 회색 계열 */
-  color: white;
-  border-color: #6c757d;
+    background-color: #6c757d;
+    color: white;
+    border-color: #6c757d;
 }
 .editButton:hover {
-  background-color: #5a6268;
-  border-color: #545b62;
+    background-color: #5a6268;
+    border-color: #545b62;
 }
+
 .deleteButton {
-  background-color: #e9ecef; /* 삭제 버튼 더 연한 회색 또는 흰색 */
-  color: #495057;
-  border-color: #ced4da;
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
 }
 .deleteButton:hover {
-  background-color: #dae0e5;
-  border-color: #b1bbc4;
+    background-color: #c82333;
+    border-color: #bd2130;
 }
 
-/* --- 하단 액션 버튼 (작성 버튼) --- */
 .bottomActions {
-  display: flex;
-  justify-content: flex-end; /* 버튼 오른쪽 정렬 */
-  margin-top: 20px; /* 테이블과의 간격 */
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
 }
-.writeButton { /* 작성 버튼 스타일 (다른 메인 actionButton들과 유사하게) */
-  padding: 8px 18px;
-  border: 1px solid #000000;
-  border-radius: 5px;
-  background-color: #000000; /* 검은색 배경 */
-  color: white;
-  cursor: pointer;
-  font-size: 0.9em;
-  font-weight: 500;
-  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+
+.writeButton {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+    font-weight: 500;
 }
 .writeButton:hover {
-  background-color: #333333;
-  border-color: #333333;
+    background-color: #0056b3;
+    border-color: #0056b3;
 }
 
-/* --- 페이지네이션 컨테이너 --- */
 .pagination {
-  margin-top: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /* gap: 8px; - 단일 자식 컴포넌트이므로 gap은 현재 큰 의미 없음. 필요시 추가. */
-  /* text-align: center; - display:flex 사용 시 불필요. */
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-
-/* 이전에 사용된 .pagination button, .pagination button:hover, .pagination button.active 스타일은
-  새로운 Pagination 컴포넌트가 자체 CSS 모듈(pagination.module.css)을 사용하므로 삭제되었습니다.
-  Pagination 컴포넌트의 버튼 모양, 색상, 활성 상태 등은 해당 컴포넌트의 CSS에서 관리됩니다.
-*/
