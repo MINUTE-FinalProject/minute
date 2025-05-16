@@ -24,33 +24,24 @@
 }
 /* 전체 페이지 배경 및 기본 폰트 */
 .background {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   padding: 20px;
-  /* 헤더가 fixed일 경우 헤더 높이만큼 추가 패딩 필요 */
-  /* 예: padding-top: 70px; (기존 20px + 헤더높이 50px) */
-  background-color: #f4f6f8;
   color: #333;
-  max-width: 1200px; /* 자유게시판 페이지들과 통일 (선택 사항) */
   margin: 20px auto; /* 중앙 정렬 */
-
-  background-color: #ffffff;       /* 카드 배경을 흰색으로 */
-  /* border: 1px solid #dee2e6;       옅은 회색 테두리 */
   border-radius: 8px;               /* 모서리 둥글게 (다른 페이지와 통일) */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* 그림자 효과 (다른 페이지와 통일) */
-  /* 기존 box-sizing: border-box; 가 있다면 유지하거나, 필요하면 추가하세요. */
   box-sizing: border-box;
+  width: 100%;
+  max-width: 1200px;
 }
 
 /* Q&A 제목 링크 (페이지 상단 "Q&A" 텍스트) */
 .qnaLinkContainer {
   margin-bottom: 25px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #dfe3e8; /* 자유게시판 상세와 유사한 구분선 */
   text-align: center; /* 중앙 정렬 */
 }
 
 .qnaLink {
-  font-size: 2.2em; /* 크기 증가 (기존 26px 또는 2em에서 조정) */
+  font-size: 2.5em; 
   font-weight: 600;
   color: #2c3e50;
   text-decoration: none;
@@ -58,7 +49,7 @@
 }
 
 .qnaLink:hover {
-  color: #007bff; /* 자유게시판 상세와 유사한 호버 색상 */
+  color: #FF69B4; /* 호버 시 요청하신 핑크색으로 변경 */
   text-decoration: none;
 }
 
@@ -66,10 +57,10 @@
 .contentArea {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
-  border-radius: 8px; /* 자유게시판과 유사하게 */
-  padding: 30px 35px; /* 자유게시판 상세와 유사하게 */
-  margin-bottom: 30px; /* 답변 영역과의 간격 */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06); /* 자유게시판과 유사하게 */
+  border-radius: 8px; 
+  padding: 20px 35px; 
+  margin-bottom: 30px; 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06); 
 }
 
 /* 문의 정보 바 (답변상태, 작성자, 제목, 작성날짜 등) */
@@ -78,20 +69,17 @@
   flex-wrap: wrap;
   align-items: center;
   padding-bottom: 15px;
-  margin-bottom: 20px; /* 내용과의 간격 */
+  margin-bottom: 20px; 
   border-bottom: 1px solid #f0f0f0;
-  gap: 10px 20px; /* 아이템 사이 간격 */
+  gap: 10px 20px; 
 }
 
-/* 정보 바 내부의 각 span 아이템 스타일 */
-/* 각 span에 고유 클래스명을 부여하여 스타일링하는 것이 더 좋습니다. */
-/* 아래는 예시이며, 필요시 JSX에서 클래스명 부여 후 해당 클래스로 스타일링하세요. */
 .info span {
   font-size: 14px;
   color: #555;
 }
 
-.statusTag { /* 예시: 답변 상태 태그 (JSX에서 <span className={qnaDetailStyle.statusTag}>...</span>) */
+.statusTag { 
   font-weight: 600;
   padding: 5px 10px;
   background-color: #e9ecef;
@@ -99,16 +87,16 @@
   font-size: 13px;
   color: #495057;
 }
-.authorName { /* 예시: 작성자 이름 */
+.authorName { 
   /* 기본 스타일 유지 또는 필요시 추가 */
 }
-.postTitleMain { /* 예시: 문의 제목 */
+.postTitleMain { 
   flex-grow: 1;
   min-width: 150px;
-  font-weight: bold; /* 제목은 보통 굵게 */
+  font-weight: bold; 
   color: #333;
 }
-.postDate { /* 예시: 작성 날짜 */
+.postDate { 
   font-size: 13px;
   color: #777;
   margin-left: auto;
@@ -119,19 +107,19 @@
 /* 문의 내용 텍스트 박스 (실제로는 div 또는 p) */
 .textbox {
   background-color: #f8f9fa;
-  padding: 20px; /* 내부 여백 증가 */
+  padding: 20px; 
   border-radius: 4px;
   margin-bottom: 20px;
-  min-height: 100px; /* 최소 높이 증가 */
+  min-height: 100px; 
   line-height: 1.7;
   color: #343a40;
-  font-size: 1em; /* 폰트 크기 약간 증가 */
+  font-size: 1em; 
 }
 
-.textbox p { /* 만약 내용이 p 태그 안에 있다면 */
+.textbox p { 
   margin: 0;
 }
-.textbox br { /* JSX에서 <br/> 사용 시 스타일 */
+.textbox br { 
   content: "";
   display: block;
   margin-bottom: 0.6em;
@@ -142,12 +130,12 @@
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
-  margin-top: 15px; /* 내용과의 간격 */
+  margin-top: 15px; 
 }
 
 .img img {
-  width: 120px;  /* 이미지 크기 증가 */
-  height: 120px; /* 이미지 크기 증가 */
+  width: 120px;   
+  height: 120px; 
   border: 1px solid #ddd;
   border-radius: 4px;
   object-fit: cover;
@@ -159,8 +147,8 @@
   margin-top: 30px;
 }
 
-.answerTitle { /* "답변" 헤딩 */
-  font-size: 1.4em; /* 자유게시판 댓글 h3 와 유사하게 */
+.answerTitle { 
+  font-size: 1.4em; 
   color: #2c3e50;
   margin-top: 0;
   margin-bottom: 20px;
@@ -169,15 +157,15 @@
   font-weight: 600;
 }
 
-.adminAnswerItem { /* 답변 전체를 감싸는 아이템 (자유게시판 .commentItem 참고) */
-  background-color: #fff; /* 질문 영역과 구분되도록 다른 배경 또는 #f8f9fa 등 사용 가능 */
-  border: 1px solid #e0e0e0; /* 질문 영역과 동일한 테두리 */
-  padding: 20px 25px; /* 내부 여백 */
-  border-radius: 8px; /* 질문 영역과 동일한 둥근 모서리 */
-  box-shadow: 0 2px 5px rgba(0,0,0,0.06); /* 질문 영역과 동일한 그림자 */
+.adminAnswerItem { 
+  background-color: #fff; 
+  border: 1px solid #e0e0e0; 
+  padding: 20px 25px; 
+  border-radius: 8px; 
+  box-shadow: 0 2px 5px rgba(0,0,0,0.06); 
 }
 
-.adminAnswerMeta { /* 답변 작성자, 날짜 (자유게시판 .commentMeta 참고) */
+.adminAnswerMeta { 
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -185,20 +173,20 @@
   font-size: 0.9em;
 }
 
-.adminAnswerAuthor { /* 답변 작성자 (자유게시판 .commentAuthor 참고) */
+.adminAnswerAuthor { 
   font-weight: 600;
-  color: #34495e; /* 관리자 이름 색상 */
+  color: #34495e; 
 }
 
-.adminAnswerDate { /* 답변 작성일 (자유게시판 .commentCreatedAt 참고) */
+.adminAnswerDate { 
   color: #95a5a6;
-  font-size: 0.9em; /* 작성자 폰트 크기와 맞춤 */
+  font-size: 0.9em; 
 }
 
-.adminAnswerContent { /* 답변 내용 (자유게시판 .commentContent 참고) */
+.adminAnswerContent { 
   line-height: 1.7;
   color: #4a6177;
-  font-size: 1em; /* 내용 폰트 크기 */
+  font-size: 1em; 
   word-break: break-word;
 }
 .adminAnswerContent br {
@@ -212,26 +200,26 @@
 /* --- 문의글 수정/삭제 등 액션 버튼 영역 --- */
 .qnaMainActions {
   display: flex;
-  justify-content: flex-end; /* 버튼 오른쪽 정렬 */
+  justify-content: flex-end; 
   gap: 12px;
-  margin-top: 30px; /* 본문과의 간격 */
+  margin-top: 30px; 
   padding-top: 20px;
-  border-top: 1px solid #ecf0f1; /* 구분선 */
+  border-top: 1px solid #ecf0f1; 
 }
 
-.actionButton { /* 수정, 삭제 등 공통 버튼 (자유게시판과 스타일 통일) */
+.actionButton { 
   padding: 8px 18px;
   border: 1px solid #000000;
   border-radius: 5px;
-  background-color: #000000; /* 검은색 배경 */
-  color: white; /* 흰색 글자 */
+  background-color: #000000; 
+  color: white; 
   cursor: pointer;
   font-size: 0.9em;
   font-weight: 500;
   transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
 .actionButton:hover {
-  background-color: #333333; /* 호버 시 약간 밝은 검은색 */
+  background-color: #333333; 
   border-color: #333333;
 }
 
@@ -240,8 +228,6 @@
 }
 /* --- 액션 버튼 영역 끝 --- */
 
-
-/* 기존 imagePlaceholder, pagination 등 다른 스타일들은 필요에 따라 유지 또는 수정 */
 .imagePlaceholder {
   width: 100px;
   height: 100px;

@@ -3,38 +3,38 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import banner from "../../assets/images/banner.png";
 import freeboardDetailStyle from './freeboardDetail.module.css';
 
-import reportOffIcon from "../../assets/images/able-alarm.png"; // 신고 안된 상태 아이콘
-import likeOffIcon from "../../assets/images/b_thumbup.png"; //좋아요 안된 상태 아이콘
-import reportOnIcon from "../../assets/images/disable-alarm.png"; //신고 된 상태 아이콘
-import likeOnIcon from "../../assets/images/thumbup.png"; //좋아요 된 상태 아이콘
+import reportOffIcon from "../../assets/images/able-alarm.png";
+import likeOffIcon from "../../assets/images/b_thumbup.png";
+import reportOnIcon from "../../assets/images/disable-alarm.png";
+import likeOnIcon from "../../assets/images/thumbup.png";
 
-// (실제 앱에서는 Context API, Redux, Zustand 등에서 가져오거나 로그인 시 설정됩니다)
-const LOGGED_IN_USER_ID = 'user123'; // 예시: 현재 로그인한 사용자 ID
+// Pagination 컴포넌트 임포트 (경로 확인 필요)
+import Pagination from '../../components/Pagination/Pagination';
+
+const LOGGED_IN_USER_ID = 'user123'; 
 
 function FreeboardDetail() {
-    const { postId } = useParams(); // URL에서 postId 가져오기
-    const navigate = useNavigate(); // 수정/삭제 후 페이지 이동 시 사용
+    const { postId } = useParams();
+    const navigate = useNavigate();
 
-    // --- 상태 관리 ---
-    const [post, setPost] = useState(null); // 게시글 데이터
-    const [comments, setComments] = useState([]); // 댓글 데이터
-    const [commentInput, setCommentInput] = useState(''); // 댓글 입력 값
-    const [currentPage, setCurrentPage] = useState(1); // 현재 댓글 페이지
-    const [totalPages, setTotalPages] = useState(1); // 전체 댓글 페이지 수
-    const [isLoading, setIsLoading] = useState(true); // 로딩 상태
-    const [error, setError] = useState(null); // 에러 상태
+    const [post, setPost] = useState(null);
+    const [allComments, setAllComments] = useState([]); // 전체 댓글 데이터
+    
+    const [commentInput, setCommentInput] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [reportedCommentIds, setReportedCommentIds] = useState([]);
-
-    // --- 댓글 수정 관련 상태 및 ref ---
+    
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [currentEditText, setCurrentEditText] = useState('');
     const editInputRef = useRef(null);
-
-    // --- 게시글 신고 상태 추가 ---
     const [isPostReported, setIsPostReported] = useState(false);
 
+    // --- 댓글 페이지네이션 상태 ---
+    const [currentCommentPage, setCurrentCommentPage] = useState(1); // 댓글 현재 페이지 (기존 currentPage 이름 변경)
+    const [totalCommentPages, setTotalCommentPages] = useState(1); // 댓글 전체 페이지 수 (기존 totalPages 이름 변경)
+    const commentsPerPage = 5; // 페이지 당 보여줄 댓글 수
 
-    // --- 데이터 예시 및 로딩 (실제로는 API 호출) ---
     useEffect(() => {
         setIsLoading(true);
         setError(null);
@@ -44,35 +44,42 @@ function FreeboardDetail() {
                 id: postId,
                 title: `게시글 (ID: ${postId}) - 최종 기능 통합`,
                 author: '최종 작성자',
-                authorId: 'user456', // 게시글 작성자의 고유 ID
+                authorId: 'user456',
                 createdAt: '2025.05.07',
                 likeCount: 20,
-                isLikedByCurrentUser: false, // <<< 게시글 좋아요 상태 추가 (초기값: false)
+                isLikedByCurrentUser: false,
                 viewCount: 150,
                 content: `이것은 ID ${postId} 게시글의 최종 내용입니다.\n\n모든 기능이 통합되었습니다:\n- 게시글 좋아요 토글\n- 게시글 신고 (일회성, 비활성화)\n- 댓글 인라인 수정 (더블클릭 후 Enter)\n- 기타 기본 기능들...\n\n즐겁게 테스트해보세요!`,
-                bannerImageUrl: 'https://via.placeholder.com/800x200?text=Final+Feature+Banner',
+                bannerImageUrl: banner, // banner 이미지 직접 사용
             };
 
-            const fetchedComments = [
-                { id: 101, postId: postId, author: '일반 댓글러', authorId: 'user789', content: '잘 봤습니다!', createdAt: '2025.05.07', likeCount: 5, isLiked: false },
-                { id: 102, postId: postId, author: '나 (로그인 사용자)', authorId: LOGGED_IN_USER_ID, content: '내 댓글입니다. 더블클릭해서 수정하고 Enter를 누르세요.\nShift+Enter로 줄바꿈도 가능합니다.', createdAt: '2025.05.07', likeCount: 2, isLiked: true },
-                { id: 103, postId: postId, author: '또 다른 나', authorId: LOGGED_IN_USER_ID, content: '이것도 내 댓글. ESC로 수정 취소도 가능해요.', createdAt: '2025.05.07', likeCount: 0, isLiked: false },
-            ];
+            // 댓글 목업 데이터 개수 증가
+            const fetchedComments = Array.from({ length: 17 }, (_, i) => ({ // 17개 댓글 생성
+                id: 101 + i,
+                postId: postId,
+                author: i % 3 === 0 ? '나 (로그인 사용자)' : `댓글러${i + 1}`,
+                authorId: i % 3 === 0 ? LOGGED_IN_USER_ID : `user${700 + i}`,
+                content: `게시글 ID ${postId}에 대한 ${i + 1}번째 댓글입니다. 댓글 내용 테스트!`,
+                createdAt: `2025.05.${String(7 + (i % 5)).padStart(2, '0')}`,
+                likeCount: Math.floor(Math.random() * 6),
+                isLiked: i % 4 === 0,
+            }));
 
-            if (postId === "error_test") { // 에러 테스트용
+            if (postId === "error_test") {
                 setError("서버에서 데이터를 가져오는 중 오류가 발생했습니다.");
                 setPost(null);
             } else {
                 setPost(fetchedPost);
-                setComments(fetchedComments);
-                setTotalPages(2); // 예시 댓글 총 페이지 수
-                setIsPostReported(false); // 게시글 로드 시 신고 상태 초기화 (실제로는 사용자별 이력 필요)
+                setAllComments(fetchedComments); // 전체 댓글 저장
+                setTotalCommentPages(Math.ceil(fetchedComments.length / commentsPerPage)); // 전체 댓글 페이지 수 계산
+                setIsPostReported(false); 
+                setReportedCommentIds(fetchedComments.filter((c,i)=> i%4 ===0 && c.authorId !== LOGGED_IN_USER_ID).map(c => c.id)) // 일부 댓글 신고된 상태로 설정
             }
             setIsLoading(false);
-        }, 1200); // 딜레이 약간 늘림
+            setCurrentCommentPage(1); // 데이터 로드 시 댓글 페이지 1로 초기화
+        }, 1200);
     }, [postId]);
 
-    // --- 댓글 수정 textarea 자동 포커스 ---
     useEffect(() => {
         if (editingCommentId && editInputRef.current) {
             editInputRef.current.focus();
@@ -82,88 +89,71 @@ function FreeboardDetail() {
         }
     }, [editingCommentId]);
 
-    // --- 이벤트 핸들러 함수 ---
+    // --- 댓글 페이지네이션 로직 ---
+    const indexOfLastComment = currentCommentPage * commentsPerPage;
+    const indexOfFirstComment = indexOfLastComment - commentsPerPage;
+    const currentDisplayedComments = allComments.slice(indexOfFirstComment, indexOfLastComment);
+
+    const handleCommentPageChange = (pageNumber) => { // 기존 handlePageChange -> handleCommentPageChange
+        console.log(`댓글 페이지 ${pageNumber}로 이동`);
+        setCurrentCommentPage(pageNumber);
+    };
+
+
+    // (handlePostLikeClick, handlePostReportClick 등 다른 핸들러들은 기존과 동일하게 유지)
     const handlePostLikeClick = () => {
         if (!post) return;
-        console.log("게시글 좋아요 토글 실행:", post.id, !post.isLikedByCurrentUser);
-        setPost(prevPost => {
-            const newIsLiked = !prevPost.isLikedByCurrentUser;
-            const newLikeCount = newIsLiked ? prevPost.likeCount + 1 : prevPost.likeCount - 1;
-            // TODO: API로 서버에 좋아요 상태 업데이트
-            return {
-                ...prevPost,
-                isLikedByCurrentUser: newIsLiked,
-                likeCount: newLikeCount < 0 ? 0 : newLikeCount,
-            };
-        });
+        setPost(prevPost => ({
+            ...prevPost,
+            isLikedByCurrentUser: !prevPost.isLikedByCurrentUser,
+            likeCount: prevPost.isLikedByCurrentUser ? prevPost.likeCount - 1 : prevPost.likeCount + 1,
+        }));
     };
 
     const handlePostReportClick = () => {
         if (!post || isPostReported) return;
         if (window.confirm("이 게시물을 신고하시겠습니까? 신고 후에는 이 세션에서 취소할 수 없습니다.")) {
-            console.log("게시글 신고 처리:", post.id);
             setIsPostReported(true);
-            // TODO: API로 서버에 신고 정보 전송
             alert("게시물이 신고되었습니다.");
         }
     };
 
     const handlePostEditClick = () => {
-        console.log(`게시글 ID ${post.id} 수정 페이지로 이동 요청`);
-        navigate(`/freeboard/${post.id}/edit`);
+        navigate(`/freeboard/${post.id}/edit`); // App.js에 정의된 경로와 일치해야 함
     };
 
     const handlePostDeleteClick = () => {
-        if (window.confirm("정말로 이 게시글을 삭제하시겠습니까? (임시 버튼)")) {
+        if (window.confirm("정말로 이 게시글을 삭제하시겠습니까?")) {
             console.log(`게시글 ID ${post.id} 삭제 처리 요청`);
-            // TODO: API로 게시글 삭제 요청
-            // navigate('/freeboard'); // 성공 시 목록으로 이동
+            // navigate('/freeboard'); 
         }
     };
 
     const handleCommentLikeToggle = (commentId) => {
-        console.log(`댓글 ID ${commentId} 좋아요 토글`);
-        setComments(prevComments =>
+        setAllComments(prevComments =>
             prevComments.map(comment =>
                 comment.id === commentId
                     ? { ...comment, isLiked: !comment.isLiked, likeCount: comment.isLiked ? Math.max(0, comment.likeCount - 1) : comment.likeCount + 1 }
                     : comment
             )
         );
-        // TODO: API로 댓글 좋아요 상태 업데이트
     };
 
     const handleCommentReportClick = (commentId) => {
-        // 이미 신고된 댓글이면 더 이상 처리하지 않음 (버튼이 비활성화되므로, 이 로직은 안전장치 역할)
-        if (reportedCommentIds.includes(commentId)) {
-            return;
-        }
-
-        if (window.confirm(`이 댓글을 신고하시겠습니까? 이 작업은 되돌릴 수 없습니다.`)) { // 확인 문구 명확히
-            console.log(`댓글 ID ${commentId} 신고 처리`);
-            // reportedCommentIds 상태 업데이트
-            setReportedCommentIds(prevIds => {
-                if (!prevIds.includes(commentId)) { // 중복 방지
-                    return [...prevIds, commentId];
-                }
-                return prevIds;
-            });
-            // TODO: API로 댓글 신고 처리 (서버에 실제 신고 정보 전송)
+        if (reportedCommentIds.includes(commentId)) return;
+        if (window.confirm(`이 댓글을 신고하시겠습니까? 이 작업은 되돌릴 수 없습니다.`)) {
+            setReportedCommentIds(prevIds => [...prevIds, commentId]);
             alert(`댓글 ID ${commentId}이(가) 신고되었습니다.`);
         }
     };
 
     const handleCommentDeleteClick = (commentId) => {
         if (window.confirm(`댓글 ID ${commentId}을(를) 정말로 삭제하시겠습니까?`)) {
-            console.log(`댓글 ID ${commentId} 삭제 처리`);
-            setComments(prevComments => prevComments.filter(comment => comment.id !== commentId));
-            // TODO: API로 댓글 삭제 처리
+            setAllComments(prevComments => prevComments.filter(comment => comment.id !== commentId));
         }
     };
 
-    const handleCommentInputChange = (event) => {
-        setCommentInput(event.target.value);
-    };
+    const handleCommentInputChange = (event) => setCommentInput(event.target.value);
 
     const handleCommentFormSubmit = (event) => {
         event.preventDefault();
@@ -171,9 +161,8 @@ function FreeboardDetail() {
             alert("댓글 내용을 입력해주세요.");
             return;
         }
-        console.log("새 댓글 등록:", commentInput, "for postId:", postId);
         const newComment = {
-            id: Date.now(), // 임시 ID
+            id: Date.now(), 
             postId: postId,
             author: '나 (로그인 사용자)',
             authorId: LOGGED_IN_USER_ID,
@@ -182,15 +171,9 @@ function FreeboardDetail() {
             likeCount: 0,
             isLiked: false
         };
-        setComments(prevComments => [newComment, ...prevComments]);
+        setAllComments(prevComments => [newComment, ...prevComments]); // 새 댓글 맨 위에 추가
+        setTotalCommentPages(Math.ceil((allComments.length + 1) / commentsPerPage)); // 전체 페이지 수 업데이트
         setCommentInput('');
-        // TODO: API로 새 댓글 등록
-    };
-
-    const handlePageChange = (pageNumber) => {
-        console.log(`댓글 페이지 ${pageNumber}로 이동`);
-        setCurrentPage(pageNumber);
-        // TODO: 해당 페이지 댓글 목록 API 호출
     };
 
     const handleCommentDoubleClick = (comment) => {
@@ -200,43 +183,32 @@ function FreeboardDetail() {
         }
     };
 
-    const handleCommentEditChange = (event) => {
-        setCurrentEditText(event.target.value);
-    };
+    const handleCommentEditChange = (event) => setCurrentEditText(event.target.value);
 
     const handleCommentEditKeyDown = (commentId, event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
             if (!currentEditText.trim()) {
                 alert("댓글 내용은 비워둘 수 없습니다.");
-                const originalComment = comments.find(c => c.id === commentId);
+                const originalComment = allComments.find(c => c.id === commentId);
                 if (originalComment) setCurrentEditText(originalComment.content);
                 return;
             }
-            console.log(`댓글 ID ${commentId} 내용 수정 완료:`, currentEditText);
-            setComments(prevComments =>
+            setAllComments(prevComments =>
                 prevComments.map(c =>
                     c.id === commentId ? { ...c, content: currentEditText } : c
                 )
             );
             setEditingCommentId(null);
-            // TODO: API로 댓글 수정 내용 전송
         } else if (event.key === 'Escape') {
             event.preventDefault();
             setEditingCommentId(null);
         }
     };
 
-    // --- 로딩 및 에러 처리 UI ---
-    if (isLoading) {
-        return <div className={freeboardDetailStyle.loadingContainer}>게시글을 불러오는 중입니다...</div>;
-    }
-    if (error) {
-        return <div className={freeboardDetailStyle.errorContainer}>오류: {error}</div>;
-    }
-    if (!post) {
-        return <div className={freeboardDetailStyle.errorContainer}>게시글을 찾을 수 없습니다.</div>;
-    }
+    if (isLoading) return <div className={freeboardDetailStyle.loadingContainer}>게시글을 불러오는 중입니다...</div>;
+    if (error) return <div className={freeboardDetailStyle.errorContainer}>오류: {error}</div>;
+    if (!post) return <div className={freeboardDetailStyle.errorContainer}>게시글을 찾을 수 없습니다.</div>;
 
     return (
         <div className={freeboardDetailStyle.pageContainer}>
@@ -248,20 +220,18 @@ function FreeboardDetail() {
 
             {post.bannerImageUrl && (
                 <div className={freeboardDetailStyle.imageBannerContainer}>
-                    <img src={banner} alt="게시판 배너" className={freeboardDetailStyle.bannerImage} />
+                    <img src={post.bannerImageUrl} alt="게시판 배너" className={freeboardDetailStyle.bannerImage} />
                 </div>
             )}
 
             <div className={freeboardDetailStyle.postContentContainer}>
                 <h1 className={freeboardDetailStyle.postTitle}>{post.title}</h1>
-
                 <div className={freeboardDetailStyle.postMeta}>
                     <div>
                         <span className={freeboardDetailStyle.postAuthor}> {post.author}</span>
                         <span className={freeboardDetailStyle.postCreatedAt}>{post.createdAt}</span>
                     </div>
                 </div>
-
                 <div className={freeboardDetailStyle.postSubMeta}>
                     <div className={freeboardDetailStyle.postStats}>
                         <button
@@ -273,7 +243,7 @@ function FreeboardDetail() {
                             <img
                                 src={post.isLikedByCurrentUser ? likeOnIcon : likeOffIcon}
                                 alt={post.isLikedByCurrentUser ? "좋아요 된 상태" : "좋아요 안된 상태"}
-                                className={freeboardDetailStyle.buttonIcon} // CSS 스타일링을 위한 클래스
+                                className={freeboardDetailStyle.buttonIcon}
                             />
                         </button>
                         <span>좋아요: {post.likeCount}</span>
@@ -289,21 +259,16 @@ function FreeboardDetail() {
                         <img
                             src={isPostReported ? reportOnIcon : reportOffIcon}
                             alt={isPostReported ? "신고 된 상태" : "신고 안된 상태"}
-                            className={freeboardDetailStyle.buttonIcon} // CSS 스타일링을 위한 클래스
+                            className={freeboardDetailStyle.buttonIcon}
                         />
                     </button>
                 </div>
-
                 <div className={freeboardDetailStyle.postBody}>
                     {post.content.split('\n').map((line, index) => (
-                        <React.Fragment key={index}>
-                            {line}
-                            <br />
-                        </React.Fragment>
+                        <React.Fragment key={index}>{line}<br /></React.Fragment>
                     ))}
                 </div>
-
-                {true && ( // 게시글 수정/삭제 버튼 (위치 확인을 위해 항상 표시되도록 임시 설정)
+                {post.authorId === LOGGED_IN_USER_ID && ( // 자신의 글일 때만 수정/삭제 버튼 표시
                     <div className={freeboardDetailStyle.postActions}>
                         <button onClick={handlePostEditClick} className={`${freeboardDetailStyle.actionButton} ${freeboardDetailStyle.editButton}`}>수정</button>
                         <button onClick={handlePostDeleteClick} className={`${freeboardDetailStyle.actionButton} ${freeboardDetailStyle.deleteButton}`}>삭제</button>
@@ -323,9 +288,9 @@ function FreeboardDetail() {
             </form>
 
             <div className={freeboardDetailStyle.commentListContainer}>
-                <h3>댓글 ({comments.length})</h3>
-                {comments.length > 0 ? (
-                    comments.map(comment => (
+                <h3>댓글 ({allComments.length})</h3> {/* 전체 댓글 수 표시 */}
+                {currentDisplayedComments.length > 0 ? ( // currentDisplayedComments로 변경
+                    currentDisplayedComments.map(comment => (
                         <div key={comment.id} className={freeboardDetailStyle.commentItem}>
                             <div className={freeboardDetailStyle.commentMeta}>
                                 <div>
@@ -365,56 +330,52 @@ function FreeboardDetail() {
                                 <div>
                                     <button
                                         onClick={() => handleCommentLikeToggle(comment.id)}
-                                        className={freeboardDetailStyle.commentLikeButton}
+                                        className={freeboardDetailStyle.commentLikeButton} // CSS 클래스 확인
                                         aria-label={comment.isLiked ? "댓글 좋아요 취소" : "댓글 좋아요"}
                                         title={comment.isLiked ? "좋아요 취소" : "좋아요"}
                                     >
                                         <img
                                             src={comment.isLiked ? likeOnIcon : likeOffIcon}
                                             alt={comment.isLiked ? "좋아요 된 상태" : "좋아요 안된 상태"}
-                                            className={freeboardDetailStyle.buttonIcon} /* 게시글 버튼과 동일한 아이콘 클래스 사용 */
+                                            className={freeboardDetailStyle.buttonIcon}
                                         />
                                     </button>
                                     <span className={freeboardDetailStyle.commentLikeCount}>{comment.likeCount}</span>
                                 </div>
-                                {LOGGED_IN_USER_ID !== comment.authorId && ( // 자신의 댓글이 아닐 때만 신고 버튼 표시
+                                {LOGGED_IN_USER_ID !== comment.authorId && (
                                     <button
-                                    onClick={() => handleCommentReportClick(comment.id)}
-                                    className={`${freeboardDetailStyle.reportButton} ${freeboardDetailStyle.commentReportButton} ${
-                                        reportedCommentIds.includes(comment.id) ? freeboardDetailStyle.reported : '' // 신고된 경우 .reported 클래스 추가
-                                    }`}
-                                    disabled={reportedCommentIds.includes(comment.id)} // 신고된 경우 비활성화
-                                    aria-label={reportedCommentIds.includes(comment.id) ? "댓글 신고됨" : "댓글 신고하기"}
-                                    title={reportedCommentIds.includes(comment.id) ? "신고됨" : "신고하기"}
-                                >
-                                    <img
-                                        src={reportedCommentIds.includes(comment.id) ? reportOnIcon : reportOffIcon} // 상태에 따라 아이콘 변경
-                                        alt={reportedCommentIds.includes(comment.id) ? "신고 된 상태" : "댓글 신고하기"}
-                                        className={freeboardDetailStyle.buttonIcon}
-                                    />
-                                </button>
+                                        onClick={() => handleCommentReportClick(comment.id)}
+                                        className={`${freeboardDetailStyle.reportButton} ${freeboardDetailStyle.commentReportButton} ${
+                                            reportedCommentIds.includes(comment.id) ? freeboardDetailStyle.reported : ''
+                                        }`}
+                                        disabled={reportedCommentIds.includes(comment.id)}
+                                        aria-label={reportedCommentIds.includes(comment.id) ? "댓글 신고됨" : "댓글 신고하기"}
+                                        title={reportedCommentIds.includes(comment.id) ? "신고됨" : "신고하기"}
+                                    >
+                                        <img
+                                            src={reportedCommentIds.includes(comment.id) ? reportOnIcon : reportOffIcon}
+                                            alt={reportedCommentIds.includes(comment.id) ? "신고 된 상태" : "댓글 신고하기"}
+                                            className={freeboardDetailStyle.buttonIcon}
+                                        />
+                                    </button>
                                 )}
                             </div>
                         </div>
                     ))
                 ) : (
-                    <p className={freeboardDetailStyle.noComments}>등록된 댓글이 없습니다. 첫 댓글을 남겨보세요!</p>
+                     allComments.length > 0 ? <p>해당 페이지에 댓글이 없습니다.</p> : <p className={freeboardDetailStyle.noComments}>등록된 댓글이 없습니다. 첫 댓글을 남겨보세요!</p>
                 )}
             </div>
 
-            {comments.length > 0 && totalPages > 1 && (
+            {/* 기존 버튼식 페이지네이션을 Pagination 컴포넌트로 교체 */}
+            {allComments.length > 0 && totalCommentPages > 1 && (
                 <div className={freeboardDetailStyle.commentPaginationContainer}>
-                    <div>
-                        {[...Array(totalPages).keys()].map(num => (
-                            <button
-                                key={num + 1}
-                                onClick={() => handlePageChange(num + 1)}
-                                className={`${freeboardDetailStyle.paginationButton} ${currentPage === num + 1 ? freeboardDetailStyle.activePage : ''}`}
-                            >
-                                {num + 1}
-                            </button>
-                        ))}
-                    </div>
+                    <Pagination
+                        currentPage={currentCommentPage}
+                        totalPages={totalCommentPages}
+                        onPageChange={handleCommentPageChange}
+                        pageNeighbours={1} // 댓글 페이지네이션에 적합하게 조절 가능
+                    />
                 </div>
             )}
         </div>

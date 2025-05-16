@@ -120,7 +120,7 @@ const Bookmark = () => {
     setTimeout(() => {
       navigate(`/bookmark/${folderId}`); // URL 변경으로 페이지 이동
       setIsLoading(false);
-    }, 1000); // 3초 딜레이
+    }, 1000);
   };
 
   return (

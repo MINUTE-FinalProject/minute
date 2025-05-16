@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import Header from '../../components/Header/Header'; // 경로 확인
-import Sidebar from '../../components/Sidebar/Sidebar'; // 경로 확인
 import styles from './ManagerNoticeDetail.module.css';
 
 // 샘플 데이터 (컴포넌트 외부 또는 최상단에 정의하여 useEffect에서도 접근 가능하도록)
@@ -60,9 +58,9 @@ function ManagerNoticeDetail() {
     if (loading) {
         return ( // 로딩 중에도 Layout 적용
             <>
-                <Header />
+
                 <div className={styles.container}>
-                    <Sidebar />
+
                     <main className={styles.managerContent}>
                         <p>공지사항을 불러오는 중입니다...</p>
                     </main>
@@ -78,9 +76,9 @@ function ManagerNoticeDetail() {
     if (!notice) {
         return (
             <>
-                <Header />
+
                 <div className={styles.container}>
-                    <Sidebar />
+
                     <main className={styles.managerContent}>
                         <div className={styles.titleArea}>
                              <Link to="/admin/notice" className={styles.backToListLink}>&lt; 공지사항 목록</Link>
@@ -95,9 +93,9 @@ function ManagerNoticeDetail() {
     // 정상적으로 notice 데이터가 있을 때 렌더링
     return (
         <>
-            <Header />
+
             <div className={styles.container}>
-                <Sidebar />
+
                 <main className={styles.managerContent}>
                     <div className={styles.titleArea}>
                         <Link to="/admin/notice" className={styles.backToListLink}>&lt; 공지사항 목록</Link>

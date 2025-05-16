@@ -68,15 +68,20 @@ function QnaDetail() {
                 )}
 
                 {/* --- 문의글 수정 버튼 (항상 보이도록) --- */}
-                {/* 실제로는 작성자만 보이도록 조건부 렌더링 필요 */}
-                <div className={qnaDetailStyle.qnaMainActions}>
-                    <button
-                        onClick={() => console.log(`Q&A ID ${qnaPost.id} 수정 페이지로 이동`)}
+                {/* 실제로는 작성자만 보이도록 조건부 렌더링 필요 */}     
+                {/* "문의는 수정만 가능해" 라고 하셨으므로 삭제 버튼은 제외합니다. */}
+
+                 <div className={qnaDetailStyle.qnaMainActions}>
+                    
+                     {/* 지금 포스터 아이디가 없어서 화면이동 확인하기 위해 뒤에  /${qnaPost.id} 이걸 지운 상태
+                        Link to에  `/qnaEdit/${qnaPost.id}` 이걸로 바꿔서 진행하시면 됩니다.*/}
+                    <Link
+                        to={`/qnaEdit`}
                         className={`${qnaDetailStyle.actionButton} ${qnaDetailStyle.editButton}`}
+                        onClick={() => console.log(`Q&A ID ${qnaPost.id} 수정 페이지로 이동`)}
                     >
                         수정
-                    </button>
-                    {/* "문의는 수정만 가능해" 라고 하셨으므로 삭제 버튼은 제외합니다. */}
+                    </Link>
                 </div>
                 {/* ------------------------------------ */}
             </div>

@@ -1,145 +1,132 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import Header from '../../components/Header/Header'; // 실제 경로로 수정해주세요
-import Sidebar from '../../components/Sidebar/Sidebar'; // 실제 경로로 수정해주세요
-import styles from './ManagerFreeboard.module.css'; // CSS 모듈 파일 이름에 맞게 수정
+// ManagerFreeboard.jsx
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // useNavigate 추가
+import reportOffIcon from "../../assets/images/able-alarm.png";
+import likeOffIcon from "../../assets/images/b_thumbup.png";
+import reportOnIcon from "../../assets/images/disable-alarm.png";
+import searchButtonIcon from "../../assets/images/search_icon.png";
+import likeOnIcon from "../../assets/images/thumbup.png";
+import Pagination from '../../components/Pagination/Pagination';
+import styles from './ManagerFreeboard.module.css';
 
-// 아이콘 import (자유게시판에서 사용했던 아이콘과 동일하게)
-import reportOffIcon from "../../assets/images/able-alarm.png"; // 실제 경로로 수정해주세요
-import likeOffIcon from "../../assets/images/b_thumbup.png"; // 실제 경로로 수정해주세요
-import reportOnIcon from "../../assets/images/disable-alarm.png"; // 실제 경로로 수정해주세요
-import searchButtonIcon from "../../assets/images/search_icon.png"; // 검색 버튼용 아이콘, 실제 경로로 수정
-import likeOnIcon from "../../assets/images/thumbup.png"; // 실제 경로로 수정해주세요
+const CURRENT_ADMIN_ID = '관리자1';
+// generateInitialPosts 함수는 이전 제공된 버전 사용
+const generateInitialPosts = (count = 47) => { /* ... 이전 코드와 동일 ... */
+    const posts = []; const authors = ['관리자1', '사용자A', '사용자B', '관리자2', '사용자C'];
+    for (let i = 1; i <= count; i++) {
+        posts.push({
+            id: i, title: `자유게시판 테스트 게시물 ${i}`, author: authors[i % authors.length],
+            date: `2025.05.${String(10 + (i % 15)).padStart(2, '0')}`,
+            views: Math.floor(Math.random() * 500) + 50, likes: Math.floor(Math.random() * 100),
+            reports: i % 10 === 0 ? Math.floor(Math.random() * 5) + 1 : 0,
+            isLikedByManager: i % 4 === 0 && authors[i % authors.length] === CURRENT_ADMIN_ID,
+            isReportedBySomeone: i % 10 === 0, adminActionedOnReport: i % 10 === 0 && i % 2 === 0,
+        });
+    } return posts;
+};
 
-// 예시 데이터 (실제로는 API를 통해 받아옵니다)
-const initialPosts = [
-    { id: 1, type: '정보', title: '어디로 가야하죠 - 아조씨패션', author: '닉네임', date: '25.04.21', views: 111, likes: 111, reports: 0, isLiked: false, isReported: false },
-    { id: 2, type: '질문', title: '아 여행가고싶다 ㅠㅠ', author: '닉네임', date: '25.04.21', views: 111, likes: 111, reports: 1, isLiked: true, isReported: true },
-    { id: 3, type: '후기', title: '여러분은 순대를 뭐 찍어 먹나요?', author: '닉네임', date: '25.04.21', views: 111, likes: 111, reports: 0, isLiked: false, isReported: false },
-    // ... 기타 게시물 데이터
-];
 
 function ManagerFreeboard() {
-    const [activeTab, setActiveTab] = useState('all'); // 'all' 또는 'myPosts'
-    const [posts, setPosts] = useState(initialPosts);
+    const navigate = useNavigate(); // useNavigate 사용
+    const [allPosts, setAllPosts] = useState([]);
+    const [postsToDisplay, setPostsToDisplay] = useState([]);
+    const [activeTab, setActiveTab] = useState('all');
+    const [dateRange, setDateRange] = useState({ start: '', end: '' });
+    const [searchTerm, setSearchTerm] = useState('');
+    const [sortOrder, setSortOrder] = useState('latest');
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
-    // TODO: 실제 필터링 및 정렬 로직 추가
-    // TODO: 좋아요, 신고 토글 로직 추가 (자유게시판 목록 페이지 참고)
+    useEffect(() => { /* ... (데이터 로드 useEffect) ... */ setAllPosts(generateInitialPosts()); }, []);
+    useEffect(() => { /* ... (필터링 및 정렬 useEffect) ... */
+        let processedData = [...allPosts];
+        // 필터링 (탭, 날짜, 검색어)
+        if (activeTab === 'myPosts') { processedData = processedData.filter(post => post.author === CURRENT_ADMIN_ID); }
+        if (dateRange.start && dateRange.end) { /* ... */ }
+        if (searchTerm) { /* ... */ }
+        // 정렬
+        if (sortOrder === 'latest') { processedData.sort((a, b) => b.id - a.id); }
+        else if (sortOrder === 'views') { processedData.sort((a, b) => b.views - a.views); }
+        else if (sortOrder === 'likes') { processedData.sort((a, b) => b.likes - a.likes); }
+        setPostsToDisplay(processedData); setCurrentPage(1);
+    }, [allPosts, activeTab, dateRange, searchTerm, sortOrder]);
 
-    const handleLikeToggle = (postId) => {
-        setPosts(prevPosts =>
-            prevPosts.map(post =>
-                post.id === postId ? { ...post, isLiked: !post.isLiked, likes: post.isLiked ? post.likes -1 : post.likes + 1 } : post
-            )
-        );
-    };
+    const handleLikeToggle = (postId) => { /* ... (기존 로직) ... */ };
+    const handleReportActionToggle = (postId) => { /* ... (기존 로직) ... */ };
+    const totalPages = Math.ceil(postsToDisplay.length / itemsPerPage);
+    const indexOfLastPost = currentPage * itemsPerPage;
+    const indexOfFirstPost = indexOfLastPost - itemsPerPage;
+    const currentDisplayedPosts = postsToDisplay.slice(indexOfFirstPost, indexOfLastPost);
+    const handlePageChange = (pageNumber) => { setCurrentPage(pageNumber); };
 
-    const handleReportToggle = (postId) => {
-        setPosts(prevPosts =>
-            prevPosts.map(post =>
-                post.id === postId ? { ...post, isReported: !post.isReported } : post
-            )
-        );
+    // 행 클릭 핸들러
+    const handleRowClick = (postId) => {
+        navigate(`/admin/managerFreeboardDetail/${postId}`);
     };
 
     return (
         <>
-            <Header />
-            <div className={styles.container}> {/* Sidebar와 메인 콘텐츠를 감싸는 flex 컨테이너 */}
-                <Sidebar />
-                <main className={styles.managerFreeboardContent}> {/* 메인 콘텐츠 영역 */}
-                    <h1 className={styles.pageTitle}>자유게시판</h1>
-
-                    <div className={styles.tabContainer}>
-                        <button
-                            className={`${styles.tabButton} ${activeTab === 'all' ? styles.activeTab : ''}`}
-                            onClick={() => setActiveTab('all')}
-                        >
-                            전체 목록
-                        </button>
-                        <button
-                            className={`${styles.tabButton} ${activeTab === 'myPosts' ? styles.activeTab : ''}`}
-                            onClick={() => setActiveTab('myPosts')}
-                        >
-                            내 글 {/* 또는 다른 기준 */}
-                        </button>
+            <div className={styles.container}>
+                <main className={styles.managerFreeboardContent}>
+                    <h1 className={styles.pageTitle}>자유게시판 관리</h1>
+                    <div className={styles.tabContainer}> {/* ... 탭 버튼들 ... */}
+                        <button className={`${styles.tabButton} ${activeTab === 'all' ? styles.activeTab : ''}`} onClick={() => setActiveTab('all')}>전체 게시물</button>
+                        <button className={`${styles.tabButton} ${activeTab === 'myPosts' ? styles.activeTab : ''}`} onClick={() => setActiveTab('myPosts')}>내 작성글</button>
                     </div>
-
-                    <div className={styles.filterBar}> {/* 신고관리 페이지 필터바 느낌 */}
-                        <input type="date" className={styles.filterInput} />
-                        <input type="date" className={styles.filterInput} />
-                        <select className={styles.filterSelect}>
-                            <option value="">정렬순▼</option>
-                            <option value="latest">최신순</option>
-                            <option value="views">조회순</option>
+                    <div className={styles.filterBar}>
+                        {/* ... 필터 요소들 (정렬 select 포함) ... */}
+                        <input type="date" className={styles.filterElement} value={dateRange.start} onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}/>
+                        <span className={styles.dateSeparator}>~</span>
+                        <input type="date" className={styles.filterElement} value={dateRange.end} onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}/>
+                        <select className={`${styles.filterElement} ${styles.filterSelect}`} value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+                            <option value="latest">최신순</option><option value="views">조회순</option><option value="likes">좋아요순</option>
                         </select>
-                        <select className={styles.filterSelect}>
-                            <option value="">정렬순▼</option>
-                            <option value="likes">좋아요순</option>
-                            <option value="reports">신고순</option>
-                        </select>
-                        <input type="text" placeholder="검색어를 입력하세요" className={styles.filterSearchInput} />
-                        <button type="button" className={styles.filterSearchButton}>
-                            <img src={searchButtonIcon} alt="검색" className={styles.filterSearchIcon} />
-                        </button>
+                        <input type="text" placeholder="닉네임, 제목 검색" className={`${styles.filterElement} ${styles.filterSearchInput}`} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}/>
+                        <button type="button" className={styles.filterSearchButton}><img src={searchButtonIcon} alt="검색" className={styles.searchIcon} /></button>
                     </div>
-
-                    <table className={styles.boardTable}>
+                    <table className={styles.boardTable} id="boardTableAnchor">
                         <thead>
                             <tr>
-                                <th>NO</th>
-                                <th>타입</th>
-                                <th className={styles.titleColumn}>제목</th>
-                                <th>작성자</th>
-                                <th>작성날짜</th>
-                                <th>조회수</th>
-                                <th>좋아요</th>
-                                <th>신고</th>
+                                <th>NO</th><th>닉네임</th>
+                                <th className={styles.titleColumn}>제목/내용일부</th>
+                                <th>작성일</th><th>조회수</th><th>좋아요수</th><th>신고버튼</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {posts.map(post => (
-                                <tr key={post.id}>
-                                    <td>{post.id}</td>
-                                    <td>{post.type}</td>
-                                    <td className={styles.postTitleCell}> {/* 클래스명 변경 고려 */}
-                                        <Link to={`/freeboard/${post.id}`} className={styles.titleLink}> {/* 상세 페이지 경로 확인 */}
-                                            {post.title}
-                                        </Link>
-                                    </td>
-                                    <td>{post.author}</td>
-                                    <td>{post.date}</td>
-                                    <td>{post.views}</td>
-                                    <td>
-                                        <button onClick={() => handleLikeToggle(post.id)} className={styles.iconButton}>
-                                            <img
-                                                src={post.isLiked ? likeOnIcon : likeOffIcon}
-                                                alt="좋아요"
-                                                className={styles.buttonIcon}
-                                            />
-                                        </button>
-                                        <span className={styles.countText}>{post.likes}</span>
-                                    </td>
-                                    <td>
-                                        <button onClick={() => handleReportToggle(post.id)} className={styles.iconButton}>
-                                            <img
-                                                src={post.isReported ? reportOnIcon : reportOffIcon}
-                                                alt="신고"
-                                                className={styles.buttonIcon}
-                                            />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                            {currentDisplayedPosts.length > 0 ? (
+                                currentDisplayedPosts.map(post => (
+                                    <tr key={post.id} onClick={() => handleRowClick(post.id)} className={styles.clickableRow}>
+                                        <td>{post.id}</td>
+                                        <td>{post.author}</td>
+                                        <td className={styles.postTitleCell}>
+                                            {/* Link 대신 행 전체 클릭 사용, 또는 Link 유지 시 경로 수정 및 stopPropagation */}
+                                            {/* <Link to={`/admin/managerFreeboardDetail/${post.id}`} className={styles.titleLink} onClick={(e) => e.stopPropagation()} target="_blank" rel="noopener noreferrer">
+                                                {post.title.length > 30 ? `${post.title.substring(0,30)}...` : post.title}
+                                            </Link> */}
+                                            {post.title.length > 30 ? `${post.title.substring(0,30)}...` : post.title}
+                                        </td>
+                                        <td>{post.date}</td>
+                                        <td>{post.views}</td>
+                                        <td>
+                                            <button onClick={(e) => {e.stopPropagation(); handleLikeToggle(post.id);}} className={styles.iconButton} title="관리자 좋아요 토글">
+                                                <img src={post.isLikedByManager ? likeOnIcon : likeOffIcon} alt="좋아요" className={styles.buttonIcon}/>
+                                            </button>
+                                            <span className={styles.countText}>{post.likes}</span>
+                                        </td>
+                                        <td>
+                                            <button onClick={(e) => {e.stopPropagation(); handleReportActionToggle(post.id);}} className={styles.iconButton} title="신고 확인/조치 토글">
+                                                <img src={post.isReportedBySomeone ? reportOnIcon : reportOffIcon} alt="신고" className={`${styles.buttonIcon} ${post.adminActionedOnReport ? styles.reportActioned : ''}`}/>
+                                            </button>
+                                            {post.reports > 0 && <span className={styles.countText}>{post.reports}</span>}
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (<tr><td colSpan="7">표시할 게시물이 없습니다.</td></tr>)}
                         </tbody>
                     </table>
-
                     <div className={styles.pagination}>
-                        <button>&lt;</button>
-                        <button className={styles.active}>1</button>
-                        <button>2</button>
-                        <button>3</button>
-                        <button>&gt;</button>
+                        {/* ... Pagination ... */}
+                        {totalPages > 0 && ( <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange}/> )}
                     </div>
                 </main>
             </div>

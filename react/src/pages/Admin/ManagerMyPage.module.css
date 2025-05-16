@@ -12,15 +12,15 @@
 .mypage {
   flex: 1;
   padding: 40px;
-  margin-left: 230px; /* Sidebar 너비만큼 왼쪽 여백 */
-  margin-top: 30px;   /* 상단 여백 추가 */
+  margin-left: 30px; /* Sidebar 너비만큼 왼쪽 여백 */
+  margin-top: 20px;   /* 상단 여백 추가 */
   margin-right: 30px; /* 오른쪽 여백 추가 (Sidebar와의 균형) */
   margin-bottom: 20px; /* 하단 여백 추가 */
 }
 
 .mypage h2 {
   font-size: 40px;
-  margin-bottom: 40px;
+  margin-bottom: 60px;
 }
 
 .box {

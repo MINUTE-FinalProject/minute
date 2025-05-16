@@ -1,132 +1,159 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import reportOffIcon from '../../assets/images/able-alarm.png'; // 신고 아이콘 (기본)
-import reportOnIcon from '../../assets/images/disable-alarm.png'; // 신고 아이콘 (처리됨/신고됨)
-import searchButtonIcon from '../../assets/images/search_icon.png'; // 검색 아이콘 경로 확인
-import Header from '../../components/Header/Header'; // 경로 확인
-import Sidebar from '../../components/Sidebar/Sidebar'; // 경로 확인
+// ManagerQna.jsx
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // useNavigate 추가 (선택적: 행 전체 클릭 시)
+import reportOffIcon from '../../assets/images/able-alarm.png';
+import reportOnIcon from '../../assets/images/disable-alarm.png';
+import searchButtonIcon from '../../assets/images/search_icon.png';
+import Pagination from '../../components/Pagination/Pagination';
 import styles from './ManagerQna.module.css';
 
-// 예시 데이터 (실제로는 API를 통해 받아옵니다)
-const initialQnaData = [
-    { qnaId: 1, displayNo: 5, authorId: 'yujin0712', authorNickname: '최유진', title: '비밀번호 변경 문의입니다.', status: '답변완료', date: '2025-05-10', isReported: false },
-    { qnaId: 2, displayNo: 4, authorId: 'hodu1030', authorNickname: '김호두', title: '결제 오류가 발생했습니다.', status: '미답변', date: '2025-05-09', isReported: true },
-    { qnaId: 3, displayNo: 3, authorId: 'master99', authorNickname: '이관리', title: '서비스 이용 시간 관련 문의', status: '답변완료', date: '2025-05-09', isReported: false },
-    { qnaId: 4, displayNo: 2, authorId: 'user_error', authorNickname: '박오류', title: '앱 실행 시 오류 메시지가 떠요.', status: '미답변', date: '2025-05-08', isReported: false },
-    { qnaId: 5, displayNo: 1, authorId: 'partner01', authorNickname: '강제휴', title: '제휴 문의 드립니다.', status: '답변완료', date: '2025-05-07', isReported: true },
-];
+const generateInitialQnaData = (count = 42) => {
+    const data = [];
+    const answerStatuses = ['답변완료', '미답변'];
+    for (let i = 0; i < count; i++) {
+        const isReported = i % 10 === 0;
+        data.push({
+            qnaId: i + 1, NO: count - i, ID: `user${1000 + i}`, 닉네임: `문의자${i + 1}`,
+            제목: `문의사항 제목입니다 - 테스트 ${i + 1}`,
+            작성일: `2025.05.${String(15 - (i % 15)).padStart(2, '0')}`,
+            isReported: isReported, 답변상태: answerStatuses[i % answerStatuses.length],
+        });
+    }
+    return data;
+};
 
 function ManagerQna() {
-    const [qnaList, setQnaList] = useState(initialQnaData);
-    const [reportedQnaIds, setReportedQnaIds] = useState(
-        initialQnaData.filter(qna => qna.isReported).map(qna => qna.qnaId)
-    ); // 초기 신고 상태 반영
+    const navigate = useNavigate(); // 행 전체 클릭을 원할 경우 사용
+    const [allQnaData, setAllQnaData] = useState([]);
+    const [qnaListToDisplay, setQnaListToDisplay] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+    const [dateRange, setDateRange] = useState({ start: '', end: '' });
+    const [statusFilter, setStatusFilter] = useState('all');
+    const [searchTerm, setSearchTerm] = useState('');
 
-    // TODO: 실제 필터링, 정렬, 페이지네이션 상태 및 핸들러 추가
+    useEffect(() => {
+        const loadedQnaData = generateInitialQnaData();
+        setAllQnaData(loadedQnaData);
+    }, []);
 
-    const handleQnaReportToggle = (qnaId) => {
-        // 관리자 페이지에서는 신고 상태를 변경하는 로직 (예: 신고 승인/반려, 또는 단순 토글)
-        // 여기서는 임시로 토글하고, reportedQnaIds 상태를 업데이트합니다.
-        const isCurrentlyReported = reportedQnaIds.includes(qnaId);
-        if (isCurrentlyReported) {
-            // 신고 해제 (또는 다른 처리)
-            if (window.confirm(`ID ${qnaId} 문의에 대한 신고 상태를 해제하시겠습니까?`)) {
-                setReportedQnaIds(prevIds => prevIds.filter(id => id !== qnaId));
-                // 실제 API 호출로 서버 데이터 업데이트
-                console.log(`Q&A ID ${qnaId} 신고 해제 처리`);
-            }
-        } else {
-            // 신고 처리 (또는 다른 처리)
-            if (window.confirm(`ID ${qnaId} 문의를 신고된 것으로 처리하시겠습니까?`)) {
-                setReportedQnaIds(prevIds => [...prevIds, qnaId]);
-                // 실제 API 호출로 서버 데이터 업데이트
-                console.log(`Q&A ID ${qnaId} 신고 처리`);
-            }
+    useEffect(() => {
+        let filteredData = allQnaData;
+        if (dateRange.start && dateRange.end) { /* ... 날짜 필터 ... */ }
+        if (statusFilter !== 'all') {
+            filteredData = filteredData.filter(qna => qna.답변상태 === statusFilter);
         }
+        if (searchTerm) { /* ... 검색어 필터 ... */ }
+        setQnaListToDisplay(filteredData);
+        setCurrentPage(1);
+    }, [dateRange, statusFilter, searchTerm, allQnaData]);
+
+    const handleQnaReportToggle = (e, qnaId) => { /* ... (기존 로직) ... */ e.stopPropagation(); };
+    const totalPages = Math.ceil(qnaListToDisplay.length / itemsPerPage);
+    const indexOfLastQna = currentPage * itemsPerPage;
+    const indexOfFirstQna = indexOfLastQna - itemsPerPage;
+    const currentDisplayedQnaItems = qnaListToDisplay.slice(indexOfFirstQna, indexOfLastQna);
+    const handlePageChange = (pageNumber) => { setCurrentPage(pageNumber); };
+
+    // 행 전체 클릭을 원할 경우
+    const handleRowClick = (qnaId) => {
+        navigate(`/admin/managerQnaDetail/${qnaId}`);
     };
 
     return (
         <>
-            <Header />
             <div className={styles.container}>
-                <Sidebar />
                 <main className={styles.qnaContent}>
                     <h1 className={styles.pageTitle}>문의 관리</h1>
-
-                    {/* --- 필터 바 수정 시작 --- */}
                     <div className={styles.filterBar}>
-                        <input type="date" className={styles.filterElement} />
+                        {/* ... 필터 요소들 ... */}
+                         <input
+                            type="date"
+                            className={styles.filterElement}
+                            value={dateRange.start}
+                            onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
+                        />
                         <span className={styles.dateSeparator}>~</span>
-                        <input type="date" className={styles.filterElement} />
-                        <select className={styles.filterElement}>
-                            <option value="all">상태 (전체)</option>
-                            <option value="answered">답변완료</option>
-                            <option value="unanswered">미답변</option>
+                        <input
+                            type="date"
+                            className={styles.filterElement}
+                            value={dateRange.end}
+                            onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
+                        />
+                        <select
+                            className={`${styles.filterElement} ${styles.filterSelect}`}
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                        >
+                            <option value="all">답변상태 (전체)</option>
+                            <option value="답변완료">답변완료</option>
+                            <option value="미답변">미답변</option>
                         </select>
-                        {/* "유형 (전체)" select 드롭다운이 여기서 삭제되었습니다. */}
-                        <input type="text" placeholder="검색어를 입력하세요" className={`${styles.filterElement} ${styles.filterSearchInput}`} />
+                        <input
+                            type="text"
+                            placeholder="ID, 닉네임, 제목 검색"
+                            className={`${styles.filterElement} ${styles.filterSearchInput}`}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
                         <button type="button" className={styles.filterSearchButton}>
                             <img src={searchButtonIcon} alt="검색" className={styles.searchIcon} />
                         </button>
                     </div>
-                    {/* --- 필터 바 수정 끝 --- */}
-
                     <table className={styles.qnaTable}>
                         <thead>
                             <tr>
-                                <th>NO</th>
-                                <th>ID</th>
-                                <th>작성자닉네임</th>
-                                <th className={styles.titleColumn}>제목</th>
-                                <th>상태</th>
-                                <th>작성일</th>
-                                <th>신고</th>
+                                <th>NO</th><th>ID</th><th>닉네임</th>
+                                <th className={styles.titleHeaderColumn}>제목</th>
+                                <th>작성일</th><th>신고</th><th>답변상태</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {qnaList.map(qna => {
-                                const isReported = reportedQnaIds.includes(qna.qnaId);
-                                return (
-                                    <tr key={qna.qnaId}>
-                                        <td>{qna.displayNo}</td>
-                                        <td>{qna.authorId}</td>
-                                        <td>{qna.authorNickname}</td>
-                                        <td className={styles.tableTitle}>
-                                            <Link to={`/admin/qna/${qna.qnaId}`} className={styles.titleLink}> {/* 관리자용 상세 경로 예시 */}
-                                                {qna.title}
-                                            </Link>
+                            {currentDisplayedQnaItems.length > 0 ? (
+                                currentDisplayedQnaItems.map((qna) => (
+                                    <tr key={qna.qnaId} onClick={() => handleRowClick(qna.qnaId)} className={styles.clickableRow}>
+                                        <td>{qna.NO}</td>
+                                        <td>{qna.ID}</td>
+                                        <td>{qna.닉네임}</td>
+                                        <td className={styles.titleDataColumn}>
+                                            {/* Link를 사용하지 않고 행 전체 클릭으로 변경, 또는 Link 유지 시 to 경로 수정 */}
+                                            {/* <Link to={`/admin/managerQnaDetail/${qna.qnaId}`} className={styles.titleLink} onClick={(e) => e.stopPropagation()}>
+                                                {qna.제목}
+                                            </Link> */}
+                                            {qna.제목} {/* 행 전체 클릭 시 제목은 텍스트로만 표시 */}
                                         </td>
-                                        <td>
-                                            <span className={`${styles.statusTag} ${qna.status === '답변완료' ? styles.answered : styles.unanswered}`}>
-                                                {qna.status}
-                                            </span>
-                                        </td>
-                                        <td>{qna.date}</td>
+                                        <td>{qna.작성일}</td>
                                         <td>
                                             <button
-                                                onClick={() => handleQnaReportToggle(qna.qnaId)}
-                                                className={`${styles.iconButton} ${isReported ? styles.reportedButton : ''}`}
-                                                title={isReported ? "신고 처리됨 (클릭 시 해제 가능)" : "신고 처리하기"}
+                                                onClick={(e) => handleQnaReportToggle(e, qna.qnaId)}
+                                                className={`${styles.iconButton} ${qna.isReported ? styles.reportedButton : ''}`}
+                                                title={qna.isReported ? "신고 처리됨 (클릭 시 해제 가능)" : "신고 처리하기"}
                                             >
-                                                <img
-                                                    src={isReported ? reportOnIcon : reportOffIcon}
-                                                    alt={isReported ? "신고 처리됨" : "신고 처리하기"}
-                                                    className={styles.buttonIcon}
-                                                />
+                                                <img src={qna.isReported ? reportOnIcon : reportOffIcon} alt="신고" className={styles.buttonIcon}/>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button
+                                                className={`${styles.statusButton} ${qna.답변상태 === '답변완료' ? styles.answeredStatus : styles.unansweredStatus}`}
+                                                disabled
+                                            >
+                                                {qna.답변상태}
                                             </button>
                                         </td>
                                     </tr>
-                                );
-                            })}
+                                ))
+                            ) : ( <tr><td colSpan="7">표시할 문의사항이 없습니다.</td></tr> )}
                         </tbody>
                     </table>
-
                     <div className={styles.pagination}>
-                        <button>&lt;</button>
-                        <button className={styles.active}>1</button>
-                        <button>2</button>
-                        <button>3</button>
-                        <button>&gt;</button>
+                        {/* ... Pagination ... */}
+                         {totalPages > 0 && (
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={handlePageChange}
+                            />
+                        )}
                     </div>
                 </main>
             </div>

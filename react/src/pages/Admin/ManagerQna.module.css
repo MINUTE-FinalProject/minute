@@ -3,20 +3,16 @@
 .container {
     display: flex;
     flex-direction: row;
-    margin-top: 45px; 
+    margin-top: 45px;
     min-height: calc(100vh - 45px);
     background-color: #f4f6f8;
 }
 
 .qnaContent {
-    margin-left: 230px; 
-    margin-top: 20px;
-    margin-right: 20px;
-    margin-bottom: 20px;
     flex: 1;
+    margin: 20px;
     padding: 30px 35px;
     background-color: #ffffff;
-    border: 1px solid #dee2e6;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
@@ -31,47 +27,43 @@
     border-bottom: 1px solid #dfe3e8;
 }
 
-/* 필터 바 스타일 (어두운 테마 - 신고관리 페이지처럼) */
 .filterBar {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 25px;
     padding: 15px;
-    background-color: #333; /* 어두운 배경 */
+    background-color: #333;
     border-radius: 6px;
 }
 
-.filterElement { /* input[type=date], select, input[type=text] 공통 스타일 */
+.filterElement {
     padding: 8px 12px;
     border: 1px solid #555;
-    background-color: #f0f0f0; /* 밝은 입력 요소 배경 */
+    background-color: #f0f0f0;
     color: #333;
     border-radius: 4px;
     font-size: 14px;
     box-sizing: border-box;
 }
-.filterDate { /* 날짜 입력 필드에 .filterElement 적용 */
-    composes: filterElement; /* 다른 클래스 스타일 상속 (선택적) */
-    width: 130px;
-}
+
 .dateSeparator {
-    color: #f0f0f0; /* 어두운 배경에 맞춰 밝은 색 */
+    color: #f0f0f0;
 }
-.filterSelect { /* select 에 .filterElement 적용 */
-    composes: filterElement;
-    min-width: 120px;
+
+.filterSelect {
+    min-width: 150px;
 }
-.filterSearchInput { /* text input 에 .filterElement 적용하고 추가 스타일 */
-    composes: filterElement;
+
+.filterSearchInput {
     flex-grow: 1;
 }
 
-.filterSearchButton { /* 검색 아이콘 버튼 */
+.filterSearchButton {
     padding: 0;
     width: 36px;
     height: 36px;
-    background-color: #555; /* 어두운 테마에 맞는 버튼 배경 */
+    background-color: #555;
     border: 1px solid #555;
     border-radius: 4px;
     cursor: pointer;
@@ -87,10 +79,9 @@
     width: 16px;
     height: 16px;
     display: block;
-    filter: brightness(0) invert(1); /* 아이콘이 어두우면 흰색으로 */
+    filter: brightness(0) invert(1);
 }
 
-/* 테이블 스타일 */
 .qnaTable {
     width: 100%;
     border-collapse: collapse;
@@ -104,6 +95,7 @@
     text-align: center;
     font-size: 0.9em;
     vertical-align: middle;
+    word-break: keep-all;
 }
 
 .qnaTable th {
@@ -112,39 +104,65 @@
     color: #495057;
     border-top: 1px solid #dee2e6;
 }
-.qnaTable th.titleColumn, /* 제목 th */
-.qnaTable td.tableTitle {  /* 제목 td */
+
+.qnaTable th.titleHeaderColumn {
     text-align: left;
+    padding-left: 15px;
 }
 
+.qnaTable td.titleDataColumn {
+    text-align: left;
+    padding-left: 15px;
+}
+
+/* 제목 링크 스타일 변경 */
 .titleLink {
     text-decoration: none;
-    color: #007bff;
-    font-weight: 500;
+    color: #333; /* 검은색 계열로 변경 */
+    font-weight: normal; /* 기본 두께로 변경 */
 }
 .titleLink:hover {
-    text-decoration: underline;
-    color: #0056b3;
+    text-decoration: underline; /* 밑줄 유지 */
+    color: #000; /* 호버 시 더 진한 검은색 (선택 사항) */
 }
 
-/* 상태 태그 스타일 */
-.statusTag {
+/* 이전 .statusTag 관련 스타일 제거 또는 주석 처리 */
+/*
+.statusTag { ... }
+.answered { ... }
+.unanswered { ... }
+*/
+
+/* 새로운 답변상태 버튼 스타일 (기존 상태변경 버튼과 유사하게) */
+.statusButton {
     display: inline-block;
     padding: 5px 12px;
-    border-radius: 12px;
-    font-size: 0.8em;
-    font-weight: 600;
-    color: #fff;
-    line-height: 1.2;
-}
-.answered {
-    background-color: #28a745; 
-}
-.unanswered {
-    background-color: #6c757d;
+    border: none;
+    border-radius: 12px; /* 알약 형태 */
+    font-size: 12px; /* 기존 status 버튼과 유사한 크기 */
+    font-weight: bold; /* 기존 status 버튼과 유사한 두께 */
+    color: #fff; /* 기본 글자색 흰색 */
+    text-align: center;
+    min-width: 70px; /* 최소 너비 */
+    cursor: default; /* 클릭 기능 없으므로 기본 커서 */
+    opacity: 1; /* disabled 상태일 때 흐려지지 않도록 */
 }
 
-/* 신고 아이콘 버튼 */
+.statusButton.answeredStatus { /* 답변완료 */
+    background-color: #28a745; /* 초록색 계열 */
+}
+.statusButton.answeredStatus:hover { /* 호버 효과 (필요하다면) */
+    background-color: #218838;
+}
+
+.statusButton.unansweredStatus { /* 미답변 */
+    background-color: #6c757d; /* 회색 계열 */
+}
+.statusButton.unansweredStatus:hover { /* 호버 효과 (필요하다면) */
+    background-color: #5a6268;
+}
+
+
 .iconButton {
     background: none;
     border: none;
@@ -161,47 +179,20 @@
     width: 16px;
     height: 16px;
 }
-.reportedButton .buttonIcon { /* 신고 처리된 아이콘에 대한 추가 스타일 (선택적) */
-    /* 예: filter: grayscale(100%); */
+.reportedButton .buttonIcon {
+    /* filter: grayscale(50%) opacity(0.7); */
 }
 
-
-.qnaTable tbody tr:hover td {
+.clickableRow:hover td {
     background-color: #f0f2f5;
+}
+.clickableRow {
     cursor: pointer;
 }
 
-/* 페이지네이션 스타일 */
 .pagination {
     margin-top: 30px;
-    text-align: center;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
-}
-.pagination button {
-    margin: 0;
-    padding: 8px 12px;
-    border: 1px solid #ced4da;
-    background-color: #fff;
-    color: #495057;
-    cursor: pointer;
-    border-radius: 4px;
-    font-size: 14px;
-    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-}
-.pagination button:hover {
-    background-color: #e9ecef;
-    border-color: #adb5bd;
-}
-.pagination .active {
-    font-weight: bold;
-    background-color: #007bff;
-    color: #fff;
-    border-color: #007bff;
-}
-.pagination .active:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
 }

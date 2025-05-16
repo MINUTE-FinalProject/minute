@@ -1,116 +1,154 @@
-import { Link } from 'react-router-dom'; // Link import 추가
-import Pagination from "../../components/pagination/pagination";
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import Pagination from "../../components/Pagination/Pagination"; // 실제 파일명 대소문자 확인 (예: Pagination.jsx)
 import qnaStyle from "./qna.module.css";
 
 import searchButtonIcon from "../../assets/images/search_icon.png";
-import MypageNav from '../../components/MypageNavBar/MypageNav';
+import MypageNav from '../../components/MypageNavBar/MypageNav'; // 실제 파일명 대소문자 확인 (예: MypageNav.jsx)
+
+const generateInitialQnaData = (count = 25) => {
+    const items = [];
+    const statuses = ['완료', '대기'];
+    const authors = ['김*진', '이*서', '박*훈', '최*아', '정*원'];
+    for (let i = 0; i < count; i++) {
+        items.push({
+            id: `qna-${i + 1}`,
+            status: statuses[i % statuses.length],
+            author: authors[i % authors.length],
+            title: `문의사항 ${i + 1}: ${i % 3 === 0 ? '결제 관련 문의입니다.' : (i % 3 === 1 ? '서비스 이용 중 궁금한 점이 있습니다.' : '기타 문의 드립니다.')}`,
+            date: `25.04.${String(28 - (i % 28)).padStart(2, '0')}`,
+        });
+    }
+    return items;
+};
 
 function Qna() {
+    const [allQnaItems, setAllQnaItems] = useState([]);
+    const [qnaToDisplay, setQnaToDisplay] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const itemsPerPage = 8;
+
+    useEffect(() => {
+        const loadedQnaData = generateInitialQnaData();
+        setAllQnaItems(loadedQnaData);
+        setQnaToDisplay(loadedQnaData);
+    }, []);
+
+    useEffect(() => {
+        if (qnaToDisplay.length > 0) {
+            const calculatedTotalPages = Math.ceil(qnaToDisplay.length / itemsPerPage);
+            setTotalPages(calculatedTotalPages);
+            if (currentPage > calculatedTotalPages && calculatedTotalPages > 0) {
+                setCurrentPage(1);
+            } else if (calculatedTotalPages === 0 && qnaToDisplay.length === 0) {
+                setCurrentPage(1);
+                setTotalPages(1);
+            }
+        } else {
+            setTotalPages(1);
+            setCurrentPage(1);
+        }
+    }, [qnaToDisplay, itemsPerPage, currentPage]);
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentDisplayedQnaItems = qnaToDisplay.slice(indexOfFirstItem, indexOfLastItem);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
     return (
         <>
-        <MypageNav/>
-         <div className={qnaStyle.layout}>
-            <div className={qnaStyle.container}>
-                <div className={qnaStyle.background}>
-                    {/* 제목 섹션: className={qnaStyle.title} 유지 */}
-                    <div className={qnaStyle.title}>
-                        <h1>Q&A</h1>
-                    </div>
+            <MypageNav />
+            <div className={qnaStyle.layout}>
+                {/* .container가 흰색 배경 카드 역할 */}
+                <div className={qnaStyle.container}> 
+                    <div className={qnaStyle.inner}>
+                        <div className={qnaStyle.title}>
+                            <Link to="/qna" className={qnaStyle.pageTitleLink}> {/* 페이지 제목 링크 */}
+                                <h1>Q&A</h1>
+                            </Link>
+                        </div>
 
-                    {/* 검색창 섹션: className={qnaStyle.searchbar} 유지 */}
-                    <div className={qnaStyle.searchbar}>
-                        {/* 날짜 선택 버튼들 */}
-                        <button type="button">날짜 선택</button>
-                        <button type="button">날짜 선택</button>
-                        {/* 상태 선택 드롭다운 */}
-                        <select>
-                            <option value="">상태</option>
-                            <option value="completed">완료</option>
-                            <option value="pending">대기</option>
-                        </select>
-                        {/* 검색 입력창 */}
-                        <input type="text" placeholder="검색어를 입력하세요" />
-                        {/* 검색 버튼 (돋보기 아이콘은 텍스트 또는 이미지로 대체 가능) */}
-                        <button type="button" className={qnaStyle.searchIconButton}>
-                            <img
-                                src={searchButtonIcon}
-                                alt="검색"
-                                className={qnaStyle.searchButtonIcon} /* 아이콘 이미지 스타일용 클래스 */
-                            />
-                        </button>
-                    </div>
+                        <div className={qnaStyle.searchbar}>
+                            <button type="button">날짜 선택</button>
+                            <button type="button">날짜 선택</button>
+                            <select>
+                                <option value="">상태 (전체)</option>
+                                <option value="completed">완료</option>
+                                <option value="pending">대기</option>
+                            </select>
+                                <input type="text" placeholder="검색어를 입력하세요" />
+                                <button type="button" className={qnaStyle.searchIconButton}>
+                                    <img
+                                        src={searchButtonIcon}
+                                        alt="검색"
+                                        className={qnaStyle.searchButtonIcon}
+                                    />
+                                </button>
+                        </div>
 
-                    {/* Q&A 목록 테이블 섹션: className={qnaStyle.table} 유지 */}
-                    <table className={qnaStyle.table}>
-                        <thead>
-                            <tr>
-                                <th>상태</th>
-                                <th>작성자</th>
-                                <th>제목</th>
-                                <th>날짜</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {/* 예시 데이터 행들 (실제 데이터는 map 함수를 통해 동적으로 생성) */}
-                            <tr>
-                                <td><span>완료</span></td>
-                                <td>김*</td>
-                                <td>첫 번째 문의 제목입니다.</td>
-                                <td>25.03.04</td>
-                            </tr>
-                            <tr>
-                                <td><span>대기</span></td>
-                                <td>이*</td>
-                                <td>두 번째 문의사항입니다. 내용이 조금 길어질 수 있습니다.</td>
-                                <td>25.03.04</td>
-                            </tr>
-                            <tr>
-                                <td><span>완료</span></td>
-                                <td>박*</td>
-                                <td>세 번째 문의입니다.</td>
-                                <td>25.03.04</td>
-                            </tr>
-                            <tr>
-                                <td><span>대기</span></td>
-                                <td>최*</td>
-                                <td>네 번째 문의사항입니다.</td>
-                                <td>25.03.04</td>
-                            </tr>
-                            <tr>
-                                <td><span>완료</span></td>
-                                <td>정*</td>
-                                <td>다섯 번째 문의입니다.</td>
-                                <td>25.03.04</td>
-                            </tr>
-                            <tr>
-                                <td><span>대기</span></td>
-                                <td>강*</td>
-                                <td>여섯 번째 문의입니다. 조금 더 긴 문의 내용이 여기에 들어갈 수 있습니다.</td>
-                                <td>25.03.04</td>
-                            </tr>
-                            {/* 실제 데이터에 따라 추가적인 행들이 여기에 들어갑니다. */}
-                        </tbody>
-                    </table>
+                        <table className={qnaStyle.table}>
+                            <thead>
+                                <tr>
+                                    <th>상태</th>
+                                    <th>작성자</th>
+                                    <th>제목</th>
+                                    <th>날짜</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {currentDisplayedQnaItems.length > 0 ? (
+                                    currentDisplayedQnaItems.map(qna => (
+                                        <tr key={qna.id}>
+                                            <td>
+                                                <span 
+                                                    className={`${qnaStyle.statusBadge} ${qna.status === '완료' ? qnaStyle.completed : qnaStyle.pending}`}
+                                                >
+                                                    {qna.status}
+                                                </span>
+                                            </td>
+                                            <td>{qna.author}</td>
+                                            <td className={qnaStyle.tableTitleCell}>
+                                                {/* 테이블 내부 문의 제목 링크 */}
+                                                <Link to={`/qna/${qna.id}`} className={qnaStyle.titleLink}> 
+                                                    {qna.title}
+                                                </Link>
+                                            </td>
+                                            <td>{qna.date}</td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="4">등록된 문의사항이 없습니다.</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
 
-                    {/* 글쓰기 버튼 섹션: className={qnaStyle.wirte} 유지 */}
-                    <div className={qnaStyle.write}>
-                        {/* 기존 <button>을 <Link> 컴포넌트로 변경 */}
-                        <Link to="/qnawrite" className={qnaStyle.writeButton}> {/* 클래스명 변경 또는 CSS 수정 필요 */}
-                            작성
-                        </Link>
-                    </div>
-
-                    {/* 페이지네이션 섹션: className={qnaStyle.Pagination} 유지 */}
-                    <div className={qnaStyle.pagination}>
-                        <Pagination /> {/* 이 컴포넌트는 이미 import 되어 있다고 가정합니다. */}
-                    </div>
-                </div>
-            </div>
-         </div>
-        </>  
+                        <div className={qnaStyle.bottomControls}>
+                            <div className={qnaStyle.paginationContainerInBottomControls}>
+                                {totalPages > 1 && (
+                                    <Pagination
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        onPageChange={handlePageChange}
+                                    />
+                                )}
+                            </div>
+                            <div className={qnaStyle.writeButtonContainerInBottomControls}>
+                                <Link to="/qnaWrite" className={qnaStyle.writeButton}>
+                                    작성
+                                </Link>
+                            </div>
+                        </div>
+                        </div>
+                    </div> {/* .container div의 끝 */}
+            </div> {/* .layout div의 끝 */}
+        </>   
     );
 }
 
-
-export default Qna
+export default Qna;

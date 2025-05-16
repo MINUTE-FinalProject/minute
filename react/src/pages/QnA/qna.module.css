@@ -1,326 +1,223 @@
+/* qna.module.css */
+
 .layout {
   display: flex;
 }
 
 .container {
   display: flex;
+  flex-direction: column;
   background-color: #fff;
   margin-top: 20px;
   margin-bottom: 20px;
   margin-right: 20px;
   margin-left: 100px;
-  width: calc(100% - 120px); 
-  height: calc(100vh - 41px); 
+  width: calc(100% - 120px);
+  height: calc(100vh - 41px);
   box-sizing: border-box;
-  scrollbar-width: none; 
+  scrollbar-width: none;
   padding-left: 30px;
   border-radius: 0 10px 10px 0;
 }
 
 .container::-webkit-scrollbar {
-  display: none; /* Chrome, Safari 스크롤바 숨김 */
+  display: none;
 }
-/* 전체 Q&A 섹션 컨테이너 */
-.background {
-    width: 100%;
-    max-width: 1200px;
-    /* 예시 최대 너비 */
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #ffffff;
-    /* 이미지상 Q&A 영역 배경 */
-    font-family: Arial, sans-serif;
-    /* 예시 폰트 */
-    box-sizing: border-box;
-    border: 1px solid #dee2e6;
-    /* 옅은 회색 테두리 */
-    border-radius: 8px;
-    /* 모서리 둥글게 */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+.inner {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-/* 제목 ("Q&A") 섹션 */
 .title {
-    margin-bottom: 20px;
-    text-align: center;
-    /* 텍스트를 중앙으로 정렬합니다. */
-    width: 100%;
-    /* 부모 요소(.background)의 너비에 맞춰 중앙 정렬되도록 합니다. */
-    /* .background에 max-width와 margin: auto가 있으므로,
-                   .title도 너비를 100%로 하면 .background 내에서 중앙 정렬됩니다. */
+  margin-bottom: 20px;
+  text-align: center;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+/* 페이지 제목 "Q&A"를 감싸는 Link에 대한 스타일 */
+.pageTitleLink {
+  text-decoration: none;
+  color: #333; /* .title h1의 기본 색상과 동일하게 */
+  transition: color 0.2s ease-in-out;
+  display: inline-block;
+}
+
+.pageTitleLink:hover {
+  color: #ff69b4; /* 호버 시 핑크색으로 변경 */
 }
 
 .title h1 {
-    font-size: 28px;
-    /* 예시 폰트 크기 */
-    font-weight: bold;
-    color: #333;
-    margin: 0;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0;
 }
 
-/* 검색창 섹션 */
 .searchbar {
-    background-color: #333;
-    /* 이미지상 어두운 배경 */
-    padding: 15px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    /* 요소 간 간격 */
-    border-radius: 4px;
-    /* 약간의 둥근 모서리 */
+  background-color: #333;
+  padding: 15px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 4px;
+  flex-shrink: 0;
 }
-
-/* 검색창 내부 요소들 스타일 */
 .searchbar button,
 .searchbar select {
-    padding: 8px 12px;
-    border: 1px solid #555;
-    background-color: #f0f0f0;
-    /* 이미지상 밝은 버튼 배경 */
-    color: #333;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
+  padding: 8px 12px;
+  border: 1px solid #555;
+  background-color: #f0f0f0;
+  color: #333;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
 }
-
 .searchbar select {
-    min-width: 100px;
-    /* 상태 선택 드롭다운 최소 너비 */
+  min-width: 100px;
 }
-
 .searchbar input[type="text"] {
-    flex-grow: 1;
-    /* 검색창이 남은 공간을 채우도록 */
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
+  flex-grow: 1;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #fff;
 }
-
-.searchbar button:last-child {
-    /* 검색 아이콘 버튼 */
-    background-color: #555;
-    /* 약간 더 어두운 배경 가능 */
-    color: #fff;
-    padding: 8px;
-    /* 아이콘 버튼이므로 패딩 조정 */
-}
-
-/* 검색 아이콘 버튼 자체의 스타일 (선택적 클래스명 사용) */
 .searchIconButton {
-    background-color: #555;
-    /* 기존 돋보기 버튼 배경색과 유사하게 */
-    color: #fff;
-    /* 아이콘이 SVG이고 fill="currentColor"일 때 영향 */
-    padding: 8px;
-    /* 아이콘 크기에 맞는 패딩 */
-    border: 1px solid #555;
-    /* 기존 스타일 유지 또는 변경 */
-    border-radius: 4px;
-    /* 기존 스타일 유지 */
-    cursor: pointer;
-    display: inline-flex;
-    /* 아이콘 중앙 정렬을 위해 */
-    align-items: center;
-    justify-content: center;
-    /* height: 34px; */
-    /* 다른 요소들과 높이를 맞추려면 */
+  background-color: #555;
+  padding: 8px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  width: 36px;
 }
-
 .searchIconButton:hover {
-    background-color: #777;
-    /* 호버 시 약간 밝게 */
+  background-color: #777;
 }
-
-/* 검색 버튼 내부 아이콘 이미지 스타일 */
 .searchButtonIcon {
-    width: 16px;
-    /* 원하는 아이콘 너비 (자유게시판과 동일하게) */
-    height: 16px;
-    /* 원하는 아이콘 높이 (자유게시판과 동일하게) */
-    display: block;
-    /* 이미지가 너비/높이 값을 정확히 갖도록 함 */
+  width: 16px;
+  height: 16px;
+  display: block;
+  filter: brightness(0) invert(1);
 }
 
-/* 기존 검색창 맨 오른쪽 버튼에 대한 스타일이 있었다면, 위 .searchIconButton 클래스로 대체하거나,
-   기존 스타일을 수정할 수도 있습니다.
-   만약 기존 .searchbar button:last-child 스타일을 유지하고 싶다면,
-   padding을 조절하고 내부 img 태그를 중앙 정렬하는 방식으로 수정합니다. */
-/* 예시: 기존 .searchbar button:last-child 수정 시 */
-.searchbar button:last-child {
-    background-color: #555;
-    color: #fff;
-    /* 실제로는 img 태그가 들어가므로 color는 영향 없음 */
-    padding: 0;
-    /* 내부 img만 있으므로 패딩 제거 또는 조정 */
-    width: 34px;
-    /* 예시: 아이콘 들어갈 크기 + 약간의 여백 */
-    height: 34px;
-    /* 예시: 아이콘 들어갈 크기 + 약간의 여백 */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #555;
-    border-radius: 4px;
-}
-
-
-/* Q&A 목록 테이블 */
 .table {
-    width: 100%;
-    border-collapse: collapse;
-    /* 테두리 한 줄로 */
-    margin-bottom: 20px;
-    border: 1px solid #e0e0e0;
-    /* 테이블 전체 외곽선 */
+  width: 100%;
+  border-collapse: collapse;
+  flex-shrink: 0;
 }
-
 .table th,
 .table td {
-    border-bottom: 1px solid #e0e0e0;
-    /* 행 구분선 */
-    padding: 12px 15px;
-    /* 셀 내부 여백 */
-    text-align: left;
-    font-size: 14px;
-    color: #333;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 12px 15px;
+  text-align: left;
+  font-size: 14px;
+  color: #333;
+  vertical-align: middle;
 }
-
 .table th {
-    background-color: #f9f9f9;
-    /* 헤더 배경색 */
-    font-weight: bold;
-    color: #555;
+  background-color: #f9f9f9;
+  font-weight: bold;
+  color: #555;
+  text-align: center;
+  border-top: 1px solid #e0e0e0;
 }
-
-/* 상태 표시 (첫 번째 td 내부의 span) */
-.table td:first-child span {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 12px;
-    /* 둥근 모서리 (알약 형태) */
-    font-size: 12px;
-    font-weight: bold;
-    color: #fff;
-    /* 기본 텍스트 색상 (흰색) */
+.table th:nth-child(3) {
+  text-align: left;
 }
-
-/* 예시: 내용에 따른 상태 스타일링 (실제로는 JS로 클래스를 동적 추가하거나, 다른 방식으로 구현) */
-/* 아래는 CSS만으로 불가능하며, JSX에서 item.status에 따라 className을 부여해야 합니다. */
-/* .statusCompleted { background-color: #777; } */
-/* .statusPending { background-color: #aaa; } */
-
-/* 임시로 모든 상태 span에 같은 배경색 적용 (이미지 참고) */
-.table td:first-child span {
-    background-color: #a0a0a0;
-    /* 이미지상 회색 배경 */
-    color: #333;
-    /* 또는 #fff - 이미지상으로는 글씨가 어두워 보임 */
+.table td:first-child {
+  text-align: center;
+  width: 10%;
 }
-
-/* 이미지에서 '완료'가 약간 더 진해보이므로, 만약 JSX에서 클래스를 추가한다면: */
-/* 예: <span className={qnaStyle.statusBadge + ' ' + (isCompleted ? qnaStyle.completed : qnaStyle.pending)}>완료</span> */
-/* .statusBadge { ... 공통 스타일 ... } */
-/* .completed { background-color: #6c757d; } */
-/* 진한 회색 */
-/* .pending { background-color: #adb5bd; } */
-/* 연한 회색 */
-
-
 .table td:nth-child(2) {
-    /* 작성자 */
-    width: 15%;
+  text-align: center;
+  width: 15%;
 }
-
 .table td:nth-child(3) {
-    /* 제목 */
-    width: 55%;
+  width: auto;
 }
-
 .table td:nth-child(4) {
-    /* 날짜 */
-    width: 15%;
-    text-align: right;
+  text-align: center;
+  width: 15%;
 }
 
-/* 테이블 데이터 행 호버 효과 */
+.statusBadge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+}
+.completed {
+  background-color: #6c757d;
+}
+.pending {
+  background-color: #adb5bd;
+}
+
+.tableTitleCell {
+  /* 테이블 내 제목 셀, 필요시 사용 */
+}
+
+.titleLink {
+  /* 테이블 내부의 문의 제목 링크 */
+  text-decoration: none;
+  color: #333; /* 기본 색상 유지 */
+  transition: color 0.2s ease; /* 부드러운 색상 전환 (선택적) */
+}
+.titleLink:hover {
+  text-decoration: underline; /* 호버 시 밑줄만 표시 */
+  /* color: #555; */ /* 또는 색상을 약간 어둡게 할 수 있음, 여기서는 색상 변경 없음 */
+}
 .table tbody tr:hover {
-    background-color: #f5f5f5;
-    /* 예시: 연한 회색 배경 (자유게시판은 #fcf0f5 연핑크 사용) */
-    cursor: pointer;
-    /* 상세 페이지로 이동할 것을 암시 */
+  background-color: #f5f5f5;
+  cursor: pointer;
 }
 
-
-/* 글쓰기 버튼 섹션 */
-.write {
-    /* 현재 JSX에서는 이 div가 버튼을 감싸고 있음 */
-    display: flex;
-    justify-content: flex-end;
-    /* 버튼을 오른쪽으로 정렬 */
-    margin-bottom: 20px;
+.bottomControls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 20px;
+  width: 100%;
+  flex-shrink: 0;
 }
 
-/* qna.module.css */
+.paginationContainerInBottomControls {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.writeButtonContainerInBottomControls {
+  /* 스타일 유지 */
+}
+
 .writeButton {
-    display: inline-block;
-    /* Link(a 태그)는 기본적으로 인라인이므로, 패딩 등을 제대로 적용하기 위해 변경 */
-    padding: 10px 20px;
-    background-color: #333;
-    color: #fff;
-    text-decoration: none;
-    /* 링크 밑줄 제거 */
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    transition: background-color 0.2s ease-in-out;
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #333;
+  color: #fff;
+  text-decoration: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.2s ease-in-out;
 }
-
 .writeButton:hover {
-    background-color: #555;
-    color: #fff;
-    /* 호버 시 글자색 유지 (선택 사항) */
-    text-decoration: none;
-    /* 호버 시 밑줄 없음 유지 */
-}
-
-/* 페이지네이션 섹션 */
-.pagination {
-    display: flex;
-    justify-content: center;
-    /* 페이지 번호들 중앙 정렬 */
-    align-items: center;
-    gap: 8px;
-    /* 페이지 번호 간 간격 */
-}
-
-/* 아래는 Pagination 컴포넌트 내부의 요소들에 대한 일반적인 스타일 예시입니다. */
-/* 실제 Pagination 컴포넌트의 구조에 따라 선택자를 수정해야 합니다. */
-.pagination button,
-/* 페이지 번호가 버튼일 경우 */
-.pagination span {
-    /* 페이지 번호가 span일 경우 */
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    color: #333;
-    cursor: pointer;
-    border-radius: 4px;
-    font-size: 14px;
-}
-
-.pagination button:hover,
-.pagination span:hover {
-    background-color: #f0f0f0;
-}
-
-.pagination .active {
-    /* 활성 페이지 번호 스타일 (예시 클래스명) */
-    background-color: #333;
-    color: #fff;
-    border-color: #333;
+  background-color: #555;
+  color: #fff;
+  text-decoration: none;
 }

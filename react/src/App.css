@@ -41,5 +41,5 @@ body {
 }
 
 .mainContentWithFixedHeader {
-  padding-top: 50px; /* 헤더 높이 + 여유 공간 */
+  padding-top: 45px; /* 헤더 높이 + 여유 공간 */
 }

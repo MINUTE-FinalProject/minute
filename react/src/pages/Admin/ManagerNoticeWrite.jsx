@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // 페이지 이동을 위해 import
-import Header from '../../components/Header/Header'; // Header 컴포넌트 경로 확인
-import Sidebar from '../../components/Sidebar/Sidebar'; // Sidebar 컴포넌트 경로 확인
 import styles from "./ManagerNoticeWrite.module.css"; // CSS 모듈 import
 
 function ManagerNoticeWrite() {
@@ -34,9 +32,9 @@ function ManagerNoticeWrite() {
 
     return (
         <>
-            <Header />
+
             <div className={styles.container}> {/* 전체 컨테이너 (Sidebar + Content) */}
-                <Sidebar />
+
                 <main className={styles.writeContent}> {/* 메인 콘텐츠 영역 (흰색 카드) */}
                     <h1 className={styles.pageTitle}>공지사항 작성</h1>
 

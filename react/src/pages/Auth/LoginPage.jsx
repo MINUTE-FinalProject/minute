@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import img from "../../assets/images/loginBg.png";
+import img from "../../assets/images/loginBg1.png";
 import styles from "./LoginPage.module.css";
 
 const LoginPage = () => {

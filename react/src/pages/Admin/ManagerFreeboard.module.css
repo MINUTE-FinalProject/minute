@@ -1,210 +1,198 @@
 /* ManagerFreeboard.module.css */
 
-/* Admin 페이지 레이아웃 (Sidebar 고려) */
 .container {
-  display: flex;
-  flex-direction: row;
-  margin-top: 45px; /* 고정 헤더 높이에 따라 조절 */
-  min-height: calc(100vh - 45px);
+    display: flex;
+    flex-direction: row;
+    margin-top: 45px;
+    min-height: calc(100vh - 45px);
+    background-color: #f4f6f8;
 }
 
-.managerFreeboardContent { /* 클래스명 변경 */
-  margin-left: 230px; /* Sidebar 너비 (실제 값으로 조절) */
-  margin-top: 20px;
-  margin-right: 20px;
-  margin-bottom: 20px;
-  flex: 1;
-  padding: 30px 35px;
-  background-color: #ffffff; /* 흰색 카드 배경 */
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+.managerFreeboardContent {
+    flex: 1;
+    margin: 20px;
+    padding: 30px 35px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.pageTitle { /* "자유게시판" 제목 */
-  font-size: 2.2em;
-  font-weight: 600;
-  color: #2c3e50;
-  text-align: center;
-  margin-bottom: 25px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #dfe3e8;
+.pageTitle {
+    font-size: 2.2em;
+    font-weight: 600;
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #dfe3e8;
 }
 
-/* 탭 컨테이너 및 버튼 */
 .tabContainer {
-  margin-bottom: 20px;
-  display: flex;
-  gap: 10px;
-  border-bottom: 1px solid #dee2e6;
-  padding-bottom: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 10px;
 }
 
 .tabButton {
-  padding: 8px 15px;
-  font-size: 0.95em;
-  font-weight: 500;
-  border: 1px solid transparent;
-  border-bottom: 3px solid transparent;
-  background-color: transparent;
-  color: #555;
-  cursor: pointer;
-  transition: color 0.2s ease, border-color 0.2s ease;
+    padding: 8px 15px;
+    font-size: 0.95em;
+    font-weight: 500;
+    border: 1px solid transparent;
+    border-bottom: 3px solid transparent;
+    background-color: transparent;
+    color: #555;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
 }
 .tabButton:hover {
-  color: #000;
+    color: #000;
 }
 .tabButton.activeTab {
-  color: #FF3366;
-  border-bottom-color: #FF3366;
-  font-weight: 600;
+    color: #FF3366;
+    border-bottom-color: #FF3366;
+    font-weight: 600;
 }
 
-/* 필터 바 스타일 (신고관리/Q&A 필터바 느낌 - 어두운 배경) */
 .filterBar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 25px;
-  padding: 15px;
-  background-color: #333;
-  border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    padding: 15px;
+    background-color: #333;
+    border-radius: 6px;
 }
 
-.filterInput,
-.filterSelect,
-.filterSearchInput {
-  padding: 8px 12px;
-  border: 1px solid #555;
-  background-color: #f0f0f0;
-  color: #333;
-  border-radius: 4px;
-  font-size: 14px;
-  box-sizing: border-box;
+.filterElement {
+    padding: 8px 12px;
+    border: 1px solid #555;
+    background-color: #f0f0f0;
+    color: #333;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
 }
-.filterSearchInput {
-  flex-grow: 1;
+
+.dateSeparator {
+    color: #f0f0f0;
 }
+
+/* 정렬 select 요소 스타일 (기존 filterSelect 재활용 또는 신규 정의) */
 .filterSelect {
-  min-width: 120px;
+    min-width: 120px; /* 필요에 따라 너비 조정 */
+}
+
+.filterSearchInput {
+    flex-grow: 1;
 }
 
 .filterSearchButton {
-  padding: 0;
-  width: 34px;
-  height: 34px;
-  background-color: #555;
-  border: 1px solid #555;
-  border-radius: 4px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    background-color: #555;
+    border: 1px solid #555;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
 }
 .filterSearchButton:hover {
-  background-color: #777;
+    background-color: #777;
 }
-.filterSearchIcon {
-  width: 16px;
-  height: 16px;
-  display: block;
+.searchIcon {
+    width: 16px;
+    height: 16px;
+    display: block;
+    filter: brightness(0) invert(1);
 }
 
-/* 테이블 스타일 (기존 자유게시판 .board-table 참고) */
 .boardTable {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-  border-top: 2px solid #343a40;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    border-top: 2px solid #343a40;
+    margin-bottom: 25px;
 }
 
 .boardTable th,
 .boardTable td {
-  border-bottom: 1px solid #dee2e6;
-  padding: 10px 8px;
-  text-align: center;
-  vertical-align: middle;
-  font-size: 0.9em;
+    border-bottom: 1px solid #dee2e6;
+    padding: 10px 8px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.9em;
+    word-break: keep-all;
 }
 
 .boardTable th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-  color: #495057;
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+    white-space: nowrap;
 }
 
-.boardTable .titleColumn { /* 제목 th만 왼쪽 정렬 */
-  text-align: left;
-}
-.boardTable .postTitleCell { /* 제목 td만 왼쪽 정렬 - 클래스명 변경 */
-  text-align: left;
+.boardTable .titleColumn,
+.boardTable .postTitleCell {
+    text-align: left;
+    padding-left: 15px;
 }
 
 .titleLink {
-  text-decoration: none;
-  color: #000000;
-  font-weight: normal;
+    text-decoration: none;
+    color: #333;
+    font-weight: normal;
 }
 .titleLink:hover {
-  text-decoration: underline;
-  color: #000000;
+    text-decoration: underline;
+    color: #000;
 }
 
-.boardTable tbody tr:hover {
-  background-color: #fcf0f5;
-  cursor: pointer;
+.boardTable tbody tr:hover td {
+    background-color: #f0f4f8;
+}
+.boardTable tbody tr {
+    cursor: default;
+}
+.boardTable tbody tr .postTitleCell,
+.boardTable tbody tr .iconButton {
+    cursor: pointer;
 }
 
-/* 아이콘 버튼 (좋아요, 신고) */
 .iconButton {
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  vertical-align: middle;
-  width: 24px;
-  height: 24px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    vertical-align: middle;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 .buttonIcon {
-  width: 16px;
-  height: 16px;
+    width: 16px;
+    height: 16px;
 }
 .countText {
-  margin-left: 4px;
-  font-size: 0.9em;
-  color: #666;
-  vertical-align: middle;
+    margin-left: 4px;
+    font-size: 0.9em;
+    color: #666;
+    vertical-align: middle;
 }
 
-/* 페이지네이션 스타일 (자유게시판과 유사하게) */
+.reportActioned {
+    opacity: 0.5;
+}
+
 .pagination {
-  margin-top: 30px;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-}
-.pagination button {
-  margin: 0;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  color: #333;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 14px;
-  transition: background-color 0.2s ease-in-out;
-}
-.pagination button:hover {
-  background-color: #f0f0f0;
-}
-.pagination .active {
-  font-weight: bold;
-  background-color: #333;
-  color: #fff;
-  border-color: #333;
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

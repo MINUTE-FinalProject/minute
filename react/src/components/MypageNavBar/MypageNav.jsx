@@ -26,7 +26,7 @@ function MypageNav() {
 
                 <nav className={`${styles.menu} ${isOpen ? styles.show : ""}`}>
                     <div className={styles.menuItem}>
-                    <a href="#" onClick={() => setShowCategoryMenu(prev => !prev)}>
+                    <a onClick={() => setShowCategoryMenu(prev => !prev)}>
                         카테고리
                     </a>
                     {showCategoryMenu && (
@@ -48,18 +48,18 @@ function MypageNav() {
                     </div>
 
                     <div className={styles.menuItem}>
-                    <a href="#" onClick={() => setShowBoardMenu(prev => !prev)}>
+                    <a onClick={() => setShowBoardMenu(prev => !prev)}>
                         게시판
                     </a>
                     {showBoardMenu && (
                         <div className={styles.submenu}>
-                        <Link to="" onClick={() => setIsOpen(false)}>
+                        <Link to="/notice" onClick={() => setIsOpen(false)}>
                             공지사항
                         </Link>
-                        <Link to="" onClick={() => setIsOpen(false)}>
+                        <Link to="/freeboard" onClick={() => setIsOpen(false)}>
                             자유게시판
                         </Link>
-                        <Link to="" onClick={() => setIsOpen(false)}>
+                        <Link to="/qna" onClick={() => setIsOpen(false)}>
                             Q&A게시판
                         </Link>
                         </div>
