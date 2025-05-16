@@ -1,5 +1,7 @@
 package com.minute.checklist.entity;
 
+import com.minute.plan.entity.Plan;
+import com.minute.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,11 +21,13 @@ public class Checklist {
     @Column(name = "checklist_id")
     private int checklistId;
 
-    @Column(name = "user_id")
-    private int userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User userId;
 
-    @Column(name = "plan_id")
-    private int planId;
+    @ManyToOne
+    @JoinColumn(name = "plan_id")
+    private Plan planId;
 
     @Column(name = "travel_date")
     private LocalDate travelDate;

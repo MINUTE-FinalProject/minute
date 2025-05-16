@@ -1,5 +1,6 @@
 package com.minute.plan.entity;
 
+import com.minute.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,8 +21,9 @@ public class Plan {
     @Column(name = "plan_id")
     private int planId;
 
-    @Column(name = "user_id")
-    private int userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User userId;
 
     @Column(name = "travel_date")
     private LocalDate travelDate;
