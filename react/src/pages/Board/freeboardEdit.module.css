@@ -58,6 +58,7 @@
     max-width: 100%;
     height: auto;
     border-radius: 6px;
+    max-height: 215px;
 }
 
 /* 실제 입력 폼 내용을 감싸는 div */

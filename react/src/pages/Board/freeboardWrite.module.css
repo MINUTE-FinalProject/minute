@@ -79,12 +79,16 @@
 }
 
 .img img {
-    max-width: 100%;
+    /* max-width: 100%; */
     /* 이미지가 부모 div를 넘어가지 않도록 */
-    height: auto;
+    /* height: auto; */
     /* 이미지 비율 유지 */
-    border-radius: 6px;
+    /* border-radius: 6px; */
     /* 이미지 모서리 살짝 둥글게 (선택적) */
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    max-height: 215px;
 }
 
 /* 실제 입력 폼 내용을 감싸는 div */
