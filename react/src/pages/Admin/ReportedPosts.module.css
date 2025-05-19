@@ -1,20 +1,24 @@
-/* ReportedPosts.module.css */
+/* ReportedPosts.module.css (필터 바 깨짐 현상 해결 및 반응형 개선) */
 
 .container {
-    display: flex;
-    flex-direction: row;
-    margin-top: 45px;
-    min-height: calc(100vh - 45px);
     background-color: #f4f6f8;
+    flex: 1;
+    display: flex; /* .reportedPostsContentCard에 flex:1 주기 위함 */
+    flex-direction: column; /* 내부 콘텐츠를 세로로 정렬 */
+    margin-top: 45px; /* 헤더 높이만큼 */
+    min-height: calc(100vh - 45px); /* 헤더 높이 제외한 전체 높이 */
+    /* padding: 0; /* .reportedPostsContentCard 가 margin: 20px; 을 가질 것이므로 */
 }
 
-.reportedPostsContent {
-    flex: 1;
-    margin: 20px;
-    padding: 30px 35px;
+.reportedPostsContentCard {
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 30px 35px;
+    margin: 20px; /* .container 배경과의 여백 */
+    flex: 1; /* .container 내부에서 남은 공간을 채우도록 (선택적, 내용에 따라) */
+    display: flex; /* 내부 요소들을 flex로 관리 (선택적, 필요에 따라) */
+    flex-direction: column; /* 내부 요소들을 세로로 배치 (일반적) */
 }
 
 .pageTitle {
@@ -22,6 +26,7 @@
     font-weight: 600;
     color: #2c3e50;
     text-align: center;
+    margin-top: 0;
     margin-bottom: 25px;
     padding-bottom: 15px;
     border-bottom: 1px solid #dfe3e8;
@@ -30,7 +35,6 @@
 .tabContainer {
     margin-bottom: 20px;
     display: flex;
-    gap: 0px;
     border-bottom: 1px solid #dee2e6;
 }
 
@@ -53,19 +57,20 @@
     color: #000;
 }
 .tabButton.activeTab {
-    color: #FF3366; /* 핑크색 계열 유지 (사용자 요청) */
-    border-bottom-color: #FF3366; /* 핑크색 계열 유지 */
+    color: #FF3366;
+    border-bottom-color: #FF3366;
     font-weight: 600;
 }
 
 .filterBar {
     display: flex;
-    align-items: center;
+    align-items: center; /* 기본 세로 정렬 */
     gap: 10px;
     margin-bottom: 25px;
     padding: 15px;
     background-color: #333;
     border-radius: 6px;
+    flex-wrap: wrap; /* <<< 핵심: 요소들이 공간 부족 시 다음 줄로 넘어가도록 */
 }
 
 .filterElement {
@@ -76,18 +81,38 @@
     border-radius: 4px;
     font-size: 14px;
     box-sizing: border-box;
+    height: 36px;
+    /* 모든 필터 요소에 대한 공통적인 최소 너비보다는 개별 설정이 더 유용할 수 있음 */
+    /* 예: flex-basis: 150px; flex-grow: 1; 와 같이 설정하여 유연하게 */
 }
 
 .dateSeparator {
     color: #f0f0f0;
+    font-size: 14px;
+    line-height: 36px; /* filterElement 높이와 맞춤 */
+    flex-shrink: 0; /* 크기가 줄어들지 않도록 */
+    padding: 0 5px; /* 좌우 약간의 여백 */
 }
 
+/* 날짜 입력 필드 스타일 */
+input[type="date"].filterElement {
+    min-width: 130px; /* 날짜 입력 필드의 최소 너비 (내용 표시에 필요) */
+    flex-grow: 1; /* 공간이 남으면 다른 요소들과 함께 늘어나도록 (선택적) */
+    flex-basis: 130px; /* 기본 너비 */
+}
+
+
 .filterSelect {
-    min-width: 150px;
+    min-width: 150px; /* Select 박스 최소 너비 */
+    /* flex-grow: 1; /* 필요하다면 다른 요소들과 함께 늘어나도록 */
+    flex-basis: 150px; /* 기본 너비 */
+    flex-shrink: 0; /* 내용에 따라 너비가 결정되므로, 강제로 줄어들지 않도록 */
 }
 
 .filterSearchInput {
-    flex-grow: 1;
+    flex-grow: 1; /* 사용 가능한 공간을 최대한 차지 */
+    min-width: 180px; /* 검색창이 너무 작아지지 않도록 최소 너비 (중요) */
+    flex-basis: 200px; /* 기본 너비, 화면이 충분할 때 */
 }
 
 .filterSearchButton {
@@ -102,6 +127,7 @@
     align-items: center;
     justify-content: center;
     transition: background-color 0.2s ease;
+    flex-shrink: 0; /* 버튼 크기가 줄어들지 않도록 */
 }
 .filterSearchButton:hover {
     background-color: #777;
@@ -127,7 +153,7 @@
     padding: 10px 8px;
     text-align: center;
     vertical-align: middle;
-    font-size: 0.85em;
+    font-size: 0.88em;
     word-break: break-word;
 }
 
@@ -141,56 +167,40 @@
 .reportsTable .titleColumn,
 .reportsTable .contentSnippetCell {
     text-align: left;
-    min-width: 250px;
+    min-width: 250px; /* 내용이 긴 경우를 대비한 최소 너비 */
+    /* max-width: 400px; /* 너무 길어지지 않도록 최대 너비 (선택적) */
     padding-left: 15px;
 }
 
-.contentLink {
-    text-decoration: none;
-    color: #333;
-    font-weight: normal;
-}
-.contentLink:hover {
-    text-decoration: underline;
-    color: #000;
-}
-
-.reportsTable tbody tr:hover td {
+.reportsTable tbody tr.clickableRow:hover td {
     background-color: #f0f4f8;
+    cursor: pointer;
 }
 
-/* 기존 숨김상태 버튼 스타일 (.statusButton, .statusPublic, .statusHidden) 주석 처리 또는 삭제 */
-/*
-.statusButton { ... }
-.statusPublic { ... }
-.statusHidden { ... }
-*/
-
-/* 새로운 숨김상태 버튼 스타일 (다른 관리 페이지와 유사하게) */
-.status { /* 기본 알약 버튼 스타일 */
+.status {
     display: inline-block;
     padding: 5px 12px;
     border: none;
     border-radius: 12px;
     font-size: 12px;
     font-weight: bold;
-    color: #fff; /* 기본 글자색 흰색 */
+    color: #fff;
     text-align: center;
     min-width: 60px;
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s;
-    line-height: 1.5; /* 텍스트 세로 정렬 개선 */
-    vertical-align: middle; /* 다른 셀 내용과 수직 정렬 */
+    line-height: 1.5;
+    vertical-align: middle;
 }
 
-.activeStatus { /* '공개' 상태 (초록색 계열) */
+.activeStatus {
     background-color: #28a745;
 }
 .activeStatus:hover {
     background-color: #218838;
 }
 
-.inactiveStatus { /* '숨김' 상태 (회색 계열) */
+.inactiveStatus {
     background-color: #6c757d;
 }
 .inactiveStatus:hover {
