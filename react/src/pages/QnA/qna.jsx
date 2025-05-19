@@ -3,13 +3,16 @@ import { Link } from 'react-router-dom';
 import Pagination from "../../components/Pagination/Pagination";
 import qnaStyle from "./qna.module.css";
 
-import searchButtonIcon from "../../assets/images/search_icon.png"; // 이 import는 유지합니다.
+import searchButtonIcon from "../../assets/images/search_icon.png";
 import MypageNav from '../../components/MypageNavBar/MypageNav';
+
+// 예시: 현재 로그인한 사용자 이름 (실제 앱에서는 로그인 정보에서 가져옵니다)
+const LOGGED_IN_USER_AUTHOR_NAME = '김*진';
 
 const generateInitialQnaData = (count = 25) => {
     const items = [];
     const statuses = ['완료', '대기'];
-    const authors = ['김*진', '이*서', '박*훈', '최*아', '정*원'];
+    const authors = ['김*진', '이*서', '박*훈', '최*아', '정*원', '김*진', '정*원']; // '김*진' 추가하여 테스트 용이하게
     for (let i = 0; i < count; i++) {
         items.push({
             id: `qna-${i + 1}`,
@@ -23,8 +26,8 @@ const generateInitialQnaData = (count = 25) => {
 };
 
 function Qna() {
-    const [allQnaItems, setAllQnaItems] = useState([]);
-    const [qnaToDisplay, setQnaToDisplay] = useState([]);
+    const [allQnaItems, setAllQnaItems] = useState([]); // 모든 QnA 데이터 (원본)
+    const [qnaToDisplay, setQnaToDisplay] = useState([]); // 화면에 실제로 표시될 QnA (필터링된)
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const itemsPerPage = 8;
@@ -32,20 +35,26 @@ function Qna() {
     useEffect(() => {
         const loadedQnaData = generateInitialQnaData();
         setAllQnaItems(loadedQnaData);
-        setQnaToDisplay(loadedQnaData);
-    }, []);
+
+        // === 본인 문의만 필터링 ===
+        const myInquiries = loadedQnaData.filter(item => item.author === LOGGED_IN_USER_AUTHOR_NAME);
+        setQnaToDisplay(myInquiries);
+        // =======================
+
+    }, []); // 마운트 시 한 번만 실행
 
     useEffect(() => {
         if (qnaToDisplay.length > 0) {
             const calculatedTotalPages = Math.ceil(qnaToDisplay.length / itemsPerPage);
             setTotalPages(calculatedTotalPages);
+            // 현재 페이지가 전체 페이지 수보다 크면 1페이지로 (데이터가 줄었을 경우)
             if (currentPage > calculatedTotalPages && calculatedTotalPages > 0) {
                 setCurrentPage(1);
-            } else if (calculatedTotalPages === 0 && qnaToDisplay.length === 0) {
+            } else if (calculatedTotalPages === 0 && qnaToDisplay.length === 0) { // 데이터가 없을 경우
                 setCurrentPage(1);
-                setTotalPages(1);
+                setTotalPages(1); // 최소 1페이지
             }
-        } else {
+        } else { // 표시할 데이터가 없을 경우
             setTotalPages(1);
             setCurrentPage(1);
         }
@@ -59,6 +68,17 @@ function Qna() {
         setCurrentPage(pageNumber);
     };
 
+    // TODO: 검색 및 날짜/상태 필터링 로직 추가 시, allQnaItems를 기준으로 필터링한 후
+    // 그 결과에서 다시 LOGGED_IN_USER_AUTHOR_NAME으로 필터링하거나,
+    // LOGGED_IN_USER_AUTHOR_NAME으로 먼저 필터링된 목록(myInquiries)을 기준으로 추가 필터링합니다.
+    // 예: const handleSearch = () => {
+    // let filtered = allQnaItems.filter(item => item.author === LOGGED_IN_USER_AUTHOR_NAME);
+    // if (searchTerm) {
+    // filtered = filtered.filter(item => item.title.includes(searchTerm));
+    // }
+    // setQnaToDisplay(filtered);
+    // }
+
     return (
         <>
             <MypageNav />
@@ -71,11 +91,10 @@ function Qna() {
                             </Link>
                         </div>
 
-                        {/* --- 필터바 (searchbar) JSX 수정 --- */}
                         <div className={qnaStyle.searchbar}>
                             <input type="date" className={qnaStyle.dateFilter} />
                             <input type="date" className={qnaStyle.dateFilter} />
-                            <select> {/* select는 기존대로 유지, CSS에서 스타일 적용 */}
+                            <select>
                                 <option value="">상태 (전체)</option>
                                 <option value="completed">완료</option>
                                 <option value="pending">대기</option>
@@ -88,14 +107,13 @@ function Qna() {
                                 />
                                 <button type="button" className={qnaStyle.searchBtn}>
                                     <img
-                                        src={searchButtonIcon} // Admin 페이지와 동일한 아이콘 사용
+                                        src={searchButtonIcon}
                                         alt="검색"
                                         className={qnaStyle.searchIcon}
                                     />
                                 </button>
                             </div>
                         </div>
-                        {/* --- 필터바 (searchbar) JSX 수정 끝 --- */}
 
                         <table className={qnaStyle.table}>
                             <thead>
@@ -119,7 +137,7 @@ function Qna() {
                                             </td>
                                             <td>{qna.author}</td>
                                             <td className={qnaStyle.tableTitleCell}>
-                                                <Link to={`/qna/${qna.id}`} className={qnaStyle.titleLink}>
+                                                <Link to={`/qnaDetail/${qna.id}`} className={qnaStyle.titleLink}> {/* 상세 페이지 경로 수정 */}
                                                     {qna.title}
                                                 </Link>
                                             </td>
@@ -136,7 +154,7 @@ function Qna() {
 
                         <div className={qnaStyle.bottomControls}>
                             <div className={qnaStyle.paginationContainerInBottomControls}>
-                                {totalPages > 1 && (
+                                {totalPages > 1 && ( // totalPages가 1보다 클 때만 페이지네이션 표시
                                     <Pagination
                                         currentPage={currentPage}
                                         totalPages={totalPages}
