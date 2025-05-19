@@ -1,26 +1,28 @@
-/* ManagerFreeboardDetail.module.css */
+/* ManagerFreeboardDetail.module.css (접근 방식 2에 따라 수정) */
 
-/* --- .container 스타일은 AdminLayout.jsx가 처리하므로 여기서는 제거합니다. --- */
-/*
+/* ManagerFreeboard.module.css의 .container 스타일과 유사하게 정의 */
 .container {
-  display: flex;
-  flex-direction: row;
-  margin-top: 45px;
-  min-height: calc(100vh - 45px);
+    background-color: #f4f6f8; /* 회색 배경 */
+    flex: 1; /* AdminLayout의 콘텐츠 래퍼를 꽉 채우도록 */
+    display: flex; 
+    flex-direction: column; 
+    margin-top: 45px; /* 헤더 높이만큼 상단 여백 확보 */
+    min-height: calc(100vh - 45px); /* 헤더 높이 제외한 전체 높이 */
+    /* padding: 0; /* .managerFreeboardDetailContentCard 가 margin: 20px; 을 가질 것이므로 */
 }
-*/
 
-/* 메인 콘텐츠 카드 스타일 (AdminLayout의 padding: '20px' 내부에 위치) */
-/* 기존 managerFreeboardDetailContent 에서 레이아웃 관련 flex, margin 속성 제거/수정 */
-.managerFreeboardDetailContentCard { /* 클래스명 변경 또는 기존 .managerFreeboardDetailContent 재활용 */
-  background-color: #ffffff; /* 흰색 카드 배경 */
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 30px 35px; /* 카드 내부의 자체 패딩 */
-  /* flex: 1; /* AdminLayout의 Outlet 컨테이너가 이미 flex: 1 이므로 제거 */
-  /* margin: 20px; /* AdminLayout의 Outlet 컨테이너가 padding: '20px'를 가지므로 제거 또는 필요시 최소한으로 조정 */
-  /* margin-left: 230px; /* AdminLayout이 사이드바를 처리하므로 제거 */
+/* 흰색 카드 스타일 - ManagerFreeboard의 .managerFreeboardContent와 유사하게 */
+.managerFreeboardDetailContentCard {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6; /* 기존 스타일 유지 또는 다른 카드와 통일 */
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 30px 35px; /* 카드 자체의 내부 패딩 */
+    margin: 20px; /* <<< 회색 배경(.container)과 흰색 카드 사이의 여백 추가 */
+    flex: 1; /* .container가 display:flex이고 이 카드가 그 안에서 늘어나야 한다면 */
+            /* 만약 내용에 따라 높이가 자연스럽게 조절되길 원하면 이 속성은 빼도 됨 */
+    display: flex; /* 내부 요소들을 flex로 관리하기 위함 (선택적) */
+    flex-direction: column; /* 내부 요소들을 세로로 배치 */
 }
 
 /* 페이지 헤더 (제목 및 목록 링크) */
@@ -53,6 +55,11 @@
   padding: 50px;
   font-size: 1.2em;
   color: #555;
+  /* .container 내부에 직접 표시될 경우, 배경색과 대비되도록 */
+  background-color: #fff; /* 흰색 배경 */
+  margin: 20px; /* 여백 */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 /* 게시글 내용 컨테이너 */
@@ -128,16 +135,18 @@
   height: 18px;
 }
 .countText { 
-  margin-left: 0px; 
+  /* margin-left: 0px; 이전 설정이 0px 이었음 */
   font-size: 0.95em;
   color: #666;
   vertical-align: middle;
 }
 .iconButton.liked .buttonIcon {
-  /* filter: brightness(0.9) sepia(1) hue-rotate(-50deg) saturate(5); */
+  /* 예시: 좋아요 눌렀을 때 아이콘 색상 변경 (필터 사용) */
+  /* filter: invert(50%) sepia(100%) saturate(500%) hue-rotate(330deg) brightness(100%) contrast(100%); */
 }
 .iconButton.reported .buttonIcon {
-  /* filter: grayscale(80%); */
+  /* 예시: 신고된 아이콘 스타일 */
+  /* filter: grayscale(100%) opacity(0.7); */
 }
 
 .postBody {
@@ -146,11 +155,13 @@
   color: #34495e;
   font-size: 1.05em;
   margin-bottom: 25px;
+  white-space: pre-wrap; /* \n을 실제 줄바꿈으로 렌더링 */
 }
-.postBody br {
-  content: "";
-  display: block;
-  margin-bottom: 0.6em;
+.postBody br { /* pre-wrap 사용 시 <br/> 태그는 불필요하거나 추가적인 간격을 만듦 */
+  /* content: ""; */
+  /* display: block; */
+  /* margin-bottom: 0.6em; */
+  display: none; /* pre-wrap으로 충분하므로 br은 숨김 */
 }
 
 .commentListContainer {
@@ -195,8 +206,11 @@
   color: #4a6177;
   font-size: 0.98em;
   word-break: break-word;
+  white-space: pre-wrap; /* \n을 실제 줄바꿈으로 렌더링 */
 }
-.commentContent br { content: ""; display: block; margin-bottom: 0.5em; }
+.commentContent br { /* pre-wrap 사용 시 <br/> 태그는 불필요 */
+ display: none;
+}
 
 .commentActions { 
   display: flex;
