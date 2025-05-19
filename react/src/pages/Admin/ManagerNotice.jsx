@@ -1,11 +1,10 @@
-// ManagerNotice.jsx (부제목 "공지사항 목록" 삭제됨)
+// ManagerNotice.jsx (체크박스/버튼 클릭 시 페이지 이동 방지)
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import searchButtonIcon from "../../assets/images/search_icon.png"; // 실제 경로로 수정해주세요
 import Pagination from '../../components/Pagination/Pagination'; // 실제 경로로 수정해주세요
 import styles from './ManagerNotice.module.css'; // 실제 경로로 수정해주세요
 
-// generateInitialNotices 함수는 이전 제공된 버전 사용 (authorId, authorNickname 포함)
 const generateInitialNotices = (count = 35) => {
     const notices = [];
     const authors = [
@@ -16,7 +15,7 @@ const generateInitialNotices = (count = 35) => {
         const author = authors[i % authors.length];
         notices.push({
             id: `notice-${i}`,
-            displayNo: '', // 정렬 후 채워짐
+            displayNo: '', 
             authorId: author.id,
             authorNickname: author.nickname,
             title: `공지사항 제목 ${i} ${isImportant ? "(필독 이벤트 관련 중요 안내입니다)" : "(일반 공지 사항)"}`,
@@ -24,17 +23,14 @@ const generateInitialNotices = (count = 35) => {
             isImportant: isImportant,
         });
     }
-    // 중요도 및 최신순 정렬
     const sortedNotices = notices.sort((a, b) => {
         if (a.isImportant !== b.isImportant) {
-            return a.isImportant ? -1 : 1; // 중요 공지가 위로
+            return a.isImportant ? -1 : 1;
         }
-        const idA = parseInt(a.id.split('-')[1]); // 'notice-1' -> 1
+        const idA = parseInt(a.id.split('-')[1]);
         const idB = parseInt(b.id.split('-')[1]);
-        return idB - idA; // 최신 공지 (ID가 큰 것)가 위로
+        return idB - idA;
     });
-
-    // 정렬 후 displayNo 할당
     let generalNoticeCounter = 1;
     return sortedNotices.map(notice => ({
         ...notice,
@@ -59,25 +55,13 @@ function ManagerNotice() {
     }, []);
 
     useEffect(() => {
-        let filtered = [...allNotices]; // 원본 배열 복사
+        let filtered = [...allNotices];
 
-        // 날짜 필터 (구현 필요 시 주석 해제 및 로직 추가)
-        // if (dateRange.start && dateRange.end) {
-        //     filtered = filtered.filter(notice => {
-        //         const noticeDate = new Date(notice.date.replace(/\./g, '-'));
-        //         const startDate = new Date(dateRange.start);
-        //         const endDate = new Date(dateRange.end);
-        //         return noticeDate >= startDate && noticeDate <= endDate;
-        //     });
-        // }
-
-        // 중요도 필터
         if (importanceFilter !== 'all') {
             const isImportantFilter = importanceFilter === 'important';
             filtered = filtered.filter(notice => notice.isImportant === isImportantFilter);
         }
 
-        // 검색어 필터 (제목, 작성자ID, 닉네임)
         if (searchTerm.trim() !== '') {
             const lowerSearchTerm = searchTerm.toLowerCase();
             filtered = filtered.filter(notice =>
@@ -86,9 +70,10 @@ function ManagerNotice() {
                 notice.authorNickname.toLowerCase().includes(lowerSearchTerm)
             );
         }
+        // 날짜 필터 로직은 여기에 추가 (필요시)
 
         setNoticesToDisplay(filtered);
-        setCurrentPage(1); // 필터 변경 시 첫 페이지로
+        setCurrentPage(1);
     }, [allNotices, dateRange, importanceFilter, searchTerm]);
 
     const totalPages = Math.ceil(noticesToDisplay.length / itemsPerPage);
@@ -99,12 +84,10 @@ function ManagerNotice() {
     const areAllInCurrentPageImportant = currentDisplayedNotices.length > 0 && currentDisplayedNotices.every(n => n.isImportant);
 
     const handleToggleImportant = (id) => {
-        // 실제로는 API 호출 후 상태를 업데이트해야 합니다.
         setAllNotices(prevNotices => {
             const updatedNotices = prevNotices.map(notice =>
                 notice.id === id ? { ...notice, isImportant: !notice.isImportant } : notice
             );
-            // 중요도 변경 후 다시 정렬 및 displayNo 재할당
             const sorted = updatedNotices.sort((a, b) => {
                 if (a.isImportant !== b.isImportant) return a.isImportant ? -1 : 1;
                 const idA = parseInt(a.id.split('-')[1]);
@@ -117,13 +100,14 @@ function ManagerNotice() {
     };
 
     const handleToggleAllImportantInCurrentPage = (e) => {
+        // 전체 선택 체크박스 클릭 시 행 클릭 이벤트 전파 방지를 위해 추가 (필요시)
+        // e.stopPropagation(); // 만약 헤더 체크박스 클릭이 다른 동작을 유발한다면
         const newImportantState = e.target.checked;
         setAllNotices(prevNotices => {
             const currentIds = currentDisplayedNotices.map(n => n.id);
             const updatedNotices = prevNotices.map(notice =>
                 currentIds.includes(notice.id) ? { ...notice, isImportant: newImportantState } : notice
             );
-            // 중요도 변경 후 다시 정렬 및 displayNo 재할당
             const sorted = updatedNotices.sort((a, b) => {
                 if (a.isImportant !== b.isImportant) return a.isImportant ? -1 : 1;
                 const idA = parseInt(a.id.split('-')[1]);
@@ -136,15 +120,13 @@ function ManagerNotice() {
     };
 
     const handleEdit = (id) => {
-        navigate(`/admin/managerNoticeEdit/${id}`); // 수정 페이지로 이동
+        navigate(`/admin/managerNoticeEdit/${id}`);
     };
 
     const handleDelete = (id) => {
-        // 실제로는 API 호출로 삭제 후 목록을 다시 불러오거나 상태에서 제거합니다.
         if (window.confirm(`공지사항 ID: ${id}를 정말 삭제하시겠습니까?`)) {
             setAllNotices(prevNotices => {
                 const updatedNotices = prevNotices.filter(notice => notice.id !== id);
-                // 삭제 후 다시 정렬 및 displayNo 재할당 (옵션, 번호가 유지되길 원하면 생략)
                 const sorted = updatedNotices.sort((a, b) => {
                     if (a.isImportant !== b.isImportant) return a.isImportant ? -1 : 1;
                     const idA = parseInt(a.id.split('-')[1]);
@@ -162,7 +144,7 @@ function ManagerNotice() {
     };
 
     const handleRowClick = (noticeId) => {
-        navigate(`/admin/managerNoticeDetail/${noticeId}`); // 상세 페이지로 이동
+        navigate(`/admin/managerNoticeDetail/${noticeId}`);
     };
 
     return (
@@ -185,8 +167,6 @@ function ManagerNotice() {
                         </button>
                     </div>
 
-                    {/* "공지사항 목록" 부제목 <h2 className={styles.subTitle}>공지사항 목록</h2> 이 삭제되었습니다. */}
-
                     <table className={styles.noticeTable}>
                         <thead>
                             <tr>
@@ -195,7 +175,7 @@ function ManagerNotice() {
                                 <th>닉네임</th>
                                 <th className={styles.titleHeaderColumn}>제목</th>
                                 <th>작성일</th>
-                                <th>
+                                <th onClick={(e) => e.stopPropagation()}> {/* 헤더 체크박스 셀도 전파 방지 */}
                                     <input
                                         type="checkbox"
                                         title="현재 페이지 전체 중요도 설정/해제"
@@ -203,6 +183,7 @@ function ManagerNotice() {
                                         onChange={handleToggleAllImportantInCurrentPage}
                                         disabled={currentDisplayedNotices.length === 0}
                                         className={styles.headerCheckbox}
+                                        onClick={(e) => e.stopPropagation()} // 체크박스 자체의 클릭도 전파 막기
                                     /> 중요
                                 </th>
                                 <th>수정</th>
@@ -213,25 +194,28 @@ function ManagerNotice() {
                             {currentDisplayedNotices.length > 0 ? (
                                 currentDisplayedNotices.map((notice) => (
                                     <tr key={notice.id} onClick={() => handleRowClick(notice.id)} className={`${styles.clickableRow} ${notice.isImportant ? styles.importantRow : ''}`}>
-                                        <td>{notice.isImportant ? <span className={styles.importantTag}>중요</span> : notice.displayNo}</td>
+                                        <td>{notice.isImportant ? <span className={styles.importantTag}>{notice.displayNo}</span> : notice.displayNo}</td>
                                         <td>{notice.authorId}</td>
                                         <td>{notice.authorNickname}</td>
                                         <td className={styles.titleDataColumn}>
                                             {notice.title}
                                         </td>
                                         <td>{notice.date}</td>
-                                        <td className={styles.checkboxCell}>
+                                        <td className={styles.checkboxCell} onClick={(e) => e.stopPropagation()}>
                                             <input
                                                 type="checkbox"
                                                 checked={notice.isImportant}
-                                                onChange={(e) => { e.stopPropagation(); handleToggleImportant(notice.id); }}
+                                                onClick={(e) => { // onChange 대신 onClick 사용하고 stopPropagation 명시적 호출
+                                                    e.stopPropagation(); 
+                                                    handleToggleImportant(notice.id);
+                                                }}
                                                 title={notice.isImportant ? "중요 공지 해제" : "중요 공지로 설정"}
                                             />
                                         </td>
-                                        <td className={styles.actionCell}>
+                                        <td className={styles.actionCell} onClick={(e) => e.stopPropagation()}>
                                             <button onClick={(e) => { e.stopPropagation(); handleEdit(notice.id); }} className={`${styles.actionButton} ${styles.editButton}`}>수정</button>
                                         </td>
-                                        <td className={styles.actionCell}>
+                                        <td className={styles.actionCell} onClick={(e) => e.stopPropagation()}>
                                             <button onClick={(e) => { e.stopPropagation(); handleDelete(notice.id); }} className={`${styles.actionButton} ${styles.deleteButton}`}>삭제</button>
                                         </td>
                                     </tr>
