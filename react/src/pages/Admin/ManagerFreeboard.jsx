@@ -1,25 +1,24 @@
-// ManagerFreeboard.jsx (신고 조치 1회만 가능하도록 수정, 신고 버튼 로직 수정)
-import { useEffect, useState } from 'react';
+// src/pages/Admin/ManagerFreeboard.jsx (또는 해당 파일의 실제 경로)
+import { useEffect, useState } from 'react'; // React import 추가
 import { useNavigate } from 'react-router-dom';
-import reportOffIcon from "../../assets/images/able-alarm.png"; // 아이콘: "사용자 신고 없음, 관리자 조치 가능" 상태
+import reportOffIcon from "../../assets/images/able-alarm.png";
 import likeOffIcon from "../../assets/images/b_thumbup.png";
-import reportOnIcon from "../../assets/images/disable-alarm.png"; // 아이콘: "사용자 신고 있음" 또는 "관리자 조치 완료" 상태
+import reportOnIcon from "../../assets/images/disable-alarm.png";
 import searchButtonIcon from "../../assets/images/search_icon.png";
 import likeOnIcon from "../../assets/images/thumbup.png";
+import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
 import Pagination from '../../components/Pagination/Pagination';
 import styles from './ManagerFreeboard.module.css';
 
 const CURRENT_ADMIN_ID = '관리자1';
 
 const generateInitialPosts = (count = 47) => {
+    // ... (기존 generateInitialPosts 함수 내용 유지)
     const posts = [];
     const authors = ['관리자1', '사용자A', '사용자B', '관리자2', '사용자C'];
     for (let i = 1; i <= count; i++) {
-        const isReported = i % 10 === 0; // 사용자 신고 여부
-        const isAdminActioned = isReported && i % 5 === 0; // 관리자 조치 여부 (데모를 위해 사용자 신고된 것 중 일부만 조치된 것으로 설정)
-        // 관리자가 사용자 신고 없는 게시물을 조치하는 테스트 케이스:
-        // const isAdminActioned = (isReported && i % 5 === 0) || (!isReported && i % 7 === 0)
-
+        const isReported = i % 10 === 0; 
+        const isAdminActioned = isReported && i % 5 === 0;
         posts.push({
             id: i,
             title: `자유게시판 테스트 게시물 ${i}`,
@@ -48,6 +47,19 @@ function ManagerFreeboard() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
+    // 모달 상태 관리
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalProps, setModalProps] = useState({
+        title: '',
+        message: '',
+        onConfirm: null,
+        confirmText: '확인',
+        cancelText: null,
+        type: 'default',
+        confirmButtonType: 'primary',
+        cancelButtonType: 'secondary'
+    });
+
     useEffect(() => {
         setAllPosts(generateInitialPosts());
     }, []);
@@ -59,14 +71,7 @@ function ManagerFreeboard() {
         }
         // 날짜 및 검색어 필터 로직 (현재는 주석 처리, 필요시 구현)
         // if (dateRange.start && dateRange.end) { /* ... */ }
-        // if (searchTerm.trim()) {
-        //     const lowerSearchTerm = searchTerm.toLowerCase().trim();
-        //     processedData = processedData.filter(post =>
-        //         post.title.toLowerCase().includes(lowerSearchTerm) ||
-        //         post.author.toLowerCase().includes(lowerSearchTerm)
-        //         // 필요시 다른 필드도 검색 대상에 포함
-        //     );
-        // }
+        // if (searchTerm.trim()) { /* ... */ }
 
         if (sortOrder === 'latest') {
             processedData.sort((a, b) => b.id - a.id);
@@ -92,40 +97,73 @@ function ManagerFreeboard() {
         );
     };
 
-    // 신고 조치 핸들러 (1회만 조치 가능하도록 수정됨, 관리자는 사용자 신고 없어도 조치 가능)
-    const handleReportAction = (postId) => {
+    // --- 신고 조치 핸들러 (Modal 적용) ---
+    const processReportAction = (postIdToUpdate) => {
+        setAllPosts(prevPosts =>
+            prevPosts.map(post =>
+                post.id === postIdToUpdate
+                ? { ...post, adminActionedOnReport: true, reports: post.reports > 0 ? post.reports : 1 }
+                : post
+            )
+        );
+        // TODO: API로 실제 DB 업데이트
+        setModalProps({
+            title: '조치 완료',
+            message: `게시물 ID ${postIdToUpdate}의 신고에 대해 성공적으로 조치했습니다.`,
+            confirmText: '확인',
+            type: 'adminSuccess', // 관리자용 성공 알림
+            confirmButtonType: 'primary' // 여기도 핑크색을 원하시면 type: 'success'로 변경 가능
+        });
+        setIsModalOpen(true);
+    };
+
+    const handleReportAction = (e, postId) => { // 이벤트 객체(e)를 받아 stopPropagation 호출
+        e.stopPropagation(); // 행 클릭 이벤트 전파 방지
+        
         const postToUpdate = allPosts.find(p => p.id === postId);
 
         if (!postToUpdate) {
-            alert("오류: 해당 게시물을 찾을 수 없습니다.");
+            setModalProps({
+                title: '오류',
+                message: '해당 게시물을 찾을 수 없습니다.',
+                confirmText: '확인',
+                type: 'adminError',
+                confirmButtonType: 'primary'
+            });
+            setIsModalOpen(true);
             return;
         }
 
-        // 이미 관리자가 조치한 경우
         if (postToUpdate.adminActionedOnReport) {
-            alert(`게시물 ID ${postId}는 이미 관리자가 조치한 게시물입니다. 추가 조치가 불가능합니다.`);
+            setModalProps({
+                title: '알림',
+                message: `게시물 ID ${postId}는 이미 관리자가 조치한 게시물입니다. 추가 조치가 불가능합니다.`,
+                confirmText: '확인',
+                type: 'adminWarning', // 정보성 경고
+                confirmButtonType: 'primary'
+            });
+            setIsModalOpen(true);
             return;
         }
 
-        // 사용자 신고가 있었는지 여부에 따라 확인 메시지 변경
         let confirmMessage = `게시물 ID ${postId}`;
         if (postToUpdate.isReportedBySomeone) {
             confirmMessage += ` (사용자 신고 ${postToUpdate.reports}건)`;
         } else {
             confirmMessage += ` (사용자 신고 없음)`;
         }
-        confirmMessage += `에 대해 "관리자 조치함"으로 상태를 변경하시겠습니까? 이 작업은 되돌릴 수 없습니다.`;
+        confirmMessage += `에 대해 "관리자 조치함"으로 상태를 변경하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`;
 
-        if (window.confirm(confirmMessage)) {
-            setAllPosts(prevPosts =>
-                prevPosts.map(post =>
-                    post.id === postId
-                    ? { ...post, adminActionedOnReport: true, reports: post.reports > 0 ? post.reports : 1 } // 조치 시 reports가 0이면 1로 설정 (선택적)
-                    : post
-                )
-            );
-            alert(`게시물 ID ${postId}의 신고에 대해 조치했습니다. (실제 DB 업데이트 필요)`);
-        }
+        setModalProps({
+            title: '신고 조치 확인',
+            message: confirmMessage,
+            onConfirm: () => processReportAction(postId),
+            confirmText: '조치 실행',
+            cancelText: '취소',
+            type: 'adminConfirm', // 관리자용 확인
+            confirmButtonType: 'danger' // 조치 실행은 주요 액션이므로 danger 또는 primary
+        });
+        setIsModalOpen(true);
     };
 
     const totalPages = Math.ceil(postsToDisplay.length / itemsPerPage);
@@ -148,7 +186,7 @@ function ManagerFreeboard() {
                     <h1 className={styles.pageTitle}>자유게시판 관리</h1>
                     <div className={styles.tabContainer}>
                         <button className={`${styles.tabButton} ${activeTab === 'all' ? styles.activeTab : ''}`} onClick={() => setActiveTab('all')}>전체 게시물</button>
-                        <button className={`${styles.tabButton} ${activeTab === 'myPosts' ? styles.activeTab : ''}`} onClick={() => setActiveTab('myPosts')}>내 댓글</button>
+                        <button className={`${styles.tabButton} ${activeTab === 'myPosts' ? styles.activeTab : ''}`} onClick={() => setActiveTab('myPosts')}>내 댓글</button> {/* '내 댓글' 이 아니라 '내 게시물'이 맞을 것 같습니다. */}
                     </div>
                     <div className={styles.filterBar}>
                         <input type="date" className={styles.filterElement} value={dateRange.start} onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}/>
@@ -187,16 +225,16 @@ function ManagerFreeboard() {
                                         </td>
                                         <td>
                                             <button
-                                                onClick={(e) => {e.stopPropagation(); handleReportAction(post.id);}}
+                                                onClick={(e) => handleReportAction(e, post.id)} // 이벤트 객체(e) 전달
                                                 className={`${styles.iconButton} ${post.adminActionedOnReport ? styles.reportActioned : ''}`}
                                                 title={
                                                     post.adminActionedOnReport
-                                                      ? `관리자가 조치 완료한 게시물입니다. (신고 ${post.reports}건)` // 관리자 조치 완료 시 title
-                                                      : (post.isReportedBySomeone
-                                                          ? `사용자 신고 ${post.reports}건 접수됨 (클릭하여 조치)` // 사용자 신고 있고, 관리자 조치 전 title
-                                                          : "신고된 내역 없음 (관리자가 직접 조치 가능)") // 사용자 신고 없고, 관리자 조치 전 title
+                                                    ? `관리자가 조치 완료한 게시물입니다. (신고 ${post.reports}건)`
+                                                    : (post.isReportedBySomeone
+                                                        ? `사용자 신고 ${post.reports}건 접수됨 (클릭하여 조치)`
+                                                        : "신고된 내역 없음 (관리자가 직접 조치 가능)")
                                                 }
-                                                disabled={post.adminActionedOnReport} // 관리자가 조치했으면 비활성화
+                                                disabled={post.adminActionedOnReport}
                                             >
                                                 <img
                                                     src={(post.isReportedBySomeone || post.adminActionedOnReport) ? reportOnIcon : reportOffIcon}
@@ -204,8 +242,6 @@ function ManagerFreeboard() {
                                                     className={styles.buttonIcon}
                                                 />
                                             </button>
-                                            {/* 필요시 버튼 옆에 신고 건수 표시 (선택 사항) */}
-                                            {/* {post.reports > 0 && <span className={styles.countText}>{post.reports}</span>} */}
                                         </td>
                                     </tr>
                                 ))
@@ -217,6 +253,11 @@ function ManagerFreeboard() {
                     </div>
                 </main>
             </div>
+            <Modal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                {...modalProps}
+            />
         </>
     );
 }
