@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import styles from './ManagerFreeboardDetail.module.css';
+import styles from './ManagerFreeboardDetail.module.css'; // 페이지 내부 스타일은 계속 사용
 
 // Pagination 컴포넌트 임포트
 import Pagination from '../../components/Pagination/Pagination';
 
+// 아이콘 임포트
 import reportOffIcon from "../../assets/images/able-alarm.png";
 import likeOffIcon from "../../assets/images/b_thumbup.png";
 import reportOnIcon from "../../assets/images/disable-alarm.png";
 import likeOnIcon from "../../assets/images/thumbup.png";
 
-const LOGGED_IN_ADMIN_ID = 'adminUser'; 
+// !!! AdminLayout을 사용하므로 Header, Sidebar 직접 임포트 및 사용 안 함 !!!
+// import Header from '../../components/Header/Header';
+// import Sidebar from '../../components/Sidebar/Sidebar';
+
+const LOGGED_IN_ADMIN_ID = 'adminUser';
 
 function ManagerFreeboardDetail() {
     const { postId } = useParams();
@@ -20,19 +25,18 @@ function ManagerFreeboardDetail() {
     const [comments, setComments] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    
+
     const [isPostReported, setIsPostReported] = useState(false);
     const [reportedCommentIds, setReportedCommentIds] = useState([]);
 
-    // --- 댓글 페이지네이션 상태 ---
     const [currentCommentPage, setCurrentCommentPage] = useState(1);
-    const commentsPerPage = 5; // 페이지 당 보여줄 댓글 수
+    const commentsPerPage = 5;
 
     useEffect(() => {
         setIsLoading(true);
         setError(null);
         console.log(`Workspaceing data for admin view of postId: ${postId}`);
-        
+
         setTimeout(() => {
             const fetchedPost = {
                 id: postId,
@@ -45,8 +49,7 @@ function ManagerFreeboardDetail() {
                 viewCount: 250,
                 content: `이것은 ID ${postId} 게시글의 내용입니다. 관리자 페이지에서 확인 중입니다.\n\n여러 줄의 내용도 표시됩니다.\n\n- 항목 1\n- 항목 2`,
             };
-            // 댓글 목업 데이터 개수 증가 (페이지네이션 테스트용)
-            const fetchedComments = Array.from({ length: 17 }, (_, i) => ({ // 17개 댓글 생성
+            const fetchedComments = Array.from({ length: 17 }, (_, i) => ({
                 id: 101 + i,
                 postId: postId,
                 author: `댓글러${i + 1}`,
@@ -63,15 +66,15 @@ function ManagerFreeboardDetail() {
             } else {
                 setPost(fetchedPost);
                 setComments(fetchedComments);
-                setIsPostReported(postId === "2"); // 예시: ID가 2인 게시글이 신고된 상태라고 가정
-                // 댓글 신고 상태도 초기화 (예시)
+                setIsPostReported(postId === "2");
                 setReportedCommentIds(fetchedComments.filter((c, i) => i % 5 === 0).map(c => c.id));
             }
             setIsLoading(false);
-            setCurrentCommentPage(1); // 데이터 로드 시 댓글 페이지 1로 초기화
+            setCurrentCommentPage(1);
         }, 800);
     }, [postId]);
 
+    // ... (handlePostLikeClick, handlePostReportClick 등 핸들러 함수들은 그대로 유지) ...
     const handlePostLikeClick = () => {
         if (!post) return;
         setPost(prevPost => ({
@@ -79,7 +82,6 @@ function ManagerFreeboardDetail() {
             isLikedByCurrentUser: !prevPost.isLikedByCurrentUser,
             likeCount: prevPost.isLikedByCurrentUser ? prevPost.likeCount - 1 : prevPost.likeCount + 1,
         }));
-        console.log("관리자: 게시글 좋아요 상태 변경 (테스트용)");
     };
 
     const handlePostReportClick = () => {
@@ -107,7 +109,6 @@ function ManagerFreeboardDetail() {
         }
     };
 
-    // --- 댓글 페이지네이션 로직 ---
     const totalCommentPages = Math.ceil(comments.length / commentsPerPage);
     const indexOfLastComment = currentCommentPage * commentsPerPage;
     const indexOfFirstComment = indexOfLastComment - commentsPerPage;
@@ -115,125 +116,115 @@ function ManagerFreeboardDetail() {
 
     const handleCommentPageChange = (pageNumber) => {
         setCurrentCommentPage(pageNumber);
-        // 댓글 페이지 변경 시 댓글 목록 상단으로 스크롤 (선택적)
-        // const commentSection = document.getElementById('commentListContainer');
-        // if (commentSection) {
-        //     commentSection.scrollIntoView({ behavior: 'smooth' });
-        // }
     };
 
     if (isLoading) return <div className={styles.loadingContainer}>데이터 로딩 중...</div>;
     if (error) return <div className={styles.errorContainer}>오류: {error}</div>;
     if (!post) return <div className={styles.errorContainer}>게시글을 찾을 수 없습니다.</div>;
 
+    // AdminLayout의 PageContentOutlet으로 렌더링될 내용
+    // 최상위 div.container 제거, Header/Sidebar 제거
     return (
-        <>
-
-            <div className={styles.container}>
-
-                <main className={styles.managerFreeboardDetailContent}>
-                    
-                    <div className={styles.pageHeader}>
-                        <Link to="/admin/freeboard" className={styles.toListLink}>
-                            <h1>자유게시판 관리</h1>
-                        </Link>
-                    </div>
-
-                    <div className={styles.postContentContainer}>
-                        <h2 className={styles.postTitle}>{post.title}</h2>
-                        <div className={styles.postMeta}>
-                            <div>
-                                <span className={styles.postAuthor}>작성자: {post.author}</span>
-                                <span className={styles.postCreatedAt}>작성일: {post.createdAt}</span>
-                            </div>
-                        </div>
-                        <div className={styles.postSubMeta}>
-                            <div className={styles.postStats}>
-                                <button
-                                    onClick={handlePostLikeClick}
-                                    className={`${styles.iconButton} ${post.isLikedByCurrentUser ? styles.liked : ''}`}
-                                    title={post.isLikedByCurrentUser ? "좋아요 취소 (테스트)" : "좋아요 (테스트)"}
-                                >
-                                    <img
-                                        src={post.isLikedByCurrentUser ? likeOnIcon : likeOffIcon}
-                                        alt="좋아요 상태"
-                                        className={styles.buttonIcon}
-                                    />
-                                </button>
-                                <span className={styles.countText}>좋아요: {post.likeCount}</span>
-                                <span className={styles.countText}>조회수: {post.viewCount}</span>
-                            </div>
-                            <button
-                                onClick={handlePostReportClick}
-                                className={`${styles.iconButton} ${isPostReported ? styles.reported : ''}`}
-                                title={isPostReported ? "신고 상태 해제 (테스트)" : "신고 상태로 변경 (테스트)"}
-                            >
-                                <img
-                                    src={isPostReported ? reportOnIcon : reportOffIcon}
-                                    alt="신고 상태"
-                                    className={styles.buttonIcon}
-                                />
-                            </button>
-                        </div>
-                        <div className={styles.postBody}>
-                            {post.content.split('\n').map((line, index) => (
-                                <React.Fragment key={index}>
-                                    {line}
-                                    <br />
-                                </React.Fragment>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* 댓글 목록 */}
-                    <div className={styles.commentListContainer} id="commentListContainer">
-                        <h3>댓글 ({comments.length})</h3>
-                        {currentDisplayedComments.length > 0 ? ( // comments -> currentDisplayedComments
-                            currentDisplayedComments.map(comment => (
-                                <div key={comment.id} className={styles.commentItem}>
-                                    <div className={styles.commentMeta}>
-                                        <div>
-                                            <span className={styles.commentAuthor}>{comment.author}</span>
-                                            <span className={styles.commentCreatedAt}>{comment.createdAt}</span>
-                                        </div>
-                                    </div>
-                                    <p className={styles.commentContent}>
-                                        {comment.content.split('\n').map((line, index) => (
-                                            <React.Fragment key={index}>{line}<br /></React.Fragment>
-                                        ))}
-                                    </p>
-                                    <div className={styles.commentActions}>
-                                        <div>
-                                            <button onClick={() => handleCommentLikeToggle(comment.id)} className={styles.iconButton} title={comment.isLiked ? "좋아요 취소 (테스트)" : "좋아요 (테스트)"}>
-                                                <img src={comment.isLiked ? likeOnIcon : likeOffIcon} alt="댓글 좋아요" className={styles.buttonIcon} />
-                                            </button>
-                                            <span className={styles.countText}>{comment.likeCount}</span>
-                                        </div>
-                                        <button onClick={() => handleCommentReportClick(comment.id)} className={`${styles.iconButton} ${reportedCommentIds.includes(comment.id) ? styles.reported : ''}`} title={reportedCommentIds.includes(comment.id) ? "댓글 신고 상태 해제 (테스트)" : "댓글 신고 상태로 변경 (테스트)"}>
-                                            <img src={reportedCommentIds.includes(comment.id) ? reportOnIcon : reportOffIcon} alt="댓글 신고" className={styles.buttonIcon} />
-                                        </button>
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            comments.length > 0 ? <p>해당 페이지에 댓글이 없습니다.</p> : <p className={styles.noComments}>등록된 댓글이 없습니다.</p>
-                        )}
-                        
-                        {/* 댓글 페이지네이션 */}
-                        {comments.length > 0 && totalCommentPages > 1 && ( // 댓글이 있고, 댓글 페이지가 2개 이상일 때만 표시
-                            <div className={styles.commentPaginationWrapper}> {/* 필요시 이 div로 감싸서 추가 스타일링 */}
-                                <Pagination
-                                    currentPage={currentCommentPage}
-                                    totalPages={totalCommentPages}
-                                    onPageChange={handleCommentPageChange}
-                                    pageNeighbours={0} // 댓글 페이지네이션은 더 간결하게 (옵션)
-                                />
-                            </div>
-                        )}
-                    </div>
-                </main>
+        // 이 main 태그가 페이지 콘텐츠의 루트 역할을 하며, AdminLayout의 padding: '20px' 내부에 위치하게 됩니다.
+        // 기존의 managerFreeboardDetailContent 스타일을 카드 스타일에 맞게 조정합니다.
+        <main className={styles.managerFreeboardDetailContentCard}>
+            <div className={styles.pageHeader}>
+                <Link to="/admin/freeboard" className={styles.toListLink}>
+                    <h1>자유게시판 관리</h1>
+                </Link>
             </div>
-        </>
+
+            <div className={styles.postContentContainer}>
+                <h2 className={styles.postTitle}>{post.title}</h2>
+                <div className={styles.postMeta}>
+                    <div>
+                        <span className={styles.postAuthor}>작성자: {post.author}</span>
+                        <span className={styles.postCreatedAt}>작성일: {post.createdAt}</span>
+                    </div>
+                </div>
+                <div className={styles.postSubMeta}>
+                    <div className={styles.postStats}>
+                        <button
+                            onClick={handlePostLikeClick}
+                            className={`${styles.iconButton} ${post.isLikedByCurrentUser ? styles.liked : ''}`}
+                            title={post.isLikedByCurrentUser ? "좋아요 취소 (테스트)" : "좋아요 (테스트)"}
+                        >
+                            <img
+                                src={post.isLikedByCurrentUser ? likeOnIcon : likeOffIcon}
+                                alt="좋아요 상태"
+                                className={styles.buttonIcon}
+                            />
+                        </button>
+                        <span className={styles.countText}>좋아요: {post.likeCount}</span>
+                        <span className={styles.countText}>조회수: {post.viewCount}</span>
+                    </div>
+                    <button
+                        onClick={handlePostReportClick}
+                        className={`${styles.iconButton} ${isPostReported ? styles.reported : ''}`}
+                        title={isPostReported ? "신고 상태 해제 (테스트)" : "신고 상태로 변경 (테스트)"}
+                    >
+                        <img
+                            src={isPostReported ? reportOnIcon : reportOffIcon}
+                            alt="신고 상태"
+                            className={styles.buttonIcon}
+                        />
+                    </button>
+                </div>
+                <div className={styles.postBody}>
+                    {post.content.split('\n').map((line, index) => (
+                        <React.Fragment key={index}>
+                            {line}
+                            <br />
+                        </React.Fragment>
+                    ))}
+                </div>
+            </div>
+
+            <div className={styles.commentListContainer}>
+                <h3>댓글 ({comments.length})</h3>
+                {currentDisplayedComments.length > 0 ? (
+                    currentDisplayedComments.map(comment => (
+                        <div key={comment.id} className={styles.commentItem}>
+                            <div className={styles.commentMeta}>
+                                <div>
+                                    <span className={styles.commentAuthor}>{comment.author}</span>
+                                    <span className={styles.commentCreatedAt}>{comment.createdAt}</span>
+                                </div>
+                            </div>
+                            <p className={styles.commentContent}>
+                                {comment.content.split('\n').map((line, index) => (
+                                    <React.Fragment key={index}>{line}<br /></React.Fragment>
+                                ))}
+                            </p>
+                            <div className={styles.commentActions}>
+                                <div>
+                                    <button onClick={() => handleCommentLikeToggle(comment.id)} className={styles.iconButton} title={comment.isLiked ? "좋아요 취소 (테스트)" : "좋아요 (테스트)"}>
+                                        <img src={comment.isLiked ? likeOnIcon : likeOffIcon} alt="댓글 좋아요" className={styles.buttonIcon} />
+                                    </button>
+                                    <span className={styles.countText}>{comment.likeCount}</span>
+                                </div>
+                                <button onClick={() => handleCommentReportClick(comment.id)} className={`${styles.iconButton} ${reportedCommentIds.includes(comment.id) ? styles.reported : ''}`} title={reportedCommentIds.includes(comment.id) ? "댓글 신고 상태 해제 (테스트)" : "댓글 신고 상태로 변경 (테스트)"}>
+                                    <img src={reportedCommentIds.includes(comment.id) ? reportOnIcon : reportOffIcon} alt="댓글 신고" className={styles.buttonIcon} />
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    comments.length > 0 ? <p>해당 페이지에 댓글이 없습니다.</p> : <p className={styles.noComments}>등록된 댓글이 없습니다.</p>
+                )}
+
+                {comments.length > 0 && totalCommentPages > 1 && (
+                    <div className={styles.commentPaginationWrapper}>
+                        <Pagination
+                            currentPage={currentCommentPage}
+                            totalPages={totalCommentPages}
+                            onPageChange={handleCommentPageChange}
+                            pageNeighbours={0}
+                        />
+                    </div>
+                )}
+            </div>
+        </main>
     );
 }
 

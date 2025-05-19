@@ -1,24 +1,26 @@
 /* ManagerFreeboardDetail.module.css */
 
-/* --- 기본 레이아웃 (관리자 목록 페이지와 유사) --- */
+/* --- .container 스타일은 AdminLayout.jsx가 처리하므로 여기서는 제거합니다. --- */
+/*
 .container {
   display: flex;
   flex-direction: row;
-  margin-top: 45px; /* 고정 헤더 높이에 따라 조절 */
+  margin-top: 45px;
   min-height: calc(100vh - 45px);
 }
+*/
 
-.managerFreeboardDetailContent { /* 메인 콘텐츠 영역 */
-  margin-left: 230px; /* Sidebar 너비 (실제 값으로 조절) */
-  margin-top: 20px;
-  margin-right: 20px;
-  margin-bottom: 20px;
-  flex: 1;
-  padding: 30px 35px;
+/* 메인 콘텐츠 카드 스타일 (AdminLayout의 padding: '20px' 내부에 위치) */
+/* 기존 managerFreeboardDetailContent 에서 레이아웃 관련 flex, margin 속성 제거/수정 */
+.managerFreeboardDetailContentCard { /* 클래스명 변경 또는 기존 .managerFreeboardDetailContent 재활용 */
   background-color: #ffffff; /* 흰색 카드 배경 */
   border: 1px solid #dee2e6;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 30px 35px; /* 카드 내부의 자체 패딩 */
+  /* flex: 1; /* AdminLayout의 Outlet 컨테이너가 이미 flex: 1 이므로 제거 */
+  /* margin: 20px; /* AdminLayout의 Outlet 컨테이너가 padding: '20px'를 가지므로 제거 또는 필요시 최소한으로 조정 */
+  /* margin-left: 230px; /* AdminLayout이 사이드바를 처리하므로 제거 */
 }
 
 /* 페이지 헤더 (제목 및 목록 링크) */
@@ -41,10 +43,10 @@
   font-size: 2.2em;
   font-weight: 600;
   margin: 0;
-  display: inline-block; /* 링크 영역에 맞춤 */
+  display: inline-block;
 }
 
-/* 로딩, 에러 메시지 (자유게시판 상세 참고) */
+/* 로딩, 에러 메시지 */
 .loadingContainer,
 .errorContainer {
   text-align: center;
@@ -53,24 +55,18 @@
   color: #555;
 }
 
-/* 배너 이미지 (필요하다면 자유게시판 상세 참고) */
-/*
-.imageBannerContainer { margin-bottom: 30px; text-align: center; }
-.bannerImage { max-width: 100%; height: auto; border-radius: 8px; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-*/
-
-/* 게시글 내용 컨테이너 (자유게시판 상세 .postContentContainer 참고) */
+/* 게시글 내용 컨테이너 */
 .postContentContainer {
   border: 1px solid #dfe3e8;
   padding: 30px 35px;
   margin-bottom: 30px;
   border-radius: 8px;
-  background-color: #fff; /* 내부 박스도 흰색일 수 있으나, 이미 부모가 흰색이면 생략 가능 */
+  background-color: #fff; 
   box-shadow: 0 2px 5px rgba(0,0,0,0.06);
 }
 
 .postTitle {
-  font-size: 2em; /* 상세페이지 제목 크기 */
+  font-size: 2em;
   margin-top: 0;
   margin-bottom: 20px;
   color: #1c2833;
@@ -87,7 +83,7 @@
   color: #525f6b;
   font-size: 0.9em;
 }
-.postMeta > div:first-child { /* 작성자, 작성일 그룹 */
+.postMeta > div:first-child {
   display: flex;
   align-items: center;
   gap: 18px;
@@ -95,7 +91,7 @@
 .postAuthor { font-weight: 600; color: #34495e; }
 .postCreatedAt { color: #7f8c8d; font-size: 0.9em; }
 
-.postSubMeta { /* 좋아요, 조회수, 신고 버튼 영역 */
+.postSubMeta {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -104,21 +100,20 @@
   border-bottom: 1px solid #ecf0f1;
   font-size: 0.9em;
 }
-.postStats { /* 좋아요, 조회수 묶음 */
+.postStats {
   display: flex;
   align-items: center;
-  gap: 15px; /* 아이콘 버튼과 텍스트 사이 간격 */
+  gap: 15px; 
   color: #525f6b;
 }
 
-/* 아이콘 버튼 (좋아요, 신고 - 게시글 및 댓글 공용 가능) */
 .iconButton {
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
   vertical-align: middle;
-  width: 28px; /* 아이콘 버튼 크기 */
+  width: 28px; 
   height: 28px;
   display: inline-flex;
   align-items: center;
@@ -129,25 +124,24 @@
   transform: scale(1.1);
 }
 .buttonIcon {
-  width: 18px; /* 아이콘 실제 크기 */
+  width: 18px; 
   height: 18px;
 }
-.countText { /* 좋아요 수, 조회수 텍스트 */
-  margin-left: 0px; /* 아이콘 버튼에 패딩 없으므로 간격 조정 */
+.countText { 
+  margin-left: 0px; 
   font-size: 0.95em;
   color: #666;
   vertical-align: middle;
 }
-.iconButton.liked .buttonIcon { /* 좋아요 눌렸을 때 아이콘 (필터 등으로 색상 변경 가능) */
-  /* 예: filter: brightness(0.9) sepia(1) hue-rotate(-50deg) saturate(5); */
+.iconButton.liked .buttonIcon {
+  /* filter: brightness(0.9) sepia(1) hue-rotate(-50deg) saturate(5); */
 }
-.iconButton.reported .buttonIcon { /* 신고됨 아이콘 (필터 등으로 색상 변경 가능) */
-  /* 예: filter: grayscale(80%); */
+.iconButton.reported .buttonIcon {
+  /* filter: grayscale(80%); */
 }
-
 
 .postBody {
-  min-height: 150px; /* 내용 최소 높이 */
+  min-height: 150px; 
   line-height: 1.75;
   color: #34495e;
   font-size: 1.05em;
@@ -159,10 +153,9 @@
   margin-bottom: 0.6em;
 }
 
-/* 댓글 리스트 (자유게시판 상세 .commentListContainer 참고) */
 .commentListContainer {
   margin-top: 30px;
-  background-color: #fff; /* 댓글 목록 배경 */
+  background-color: #fff; 
   padding: 25px 30px;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.06);
@@ -186,10 +179,10 @@
 .commentMeta {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start; /* 댓글 작성자와 삭제 버튼 정렬 */
+  align-items: flex-start; 
   margin-bottom: 10px;
 }
-.commentMeta > div:first-child { /* 작성자, 작성일 그룹 */
+.commentMeta > div:first-child { 
   display: flex;
   flex-direction: column;
 }
@@ -205,13 +198,13 @@
 }
 .commentContent br { content: ""; display: block; margin-bottom: 0.5em; }
 
-.commentActions { /* 댓글 내 좋아요/신고 버튼 영역 */
+.commentActions { 
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 0.9em;
 }
-.commentActions > div:first-child { /* 좋아요 버튼 + 카운트 영역 */
+.commentActions > div:first-child { 
   display: flex;
   align-items: center;
 }
@@ -221,9 +214,9 @@
   padding: 30px 0;
   font-size: 0.98em;
 }
-/* 댓글 페이지네이션 래퍼 스타일 (선택 사항) */
+
 .commentPaginationWrapper {
-  margin-top: 25px; /* 댓글 목록과의 간격 */
+  margin-top: 25px; 
   display: flex;
-  justify-content: center; /* 페이지네이션 컴포넌트 중앙 정렬 */
+  justify-content: center; 
 }
