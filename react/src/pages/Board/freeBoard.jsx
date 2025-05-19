@@ -163,7 +163,7 @@ function FreeBoard() {
               <th scope="col">타입</th>
               <th scope="col">제목</th>
               <th scope="col">작성자</th>
-              <th scope="col">작성날짜</th>
+              <th scope="col">날짜</th>
               <th scope="col">조회수</th>
               <th scope="col">좋아요</th>
               <th scope="col">신고</th>

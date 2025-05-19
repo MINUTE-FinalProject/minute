@@ -1,106 +1,98 @@
+// ManagerNoticeWrite.jsx (상단 제목 링크 기능 제거)
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // 페이지 이동을 위해 import
-import styles from "./ManagerNoticeWrite.module.css"; // CSS 모듈 import
+// import { Link, useNavigate } from 'react-router-dom'; // Link는 이제 필요 없음
+import { useNavigate } from 'react-router-dom'; // useNavigate는 버튼에 사용
+import styles from "./ManagerNoticeWrite.module.css";
 
 function ManagerNoticeWrite() {
-    const navigate = useNavigate(); // 페이지 이동 함수
+    const navigate = useNavigate();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const [isImportant, setIsImportant] = useState(false); // 중요 공지 여부 상태
-    // const [files, setFiles] = useState(null); // 파일 첨부 상태 (필요시)
+    const [isImportant, setIsImportant] = useState(false);
 
-    const handleSubmit = () => {
-        // TODO: 실제 공지사항 등록 로직 (API 호출 등)
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!title.trim()) {
+            alert("제목을 입력해주세요.");
+            return;
+        }
+        if (!content.trim()) {
+            alert("내용을 입력해주세요.");
+            return;
+        }
+        console.log("새 공지사항 등록 내용:");
         console.log("중요여부:", isImportant);
         console.log("제목:", title);
         console.log("내용:", content);
-        // console.log("첨부파일:", files);
-        alert("공지사항이 등록되었습니다."); // 임시 알림
-        navigate('/admin/notice-management'); // 등록 후 공지사항 관리 목록 페이지로 이동 (경로는 실제 설정에 맞게)
+        alert("공지사항이 등록되었습니다. (실제 저장은 구현 필요)");
+        navigate('/admin/notice'); 
     };
 
     const handleCancel = () => {
         if (window.confirm("작성을 취소하시겠습니까? 변경사항이 저장되지 않습니다.")) {
-            navigate('/admin/notice-management'); // 공지사항 관리 목록 페이지로 이동 (경로는 실제 설정에 맞게)
+            navigate('/admin/notice'); 
         }
     };
 
-    // 파일 핸들러 예시 (필요시)
-    // const handleFileChange = (e) => {
-    //     setFiles(e.target.files);
-    // };
-
     return (
-        <>
+        <div className={styles.container}>
+            <main className={styles.writeContentCard}>
+                {/* === 상단 제목 (링크 기능 제거) === */}
+                <div className={styles.pageHeader}>
+                    {/* Link 태그 대신 h1 태그만 사용 */}
+                    <h1 className={styles.pageTitleText}>공지사항 작성</h1> 
+                </div>
 
-            <div className={styles.container}> {/* 전체 컨테이너 (Sidebar + Content) */}
-
-                <main className={styles.writeContent}> {/* 메인 콘텐츠 영역 (흰색 카드) */}
-                    <h1 className={styles.pageTitle}>공지사항 작성</h1>
-
-                    <form onSubmit={(e) => e.preventDefault()}> {/* 실제 form 제출 방지 */}
-                        <div className={styles.formGroup}>
-                            <label htmlFor="noticeTitle" className={styles.label}>제목</label>
+                <form onSubmit={handleSubmit} className={styles.writeForm}>
+                    <div className={styles.metadataSection}>
+                        <label className={styles.checkboxContainer}>
                             <input
-                                type="text"
-                                id="noticeTitle"
-                                className={styles.inputField}
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                placeholder="공지사항 제목을 입력하세요"
+                                type="checkbox"
+                                checked={isImportant}
+                                onChange={(e) => setIsImportant(e.target.checked)}
+                                className={styles.checkboxInput}
                             />
-                        </div>
+                            <span className={styles.checkboxLabel}>중요 공지로 설정</span>
+                        </label>
+                    </div>
+                    
+                    <div className={styles.formGroup}>
+                        <label htmlFor="noticeTitle" className={styles.label}>제목</label>
+                        <input
+                            type="text"
+                            id="noticeTitle"
+                            className={styles.titleInput}
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            placeholder="공지사항 제목을 입력하세요"
+                            required
+                        />
+                    </div>
 
-                        <div className={styles.formGroup}>
-                            <label htmlFor="noticeContent" className={styles.label}>내용</label>
-                            <textarea
-                                id="noticeContent"
-                                className={styles.textareaField}
-                                value={content}
-                                onChange={(e) => setContent(e.target.value)}
-                                placeholder="공지사항 내용을 입력하세요"
-                                rows="15"
-                            ></textarea>
-                        </div>
+                    <div className={styles.formGroup}>
+                        <label htmlFor="noticeContent" className={styles.label}>내용</label>
+                        <textarea
+                            id="noticeContent"
+                            className={styles.contentTextarea}
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                            placeholder="공지사항 내용을 입력하세요"
+                            rows="15"
+                            required
+                        ></textarea>
+                    </div>
 
-                        <div className={styles.formGroup}>
-                            <label className={styles.checkboxLabel}>
-                                <input
-                                    type="checkbox"
-                                    checked={isImportant}
-                                    onChange={(e) => setIsImportant(e.target.checked)}
-                                    className={styles.checkbox}
-                                />
-                                중요 공지로 설정
-                            </label>
-                        </div>
-
-                        {/* 파일 첨부 기능 (필요하다면 주석 해제 후 사용) */}
-                        {/*
-                        <div className={styles.formGroup}>
-                            <label htmlFor="noticeFile" className={styles.label}>파일 첨부</label>
-                            <input 
-                                type="file" 
-                                id="noticeFile" 
-                                className={styles.fileInput} 
-                                onChange={handleFileChange} 
-                                multiple // 여러 파일 선택 가능하게 하려면
-                            />
-                        </div>
-                        */}
-
-                        <div className={styles.buttonGroup}>
-                            <button type="button" onClick={handleCancel} className={`${styles.button} ${styles.cancelButton}`}>
-                                취소
-                            </button>
-                            <button type="button" onClick={handleSubmit} className={`${styles.button} ${styles.submitButton}`}>
-                                등록
-                            </button>
-                        </div>
-                    </form>
-                </main>
-            </div>
-        </>
+                    <div className={styles.actionsBar}>
+                        <button type="button" onClick={handleCancel} className={`${styles.actionButton} ${styles.cancelButton}`}>
+                            취소
+                        </button>
+                        <button type="submit" className={`${styles.actionButton} ${styles.submitButton}`}>
+                            등록
+                        </button>
+                    </div>
+                </form>
+            </main>
+        </div>
     );
 }
 

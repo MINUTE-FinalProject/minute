@@ -1,238 +1,4 @@
-/* ManagerNotice.module.css */
-
-.container {
-    display: flex;
-    flex-direction: row;
-    margin-top: 45px;
-    background-color: #f4f6f8;
-    min-height: calc(100vh - 45px);
-}
-
-.managerContent {
-    flex: 1;
-    margin: 20px;
-    padding: 30px 35px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.pageTitle {
-    font-size: 2.2em;
-    font-weight: 600;
-    color: #2c3e50;
-    text-align: center;
-    margin-bottom: 30px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #dfe3e8;
-}
-
-.filterBar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 25px;
-    padding: 15px;
-    background-color: #333;
-    border-radius: 6px;
-}
-
-.filterElement {
-    padding: 8px 12px;
-    border: 1px solid #555;
-    background-color: #f0f0f0;
-    color: #333;
-    border-radius: 4px;
-    font-size: 14px;
-    box-sizing: border-box;
-}
-
-.dateSeparator {
-    color: #f0f0f0;
-}
-
-.filterSelect {
-    min-width: 140px;
-}
-
-.filterSearchInput {
-    flex-grow: 1;
-}
-
-.filterSearchButton {
-    padding: 0;
-    width: 36px;
-    height: 36px;
-    background-color: #555;
-    border: 1px solid #555;
-    border-radius: 4px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s ease;
-}
-.filterSearchButton:hover {
-    background-color: #777;
-}
-.searchIcon {
-    width: 16px;
-    height: 16px;
-    display: block;
-    filter: brightness(0) invert(1);
-}
-
-.subTitle {
-    font-size: 1.4em;
-    font-weight: 600;
-    color: #333;
-    margin-top: 20px;
-    margin-bottom: 15px;
-}
-
-.noticeTable {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9em;
-}
-
-.noticeTable thead th {
-    background-color: #f8f9fa;
-    padding: 12px 10px;
-    text-align: center;
-    font-weight: 600;
-    color: #495057;
-    border-bottom: 2px solid #dee2e6;
-    vertical-align: middle;
-}
-
-.noticeTable th.titleHeaderColumn,
-.noticeTable td.titleDataColumn {
-    text-align: left;
-    padding-left: 15px;
-}
-
-.noticeTable th:nth-child(1) { width: 8%; }
-.noticeTable th:nth-child(2) { width: 12%; }
-.noticeTable th:nth-child(3) { width: 12%; }
-.noticeTable th:nth-child(4) { width: auto; }
-.noticeTable th:nth-child(5) { width: 12%; }
-.noticeTable th:nth-child(6) { width: 8%; }
-.noticeTable th:nth-child(7) { width: 8%; }
-.noticeTable th:nth-child(8) { width: 8%; }
-
-
-.noticeTable tbody td {
-    padding: 10px;
-    border-bottom: 1px solid #e9ecef;
-    vertical-align: middle;
-    text-align: center;
-}
-
-.noticeTable tbody tr:hover td {
-    background-color: #f1f9ff;
-}
-
-.importantRow {
-    background-color: #fff5f5;
-}
-.importantRow td {
-    font-weight: 500;
-}
-.importantRow .titleLink {
-    font-weight: bold; /* 중요 공지 제목 링크는 계속 굵게 유지 */
-}
-
-
-/* ManagerNotice.module.css 파일 내의 .importantTag 부분을 아래와 같이 수정합니다. */
-
-.importantTag {
-    display: inline-block;
-    padding: 5px 10px;         /* 패딩을 상하좌우로 약간 더 주어 여유 공간 확보 */
-    font-size: 0.85em;         /* 글자 크기를 다른 상태 버튼들과 유사하게 미세 조정 */
-    font-weight: 600;          /* font-weight: bold; (700) 대신 600 (semi-bold)으로 부드러움 추가 또는 bold 유지 */
-    color: white;              /* 글자색 흰색 유지 */
-    background-color: #dc3545; /* 기존 빨간색 계열 배경색 유지 */
-    border-radius: 12px;       /* 다른 알약 버튼들과 일관된 둥근 모서리 값 */
-    line-height: 1.3;          /* 텍스트의 수직 정렬을 개선 */
-    text-align: center;        /* 텍스트 중앙 정렬 (이미 inline-block에서 잘 동작하지만 명시) */
-    vertical-align: middle;    /* 다른 요소들과 수직 정렬 맞춤 */
-    /* box-shadow: 0 1px 2px rgba(0,0,0,0.1); */ /* 선택 사항: 아주 연한 그림자로 입체감 추가 */
-}
-
-/* 제목 링크 스타일 변경 */
-.titleLink {
-    text-decoration: none;
-    color: #333; /* 기본 글자색 검은색 계열로 변경 */
-    font-weight: normal; /* 일반 공지 제목은 기본 두께 */
-}
-.titleLink:hover {
-    text-decoration: underline; /* 밑줄 유지 */
-    color: #000; /* 호버 시 약간 더 진한 검은색 (선택 사항) */
-}
-
-.checkboxCell, .actionCell {
-    text-align: center;
-}
-.headerCheckbox {
-    vertical-align: middle;
-    margin-right: 4px;
-}
-
-.actionButton {
-    padding: 5px 10px;
-    font-size: 0.85em;
-    border-radius: 4px;
-    cursor: pointer;
-    margin: 0 3px;
-    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
-    border: 1px solid transparent;
-    min-width: 50px;
-}
-
-.editButton {
-    background-color: #6c757d;
-    color: white;
-    border-color: #6c757d;
-}
-.editButton:hover {
-    background-color: #5a6268;
-    border-color: #545b62;
-}
-
-.deleteButton {
-    background-color: #dc3545;
-    color: white;
-    border-color: #dc3545;
-}
-.deleteButton:hover {
-    background-color: #c82333;
-    border-color: #bd2130;
-}
-
-.bottomActions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
-}
-
-.writeButton {
-    background-color: #000000;
-    color: white;
-    border-color: #000000;
-    font-weight: 500;
-}
-.writeButton:hover {
-    background-color: #333333;
-    border-color: #333333;
-}
-
-.pagination {
-    margin-top: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}/* ManagerNotice.module.css (필터 바 반응형 개선) */
+/* ManagerNotice.module.css (필터 바 반응형 개선 및 체크박스 스타일 수정) */
 
 .container {
     display: flex;
@@ -400,7 +166,7 @@ input[type="date"].filterElement {
     font-weight: 500; /* 중요 공지 행 텍스트 약간 굵게 */
 }
 .importantRow .titleLink { /* 중요 공지 제목 링크 */
-    font-weight: bold; 
+    font-weight: bold;
 }
 
 .importantTag {
@@ -429,10 +195,25 @@ input[type="date"].filterElement {
 .checkboxCell, .actionCell {
     text-align: center;
 }
-.headerCheckbox {
+
+/* === 체크박스 스타일 수정 시작 === */
+.headerCheckbox { /* 테이블 헤더의 전체 선택 체크박스 */
     vertical-align: middle;
     margin-right: 4px;
+    width: 16px; /* 수정 페이지와 동일하게 크기 설정 */
+    height: 16px; /* 수정 페이지와 동일하게 크기 설정 */
+    cursor: pointer; /* 커서 모양 변경 */
+    accent-color: #FF69B4; /* 체크 시 색상 변경 */
 }
+
+.checkboxCell input[type="checkbox"] { /* 테이블 각 행의 중요도 체크박스 */
+    vertical-align: middle;
+    width: 16px; /* 수정 페이지와 동일하게 크기 설정 */
+    height: 16px; /* 수정 페이지와 동일하게 크기 설정 */
+    cursor: pointer; /* 커서 모양 변경 */
+    accent-color: #FF69B4; /* 체크 시 색상 변경 */
+}
+/* === 체크박스 스타일 수정 끝 === */
 
 .actionButton {
     padding: 5px 10px;

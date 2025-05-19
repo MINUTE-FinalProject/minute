@@ -1,4 +1,4 @@
-/* freeboardDetail.module.css (댓글 수정 버튼 제거, 저장/취소 버튼 스타일 관리자 페이지와 통일) */
+/* freeboardDetail.module.css (댓글 입력/수정 폼 기본 및 활성화 스타일 통일) */
 
 .loadingContainer,
 .errorContainer {
@@ -21,16 +21,16 @@
   margin-bottom: 25px;
   padding-bottom: 20px;
   border-bottom: 1px solid #dfe3e8;
-  text-align: center; 
+  text-align: center;
 }
 
 .boardLinkContainer a {
   text-decoration: none;
   color: #2c3e50;
-  transition: color 0.2s ease-in-out; 
+  transition: color 0.2s ease-in-out;
 }
 .boardLinkContainer a:hover {
-  color: #FF69B4; 
+  color: #FF69B4;
 }
 
 .boardLinkContainer h2 {
@@ -60,7 +60,7 @@
   margin-bottom: 35px;
   border-radius: 8px;
   background-color: #fff;
-  position: relative; 
+  position: relative;
   box-shadow: 0 2px 5px rgba(0,0,0,0.06);
 }
 
@@ -116,23 +116,23 @@
   color: #525f6b;
 }
 .postStats span {
-  margin-right: 10px; 
+  margin-right: 10px;
 }
-.postStats span:last-child { 
+.postStats span:last-child {
   margin-right: 0;
 }
 
 /* 게시글 및 댓글의 좋아요/신고 아이콘 버튼 공통 스타일 */
-.iconButton { 
-  background: none; border: none; cursor: pointer; padding: 0; 
-  vertical-align: middle; 
+.iconButton {
+  background: none; border: none; cursor: pointer; padding: 0;
+  vertical-align: middle;
   transition: transform 0.2s ease;
-  width: 24px; 
+  width: 24px;
   height: 24px;
   display: inline-flex; align-items: center; justify-content: center;
 }
 .iconButton:hover:not(:disabled) {
-  transform: scale(1.15); 
+  transform: scale(1.15);
 }
 .iconButton:disabled {
     cursor: not-allowed;
@@ -140,16 +140,16 @@
 .iconButton:disabled .buttonIcon {
     /* filter: grayscale(90%) opacity(0.5); /* 신고됨 아이콘은 원래 색상 유지 */
 }
-.buttonIcon { 
-  width: 16px;  
-  height: 16px; 
-  display: block; 
+.buttonIcon {
+  width: 16px;
+  height: 16px;
+  display: block;
 }
 .countText { /* 게시글의 좋아요/조회수 숫자, 댓글 좋아요 수 */
-  font-size: 0.9em; 
-  color: #666; 
-  vertical-align: middle; 
-  margin-left: 4px; 
+  font-size: 0.9em;
+  color: #666;
+  vertical-align: middle;
+  margin-left: 4px;
 }
 .iconButton.liked .buttonIcon { /* 특정 스타일 필요시 */ }
 .iconButton.reported .buttonIcon { /* 특정 스타일 필요시 */ }
@@ -161,10 +161,10 @@
   color: #34495e;
   font-size: 1.05em;
   margin-bottom: 25px;
-  white-space: pre-wrap; 
+  white-space: pre-wrap;
 }
-.postBody br { 
-  display: block; 
+.postBody br {
+  display: block;
   margin-bottom: 0.6em;
 }
 
@@ -178,24 +178,24 @@
 
 .actionButton { /* 게시글 수정/삭제, 댓글 삭제 버튼에 공통 적용 */
   padding: 7px 15px;
-  border: 1px solid #000000; 
+  border: 1px solid #000000;
   border-radius: 5px;
-  background-color: #000000; 
+  background-color: #000000;
   color: white;
   cursor: pointer;
   font-size: 0.9em;
   font-weight: 500;
   transition: all 0.2s ease-in-out;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  margin-left: 8px; 
+  margin-left: 8px;
 }
-.actionButton:first-child { 
+.actionButton:first-child {
     margin-left: 0;
 }
 .actionButton:hover {
   box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-  background-color: #333333; 
-  border-color: #333333; 
+  background-color: #333333;
+  border-color: #333333;
 }
 /* .editButton, .deleteButton은 .actionButton 스타일을 공유 */
 
@@ -206,22 +206,24 @@
   gap: 12px;
 }
 
-.commentTextarea {
+.commentTextarea { /* 댓글 등록 입력칸 */
   flex-grow: 1;
   min-height: 75px;
   padding: 12px 15px;
-  border: 1px solid #d1d8e0;
+  border: 1px solid #d1d8e0; /* 기본 테두리 (연한 회색) */
   border-radius: 6px;
   resize: vertical;
   font-size: 0.98em;
   line-height: 1.6;
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
+/* === 댓글 등록 입력칸 포커스 스타일 수정 === */
 .commentTextarea:focus {
-  border-color: #007bff;
-  outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.2);
+  border-color: #FF69B4; /* 핑크색 테두리로 변경 */
+  outline: 0; /* outline: none; 과 동일 */
+  box-shadow: 0 0 0 0.2rem rgba(255, 105, 180, 0.25); /* 핑크색 그림자 효과로 변경 */
 }
+/* === 댓글 등록 입력칸 포커스 스타일 수정 끝 === */
 
 .commentSubmitButton {
   padding: 0 22px;
@@ -296,57 +298,62 @@
   line-height: 1.65;
   color: #4a6177;
   font-size: 0.98em;
-  word-break: break-word; 
+  word-break: break-word;
   white-space: pre-wrap;
 }
-.commentContent br { 
-  display: block; 
+.commentContent br {
+  display: block;
   margin-bottom: 0.5em;
 }
-.commentContent[title="더블클릭하여 수정"] { 
+.commentContent[title="더블클릭하여 수정"] {
     cursor: pointer;
 }
 
-.commentEditTextarea { 
+/* === 댓글 수정 입력칸 기본 테두리 스타일 수정 === */
+.commentEditTextarea { /* 댓글 수정 입력칸 */
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #007bff; 
+  border: 1px solid #d1d8e0; /* 기본 테두리 (연한 회색) - 댓글 등록 입력칸과 통일 */
   border-radius: 5px;
-  font-family: inherit; 
-  font-size: 0.98em; 
-  line-height: 1.65; 
-  resize: vertical; 
-  box-sizing: border-box; 
-  margin-bottom: 10px; 
+  font-family: inherit;
+  font-size: 0.98em;
+  line-height: 1.65;
+  resize: vertical;
+  box-sizing: border-box;
+  margin-bottom: 10px;
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
+/* === 댓글 수정 입력칸 기본 테두리 스타일 수정 끝 === */
+
+/* === 댓글 수정 입력칸 포커스 스타일 수정 === */
 .commentEditTextarea:focus {
   outline: none;
-  border-color: #0056b3; 
-  box-shadow: 0 0 0 0.15rem rgba(0,123,255,.2);
+  border-color: #FF69B4; /* 핑크색 테두리로 변경 */
+  box-shadow: 0 0 0 0.2rem rgba(255, 105, 180, 0.25); /* 핑크색 그림자 효과로 변경 */
 }
+/* === 댓글 수정 입력칸 포커스 스타일 수정 끝 === */
 
-.commentEditForm { 
+.commentEditForm {
     /* 필요시 추가 스타일 */
 }
-.editActionsContainer { 
+.editActionsContainer {
     display: flex;
-    justify-content: flex-end; 
+    justify-content: flex-end;
     gap: 10px;
-    margin-top: 8px; 
-    margin-bottom: 10px; 
+    margin-top: 8px;
+    margin-bottom: 10px;
 }
 
 /* 댓글 수정 폼의 저장/취소 버튼 및 댓글 삭제 버튼은 .actionButton 스타일을 기본으로 사용 */
 .saveCommentButton,
 .cancelEditButton,
 .commentDeleteButton { /* .commentDeleteButton도 .actionButton 기반으로 크기 등 통일 */
-    padding: 6px 12px !important; 
-    font-size: 0.85em !important; 
+    padding: 6px 12px !important;
+    font-size: 0.85em !important;
     /* 색상은 .actionButton의 검은색 계열을 따름 */
 }
 
-.commentUserActions { 
+.commentUserActions {
     display: flex;
     gap: 8px;
     align-items: center;
@@ -358,15 +365,15 @@
   align-items: center;
   font-size: 0.9em;
 }
-.commentActions > div:first-child { 
+.commentActions > div:first-child {
   display: flex;
   align-items: center;
 }
 
 .commentLikeCount {
-  margin-left: 4px; 
+  margin-left: 4px;
   color: #525f6b;
-  font-size: 0.9em; 
+  font-size: 0.9em;
   vertical-align: middle;
 }
 

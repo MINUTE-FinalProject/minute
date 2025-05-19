@@ -129,12 +129,13 @@
     /* 아래쪽 여백 (다음 요소와의 간격) */
 }
 
+/* === 제목 입력칸 포커스 스타일 수정 === */
 .info:focus {
-    /* 포커스 시 스타일 */
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+    border-color: #FF69B4; /* 핑크색 테두리로 변경 */
+    box-shadow: 0 0 0 0.2rem rgba(255, 105, 180, 0.25); /* 핑크색 그림자 효과로 변경 */
     outline: none;
 }
+/* === 제목 입력칸 포커스 스타일 수정 끝 === */
 
 /* 내용 입력 textarea */
 .textbox {
@@ -157,12 +158,13 @@
     /* 최소 높이 */
 }
 
+/* === 내용 입력칸 포커스 스타일 수정 === */
 .textbox:focus {
-    /* 포커스 시 스타일 */
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+    border-color: #FF69B4; /* 핑크색 테두리로 변경 */
+    box-shadow: 0 0 0 0.2rem rgba(255, 105, 180, 0.25); /* 핑크색 그림자 효과로 변경 */
     outline: none;
 }
+/* === 내용 입력칸 포커스 스타일 수정 끝 === */
 
 /* 작성 버튼을 감싸는 div */
 .wirte {
