@@ -1,68 +1,62 @@
-/* ManagerNoticeEdit.module.css (디자인 통일 수정) */
+/* ManagerNoticeEdit.module.css (상단 제목 스타일 변경) */
 
 /* === 전체 페이지 레이아웃 (다른 관리자 페이지와 동일) === */
 .container {
-    background-color: #f4f6f8; /* 페이지 전체 배경색 */
-    flex: 1; /* AdminLayout의 자식으로서 공간 채우기 */
+    background-color: #f4f6f8;
+    flex: 1;
     display: flex; 
-    flex-direction: column; /* 내부 카드가 flex:1을 가질 수 있도록 */
-    margin-top: 45px; /* 고정 헤더 높이에 따라 조절 */
+    flex-direction: column;
+    margin-top: 45px; 
     min-height: calc(100vh - 45px);
 }
 
-.editContentCard { /* 기존 .editPageContainer 대체 -> 흰색 카드 역할 */
-    flex: 1; /* 내용이 적어도 카드가 세로 공간을 채우도록 (선택적) */
-    margin: 20px; /* .container 배경과의 여백 */
-    padding: 30px 35px; /* 카드 내부 패딩 */
+.editContentCard { 
+    flex: 1; 
+    margin: 20px; 
+    padding: 30px 35px; 
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    display: flex; /* 내부 요소(pageHeader, editForm) 정렬 위해 */
+    display: flex;
     flex-direction: column;
 }
 
-/* === 페이지 상단 "공지사항" 제목 영역 (다른 상세 페이지와 통일) === */
-.pageHeader { /* 기존 .titleBar 대체 */
+/* === 페이지 상단 "공지사항" 제목 영역 수정 === */
+.pageHeader { 
   margin-bottom: 25px;
   padding-bottom: 20px;
   border-bottom: 1px solid #dfe3e8;
   text-align: center; 
 }
-.toListLink { /* JSX에서 Link 태그에 적용 */
-  text-decoration: none;
-  color: #2c3e50; 
-  transition: color 0.2s ease-in-out;
-}
-.toListLink:hover {
-  color: #FF69B4; /* 관리자 자유게시판 활성 탭 색상 */
-}
-.toListLink h1 { /* JSX에서 Link 내부의 h1 태그에 적용 */
-  font-size: 2.2em; /* 다른 페이지 타이틀과 일관성 */
+/* .toListLink, .toListLink:hover, .toListLink h1 스타일은 제거 또는 주석 처리 */
+/* .toListLink { ... } */
+/* .toListLink:hover { ... } */
+/* .toListLink h1 { ... } */
+
+.pageTitleText { /* 새로운 클래스 또는 기존 .pageTitle을 이 이름으로 변경하여 사용 */
+  font-size: 2.2em; 
   font-weight: 600;
-  color: #2c3e50; /* 다른 페이지 타이틀과 일관성 */
-  margin: 0;
-  display: inline-block; 
+  color: #2c3e50; 
+  margin: 0; 
+  /* 링크가 아니므로 text-decoration, transition, Link 관련 호버 스타일 등은 필요 없음 */
 }
 
 /* === 수정 폼 전체 스타일 조정 === */
 .editForm {
-  /* background-color: #f9f9f9; /* 흰색 카드 내부에 있으므로 배경색 제거 */
-  /* padding: 25px 30px; /* .editContentCard에 패딩이 있으므로 폼 자체 패딩은 줄이거나 0으로 */
-  padding: 0; /* .editContentCard의 패딩을 사용 */
-  /* border-radius: 8px; /* 불필요 */
-  /* box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* 흰색 카드에 이미 그림자 있음 */
+  padding: 0; 
   display: flex;
   flex-direction: column;
-  gap: 25px; /* 폼 내부 섹션(메타, 제목, 내용, 버튼) 간 간격 */
-  flex-grow: 1; /* 카드의 남은 공간을 채우도록 */
+  gap: 25px; 
+  flex-grow: 1; 
 }
 
-/* 제목 및 메타 정보 섹션 */
+/* ... (metadataSection, leftMeta, checkboxContainer, titleInput, contentTextarea, actionsBar, actionButton, submitButton, cancelButton 등 나머지 스타일은 이전 답변의 최종본과 동일하게 유지) ... */
+
 .metadataSection {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 20px; /* 간격 조정 */
+  padding-bottom: 20px; 
   border-bottom: 1px solid #e9ecef; 
   gap: 20px; 
   flex-wrap: wrap; 
@@ -74,7 +68,6 @@
   gap: 15px; 
 }
 
-/* 기본 HTML 체크박스 사용을 위한 스타일 조정 */
 .checkboxContainer {
   display: flex; 
   align-items: center;
@@ -88,21 +81,20 @@
   width: 16px; 
   height: 16px;
   cursor: pointer;
-  /* 커스텀 모양 원하면 이전 .checkmark 스타일 복원 및 JSX 수정 */
+  accent-color: #FF69B4; /* 중요: 기본 체크박스 색상 변경 (브라우저 지원 확인) */
 }
 .checkboxLabel { 
     font-weight: 500;
 }
-/* .checkmark 관련 스타일은 기본 체크박스 사용 시 불필요 */
 
-.importantTag { /* "중요" 알약 태그 - 다른 페이지와 스타일 통일 */
-  background-color: #FF3366; /* 관리자 페이지 탭 색상과 통일 */
+.importantTag { 
+  background-color: #FF3366; 
   color: white;
   padding: 4px 10px;
   border-radius: 12px;
   font-size: 0.8em;
   font-weight: bold;
-  margin-left: 5px; /* 체크박스 레이블과의 간격 (isImportant && 일 때만 표시되므로) */
+  margin-left: 5px; 
 }
 
 .rightMeta {
@@ -115,10 +107,8 @@
   flex-shrink: 0; 
 }
 
-/* 제목 입력 섹션 */
-.titleInputSection {
-    /* 이 div는 구조상 필요, 별도 스타일은 아래 .titleInput에서 */
-}
+.titleInputSection { } /* 구조용 div, 별도 스타일 불필요 */
+
 .titleInput {
   width: 100%; 
   padding: 12px 15px; 
@@ -135,15 +125,14 @@
   outline: none;
 }
 
-/* 내용 입력 섹션 */
 .contentSection {
-  flex-grow: 1; /* 남은 공간을 textarea가 차지하도록 */
-  display: flex; /* 내부 textarea가 높이를 100% 차지하도록 */
+  flex-grow: 1; 
+  display: flex; 
 }
 
 .contentTextarea {
   width: 100%;
-  flex-grow: 1; /* .contentSection 내부에서 높이를 채움 */
+  flex-grow: 1; 
   padding: 15px;
   border: 1px solid #ced4da;
   border-radius: 6px;
@@ -153,7 +142,7 @@
   color: #333;
   box-sizing: border-box;
   resize: vertical;
-  min-height: 250px; /* 최소 높이, 기존 300px에서 약간 줄임 */
+  min-height: 250px; 
 }
 .contentTextarea:focus {
   border-color: #FF69B4; 
@@ -161,7 +150,6 @@
   outline: none;
 }
 
-/* 액션 버튼 바 (수정, 취소 버튼) */
 .actionsBar {
   display: flex;
   justify-content: flex-end; 
@@ -169,8 +157,7 @@
   margin-top: 10px; 
 }
 
-/* 버튼 스타일 (다른 관리자 페이지 버튼과 통일 - 검은색/회색 계열) */
-.actionButton { /* 모든 주요 버튼에 적용될 공통 스타일 */
+.actionButton { 
     padding: 10px 25px;
     font-size: 0.95em;
     font-weight: 500;
@@ -180,10 +167,10 @@
     text-decoration: none;
     display: inline-block;
     text-align: center;
-    border: 1px solid transparent; /* 기본 테두리는 투명, 각 버튼에서 재정의 */
+    border: 1px solid transparent; 
 }
 
-.submitButton { /* "수정 완료", "등록" 버튼 */
+.submitButton { 
   background-color: #000000; 
   color: white;
   border-color: #000000;
@@ -193,8 +180,8 @@
   border-color: #333333;
 }
 
-.cancelButton { /* "취소" 버튼 */
-  background-color: #6c757d; /* 회색 계열 */
+.cancelButton { 
+  background-color: #6c757d; 
   color: white;
   border-color: #6c757d;
 }
