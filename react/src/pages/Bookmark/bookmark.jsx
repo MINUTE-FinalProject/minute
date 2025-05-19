@@ -168,7 +168,12 @@ const Bookmark = () => {
                               type="checkbox"
                               className={bookmarkStyle.bookmarkCheckbox}
                               checked={selectedFolders.includes(folder.id)}
-                              onChange={() => handleCheckboxChange(folder.id)}
+                              onClick={(e) => e.stopPropagation()} // 클릭 이벤트 전파 차단
+                              onChange={(e) => {
+                                e.stopPropagation(); // 변경 이벤트 전파 차단
+                                console.log("Checkbox clicked, propagation stopped");
+                                handleCheckboxChange(folder.id);
+                              }}
                             />
                           </div>
                         </div>
