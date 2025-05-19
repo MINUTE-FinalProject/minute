@@ -1,3 +1,4 @@
+// src/components/Modal/Modal.jsx
 import { useEffect } from 'react';
 import styles from './Modal.module.css'; // 사용자님이 지정하신 경로
 
@@ -11,8 +12,10 @@ function Modal({
   confirmText = '확인', // 확인 버튼 텍스트
   cancelText, // 취소 버튼 텍스트 (이 값이 있으면 확인창, 없으면 알림창 스타일)
   onCancel,   // 취소 버튼 클릭 시 실행될 함수 (없으면 기본적으로 onClose 호출)
-  type = 'default', // 모달 타입 ('error', 'success', 'warning' 등 스타일링에 활용 가능)
+  type = 'default', // 모달 타입 ('error', 'success', 'warning', 'adminDefault', 'adminConfirm' 등 스타일링에 활용 가능)
   hideCloseButton = false, // X 닫기 버튼 숨김 여부
+  confirmButtonType = 'primary', // 'primary', 'danger' 등 버튼 스타일 구분용
+  cancelButtonType = 'secondary', // 'secondary'
 }) {
   useEffect(() => {
     const handleEscKey = (event) => {
@@ -22,10 +25,14 @@ function Modal({
     };
 
     if (isOpen) {
+      document.body.style.overflow = 'hidden'; // 스크롤 방지
       document.addEventListener('keydown', handleEscKey);
+    } else {
+      document.body.style.overflow = 'unset';
     }
 
     return () => {
+      document.body.style.overflow = 'unset';
       document.removeEventListener('keydown', handleEscKey);
     };
   }, [isOpen, onClose]);
@@ -39,37 +46,33 @@ function Modal({
   };
 
   const handleContentClick = (e) => {
-    e.stopPropagation(); // 모달 컨텐츠 클릭 시 오버레이 클릭으로 인한 닫힘 방지
+    e.stopPropagation();
   };
 
   const handleConfirm = () => {
     if (onConfirm) {
       onConfirm();
     }
-    // onConfirm 실행 후 모달을 자동으로 닫을지는 onConfirm 함수 내부에서 결정하거나,
-    // 여기서 onClose()를 호출하도록 할 수 있습니다. 사용 편의를 위해 일단 여기서 닫도록 합니다.
-    // 필요시 이 부분을 onConfirm 함수의 책임으로 넘길 수 있습니다.
-    onClose();
+    onClose(); // 확인 후 기본적으로 모달 닫힘
   };
 
-  const handleCancel = () => {
+  const handleInternalCancel = () => {
     if (onCancel) {
       onCancel();
-    } else {
-      onClose(); // onCancel이 없으면 기본적으로 onClose 실행
     }
+    onClose(); // 취소 시 항상 모달 닫힘
   };
 
   return (
     <div
-      className={styles.modalOverlay}
+      className={`${styles.modalOverlay} ${styles[type] || ''}`} // 타입별 오버레이 스타일도 가능하도록
       onClick={handleOverlayClick}
       role="dialog"
       aria-modal="true"
       aria-labelledby={title ? 'modal-title' : undefined}
       aria-describedby={message || children ? 'modal-description' : undefined}
     >
-      <div className={`${styles.modalContent} ${styles[type] || ''}`} onClick={handleContentClick}>
+      <div className={`${styles.modalContent} ${styles[`content-${type}`] || ''}`} onClick={handleContentClick}>
         {!hideCloseButton && (
           <button
             type="button"
@@ -85,25 +88,25 @@ function Modal({
 
         {(message || children) && (
           <div id="modal-description" className={styles.modalBody}>
-            {message && <p className={styles.modalMessage}>{message}</p>}
+            {typeof message === 'string' ? <p className={styles.modalMessage}>{message}</p> : message}
             {children}
           </div>
         )}
 
         <div className={styles.modalActions}>
-          {cancelText && ( // cancelText가 제공될 때만 취소 버튼을 보여줌 (확인창 모드)
+          {cancelText && (
             <button
               type="button"
-              className={`${styles.modalButton} ${styles.cancelButton}`}
-              onClick={handleCancel}
+              className={`${styles.modalButton} ${styles[cancelButtonType] || styles.cancelButton}`}
+              onClick={handleInternalCancel}
             >
               {cancelText}
             </button>
           )}
-          {onConfirm && ( // onConfirm 핸들러가 있을 때만 확인 버튼을 보여줌
+          {onConfirm && (
              <button
                 type="button"
-                className={`${styles.modalButton} ${styles.confirmButton}`}
+                className={`${styles.modalButton} ${styles[confirmButtonType] || styles.confirmButton}`}
                 onClick={handleConfirm}
              >
                {confirmText}
