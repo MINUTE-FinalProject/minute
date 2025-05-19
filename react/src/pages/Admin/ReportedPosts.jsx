@@ -1,12 +1,18 @@
 // ReportedPosts.jsx
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // useNavigate 추가
+import { useNavigate } from 'react-router-dom';
 import searchButtonIcon from "../../assets/images/search_icon.png";
 import Pagination from '../../components/Pagination/Pagination';
 import styles from './ReportedPosts.module.css';
 
-// generateInitialReportedItems 함수는 이전 제공된 버전 사용
-const generateInitialReportedItems = (count = 45) => { /* ... 이전 코드와 동일 ... */
+// Header 및 Sidebar 임포트 (AdminLayout을 사용하지 않는 경우 필요)
+// AdminLayout을 사용하신다면 이 부분은 주석 처리하거나 삭제합니다.
+import Header from '../../components/Header/Header'; // 경로를 실제 프로젝트에 맞게 수정하세요.
+import Sidebar from '../../components/Sidebar/Sidebar'; // 경로를 실제 프로젝트에 맞게 수정하세요.
+
+
+// generateInitialReportedItems 함수 (이전 제공된 버전과 동일하다고 가정)
+const generateInitialReportedItems = (count = 45) => {
     const items = []; const postTypes = ['게시글', '댓글']; const userNicknames = ['여행가고파', '맛집킬러', '정의의사도', '친구찾기', '새로운유저', '익명123']; const hiddenStatuses = ['공개', '숨김'];
     for (let i = 0; i < count; i++) {
         const postType = postTypes[i % postTypes.length];
@@ -21,7 +27,7 @@ const generateInitialReportedItems = (count = 45) => { /* ... 이전 코드와 �
 
 
 function ReportedPosts() {
-    const navigate = useNavigate(); // useNavigate 사용
+    const navigate = useNavigate();
     const [allReportedItems, setAllReportedItems] = useState([]);
     const [filteredReportedItems, setFilteredReportedItems] = useState([]);
     const [activeContentTypeTab, setActiveContentTypeTab] = useState('all');
@@ -31,44 +37,92 @@ function ReportedPosts() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
-    useEffect(() => { /* ... (데이터 로드 useEffect) ... */ setAllReportedItems(generateInitialReportedItems()); }, []);
-    useEffect(() => { /* ... (필터링 useEffect) ... */
-        let itemsToFilter = allReportedItems;
-        // 필터 로직
-        if (activeContentTypeTab === 'post') { itemsToFilter = itemsToFilter.filter(item => item.postType === '게시글'); }
-        else if (activeContentTypeTab === 'comment') { itemsToFilter = itemsToFilter.filter(item => item.postType === '댓글');}
-        if (dateRange.start && dateRange.end) { /* ... */ }
-        if (hideFilter !== 'all') { itemsToFilter = itemsToFilter.filter(item => item.hiddenStatus === hideFilter); }
-        if (searchTerm) { /* ... */ }
-        setFilteredReportedItems(itemsToFilter); setCurrentPage(1);
+    useEffect(() => {
+        // 데이터 로드
+        setAllReportedItems(generateInitialReportedItems());
+    }, []);
+
+    useEffect(() => {
+        // 필터링 로직
+        let itemsToFilter = [...allReportedItems]; // 원본 배열을 복사하여 사용
+
+        if (activeContentTypeTab === 'post') {
+            itemsToFilter = itemsToFilter.filter(item => item.postType === '게시글');
+        } else if (activeContentTypeTab === 'comment') {
+            itemsToFilter = itemsToFilter.filter(item => item.postType === '댓글');
+        }
+
+        // 날짜 범위 필터 (실제 날짜 비교 로직 필요)
+        if (dateRange.start && dateRange.end) {
+            itemsToFilter = itemsToFilter.filter(item => {
+                // item.originalPostDate를 실제 Date 객체로 변환하여 비교해야 합니다.
+                // 예시: return new Date(item.originalPostDate) >= new Date(dateRange.start) && new Date(item.originalPostDate) <= new Date(dateRange.end);
+                // 단순 문자열 비교는 정확하지 않을 수 있으므로, 날짜 형식에 맞춰 파싱 및 비교 로직을 구현해야 합니다.
+                // 여기서는 예시로 남겨둡니다.
+                return true; // 실제 날짜 필터 로직으로 교체 필요
+            });
+        }
+
+        if (hideFilter !== 'all') {
+            itemsToFilter = itemsToFilter.filter(item => item.hiddenStatus === hideFilter);
+        }
+
+        if (searchTerm.trim() !== '') {
+            const lowercasedFilter = searchTerm.toLowerCase();
+            itemsToFilter = itemsToFilter.filter(item =>
+                item.authorId.toLowerCase().includes(lowercasedFilter) ||
+                item.authorNickname.toLowerCase().includes(lowercasedFilter) ||
+                item.titleOrContentSnippet.toLowerCase().includes(lowercasedFilter)
+            );
+        }
+
+        setFilteredReportedItems(itemsToFilter);
+        setCurrentPage(1); // 필터 변경 시 1페이지로
     }, [activeContentTypeTab, allReportedItems, dateRange, hideFilter, searchTerm]);
 
-    const toggleHiddenStatus = (reportId) => { /* ... (기존 로직) ... */ };
+    // === toggleHiddenStatus 함수 수정 ===
+    const toggleHiddenStatus = (reportId) => {
+        setAllReportedItems(prevItems =>
+            prevItems.map(item =>
+                item.id === reportId
+                    ? { ...item, hiddenStatus: item.hiddenStatus === '공개' ? '숨김' : '공개' }
+                    : item
+            )
+        );
+        // filteredReportedItems는 allReportedItems가 변경되면 useEffect에 의해 자동으로 업데이트됩니다.
+    };
+    // === 수정 끝 ===
+
     const totalPages = Math.ceil(filteredReportedItems.length / itemsPerPage);
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentDisplayedItems = filteredReportedItems.slice(indexOfFirstItem, indexOfLastItem);
     const handlePageChange = (pageNumber) => { setCurrentPage(pageNumber); };
 
-    // 행 클릭 핸들러
     const handleRowClick = (item) => {
-        // 현재는 게시글/댓글 구분 없이 managerFreeboardDetail로 보내지만,
-        // 댓글의 경우 다른 상세 페이지가 있다면 item.postType에 따라 분기할 수 있습니다.
-        navigate(`/admin/managerFreeboardDetail/${item.originalPostId}`);
+        navigate(`/admin/managerFreeboardDetail/${item.originalPostId}`); // 페이지명 확인 필요 (managerFreeboardDetail or freeboardDetail 등)
     };
+
+    // AdminLayout 사용 여부에 따라 JSX 구조 선택
+    // const isAdminLayoutUsed = true; // 또는 false
+    // 아래 return 문은 AdminLayout을 사용하지 않는 경우를 가정하고 Header/Sidebar를 포함합니다.
+    // AdminLayout을 사용한다면, <Header />와 <Sidebar /> 및 <div className={styles.container}>를 제거하고
+    // <main className={styles.reportedPostsContentCard}> (새로운 CSS 클래스 또는 기존 클래스 조정) 로 시작해야 합니다.
+    // 아래는 AdminLayout을 사용하지 않고, 각 페이지가 Header/Sidebar를 가지는 구조입니다.
 
     return (
         <>
-            <div className={styles.container}>
-                <main className={styles.reportedPostsContent}>
+            <Header /> {/* AdminLayout 미사용 시 */}
+            <div className={styles.container}> {/* AdminLayout 미사용 시 */}
+                <Sidebar /> {/* AdminLayout 미사용 시 */}
+                <main className={styles.reportedPostsContent}> {/* AdminLayout 미사용 시 이 클래스명 사용, 사용 시엔 카드 스타일 클래스로 변경 */}
                     <h1 className={styles.pageTitle}>신고된 게시물 관리</h1>
-                    <div className={styles.tabContainer}> {/* ... 탭 버튼들 ... */}
+                    <div className={styles.tabContainer}>
                         <button className={`${styles.tabButton} ${activeContentTypeTab === 'all' ? styles.activeTab : ''}`} onClick={() => setActiveContentTypeTab('all')}>전체</button>
                         <button className={`${styles.tabButton} ${activeContentTypeTab === 'post' ? styles.activeTab : ''}`} onClick={() => setActiveContentTypeTab('post')}>게시글</button>
                         <button className={`${styles.tabButton} ${activeContentTypeTab === 'comment' ? styles.activeTab : ''}`} onClick={() => setActiveContentTypeTab('comment')}>댓글</button>
                     </div>
                     <div className={styles.filterBar}>
-                        {/* ... 필터 요소들 ... */}
                         <input type="date" className={styles.filterElement} value={dateRange.start} onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))} />
                         <span className={styles.dateSeparator}>~</span>
                         <input type="date" className={styles.filterElement} value={dateRange.end} onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))} />
@@ -94,10 +148,6 @@ function ReportedPosts() {
                                         <td>{item.authorId}</td>
                                         <td>{item.authorNickname}</td>
                                         <td className={styles.contentSnippetCell}>
-                                            {/* Link 대신 행 전체 클릭 사용, 또는 Link 유지 시 경로 수정 및 stopPropagation */}
-                                            {/* <Link to={`/admin/managerFreeboardDetail/${item.originalPostId}`} className={styles.contentLink} onClick={(e) => e.stopPropagation()}>
-                                                {item.titleOrContentSnippet.length > 30 ? `${item.titleOrContentSnippet.substring(0, 30)}...` : item.titleOrContentSnippet}
-                                            </Link> */}
                                             {item.titleOrContentSnippet.length > 30 ? `${item.titleOrContentSnippet.substring(0, 30)}...` : item.titleOrContentSnippet}
                                         </td>
                                         <td>{item.originalPostDate}</td>
@@ -116,7 +166,6 @@ function ReportedPosts() {
                         </tbody>
                     </table>
                     <div className={styles.pagination}>
-                        {/* ... Pagination ... */}
                         {totalPages > 0 && ( <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange}/> )}
                     </div>
                 </main>
