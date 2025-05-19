@@ -149,7 +149,7 @@ function ManagerFreeboard() {
                             <tr>
                                 <th>NO</th><th>닉네임</th>
                                 <th className={styles.titleColumn}>제목/내용일부</th>
-                                <th>작성일</th><th>조회수</th><th>좋아요수</th><th>신고 조치</th> {/* 헤더 텍스트 변경 */}
+                                <th>작성일</th><th>조회수</th><th>좋아요수</th><th>신고</th> {/* 헤더 텍스트 변경 */}
                             </tr>
                         </thead>
                         <tbody>
