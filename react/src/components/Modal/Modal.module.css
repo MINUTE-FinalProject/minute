@@ -1,0 +1,170 @@
+/* src/components/Modal/Modal.module.css */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* 반투명 검은색 배경 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* 다른 요소들 위에 표시 */
+  opacity: 0;
+  animation: fadeInOverlay 0.2s forwards;
+}
+
+@keyframes fadeInOverlay {
+  to {
+    opacity: 1;
+  }
+}
+
+.modalContent {
+  background-color: #fff;
+  padding: 25px 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  width: 90%;
+  max-width: 480px; /* 모달 최대 너비 */
+  text-align: left; /* 기본적으로 왼쪽 정렬 */
+  opacity: 0;
+  transform: scale(0.95);
+  animation: zoomInContent 0.2s 0.1s forwards;
+}
+
+@keyframes zoomInContent {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.closeButton {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #888;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.closeButton:hover {
+  color: #333;
+}
+
+.modalTitle {
+  font-size: 20px; /* 이전보다 약간 크게 */
+  font-weight: 600;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 15px;
+  text-align: center; /* 제목은 중앙 정렬 */
+}
+
+.modalBody {
+  margin-bottom: 25px;
+}
+
+.modalMessage {
+  font-size: 16px; /* 가독성 좋게 */
+  color: #555;
+  line-height: 1.6;
+  white-space: pre-wrap; /* 줄바꿈 및 공백 유지 */
+  text-align: center; /* 메시지도 중앙 정렬 */
+  margin:0; /* 기본 p 태그 마진 제거 */
+}
+
+/* 추가적인 children 요소가 있다면 그에 맞는 스타일링 필요 */
+.modalBody > *:not(.modalMessage) {
+  margin-top: 15px; /* 메시지와 children 사이 간격 */
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end; /* 버튼 오른쪽 정렬이 일반적 */
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.modalButton {
+  padding: 10px 20px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  min-width: 90px;
+}
+
+.confirmButton {
+  background-color: #007bff; /* 일반적인 확인 버튼 색상 (예: 파란색) */
+  color: white;
+  border-color: #007bff;
+}
+
+.confirmButton:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+/* 페이지의 주요 테마 색상(예: 핑크)을 확인 버튼에 적용하려면 아래와 같이 수정 */
+/* .confirmButton {
+  background-color: #FF69B4;
+  color: white;
+  border-color: #FF69B4;
+}
+.confirmButton:hover {
+  background-color: #e0559d;
+  border-color: #e0559d;
+} */
+
+.cancelButton {
+  background-color: #f8f9fa; /* 밝은 회색 */
+  color: #333;
+  border-color: #ced4da; /* 연한 테두리 */
+}
+
+.cancelButton:hover {
+  background-color: #e2e6ea;
+  border-color: #adb5bd;
+}
+
+/* 타입별 스타일 예시 */
+.modalContent.error .modalTitle {
+  color: #d9534f; /* 에러 시 제목 색상 */
+}
+.modalContent.success .modalTitle {
+  color: #28a745; /* 성공 시 제목 색상 */
+}
+.modalContent.warning .modalTitle {
+  color: #ffc107; /* 경고 시 제목 색상 */
+}
+
+/* 모바일 화면 대응 */
+@media (max-width: 600px) {
+  .modalContent {
+    padding: 20px;
+    margin: 0 15px; /* 좌우 여백 */
+  }
+  .modalTitle {
+    font-size: 18px;
+  }
+  .modalMessage {
+    font-size: 15px;
+  }
+  .modalActions {
+    flex-direction: column-reverse; /* 작은 화면에서는 버튼 세로 정렬 */
+    gap: 10px;
+  }
+  .modalButton {
+    width: 100%; /* 버튼 전체 너비 사용 */
+  }
+}
