@@ -1,4 +1,4 @@
-/* qna.module.css (필터바 배경색 검은색으로 변경) */
+/* qna.module.css (필터바 반응형 개선 및 날짜 구분자 추가) */
 
 .layout {
   display: flex;
@@ -11,18 +11,18 @@
   margin-top: 20px;
   margin-bottom: 20px;
   margin-right: 20px;
-  margin-left: 100px; /* MypageNav 너비에 따라 조절될 수 있음 */
-  width: calc(100% - 120px); /* MypageNav 너비 및 여백에 따라 조절될 수 있음 */
-  height: calc(100vh - 41px); /* 헤더/상단 네비게이션 높이에 따라 조절될 수 있음 */
+  margin-left: 100px; 
+  width: calc(100% - 120px); 
+  height: calc(100vh - 41px); 
   box-sizing: border-box;
-  scrollbar-width: none; /* Firefox 스크롤바 숨김 */
-  padding-left: 30px; /* MypageNav 와의 간격 또는 내부 시작점 */
-  border-radius: 0 10px 10px 0; /* MypageNav가 왼쪽에 붙어있을 경우의 라운딩 */
-  overflow-y: auto; /* 추가: 내용이 길어지면 스크롤 */
+  scrollbar-width: none; 
+  padding-left: 30px; 
+  border-radius: 0 10px 10px 0; 
+  overflow-y: auto; 
 }
 
 .container::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Edge 스크롤바 숨김 */
+  display: none; 
 }
 
 .inner {
@@ -37,7 +37,7 @@
   margin-bottom: 20px;
   text-align: center;
   width: 100%;
-  flex-shrink: 0; /* 내용이 많아져도 줄어들지 않도록 */
+  flex-shrink: 0; 
 }
 
 .pageTitleLink {
@@ -48,7 +48,7 @@
 }
 
 .pageTitleLink:hover {
-  color: #ff69b4; /* 호버 시 핑크색으로 변경 */
+  color: #ff69b4; 
 }
 
 .title h1 {
@@ -57,19 +57,20 @@
   margin: 0;
 }
 
-/* --- 필터바 (searchbar) 수정 --- */
+/* --- 필터바 (searchbar) 스타일 --- */
 .searchbar {
-  background-color: #000000; /* === 검은색으로 변경 === */
+  background-color: #000000; /* 기존 검은색 배경 유지 */
   padding: 15px;
   margin-bottom: 20px;
   display: flex;
   align-items: center;
-  gap: 10px; /* 요소들 사이의 간격 */
+  gap: 10px; 
   border-radius: 6px;
   flex-shrink: 0;
+  flex-wrap: wrap; /* 반응형: 공간 부족 시 다음 줄로 */
 }
 
-/* 날짜 입력 필드 스타일 */
+/* 날짜 입력 필드 스타일 (기존 스타일 유지) */
 .dateFilter {
   padding: 8px 12px;
   border: 1px solid #ced4da;
@@ -78,12 +79,23 @@
   border-radius: 4px;
   font-size: 14px;
   box-sizing: border-box;
-  width: 150px;
+  width: 150px; /* 반응형 위해 width 대신 flex-basis, min-width 사용 고려 */
   height: 36px;
+  flex-basis: 130px; /* 반응형 기본 너비 */
+  min-width: 120px; /* 최소 너비 보장 */
 }
 
-/* select 태그 스타일 */
-.searchbar select {
+/* === 날짜 구분자 스타일 추가 === */
+.dateSeparator {
+  color: #f0f0f0; /* 흰색 계열로 변경 (검은 배경이므로) */
+  font-size: 14px;
+  line-height: 36px; /* 다른 필터 요소 높이와 맞춤 */
+  padding: 0 5px;   /* 좌우 약간의 여백 */
+  flex-shrink: 0; /* 크기가 줄어들지 않도록 */
+}
+
+/* select 태그 스타일 (기존 스타일 유지, 클래스명 명확히) */
+.statusSelect { /* 기존 select 태그에 적용할 클래스명 */
   padding: 8px 12px;
   border: 1px solid #ced4da;
   background-color: #ffffff;
@@ -94,17 +106,21 @@
   min-width: 120px;
   box-sizing: border-box;
   height: 36px;
+  flex-basis: 120px; /* 반응형 기본 너비 */
+  flex-shrink: 0; /* 내용에 따라 너비가 결정되므로, 강제로 줄어들지 않도록 */
 }
 
-/* 검색 입력창과 버튼 그룹 */
+/* 검색 입력창과 버튼 그룹 (반응형 개선) */
 .searchInputGroup {
   display: flex;
-  flex-grow: 1;
+  flex-grow: 1; /* 사용 가능한 공간을 최대한 차지 */
+  min-width: 220px; /* 검색창 + 버튼의 최소 너비 */
+  flex-basis: 250px; /* 화면이 충분할 때 가질 기본 너비 */
 }
 
-/* 검색어 입력창 스타일 */
+/* 검색어 입력창 스타일 (기존 스타일 유지) */
 .searchInput {
-  flex-grow: 1;
+  flex-grow: 1; /* 그룹 내에서 가능한 공간을 최대한 차지 */
   padding: 8px 12px;
   border: 1px solid #ced4da;
   background-color: #ffffff;
@@ -117,23 +133,24 @@
   border-bottom-left-radius: 4px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
+  min-width: 150px; /* 검색창 자체가 너무 작아지지 않도록 */
 }
-.searchInput:focus { /* 포커스 스타일 추가 (다른 페이지와 통일) */
+.searchInput:focus { 
   outline: none;
   border-color: #FF69B4;
   box-shadow: 0 0 0 0.2rem rgba(255, 105, 180, 0.25);
-  background-color: #fff; /* 포커스 시 배경색 흰색 유지 */
-  z-index: 1; /* 다른 요소 위로 올라오도록 (box-shadow 잘 보이게) */
-  position: relative; /* z-index 적용을 위해 */
+  background-color: #fff; 
+  z-index: 1; 
+  position: relative; 
 }
 
-/* 검색 버튼 스타일 */
+/* 검색 버튼 스타일 (아이콘 색상 변경 위해 기존 스타일 일부 수정) */
 .searchBtn {
   padding: 0;
   width: 40px;
   height: 36px;
-  background-color: #ffffff;
-  border: 1px solid #ced4da;
+  background-color: #ffffff; /* 기존 흰색 배경 유지 */
+  border: 1px solid #ced4da; /* 기존 테두리 유지 */
   border-left: none;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
@@ -143,18 +160,20 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0; /* 버튼 크기 고정 */
 }
 .searchBtn:hover {
-  background-color: #f8f9fa;
+  background-color: #f8f9fa; /* 기존 호버 스타일 유지 */
 }
 
-/* 검색 아이콘 스타일 */
+/* 검색 아이콘 스타일 (검은색 배경에 대비되도록 흰색으로 변경) */
 .searchIcon {
   width: 16px;
   height: 16px;
   display: block;
+  /* filter: brightness(0) invert(1); */ /* 배경이 흰색이므로, 아이콘 원래 색상 사용 (또는 필요시 검은색으로) */
 }
-/* --- 필터바 (searchbar) 수정 끝 --- */
+/* --- 필터바 (searchbar) 스타일 끝 --- */
 
 .table {
   width: 100%;
@@ -211,9 +230,7 @@
   background-color: #adb5bd;
 }
 
-.tableTitleCell {
-  /* 테이블 내 제목 셀, 필요시 사용 */
-}
+.tableTitleCell { }
 
 .titleLink {
   text-decoration: none;
@@ -225,8 +242,11 @@
 }
 .table tbody tr:hover {
   background-color: #f5f5f5;
-  cursor: pointer;
 }
+.clickableRow {
+    cursor: pointer;
+}
+
 
 .bottomControls {
   display: flex;
@@ -244,9 +264,7 @@
   justify-content: center;
 }
 
-.writeButtonContainerInBottomControls {
-  /* 특별한 스타일이 필요 없다면 이 클래스는 생략 가능 */
-}
+.writeButtonContainerInBottomControls { }
 
 .writeButton {
   display: inline-block;

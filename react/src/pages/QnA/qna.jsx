@@ -1,18 +1,17 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Pagination from "../../components/Pagination/Pagination";
 import qnaStyle from "./qna.module.css";
 
 import searchButtonIcon from "../../assets/images/search_icon.png";
 import MypageNav from '../../components/MypageNavBar/MypageNav';
 
-// 예시: 현재 로그인한 사용자 이름 (실제 앱에서는 로그인 정보에서 가져옵니다)
 const LOGGED_IN_USER_AUTHOR_NAME = '김*진';
 
 const generateInitialQnaData = (count = 25) => {
     const items = [];
     const statuses = ['완료', '대기'];
-    const authors = ['김*진', '이*서', '박*훈', '최*아', '정*원', '김*진', '정*원']; // '김*진' 추가하여 테스트 용이하게
+    const authors = ['김*진', '이*서', '박*훈', '최*아', '정*원', '김*진', '정*원']; 
     for (let i = 0; i < count; i++) {
         items.push({
             id: `qna-${i + 1}`,
@@ -26,35 +25,34 @@ const generateInitialQnaData = (count = 25) => {
 };
 
 function Qna() {
-    const [allQnaItems, setAllQnaItems] = useState([]); // 모든 QnA 데이터 (원본)
-    const [qnaToDisplay, setQnaToDisplay] = useState([]); // 화면에 실제로 표시될 QnA (필터링된)
+    const [allQnaItems, setAllQnaItems] = useState([]); 
+    const [qnaToDisplay, setQnaToDisplay] = useState([]); 
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const itemsPerPage = 8;
+
+    const navigate = useNavigate(); 
 
     useEffect(() => {
         const loadedQnaData = generateInitialQnaData();
         setAllQnaItems(loadedQnaData);
 
-        // === 본인 문의만 필터링 ===
         const myInquiries = loadedQnaData.filter(item => item.author === LOGGED_IN_USER_AUTHOR_NAME);
         setQnaToDisplay(myInquiries);
-        // =======================
 
-    }, []); // 마운트 시 한 번만 실행
+    }, []); 
 
     useEffect(() => {
         if (qnaToDisplay.length > 0) {
             const calculatedTotalPages = Math.ceil(qnaToDisplay.length / itemsPerPage);
             setTotalPages(calculatedTotalPages);
-            // 현재 페이지가 전체 페이지 수보다 크면 1페이지로 (데이터가 줄었을 경우)
             if (currentPage > calculatedTotalPages && calculatedTotalPages > 0) {
                 setCurrentPage(1);
-            } else if (calculatedTotalPages === 0 && qnaToDisplay.length === 0) { // 데이터가 없을 경우
+            } else if (calculatedTotalPages === 0 && qnaToDisplay.length === 0) { 
                 setCurrentPage(1);
-                setTotalPages(1); // 최소 1페이지
+                setTotalPages(1); 
             }
-        } else { // 표시할 데이터가 없을 경우
+        } else { 
             setTotalPages(1);
             setCurrentPage(1);
         }
@@ -68,16 +66,9 @@ function Qna() {
         setCurrentPage(pageNumber);
     };
 
-    // TODO: 검색 및 날짜/상태 필터링 로직 추가 시, allQnaItems를 기준으로 필터링한 후
-    // 그 결과에서 다시 LOGGED_IN_USER_AUTHOR_NAME으로 필터링하거나,
-    // LOGGED_IN_USER_AUTHOR_NAME으로 먼저 필터링된 목록(myInquiries)을 기준으로 추가 필터링합니다.
-    // 예: const handleSearch = () => {
-    // let filtered = allQnaItems.filter(item => item.author === LOGGED_IN_USER_AUTHOR_NAME);
-    // if (searchTerm) {
-    // filtered = filtered.filter(item => item.title.includes(searchTerm));
-    // }
-    // setQnaToDisplay(filtered);
-    // }
+    const handleRowClick = (qnaId) => {
+        navigate(`/qnaDetail/${qnaId}`); 
+    };
 
     return (
         <>
@@ -93,8 +84,10 @@ function Qna() {
 
                         <div className={qnaStyle.searchbar}>
                             <input type="date" className={qnaStyle.dateFilter} />
+                            {/* === 날짜 사이에 ~ 추가 === */}
+                            <span className={qnaStyle.dateSeparator}>~</span> 
                             <input type="date" className={qnaStyle.dateFilter} />
-                            <select>
+                            <select className={qnaStyle.statusSelect}> {/* 클래스명 명확히 분리 */}
                                 <option value="">상태 (전체)</option>
                                 <option value="completed">완료</option>
                                 <option value="pending">대기</option>
@@ -127,7 +120,7 @@ function Qna() {
                             <tbody>
                                 {currentDisplayedQnaItems.length > 0 ? (
                                     currentDisplayedQnaItems.map(qna => (
-                                        <tr key={qna.id}>
+                                        <tr key={qna.id} onClick={() => handleRowClick(qna.id)} className={qnaStyle.clickableRow}>
                                             <td>
                                                 <span
                                                     className={`${qnaStyle.statusBadge} ${qna.status === '완료' ? qnaStyle.completed : qnaStyle.pending}`}
@@ -137,7 +130,11 @@ function Qna() {
                                             </td>
                                             <td>{qna.author}</td>
                                             <td className={qnaStyle.tableTitleCell}>
-                                                <Link to={`/qnaDetail/${qna.id}`} className={qnaStyle.titleLink}> {/* 상세 페이지 경로 수정 */}
+                                                <Link 
+                                                    to={`/qnaDetail/${qna.id}`} 
+                                                    className={qnaStyle.titleLink}
+                                                    onClick={(e) => e.stopPropagation()} 
+                                                >
                                                     {qna.title}
                                                 </Link>
                                             </td>
@@ -154,7 +151,7 @@ function Qna() {
 
                         <div className={qnaStyle.bottomControls}>
                             <div className={qnaStyle.paginationContainerInBottomControls}>
-                                {totalPages > 1 && ( // totalPages가 1보다 클 때만 페이지네이션 표시
+                                {totalPages > 1 && (
                                     <Pagination
                                         currentPage={currentPage}
                                         totalPages={totalPages}

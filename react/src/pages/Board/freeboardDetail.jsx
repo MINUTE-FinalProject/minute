@@ -1,4 +1,4 @@
-// FreeboardDetail.jsx (댓글 "수정" 버튼 제거, 저장/취소 버튼 추가 및 스타일 CSS에서 처리)
+// FreeboardDetail.jsx
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import banner from "../../assets/images/banner.png"; // 실제 이미지 경로 확인
@@ -11,7 +11,8 @@ import likeOnIcon from "../../assets/images/thumbup.png"; // 실제 이미지 �
 
 import Pagination from '../../components/Pagination/Pagination'; // 실제 경로 확인
 
-const LOGGED_IN_USER_ID = 'user123'; // 실제 로그인된 사용자 ID로 교체 필요
+// === 현재 로그인된 사용자 ID를 게시글 작성자 ID와 일치하도록 수정 ===
+const LOGGED_IN_USER_ID = 'user456'; // 'user123'에서 'user456'으로 변경 (게시글 authorId와 동일하게)
 
 function FreeboardDetail() {
     const { postId } = useParams();
@@ -37,13 +38,12 @@ function FreeboardDetail() {
     useEffect(() => {
         setIsLoading(true);
         setError(null);
-        // console.log(`Workspaceing data for postId: ${postId}`); 
         setTimeout(() => {
             const fetchedPost = {
                 id: postId,
                 title: `게시글 (ID: ${postId}) - 최종 기능 통합`,
                 author: '최종 작성자',
-                authorId: 'user456', 
+                authorId: 'user456', // 이 ID와 LOGGED_IN_USER_ID가 일치해야 수정/삭제 버튼이 보입니다.
                 createdAt: '2025.05.07',
                 likeCount: 20,
                 isLikedByCurrentUser: false, 
@@ -55,7 +55,7 @@ function FreeboardDetail() {
                 id: `comment-${101 + i}`,
                 postId: postId,
                 author: i % 3 === 0 ? '나 (로그인 사용자)' : `댓글러${i + 1}`,
-                authorId: i % 3 === 0 ? LOGGED_IN_USER_ID : `user${700 + i}`,
+                authorId: i % 3 === 0 ? LOGGED_IN_USER_ID : `user${700 + i}`, // 댓글 작성자 ID도 LOGGED_IN_USER_ID를 참조
                 content: `게시글 ID ${postId}에 대한 ${i + 1}번째 댓글입니다. 댓글 내용 테스트! ${i % 3 === 0 ? '이 댓글은 더블클릭하거나, 수정 중에는 버튼으로 저장/취소 가능합니다.' : ''}`,
                 createdAt: `2025.05.${String(7 + (i % 5)).padStart(2, '0')}`,
                 likeCount: Math.floor(Math.random() * 6),
@@ -113,7 +113,8 @@ function FreeboardDetail() {
 
     const handlePostEditClick = () => {
         if(post && post.authorId === LOGGED_IN_USER_ID) {
-            navigate(`/freeboard/${post.id}/edit`); 
+             // App.js의 freeboardEdit 경로와 일치하는지 확인 필요
+            navigate(`/freeboardEdit/${post.id}`); // 경로 수정: /freeboard/:id/edit -> /freeboardEdit/:id
         } else {
             alert("본인이 작성한 글만 수정할 수 있습니다.");
         }
@@ -155,8 +156,15 @@ function FreeboardDetail() {
     };
 
     const handleCommentDeleteClick = (commentId) => {
+        const commentToDelete = allComments.find(c => c.id === commentId);
+        // 본인 댓글만 삭제 가능하도록 조건 추가 (필요시)
+        if (commentToDelete && commentToDelete.authorId !== LOGGED_IN_USER_ID) {
+            alert("본인이 작성한 댓글만 삭제할 수 있습니다.");
+            return;
+        }
         if (window.confirm(`댓글 ID ${commentId}을(를) 정말로 삭제하시겠습니까?`)) {
             setAllComments(prevComments => prevComments.filter(comment => comment.id !== commentId));
+            setTotalCommentPages(Math.ceil((allComments.length - 1) / commentsPerPage)); // 댓글 삭제 후 페이지 수 업데이트
             alert("댓글이 삭제되었습니다.");
         }
     };
@@ -182,6 +190,8 @@ function FreeboardDetail() {
         setAllComments(prevComments => [newComment, ...prevComments]);
         setTotalCommentPages(Math.ceil((allComments.length + 1) / commentsPerPage));
         setCommentInput('');
+        // 새 댓글 작성 후 1페이지로 이동하거나 현재 페이지 유지 (선택)
+        // setCurrentCommentPage(1); 
     };
 
     const handleCommentDoubleClick = (comment) => {
@@ -211,7 +221,7 @@ function FreeboardDetail() {
 
     const cancelCommentEdit = (commentId) => {
         const originalComment = allComments.find(c => c.id === commentId);
-        if (originalComment) setCurrentEditText(originalComment.content);
+        if (originalComment) setCurrentEditText(originalComment.content); // 원본 내용으로 복원 (선택적)
         setEditingCommentId(null);
     };
 
@@ -285,6 +295,7 @@ function FreeboardDetail() {
                         <React.Fragment key={index}>{line}{index < post.content.split('\n').length -1 &&<br />}</React.Fragment>
                     ))}
                 </div>
+                {/* === 이 부분이 수정/삭제 버튼 렌더링 조건 === */}
                 {post.authorId === LOGGED_IN_USER_ID && (
                     <div className={freeboardDetailStyle.postActions}>
                         <button onClick={handlePostEditClick} className={`${freeboardDetailStyle.actionButton} ${freeboardDetailStyle.editButton}`}>수정</button>
@@ -320,7 +331,6 @@ function FreeboardDetail() {
                                     </div>
                                     {isOwnComment && editingCommentId !== comment.id && (
                                         <div className={freeboardDetailStyle.commentUserActions}>
-                                            {/* 수정 버튼은 여기서 제거됨. 더블클릭으로 수정 모드 진입. */}
                                             <button
                                                 onClick={() => handleCommentDeleteClick(comment.id)}
                                                 className={`${freeboardDetailStyle.actionButton} ${freeboardDetailStyle.deleteButton} ${freeboardDetailStyle.commentDeleteButton}`}>
