@@ -71,7 +71,7 @@ function ManagerFreeboard() {
                     <h1 className={styles.pageTitle}>자유게시판 관리</h1>
                     <div className={styles.tabContainer}> {/* ... 탭 버튼들 ... */}
                         <button className={`${styles.tabButton} ${activeTab === 'all' ? styles.activeTab : ''}`} onClick={() => setActiveTab('all')}>전체 게시물</button>
-                        <button className={`${styles.tabButton} ${activeTab === 'myPosts' ? styles.activeTab : ''}`} onClick={() => setActiveTab('myPosts')}>내 작성글</button>
+                        <button className={`${styles.tabButton} ${activeTab === 'myPosts' ? styles.activeTab : ''}`} onClick={() => setActiveTab('myPosts')}>내 댓글</button>
                     </div>
                     <div className={styles.filterBar}>
                         {/* ... 필터 요소들 (정렬 select 포함) ... */}

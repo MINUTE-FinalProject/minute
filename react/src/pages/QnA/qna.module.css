@@ -11,18 +11,19 @@
   margin-top: 20px;
   margin-bottom: 20px;
   margin-right: 20px;
-  margin-left: 100px;
-  width: calc(100% - 120px);
-  height: calc(100vh - 41px);
+  margin-left: 100px; /* MypageNav 너비에 따라 조절될 수 있음 */
+  width: calc(100% - 120px); /* MypageNav 너비 및 여백에 따라 조절될 수 있음 */
+  height: calc(100vh - 41px); /* 헤더/상단 네비게이션 높이에 따라 조절될 수 있음 */
   box-sizing: border-box;
-  scrollbar-width: none;
-  padding-left: 30px;
-  border-radius: 0 10px 10px 0;
+  scrollbar-width: none; /* Firefox 스크롤바 숨김 */
+  padding-left: 30px; /* MypageNav 와의 간격 또는 내부 시작점 */
+  border-radius: 0 10px 10px 0; /* MypageNav가 왼쪽에 붙어있을 경우의 라운딩 */
 }
 
 .container::-webkit-scrollbar {
-  display: none;
+  display: none; /* Chrome, Safari, Edge 스크롤바 숨김 */
 }
+
 .inner {
   padding: 30px;
   display: flex;
@@ -35,13 +36,12 @@
   margin-bottom: 20px;
   text-align: center;
   width: 100%;
-  flex-shrink: 0;
+  flex-shrink: 0; /* 내용이 많아져도 줄어들지 않도록 */
 }
 
-/* 페이지 제목 "Q&A"를 감싸는 Link에 대한 스타일 */
 .pageTitleLink {
   text-decoration: none;
-  color: #333; /* .title h1의 기본 색상과 동일하게 */
+  color: #333;
   transition: color 0.2s ease-in-out;
   display: inline-block;
 }
@@ -56,63 +56,105 @@
   margin: 0;
 }
 
+/* --- 필터바 (searchbar) 수정 --- */
 .searchbar {
-  background-color: #333;
+  background-color: #2c3e50; /* 관리자 필터바 배경색으로 변경 */
   padding: 15px;
   margin-bottom: 20px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  border-radius: 4px;
-  flex-shrink: 0;
+  gap: 10px; /* 요소들 사이의 간격 */
+  border-radius: 6px; /* 관리자 필터바와 유사하게 */
+  flex-shrink: 0; /* 내용이 많아져도 줄어들지 않도록 */
 }
-.searchbar button,
+
+/* 날짜 입력 필드 스타일 (관리자 .filterDate 와 유사하게) */
+.dateFilter {
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  background-color: #ffffff;
+  color: #333;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  width: 150px; /* 필요시 너비 조절 */
+  height: 36px; /* 다른 input 높이와 맞춤 */
+}
+
+/* select 태그 스타일 (다른 입력 필드와 유사하게 수정) */
 .searchbar select {
   padding: 8px 12px;
-  border: 1px solid #555;
-  background-color: #f0f0f0;
+  border: 1px solid #ced4da;
+  background-color: #ffffff;
   color: #333;
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
+  min-width: 120px; /* 필요시 너비 조절 */
+  box-sizing: border-box;
+  height: 36px; /* 다른 input 높이와 맞춤 */
 }
-.searchbar select {
-  min-width: 100px;
+
+/* 검색 입력창과 버튼 그룹 (관리자 .searchContainer 와 유사하게) */
+.searchInputGroup {
+  display: flex;
+  flex-grow: 1; /* 남은 공간을 모두 차지하도록 */
 }
-.searchbar input[type="text"] {
+
+/* 검색어 입력창 스타일 (관리자 .filterSearchInput 와 유사하게) */
+.searchInput {
   flex-grow: 1;
   padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 1px solid #ced4da;
+  background-color: #ffffff;
+  color: #333;
   font-size: 14px;
-  background-color: #fff;
+  box-sizing: border-box;
+  height: 36px; /* 다른 input 높이와 맞춤 */
+  border-right: none; /* 오른쪽 테두리 제거하여 버튼과 연결 */
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-top-right-radius: 0; /* 오른쪽 상단 모서리 각 없앰 */
+  border-bottom-right-radius: 0; /* 오른쪽 하단 모서리 각 없앰 */
 }
-.searchIconButton {
-  background-color: #555;
-  padding: 8px;
-  border: 1px solid #555;
-  border-radius: 4px;
+.searchInput:focus {
+  outline: none; /* 포커스 시 기본 아웃라인 제거 (선택적) */
+  /* border-color: #80bdff; */ /* 포커스 시 테두리 색상 변경 (선택적) */
+}
+
+/* 검색 버튼 스타일 (관리자 .filterSearchButton 와 유사하게) */
+.searchBtn {
+  padding: 0; /* 내부 아이콘 정렬을 위해 패딩 제거 */
+  width: 40px; /* 관리자 버튼 너비 */
+  height: 36px; /* 검색 입력창 높이와 맞춤 */
+  background-color: #ffffff; /* 흰색 배경 */
+  border: 1px solid #ced4da;
+  border-left: none; /* 왼쪽 테두리 제거하여 입력창과 연결 */
+  border-top-left-radius: 0; /* 왼쪽 상단 모서리 각 없앰 */
+  border-bottom-left-radius: 0; /* 왼쪽 하단 모서리 각 없앰 */
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 36px;
-  width: 36px;
 }
-.searchIconButton:hover {
-  background-color: #777;
+.searchBtn:hover {
+  background-color: #f8f9fa; /* 관리자 버튼 호버 색상 */
 }
-.searchButtonIcon {
+
+/* 검색 아이콘 스타일 (관리자 .filterSearchIcon 과 유사하게) */
+.searchIcon {
   width: 16px;
   height: 16px;
   display: block;
-  filter: brightness(0) invert(1);
+  /* filter: brightness(0) invert(1); /* 아이콘 필터 제거 (버튼 배경이 흰색이므로) */
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
-  flex-shrink: 0;
+  flex-shrink: 0; /* 내용이 많아져도 줄어들지 않도록 */
 }
 .table th,
 .table td {
@@ -130,21 +172,24 @@
   text-align: center;
   border-top: 1px solid #e0e0e0;
 }
+/* 테이블 헤더 제목(세 번째)만 왼쪽 정렬 */
 .table th:nth-child(3) {
   text-align: left;
 }
-.table td:first-child {
+/* 테이블 데이터 셀 너비 및 정렬 조정 */
+.table td:first-child { /* 상태 */
   text-align: center;
   width: 10%;
 }
-.table td:nth-child(2) {
+.table td:nth-child(2) { /* 작성자 */
   text-align: center;
   width: 15%;
 }
-.table td:nth-child(3) {
-  width: auto;
+.table td:nth-child(3) { /* 제목 */
+  width: auto; /* 자동으로 나머지 너비 차지 */
+  /* text-align: left; 이미 기본값이므로 생략 가능 */
 }
-.table td:nth-child(4) {
+.table td:nth-child(4) { /* 날짜 */
   text-align: center;
   width: 15%;
 }
@@ -158,10 +203,10 @@
   color: #fff;
 }
 .completed {
-  background-color: #6c757d;
+  background-color: #6c757d; /* 완료 상태 배경색 */
 }
 .pending {
-  background-color: #adb5bd;
+  background-color: #adb5bd; /* 대기 상태 배경색 */
 }
 
 .tableTitleCell {
@@ -176,7 +221,6 @@
 }
 .titleLink:hover {
   text-decoration: underline; /* 호버 시 밑줄만 표시 */
-  /* color: #555; */ /* 또는 색상을 약간 어둡게 할 수 있음, 여기서는 색상 변경 없음 */
 }
 .table tbody tr:hover {
   background-color: #f5f5f5;
@@ -185,22 +229,23 @@
 
 .bottomControls {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* 페이지네이션은 중앙, 작성 버튼은 오른쪽 */
   align-items: center;
-  margin-top: auto;
-  padding-top: 20px;
+  margin-top: auto; /* 테이블과 하단 컨트롤 사이에 남은 공간을 모두 채움 (inner가 flex-direction: column일 때) */
+  padding-top: 20px; /* 테이블과의 간격 */
   width: 100%;
-  flex-shrink: 0;
+  flex-shrink: 0; /* 내용이 많아져도 줄어들지 않도록 */
 }
 
 .paginationContainerInBottomControls {
-  flex-grow: 1;
+  flex-grow: 1; /* 작성 버튼을 제외한 나머지 공간 차지 */
   display: flex;
-  justify-content: center;
+  justify-content: center; /* 페이지네이션 중앙 정렬 */
 }
 
 .writeButtonContainerInBottomControls {
-  /* 스타일 유지 */
+  /* 특별한 스타일이 필요 없다면 이 클래스는 생략 가능 */
+  /* flex-shrink: 0; /* 버튼 컨테이너가 줄어들지 않도록 */
 }
 
 .writeButton {

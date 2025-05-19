@@ -70,10 +70,8 @@ import ManagerNoticeEdit from "./pages/Admin/ManagerNoticeEdit";
 import ManagerNoticeWrite from "./pages/Admin/ManagerNoticeWrite";
 import ManagerQna from "./pages/Admin/ManagerQna";
 import ManagerQnaDetail from "./pages/Admin/ManagerQnaDetail";
-import ManagerQnaEdit from "./pages/Admin/ManagerQnaEdit";
 import ManagerUsers from "./pages/Admin/ManagerUsers";
 
-import ManagerQnaWrite from "./pages/Admin/ManagerQnaWrite";
 import MemberDetail from './pages/Admin/MemberDetail';
 import ReportedMemberDetail from './pages/Admin/ReportedMemberDetail';
 import ReportedMembers from './pages/Admin/ReportedMembers';
@@ -136,8 +134,6 @@ function App() {
 
             <Route path="managerQna" element={<ManagerQna />} />
             <Route path="managerQnaDetail/:id" element={<ManagerQnaDetail />} /> {/* :id 파라미터 추가 권장 */}
-            <Route path="managerQnaEdit/:id" element={<ManagerQnaEdit />} /> {/* :id 파라미터 추가 권장 */}
-            <Route path="managerQnaWrite" element={<ManagerQnaWrite />} />
 
             <Route path="reportedposts" element={<ReportedPosts />} />
             {/* 추가적인 관리자 페이지들은 여기에 계속 정의 */}

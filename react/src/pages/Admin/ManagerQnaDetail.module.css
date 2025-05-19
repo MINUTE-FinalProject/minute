@@ -1,49 +1,60 @@
-/* ManagerQnaDetail.module.css */
+/* ManagerQnaDetail.module.css (상단 링크, 버튼 색상, 목록 버튼 제거 등 수정) */
 
 .container {
-    display: flex; /* Sidebar와 detailContent를 가로로 배치 */
-    flex-direction: row; /* 명시적으로 가로 방향 설정 */
-    margin-top: 45px; /* 실제 Header 높이에 맞게 조정 */
+    display: flex;
+    margin-top: 45px;
     min-height: calc(100vh - 45px);
     background-color: #f4f6f8;
+    flex: 1; /* 추가: AdminLayout 내에서 공간을 채우도록 */
 }
 
-/* Sidebar는 자체적으로 너비를 가져야 합니다. (예: Sidebar.module.css 에서 width: 230px; flex-shrink: 0;) */
-
-.detailContent {
-    flex: 1; /* Sidebar를 제외한 나머지 공간을 모두 차지 */
-    /* margin-left는 Sidebar가 flex item으로 너비를 차지하면 필요 없습니다. */
-    /* 만약 Sidebar가 position:fixed 라면 margin-left가 필요합니다. */
-    margin: 20px; /* 콘텐츠 카드 주변 여백 */
+.detailContentCard { /* 클래스명 변경 및 스타일 조정 */
+    flex: 1;
+    margin: 20px; 
     padding: 30px 35px;
     background-color: #ffffff;
     border: 1px solid #dee2e6;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    display: flex; /* 추가 */
+    flex-direction: column; /* 추가 */
 }
 
-.loadingContainer {
+.loadingContainer,
+.errorContainer { /* 스타일 유지 */
     text-align: center;
     padding: 50px;
     font-size: 1.2em;
     color: #555;
+    background-color: #fff; 
+    margin: 20px; 
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
-.breadcrumbContainer {
-    margin-bottom: 25px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #dfe3e8;
+/* === 상단 링크/제목 영역 스타일 (자유게시판 상세와 유사하게) === */
+.pageHeader { /* 기존 .breadcrumbContainer 대체 */
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #dfe3e8;
+  text-align: center; /* 내부 Link의 h1을 중앙 정렬하기 위함 */
 }
-.breadcrumbLink {
-    font-size: 1.5em;
-    font-weight: 600;
-    color: #2c3e50;
-    text-decoration: none;
-    transition: color 0.2s ease-in-out;
+.toListLink { /* Link 태그에 적용 */
+  text-decoration: none;
+  color: #2c3e50; 
+  transition: color 0.2s ease-in-out;
 }
-.breadcrumbLink:hover {
-    color: #007bff;
+.toListLink:hover {
+  color: #FF69B4; /* 자유게시판 관리의 핑크색 계열 호버 */
 }
+.toListLink h1 { /* Link 내부의 h1 태그 */
+  font-size: 2.2em; 
+  font-weight: 600;
+  margin: 0;
+  display: inline-block; /* 중앙 정렬을 위해 */
+}
+/* 기존 .breadcrumbContainer, .breadcrumbLink 스타일은 .pageHeader, .toListLink로 대체되었으므로 제거 가능 */
+
 
 .userQuestionArea {
     border-bottom: 1px solid #e0e0e0;
@@ -55,31 +66,26 @@
     margin-bottom: 20px;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start; /* 제목이 길 경우 여러 줄이 될 수 있으므로 상단 정렬 */
+    align-items: flex-start; 
 }
 .infoBarLeft {
     display: flex;
-    align-items: center; /* 상태태그와 제목 수직 중앙 */
+    align-items: center; 
     gap: 10px;
-    flex-grow: 1; /* 제목이 남은 공간을 차지하도록 */
-    margin-right: 15px; /* 신고버튼과의 간격 */
+    flex-grow: 1; 
+    margin-right: 15px; 
 }
 
 .statusTag {
-    display: inline-block;
-    padding: 5px 12px;
-    border-radius: 12px;
-    font-size: 0.8em;
-    font-weight: 600;
-    color: #fff;
-    line-height: 1.2;
-    flex-shrink: 0; /* 줄어들지 않도록 */
+    display: inline-block; padding: 5px 12px; border-radius: 12px;
+    font-size: 0.8em; font-weight: 600; color: #fff;
+    line-height: 1.2; flex-shrink: 0;
 }
 .answered { background-color: #28a745; }
 .unanswered { background-color: #6c757d; }
 
-.postTitle {
-    font-size: 1.7em; /* 상세페이지 제목 크기 조정 */
+.postTitle { /* 문의 제목은 h1에서 h2로 변경되었으므로, h1 스타일 대신 사용 */
+    font-size: 1.7em; 
     font-weight: 600;
     color: #333;
     margin: 0;
@@ -87,27 +93,17 @@
 }
 
 .metaInfo {
-    font-size: 0.85em;
-    color: #555;
-    margin-top: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
+    font-size: 0.85em; color: #555; margin-top: 8px;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 5px;
 }
 .author, .createdAt { /* 개별 스타일 */ }
 
 .contentBody {
-    line-height: 1.7;
-    color: #343a40;
-    font-size: 1em;
-    padding: 15px;
-    background-color: #f8f9fa;
-    border-radius: 4px;
-    min-height: 100px;
-    white-space: pre-wrap; /* \n을 <br>로 자동 변환 효과 */
+    line-height: 1.7; color: #343a40; font-size: 1em;
+    padding: 15px; background-color: #f8f9fa; border-radius: 4px;
+    min-height: 100px; white-space: pre-wrap; 
 }
-.contentBody br { display: none; /* pre-wrap 사용 시 <br/> 불필요 */ }
+.contentBody br { display: block; margin-bottom: 0.5em; } /* 유지 */
 
 
 .imageAttachmentSection { margin-top: 20px; }
@@ -120,69 +116,70 @@
 
 .answerDisplaySection {}
 .answerHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    /* .responseTitle 이 이미 margin-bottom을 가지고 있음 */
+    display: flex; justify-content: space-between; align-items: center;
 }
-.answerHeader .responseTitle {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
+.answerHeader .responseTitle { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
 .adminAnswerItem {
-    background-color: #f0f2f5;
-    border: 1px solid #dfe3e8;
-    padding: 20px 25px;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-top: 10px; /* 답변 헤더와 구분 */
+    background-color: #f0f2f5; border: 1px solid #dfe3e8;
+    padding: 20px 25px; border-radius: 6px; cursor: pointer; margin-top: 10px;
 }
 .adminAnswerItem:hover { background-color: #e9ecef; }
 .adminAnswerMeta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.85em; }
 .adminAnswerAuthor { font-weight: 600; color: #34495e; }
 .adminAnswerDate { color: #95a5a6; }
 .adminAnswerContent { line-height: 1.6; color: #4a6177; font-size: 0.95em; white-space: pre-wrap; }
+.adminAnswerContent br { display: block; margin-bottom: 0.5em; } /* 추가 */
+
 
 .answerEditSection {}
 .answerTextarea {
-    width: 100%;
-    min-height: 120px;
-    padding: 12px 15px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    box-sizing: border-box;
-    font-size: 1em;
-    line-height: 1.6;
-    resize: vertical;
-    margin-bottom: 15px;
-    font-family: inherit;
+    width: 100%; min-height: 120px; padding: 12px 15px;
+    border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box;
+    font-size: 1em; line-height: 1.6; resize: vertical;
+    margin-bottom: 15px; font-family: inherit;
 }
 .answerTextarea:focus {
-    border-color: #4a90e2;
-    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
-    outline: none;
+    border-color: #4a90e2; box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2); outline: none;
 }
 
 .buttonGroup { display: flex; justify-content: flex-end; gap: 10px; }
 .editButtonGroup { margin-top: 10px; }
 
-.button { padding: 8px 20px; font-size: 0.9em; font-weight: 500; border-radius: 5px; cursor: pointer; transition: background-color 0.2s ease, border-color 0.2s ease; text-decoration: none; display: inline-block; text-align: center; margin-left: 10px; }
-.submitButton { background-color: #000000; color: white; border: 1px solid #000000; }
-.submitButton:hover { background-color: #333333; border-color: #333333; color: white; }
-.cancelButton { background-color: #6c757d; color: white; border: 1px solid #6c757d; }
-.cancelButton:hover { background-color: #5a6268; border-color: #5a6268; color: white; }
-.deleteAnswerButton { background-color: #dc3545; color: white; border: 1px solid #dc3545; padding: 6px 12px; font-size: 0.85em; margin-left: 0; /* answerHeader에서 flex-end로 정렬되므로 */ }
-.deleteAnswerButton:hover { background-color: #c82333; border-color: #bd2130; }
+.button { padding: 8px 20px; font-size: 0.9em; font-weight: 500; border-radius: 5px; cursor: pointer; transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; text-decoration: none; display: inline-block; text-align: center; margin-left: 10px; }
+.button:first-child { margin-left: 0; } /* 그룹 내 첫 버튼 마진 제거 */
+
+/* === 답변 삭제 버튼 포함 모든 주요 버튼 색상 통일 (검은색 계열) === */
+.submitButton, 
+.cancelButton, /* 취소 버튼도 통일 */
+.deleteAnswerButton { /* 삭제 버튼 색상 변경 */
+    background-color: #000000; 
+    color: white; 
+    border: 1px solid #000000; 
+}
+.submitButton:hover,
+.cancelButton:hover,
+.deleteAnswerButton:hover { 
+    background-color: #333333; 
+    border-color: #333333; 
+    color: white; 
+}
+/* 개별 버튼 크기/패딩 조정 */
+.deleteAnswerButton { 
+    padding: 6px 12px; 
+    font-size: 0.85em; 
+    margin-left: 0; /* answerHeader에서 flex-end로 정렬되므로 */ 
+}
+
 
 .iconButton { background: none; border: none; padding: 0; cursor: pointer; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; }
 .buttonIcon { width: 18px; height: 18px; }
-.qnaReportButton { /* 문의글 자체 신고 버튼 위치/여백 조정 */
-    /* align-self: flex-start; */ /* 이미 infoBar가 align-items: flex-start 임 */
-}
-.reportedActive .buttonIcon { /* 신고된 아이콘 시각적 피드백 */ }
+.qnaReportButton { /* 기존 스타일 유지 */ }
+.reportedActive .buttonIcon { /* 기존 스타일 유지 */ }
 
+/* === 목록 버튼 관련 스타일 제거 === */
+/*
 .actionButtonsBottom { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ecf0f1; text-align: right; }
-.listButton { background-color: #6c757d; color: white; border: 1px solid #6c757d; margin-left: 0; } /* 목록 버튼은 보통 왼쪽에 있거나, 오른쪽 유일 버튼이면 margin-left 불필요 */
+.listButton { background-color: #6c757d; color: white; border: 1px solid #6c757d; margin-left: 0; }
 .listButton:hover { background-color: #5a6268; border-color: #5a6268; color: white; }
+*/
