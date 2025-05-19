@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Pagination from "../../components/Pagination/Pagination"; // 실제 파일명 대소문자 확인 (예: Pagination.jsx)
+import Pagination from "../../components/Pagination/Pagination";
 import qnaStyle from "./qna.module.css";
 
-import searchButtonIcon from "../../assets/images/search_icon.png";
-import MypageNav from '../../components/MypageNavBar/MypageNav'; // 실제 파일명 대소문자 확인 (예: MypageNav.jsx)
+import searchButtonIcon from "../../assets/images/search_icon.png"; // 이 import는 유지합니다.
+import MypageNav from '../../components/MypageNavBar/MypageNav';
 
 const generateInitialQnaData = (count = 25) => {
     const items = [];
@@ -63,32 +63,39 @@ function Qna() {
         <>
             <MypageNav />
             <div className={qnaStyle.layout}>
-                {/* .container가 흰색 배경 카드 역할 */}
-                <div className={qnaStyle.container}> 
+                <div className={qnaStyle.container}>
                     <div className={qnaStyle.inner}>
                         <div className={qnaStyle.title}>
-                            <Link to="/qna" className={qnaStyle.pageTitleLink}> {/* 페이지 제목 링크 */}
+                            <Link to="/qna" className={qnaStyle.pageTitleLink}>
                                 <h1>Q&A</h1>
                             </Link>
                         </div>
 
+                        {/* --- 필터바 (searchbar) JSX 수정 --- */}
                         <div className={qnaStyle.searchbar}>
-                            <button type="button">날짜 선택</button>
-                            <button type="button">날짜 선택</button>
-                            <select>
+                            <input type="date" className={qnaStyle.dateFilter} />
+                            <input type="date" className={qnaStyle.dateFilter} />
+                            <select> {/* select는 기존대로 유지, CSS에서 스타일 적용 */}
                                 <option value="">상태 (전체)</option>
                                 <option value="completed">완료</option>
                                 <option value="pending">대기</option>
                             </select>
-                                <input type="text" placeholder="검색어를 입력하세요" />
-                                <button type="button" className={qnaStyle.searchIconButton}>
+                            <div className={qnaStyle.searchInputGroup}>
+                                <input
+                                    type="text"
+                                    placeholder="검색어를 입력하세요"
+                                    className={qnaStyle.searchInput}
+                                />
+                                <button type="button" className={qnaStyle.searchBtn}>
                                     <img
-                                        src={searchButtonIcon}
+                                        src={searchButtonIcon} // Admin 페이지와 동일한 아이콘 사용
                                         alt="검색"
-                                        className={qnaStyle.searchButtonIcon}
+                                        className={qnaStyle.searchIcon}
                                     />
                                 </button>
+                            </div>
                         </div>
+                        {/* --- 필터바 (searchbar) JSX 수정 끝 --- */}
 
                         <table className={qnaStyle.table}>
                             <thead>
@@ -104,7 +111,7 @@ function Qna() {
                                     currentDisplayedQnaItems.map(qna => (
                                         <tr key={qna.id}>
                                             <td>
-                                                <span 
+                                                <span
                                                     className={`${qnaStyle.statusBadge} ${qna.status === '완료' ? qnaStyle.completed : qnaStyle.pending}`}
                                                 >
                                                     {qna.status}
@@ -112,8 +119,7 @@ function Qna() {
                                             </td>
                                             <td>{qna.author}</td>
                                             <td className={qnaStyle.tableTitleCell}>
-                                                {/* 테이블 내부 문의 제목 링크 */}
-                                                <Link to={`/qna/${qna.id}`} className={qnaStyle.titleLink}> 
+                                                <Link to={`/qna/${qna.id}`} className={qnaStyle.titleLink}>
                                                     {qna.title}
                                                 </Link>
                                             </td>
@@ -144,10 +150,10 @@ function Qna() {
                                 </Link>
                             </div>
                         </div>
-                        </div>
-                    </div> {/* .container div의 끝 */}
-            </div> {/* .layout div의 끝 */}
-        </>   
+                    </div>
+                </div>
+            </div>
+        </>
     );
 }
 
