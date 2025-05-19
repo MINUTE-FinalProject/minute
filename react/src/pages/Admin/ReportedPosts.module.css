@@ -1,26 +1,24 @@
-/* ReportedPosts.module.css (AdminLayout 사용에 맞게 수정) */
+/* ReportedPosts.module.css (필터 바 깨짐 현상 해결 및 반응형 개선) */
 
-/* .container 스타일은 AdminLayout.jsx가 처리하므로 여기서 제거합니다. */
-/*
 .container {
-    display: flex;
-    flex-direction: row;
-    margin-top: 45px;
-    min-height: calc(100vh - 45px);
     background-color: #f4f6f8;
+    flex: 1;
+    display: flex; /* .reportedPostsContentCard에 flex:1 주기 위함 */
+    flex-direction: column; /* 내부 콘텐츠를 세로로 정렬 */
+    margin-top: 45px; /* 헤더 높이만큼 */
+    min-height: calc(100vh - 45px); /* 헤더 높이 제외한 전체 높이 */
+    /* padding: 0; /* .reportedPostsContentCard 가 margin: 20px; 을 가질 것이므로 */
 }
-*/
 
-/* AdminLayout의 Outlet 내부에 표시될 페이지 콘텐츠 카드 스타일 */
-.reportedPostsContentCard { /* 기존 .reportedPostsContent 에서 레이아웃 관련 속성 제거/수정 */
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 30px 35px; /* 카드 내부의 패딩. AdminLayout에서 주는 padding: '20px'는 이 카드 바깥의 여백입니다. */
-  /* flex: 1; /* 제거 (AdminLayout의 콘텐츠 래퍼가 이미 담당) */
-  /* margin: 20px; /* 제거 (AdminLayout의 콘텐츠 래퍼가 이미 담당) */
-  /* height: 100%; /* 내용에 따라 자동으로 높이 조절되도록 하거나, 필요시 설정 */
-  /* overflow-y: auto; /* 내용이 많을 경우 이 카드 자체에 스크롤이 필요하다면 설정, 보통 AdminLayout의 래퍼가 담당 */
+.reportedPostsContentCard {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 30px 35px;
+    margin: 20px; /* .container 배경과의 여백 */
+    flex: 1; /* .container 내부에서 남은 공간을 채우도록 (선택적, 내용에 따라) */
+    display: flex; /* 내부 요소들을 flex로 관리 (선택적, 필요에 따라) */
+    flex-direction: column; /* 내부 요소들을 세로로 배치 (일반적) */
 }
 
 .pageTitle {
@@ -28,7 +26,7 @@
     font-weight: 600;
     color: #2c3e50;
     text-align: center;
-    margin-top: 0; /* 카드 내부이므로 margin-top 0으로 시작 가능 */
+    margin-top: 0;
     margin-bottom: 25px;
     padding-bottom: 15px;
     border-bottom: 1px solid #dfe3e8;
@@ -37,7 +35,6 @@
 .tabContainer {
     margin-bottom: 20px;
     display: flex;
-    gap: 0px; /* 탭 버튼 사이 간격 없음 (border로 구분) */
     border-bottom: 1px solid #dee2e6;
 }
 
@@ -45,13 +42,13 @@
     padding: 10px 20px;
     font-size: 0.95em;
     font-weight: 500;
-    border: none; /* 위, 좌, 우 테두리 없음 */
-    border-bottom: 3px solid transparent; /* 하단 테두리만 사용 */
+    border: none;
+    border-bottom: 3px solid transparent;
     background-color: transparent;
     color: #555;
     cursor: pointer;
     transition: color 0.2s ease, border-color 0.2s ease;
-    margin-right: 8px; /* 탭 간의 간격 */
+    margin-right: 8px;
 }
 .tabButton:last-child {
     margin-right: 0;
@@ -67,15 +64,16 @@
 
 .filterBar {
     display: flex;
-    align-items: center;
+    align-items: center; /* 기본 세로 정렬 */
     gap: 10px;
     margin-bottom: 25px;
     padding: 15px;
-    background-color: #333; /* 신고글 관리 페이지는 어두운 필터바 유지 (원하시면 #2c3e50으로 변경) */
+    background-color: #333;
     border-radius: 6px;
+    flex-wrap: wrap; /* <<< 핵심: 요소들이 공간 부족 시 다음 줄로 넘어가도록 */
 }
 
-.filterElement { /* 날짜 input, select, 검색 input 공통 스타일 */
+.filterElement {
     padding: 8px 12px;
     border: 1px solid #555;
     background-color: #f0f0f0;
@@ -83,21 +81,38 @@
     border-radius: 4px;
     font-size: 14px;
     box-sizing: border-box;
-    height: 36px; /* 높이 통일 */
+    height: 36px;
+    /* 모든 필터 요소에 대한 공통적인 최소 너비보다는 개별 설정이 더 유용할 수 있음 */
+    /* 예: flex-basis: 150px; flex-grow: 1; 와 같이 설정하여 유연하게 */
 }
 
 .dateSeparator {
-    color: #f0f0f0; /* 날짜 구분자 색상 */
+    color: #f0f0f0;
     font-size: 14px;
-    line-height: 36px; /* 필터 요소 높이에 맞춤 */
+    line-height: 36px; /* filterElement 높이와 맞춤 */
+    flex-shrink: 0; /* 크기가 줄어들지 않도록 */
+    padding: 0 5px; /* 좌우 약간의 여백 */
 }
 
+/* 날짜 입력 필드 스타일 */
+input[type="date"].filterElement {
+    min-width: 130px; /* 날짜 입력 필드의 최소 너비 (내용 표시에 필요) */
+    flex-grow: 1; /* 공간이 남으면 다른 요소들과 함께 늘어나도록 (선택적) */
+    flex-basis: 130px; /* 기본 너비 */
+}
+
+
 .filterSelect {
-    min-width: 150px;
+    min-width: 150px; /* Select 박스 최소 너비 */
+    /* flex-grow: 1; /* 필요하다면 다른 요소들과 함께 늘어나도록 */
+    flex-basis: 150px; /* 기본 너비 */
+    flex-shrink: 0; /* 내용에 따라 너비가 결정되므로, 강제로 줄어들지 않도록 */
 }
 
 .filterSearchInput {
-    flex-grow: 1; /* 검색창이 남은 공간 차지 */
+    flex-grow: 1; /* 사용 가능한 공간을 최대한 차지 */
+    min-width: 180px; /* 검색창이 너무 작아지지 않도록 최소 너비 (중요) */
+    flex-basis: 200px; /* 기본 너비, 화면이 충분할 때 */
 }
 
 .filterSearchButton {
@@ -105,13 +120,14 @@
     width: 36px;
     height: 36px;
     background-color: #555;
-    border: 1px solid #555; /* 테두리 색상 통일 */
+    border: 1px solid #555;
     border-radius: 4px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     transition: background-color 0.2s ease;
+    flex-shrink: 0; /* 버튼 크기가 줄어들지 않도록 */
 }
 .filterSearchButton:hover {
     background-color: #777;
@@ -120,80 +136,71 @@
     width: 16px;
     height: 16px;
     display: block;
-    filter: brightness(0) invert(1); /* 어두운 버튼 배경이므로 아이콘 흰색으로 */
+    filter: brightness(0) invert(1);
 }
 
 .reportsTable {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px; /* 기본 폰트 크기 조정 */
-    border-top: 2px solid #343a40; /* 테이블 상단 테두리 */
+    font-size: 14px;
+    border-top: 2px solid #343a40;
     margin-bottom: 25px;
 }
 
 .reportsTable th,
 .reportsTable td {
     border-bottom: 1px solid #dee2e6;
-    padding: 10px 8px; /* 패딩 약간 줄임 */
+    padding: 10px 8px;
     text-align: center;
     vertical-align: middle;
-    font-size: 0.88em; /* 테이블 내부 폰트 크기 미세 조정 */
-    word-break: break-word; /* 긴 내용 자동 줄바꿈 */
+    font-size: 0.88em;
+    word-break: break-word;
 }
 
 .reportsTable th {
     background-color: #f8f9fa;
     font-weight: 600;
     color: #495057;
-    white-space: nowrap; /* 헤더 줄바꿈 방지 */
+    white-space: nowrap;
 }
 
 .reportsTable .titleColumn,
 .reportsTable .contentSnippetCell {
-    text-align: left; /* 제목/내용은 왼쪽 정렬 */
-    min-width: 250px; /* 최소 너비 확보 */
-    padding-left: 15px; /* 왼쪽 패딩 추가 */
+    text-align: left;
+    min-width: 250px; /* 내용이 긴 경우를 대비한 최소 너비 */
+    /* max-width: 400px; /* 너무 길어지지 않도록 최대 너비 (선택적) */
+    padding-left: 15px;
 }
 
-.contentLink { /* 현재 JSX에서 직접 사용되지 않음, 필요시 주석 해제 */
-    text-decoration: none;
-    color: #333;
-    font-weight: normal;
-}
-.contentLink:hover {
-    text-decoration: underline;
-    color: #000;
-}
-
-.reportsTable tbody tr.clickableRow:hover td { /* 클릭 가능한 행에만 호버 효과 */
-    background-color: #f0f4f8; /* 호버 시 배경색 */
+.reportsTable tbody tr.clickableRow:hover td {
+    background-color: #f0f4f8;
     cursor: pointer;
 }
 
-.status { /* 기본 알약 버튼 스타일 */
+.status {
     display: inline-block;
     padding: 5px 12px;
     border: none;
-    border-radius: 12px; /* 둥근 모서리 */
+    border-radius: 12px;
     font-size: 12px;
     font-weight: bold;
-    color: #fff; /* 기본 글자색 흰색 */
+    color: #fff;
     text-align: center;
-    min-width: 60px; /* 최소 너비 */
+    min-width: 60px;
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s;
     line-height: 1.5;
     vertical-align: middle;
 }
 
-.activeStatus { /* '공개' 상태 (초록색 계열) */
+.activeStatus {
     background-color: #28a745;
 }
 .activeStatus:hover {
     background-color: #218838;
 }
 
-.inactiveStatus { /* '숨김' 상태 (회색 계열) */
+.inactiveStatus {
     background-color: #6c757d;
 }
 .inactiveStatus:hover {
