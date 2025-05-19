@@ -26,11 +26,12 @@
 }
 
 .searchInput:hover {
-  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
 .mainContent {
-  position: relative;  /* 꼭 필요 */
+  position: relative;
+  /* 꼭 필요 */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -55,12 +56,15 @@
 /* Reaction icons: 비디오 영역 바깥에 고정 */
 .reactionWrap {
   position: absolute;
-  bottom: 100px;               /* 비디오 하단에서 30px 위 */
-  right: -80px;                /* 비디오 오른쪽 영역 바깥으로 */
+  bottom: 100px;
+  /* 비디오 하단에서 30px 위 */
+  right: -80px;
+  /* 비디오 오른쪽 영역 바깥으로 */
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
+
 .reactionWrap li {
   width: 56px;
   height: 56px;
@@ -72,9 +76,11 @@
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .reactionWrap li:hover {
   background: #e0e0e0;
 }
+
 .reactionIcon {
   width: 30px;
   height: 30px;
@@ -84,18 +90,21 @@
 .arrowWrap {
   position: absolute;
   top: 50%;
-  right: 150px;  /* 영상 오른쪽 바깥으로 충분히 이동 */
+  right: 150px;
+  /* 영상 오른쪽 바깥으로 충분히 이동 */
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   gap: 50px;
   z-index: 10;
 }
+
 .arrowWrap ul {
   margin: 0;
   padding: 0;
   list-style: none;
 }
+
 .arrowWrap li {
   width: 56px;
   height: 56px;
@@ -108,14 +117,17 @@
   transition: background 0.2s;
   margin-bottom: 50px;
 }
+
 .arrowWrap li:hover {
   background-color: #ddd;
 }
+
 .arrowTop,
 .arrowBottom {
   width: 25px;
   height: 25px;
 }
+
 /* 아래 화살표는 회전 제거하여 아래 방향 */
 .arrowBottom {
   transform: rotate(180deg);
@@ -128,7 +140,7 @@
   width: 290px;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   padding: 16px;
   transition: bottom 0.4s ease;
   z-index: 1000;
@@ -161,6 +173,7 @@
   align-items: center;
   justify-content: center;
 }
+
 .folderBtn:hover {
   background: #4a5cd3;
 }
@@ -172,6 +185,7 @@
   padding: 0;
   list-style: none;
 }
+
 .emptyFolder {
   text-align: center;
   color: #999;
@@ -187,6 +201,7 @@
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .folderItem:hover {
   background: #f5f7ff;
 }
@@ -215,7 +230,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0,0,0,0.4);
+  background-color: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -229,7 +244,7 @@
   padding: 24px 32px;
   max-width: 320px;
   width: 90%;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   text-align: center;
 }
 
@@ -246,17 +261,18 @@
 }
 
 .loginModal button {
-  background-color: #fff;
-  color: black;
+  background-color: #ff3366;
+  color: white;
   border: none;
   border-radius: 8px;
   padding: 10px 24px;
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  border: 1px solid #333;
+  
 }
 
 .loginModal button:hover {
-  background-color: #4258c9;
+  background-color: #fb1f56;
+  color: white;
 }
