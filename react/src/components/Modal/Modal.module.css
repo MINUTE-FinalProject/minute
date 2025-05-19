@@ -5,14 +5,14 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6); /* 반투명도 약간 더 진하게 */
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1050; /* 부트스트랩 모달 z-index 참고 */
+  z-index: 1050;
   opacity: 0;
   animation: fadeInOverlay 0.25s forwards;
-  padding: 15px; /* 모바일 화면에서 좌우 여백 */
+  padding: 15px;
 }
 
 @keyframes fadeInOverlay {
@@ -31,7 +31,7 @@
   max-width: 500px;
   text-align: left;
   opacity: 0;
-  transform: translateY(-20px) scale(0.98); /* 시작 시 약간 위에서 작게 */
+  transform: translateY(-20px) scale(0.98);
   animation: slideDownFadeInContent 0.3s 0.05s forwards;
 }
 
@@ -48,30 +48,30 @@
   right: 15px;
   background: none;
   border: none;
-  font-size: 30px; /* 크기 약간 키움 */
+  font-size: 30px;
   color: #aaa;
   cursor: pointer;
   padding: 0;
   line-height: 1;
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition: color 0.2s ease; /* transform transition 제거 */
 }
 
 .closeButton:hover {
   color: #333;
-  transform: rotate(90deg);
+  /* transform: rotate(90deg); // <<< 애니메이션 제거 */
 }
 
 .modalTitle {
   font-size: 22px;
   font-weight: 600;
-  color: #333;
+  color: #333; /* 기본 제목 색상 (검정색 계열) */
   margin-top: 0;
-  margin-bottom: 20px; /* 메시지와의 간격 */
+  margin-bottom: 20px;
   text-align: center;
 }
 
 .modalBody {
-  margin-bottom: 30px; /* 버튼 영역과의 간격 */
+  margin-bottom: 30px;
 }
 
 .modalMessage {
@@ -89,23 +89,21 @@
   gap: 12px;
 }
 
-/* --- 버튼 공통 스타일 --- */
 .modalButton {
-  padding: 10px 22px; /* 패딩 조정 */
+  padding: 10px 22px;
   border: 1px solid transparent;
-  border-radius: 6px; /* 둥글기 약간 더 */
+  border-radius: 6px;
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
-  min-width: 100px; /* 최소 너비 */
+  min-width: 100px;
 }
 .modalButton:active {
-  transform: translateY(1px); /* 클릭 시 약간 눌리는 효과 */
+  transform: translateY(1px);
 }
 
-/* --- 기본 버튼 타입 (confirmButtonType, cancelButtonType) --- */
-.primary { /* 기본 확인 버튼 */
+.primary {
   background-color: #007bff;
   color: white;
   border-color: #007bff;
@@ -116,8 +114,8 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.secondary { /* 기본 취소 버튼 */
-  background-color: #6c757d; /* 회색 계열 */
+.secondary {
+  background-color: #6c757d;
   color: white;
   border-color: #6c757d;
 }
@@ -127,7 +125,7 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.danger { /* 삭제 등 위험한 작업 버튼 */
+.danger {
   background-color: #dc3545;
   color: white;
   border-color: #dc3545;
@@ -138,38 +136,29 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* 레거시/대체 버튼 스타일 (기본 타입이 없을 경우) */
-.confirmButton { /* .primary 와 동일하게 */
+.confirmButton {
   composes: primary;
 }
-.cancelButton { /* .secondary 와 동일하게 */
+.cancelButton {
   composes: secondary;
 }
 
-
-/* --- 타입별 모달 컨텐츠 스타일링 (선택적) --- */
 .content-error .modalTitle { color: #dc3545; }
-/* .content-error .primary { background-color: #dc3545; border-color: #dc3545; } */ /* 필요시 버튼 색상도 변경 */
-/* .content-error .primary:hover { background-color: #c82333; border-color: #bd2130; } */
-
 .content-success .modalTitle { color: #28a745; }
-/* .content-success .primary { background-color: #28a745; border-color: #28a745; } */
-/* .content-success .primary:hover { background-color: #218838; border-color: #1e7e34; } */
 
-.content-warning .modalTitle { color: #ffc107; }
-/* .content-warning .primary { background-color: #ffc107; border-color: #ffc107; color: #212529; } */
-/* .content-warning .primary:hover { background-color: #e0a800; border-color: #d39e00; } */
+/* === 경고 타입 모달 제목 색상 변경 === */
+/* .content-warning .modalTitle { color: #ffc107; } // <<< 기존 노란색 스타일 제거 (기본값인 #333으로 표시됨) */
+/* 만약 .content-warning 클래스가 다른 곳에서 .modalTitle 색상을 변경할 가능성이 있다면 아래처럼 명시적으로 #333을 지정할 수 있습니다. */
+/* .content-warning .modalTitle { color: #333; } */
 
 
-/* --- 관리자용 모달 특별 스타일 (예시) --- */
-/* .adminDefault 또는 .adminConfirm 같은 type으로 전달 시 적용 */
 .content-adminDefault .modalTitle,
 .content-adminConfirm .modalTitle {
-  color: #343a40; /* 관리자용 제목 색상 (예시) */
+  color: #343a40;
 }
 .content-adminDefault .primary,
 .content-adminConfirm .primary {
-  background-color: #343a40; /* 관리자용 확인 버튼 (예시: 다크 그레이) */
+  background-color: #343a40;
   border-color: #343a40;
 }
 .content-adminDefault .primary:hover,
@@ -179,7 +168,7 @@
 }
 .content-adminDefault .secondary,
 .content-adminConfirm .secondary {
-  background-color: #6c757d; /* 관리자용 취소 버튼은 동일하게 사용 가능 */
+  background-color: #6c757d;
   border-color: #6c757d;
 }
 .content-adminDefault .secondary:hover,
@@ -188,27 +177,25 @@
   border-color: #545b62;
 }
 
-
-/* 모바일 화면 대응 */
 @media (max-width: 600px) {
   .modalContent {
-    padding: 20px 20px 25px; /* 패딩 조정 */
+    padding: 20px 20px 25px;
     margin: 0 10px;
-    max-height: calc(100vh - 40px); /* 화면 높이에 맞게 최대 높이 */
-    overflow-y: auto; /* 내용 길어지면 내부 스크롤 */
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
   }
   .modalTitle {
-    font-size: 20px; /* 모바일 제목 크기 */
+    font-size: 20px;
   }
   .modalMessage {
     font-size: 15px;
   }
   .modalActions {
-    flex-direction: column-reverse; /* 버튼 세로 정렬 */
+    flex-direction: column-reverse;
     gap: 10px;
   }
   .modalButton {
-    width: 100%; /* 버튼 전체 너비 */
-    padding: 12px 15px; /* 모바일 버튼 패딩 */
+    width: 100%;
+    padding: 12px 15px;
   }
 }
