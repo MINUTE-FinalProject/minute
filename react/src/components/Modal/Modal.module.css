@@ -53,18 +53,17 @@
   cursor: pointer;
   padding: 0;
   line-height: 1;
-  transition: color 0.2s ease; /* transform transition 제거 */
+  transition: color 0.2s ease;
 }
 
 .closeButton:hover {
   color: #333;
-  /* transform: rotate(90deg); // <<< 애니메이션 제거 */
 }
 
 .modalTitle {
   font-size: 22px;
   font-weight: 600;
-  color: #333; /* 기본 제목 색상 (검정색 계열) */
+  color: #333;
   margin-top: 0;
   margin-bottom: 20px;
   text-align: center;
@@ -89,6 +88,7 @@
   gap: 12px;
 }
 
+/* --- 버튼 공통 스타일 --- */
 .modalButton {
   padding: 10px 22px;
   border: 1px solid transparent;
@@ -103,6 +103,7 @@
   transform: translateY(1px);
 }
 
+/* --- 기본 버튼 타입 (confirmButtonType, cancelButtonType) --- */
 .primary {
   background-color: #007bff;
   color: white;
@@ -143,40 +144,77 @@
   composes: secondary;
 }
 
+/* --- 타입별 모달 컨텐츠 스타일링 --- */
 .content-error .modalTitle { color: #dc3545; }
 .content-success .modalTitle { color: #28a745; }
 
-/* === 경고 타입 모달 제목 색상 변경 === */
-/* .content-warning .modalTitle { color: #ffc107; } // <<< 기존 노란색 스타일 제거 (기본값인 #333으로 표시됨) */
-/* 만약 .content-warning 클래스가 다른 곳에서 .modalTitle 색상을 변경할 가능성이 있다면 아래처럼 명시적으로 #333을 지정할 수 있습니다. */
-/* .content-warning .modalTitle { color: #333; } */
+/* === 사용자용 'success' 타입 모달의 확인 버튼 스타일 === */
+.content-success .primary {
+  background-color: #FF69B4;
+  color: white;
+  border-color: #FF69B4;
+}
+.content-success .primary:hover {
+  background-color: #e0559d;
+  border-color: #e0559d;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
+/* === 관리자용 'adminSuccess' 타입 모달의 확인 버튼 스타일 (핑크색으로 통일) === */
+.content-adminSuccess .primary {
+  background-color: #FF69B4;
+  color: white;
+  border-color: #FF69B4;
+}
+.content-adminSuccess .primary:hover {
+  background-color: #e0559d;
+  border-color: #e0559d;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
+/* --- 기타 관리자용 모달 스타일 --- */
 .content-adminDefault .modalTitle,
-.content-adminConfirm .modalTitle {
+.content-adminConfirm .modalTitle,
+.content-adminWarning .modalTitle,
+.content-adminError .modalTitle,
+.content-adminSuccess .modalTitle {
   color: #343a40;
 }
+
+/* 관리자용 primary 버튼 (success가 아닌 경우 - 기본 어두운 색) */
 .content-adminDefault .primary,
-.content-adminConfirm .primary {
-  background-color: #343a40;
+.content-adminConfirm .primary,
+.content-adminWarning .primary,
+.content-adminError .primary {
+  background-color: #343a40; 
   border-color: #343a40;
+  color: white;
 }
 .content-adminDefault .primary:hover,
-.content-adminConfirm .primary:hover {
+.content-adminConfirm .primary:hover,
+.content-adminWarning .primary:hover,
+.content-adminError .primary:hover {
   background-color: #23272b;
   border-color: #1d2124;
 }
-.content-adminDefault .secondary,
-.content-adminConfirm .secondary {
-  background-color: #6c757d;
-  border-color: #6c757d;
-}
-.content-adminDefault .secondary:hover,
-.content-adminConfirm .secondary:hover {
-  background-color: #5a6268;
-  border-color: #545b62;
-}
 
+/* 아래 블록이 오류의 원인이었습니다. 이 블록을 제거합니다.
+  취소 버튼(secondary)은 Modal.jsx에서 cancelButtonType prop에 의해 이미 
+  .secondary 또는 .cancelButton(composes .secondary) 클래스를 받으므로
+  모달의 type에 따라 중복으로 composes 할 필요가 없습니다.
+*/
+/*
+.content-adminDefault .secondary,
+.content-adminConfirm .secondary,
+.content-adminWarning .secondary,
+.content-adminError .secondary,
+.content-adminSuccess .secondary {
+  composes: secondary; 
+}
+*/
+
+
+/* 모바일 화면 대응 */
 @media (max-width: 600px) {
   .modalContent {
     padding: 20px 20px 25px;
