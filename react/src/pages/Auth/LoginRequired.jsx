@@ -1,5 +1,5 @@
 import img from '../../assets/images/waring.png';
-import styles from "./LoginRequired.module.css";
+import styles from "../../assets/styles/LoginRequired.module.css";
 
 const LoginRequired = () => {
   return (

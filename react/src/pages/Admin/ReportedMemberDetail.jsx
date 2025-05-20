@@ -1,8 +1,8 @@
 // ReportedMemberDetail.jsx
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'; // useNavigate 추가
+import styles from "../../assets/styles/ReportedMemberDetail.module.css"; // 실제 경로로 수정해주세요.
 import Pagination from '../../components/Pagination/Pagination'; // 실제 경로로 수정해주세요.
-import styles from "./ReportedMemberDetail.module.css"; // 실제 경로로 수정해주세요.
 
 const generateInitialReportData = (userIdForDetail, count = 15) => {
     const items = [];

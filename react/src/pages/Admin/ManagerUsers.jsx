@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import searchButtonIcon from '../../assets/images/search_icon.png'; // 실제 경로에 맞게 수정해주세요.
+import styles from "../../assets/styles/ManagerUsers.module.css";
 import Pagination from '../../components/Pagination/Pagination'; // 실제 경로에 맞게 수정해주세요.
-import styles from "./ManagerUsers.module.css";
 
 // 더미 데이터 생성 함수 (새로운 분류에 맞게 수정)
 const generateUserMockData = () => {

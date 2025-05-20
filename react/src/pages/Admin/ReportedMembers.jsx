@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // useNavigate import
 import searchButtonIcon from '../../assets/images/search_icon.png'; // 실제 경로로 수정해주세요.
+import styles from "../../assets/styles/ReportedMembers.module.css"; // 실제 경로로 수정해주세요.
 import Pagination from '../../components/Pagination/Pagination'; // 실제 경로로 수정해주세요.
-import styles from "./ReportedMembers.module.css"; // 실제 경로로 수정해주세요.
 
 const generateInitialReportedMembers = (count = 37) => {
     const items = [];

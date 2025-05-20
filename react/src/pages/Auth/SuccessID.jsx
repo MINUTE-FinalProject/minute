@@ -1,4 +1,4 @@
-import styles from './SuccessID.module.css';
+import styles from '../../assets/styles/SuccessID.module.css';
 
 
 function SuccessID() {

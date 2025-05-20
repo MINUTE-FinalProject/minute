@@ -1,4 +1,5 @@
-import styles from "./SignUpForm.module.css";
+import { Link } from "react-router-dom";
+import styles from "../../assets/styles/SignUpForm.module.css";
 
 const SignupComplete = () => {
 
@@ -21,8 +22,10 @@ const SignupComplete = () => {
           <p className={styles.mainText}>회원가입이 완료되었습니다.</p>
           <p className={styles.subText}>로그인 후 MIN:UTE의 다양한 서비스를 이용하실 수 있습니다.</p>
         </div>
+        <Link to="/login" className={styles.loginButton}>
+          Login
+        </Link>
 
-        <button className={styles.loginButton}>Login</button>
       </div>
     </div>
     </div>

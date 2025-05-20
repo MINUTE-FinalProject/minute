@@ -1,5 +1,5 @@
 import img from '../../assets/images/key.png';
-import styles from './FindPwd.module.css';
+import styles from '../../assets/styles/FindPwd.module.css';
 
 function SuccessPwd() {
     return (

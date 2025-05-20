@@ -1,4 +1,4 @@
-import styles from "./CheckDelete.module.css";
+import styles from "../../assets/styles/CheckDelete.module.css";
 
 function CheckDelete() {
     return (

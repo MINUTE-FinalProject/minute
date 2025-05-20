@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import img from '../../assets/images/cute.png';
 import img2 from '../../assets/images/edit_pencil.png';
-import styles from './CheckInfo.module.css';
+import styles from '../../assets/styles/CheckInfo.module.css';
 
 function CheckInfo() {
   const [gender, setGender] = useState('');

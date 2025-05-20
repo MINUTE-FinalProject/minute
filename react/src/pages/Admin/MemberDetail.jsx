@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import styles from "./MemberDetail.module.css";
+import styles from "../../assets/styles/MemberDetail.module.css";
 
 const mockMembers = [
   {

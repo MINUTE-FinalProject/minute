@@ -1,6 +1,6 @@
 
 import img from "../../assets/images/ex1.jpg";
-import styles from "./ManagerMyPage.module.css";
+import styles from "../../assets/styles/ManagerMyPage.module.css";
 
 const ManagerMyPage = () => {
   return (

@@ -1,4 +1,4 @@
-import styles from './FindID.module.css';
+import styles from '../../assets/styles/FindID.module.css';
 
 function FindID() {
   return (

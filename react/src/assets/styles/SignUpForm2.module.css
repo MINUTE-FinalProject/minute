@@ -36,16 +36,19 @@ body {
   }
   
   .circle {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     border-radius: 9999px;
     background-color: #d1d5db;
   }
   
   .circleActive {
-    background-color: #FF3366;
+    width: 28px;
+    height: 28px;
+    border-radius: 9999px;
+    background-color: #f43f5e;
   }
-  
+    
   .line {
     width: 150px;
     height: 1px;
@@ -95,6 +98,16 @@ body {
     font-size: 14px;
   }
 
+  .active {
+  background-color: #f43f5e;
+  }
+
+  .disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+
   .modibtn {
     width: 100px;
     border: 1px solid #000;
@@ -130,7 +143,14 @@ body {
   }
   
   .hiddenRadio {
-    display: none;
+    position: absolute;
+  opacity: 0;
+  width: 20px;    /* 클릭 가능한 영역 확보 */
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  z-index: 1;
+  cursor: pointer;
   }
   
   .genderIndicator {
@@ -179,6 +199,26 @@ body {
     text-decoration: underline;
     text-decoration-color: #9E9E9E;
   }
+
+
+  .err {
+  color: red;
+  font-size: 12px;
+  text-align: right;
+  height: 18px;
+  margin-top: 4px;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease;
+  line-height: 18px; 
+}
+
+.err:empty {
+  opacity: 0;
+  visibility: hidden;
+  margin-top: 4px;
+  height: 18px;
+}
 
   
   

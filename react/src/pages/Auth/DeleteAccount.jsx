@@ -1,5 +1,5 @@
 import img from '../../assets/images/ex1.jpg';
-import styles from './DeleteAccount.module.css';
+import styles from '../../assets/styles/DeleteAccount.module.css';
 
 function DeleteAccount() {
     return(
