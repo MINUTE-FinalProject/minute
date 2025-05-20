@@ -1,6 +1,6 @@
 // src/Like.jsx
 import React, { useState } from "react";
-import styles from "./Like.module.css";
+import likeStyle from "../../assets/styles/Like.module.css";
 import MypageNav from "../../components/MypageNavBar/MypageNav";
 import Modal from "../../components/Modal/Modal"; // Modal 컴포넌트 import
 
@@ -112,42 +112,42 @@ const Like = () => {
   };
 
   const renderVideos = (videoList, containerId) => (
-    <div className={styles.videoListWrapper}>
+    <div className={likeStyle.videoListWrapper}>
       {videoList.length > VISIBLE_COUNT && (
-        <button className={styles.arrow} onClick={() => scroll(containerId, -1)}>‹</button>
+        <button className={likeStyle.arrow} onClick={() => scroll(containerId, -1)}>‹</button>
       )}
-      <div className={styles.videoList} id={containerId}>
+      <div className={likeStyle.videoList} id={containerId}>
         {videoList.map((video, index) => (
           <div
             key={video.id}
-            className={styles.videoItem}
+            className={likeStyle.videoItem}
             style={{ backgroundImage: `url(${video.thumbnail || 'https://via.placeholder.com/220x124'})` }}
           >
-            <div className={styles.videoTitle}>
+            <div className={likeStyle.videoTitle}>
               <span>{video.title || 'No Title'}</span>
-              <button className={styles.moreBtn} onClick={() => setModal({ show: true, index })}>⋯</button>
+              <button className={likeStyle.moreBtn} onClick={() => setModal({ show: true, index })}>⋯</button>
             </div>
           </div>
         ))}
       </div>
       {videoList.length > VISIBLE_COUNT && (
-        <button className={styles.arrow} onClick={() => scroll(containerId, 1)}>›</button>
+        <button className={likeStyle.arrow} onClick={() => scroll(containerId, 1)}>›</button>
       )}
     </div>
   );
 
   return (
-    <div className={styles.wrapper}>
+    <div className={likeStyle.wrapper}>
       <MypageNav />
-      <div className={styles.mainContent}>
-        <h1 className={styles.header}>좋아요 한 영상</h1>
+      <div className={likeStyle.mainContent}>
+        <h1 className={likeStyle.header}>좋아요 한 영상</h1>
 
         {/* 필터 버튼 */}
-        <div className={styles.filterMenu}>
+        <div className={likeStyle.filterMenu}>
           {["전체", "최근"].map((type) => (
             <button
               key={type}
-              className={`${styles.filterButton} ${filter === type ? styles.active : ""}`}
+              className={`${likeStyle.filterButton} ${filter === type ? likeStyle.active : ""}`}
               onClick={() => setFilter(type)}
             >
               {type}
@@ -159,15 +159,15 @@ const Like = () => {
         {getFilteredVideos().length > 0 ? (
           renderVideos(getFilteredVideos(), "likedVideoList")
         ) : (
-          <p className={styles.noData}>좋아요 한 영상이 없습니다.</p>
+          <p className={likeStyle.noData}>좋아요 한 영상이 없습니다.</p>
         )}
 
         {/* 최근 시청한 영상 */}
-        <h2 className={styles.sectionTitle}>최근 시청한 영상</h2>
+        <h2 className={likeStyle.sectionTitle}>최근 시청한 영상</h2>
         {recentWatched.length > 0 ? (
           renderVideos(recentWatched, "recentVideoList")
         ) : (
-          <p className={styles.noData}>최근 시청한 영상이 없습니다.</p>
+          <p className={likeStyle.noData}>최근 시청한 영상이 없습니다.</p>
         )}
 
         {/* 삭제/북마크 모달 */}
@@ -176,11 +176,11 @@ const Like = () => {
           onClose={closeModal}
           title="옵션"
           children={
-            <div className={styles.optionsContainer}>
-              <button className={styles.optionButton} onClick={handleDelete}>
+            <div className={likeStyle.optionsContainer}>
+              <button className={likeStyle.optionButton} onClick={handleDelete}>
                 삭제
               </button>
-              <button className={styles.optionButton} onClick={openFolderModal}>
+              <button className={likeStyle.optionButton} onClick={openFolderModal}>
                 북마크에 저장
               </button>
             </div>
@@ -199,10 +199,10 @@ const Like = () => {
           title="저장할 폴더 선택"
           children={
             <>
-              <ul className={styles.folderList}>
+              <ul className={likeStyle.folderList}>
                 {folders.map((folder) => (
                   <li key={folder.id}>
-                    <label className={styles.folderLabel}>
+                    <label className={likeStyle.folderLabel}>
                       <input
                         type="radio"
                         name="folder"
@@ -216,7 +216,7 @@ const Like = () => {
                 ))}
               </ul>
               <button
-                className={styles.newFolderButton}
+                className={likeStyle.newFolderButton}
                 onClick={() => {
                   setFolderModal(false);
                   setCreateFolderModal(true);
@@ -246,7 +246,7 @@ const Like = () => {
               placeholder="폴더 이름 입력"
               value={newFolderName}
               onChange={(e) => setNewFolderName(e.target.value)}
-              className={styles.modalInput}
+              className={likeStyle.modalInput}
             />
           }
           onConfirm={handleCreateFolder}

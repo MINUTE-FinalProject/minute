@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import searchStyle from './search.module.css';
+import styles from "../../assets/styles/search.module.css";
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
-
 
 function Search() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,41 +23,40 @@ function Search() {
 
   return (
     <>
-      <div className={searchStyle.container}>
+      <div className={styles.container}>
         <Header />
-        <header className={searchStyle.header}>
-          <div className={searchStyle.searchBarWrapper}>
-            <div className={searchStyle.searchBar}>
+        <header className={styles.header}>
+          <div className={styles.searchBarWrapper}>
+            <div className={styles.searchBar}>
               <input type="text" placeholder="검색..." />
-              <button className={searchStyle.searchIcon}>
+              <button className={styles.searchIcon}>
                 <img src="/src/assets/images/searchIcon.png" alt="" width="20" height="20" />
               </button>
             </div>
           </div>
         </header>
-        <div className={searchStyle.grid}>
+        <div className={styles.grid}>
           {currentItems.map((item) => (
-            <div key={item.id} className={searchStyle.gridItem}>
-              <div className={searchStyle.itemContent}>
-                <div className={searchStyle.placeholder}></div>
+            <div key={item.id} className={styles.gridItem}>
+              <div className={styles.itemContent}>
+                <div className={styles.placeholder}></div>
                 <h3>{item.title}</h3>
                 <p>{item.content}</p>
               </div>
             </div>
           ))}
         </div>
-        <div className={searchStyle.pagination}>
+        <div className={styles.pagination}>
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
             <button
               key={number}
               onClick={() => paginate(number)}
-              className={currentPage === number ? searchStyle.active : ''}
+              className={currentPage === number ? styles.active : ''}
             >
               {number}
             </button>
           ))}
         </div>
-
       </div>
       <Footer />
     </>

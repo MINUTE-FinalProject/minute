@@ -2,8 +2,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import MypageNav from "../../components/MypageNavBar/MypageNav";
-import Modal from "../../components/Modal/Modal"; // Modal 컴포넌트 import
-import bookmarkStyle from "./bookmark.module.css";
+import Modal from "../../components/Modal/Modal";
+import bookmarkStyle from "../../assets/styles/bookmark.module.css";
 
 const Bookmark = () => {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const Bookmark = () => {
     if (folderId) {
       const folder = folders.find((f) => f.id === parseInt(folderId));
       if (folder) {
-        setSelectedFolderId(parseInt(folderId));
+        setSelectedFolderId(folder.id);
         setSelectedFolderVideos([]);
       }
     } else {
@@ -38,10 +38,10 @@ const Bookmark = () => {
   };
 
   const handleAddModalSubmit = () => {
-    if (newFolderName.trim()) {
-      const trimmedFolderName = newFolderName.trim().slice(0, 10);
-      const newFolder = { id: Date.now(), title: trimmedFolderName };
-      setFolders([...folders, newFolder]);
+    const name = newFolderName.trim().slice(0, 10);
+    if (name) {
+      const newFolder = { id: Date.now(), title: name };
+      setFolders((prev) => [...prev, newFolder]);
       setNewFolderName("");
       setIsAddModalOpen(false);
     }
@@ -52,27 +52,23 @@ const Bookmark = () => {
     setIsAddModalOpen(false);
   };
 
-  const handleOpenOptionsModal = (folderId) => {
-    setSelectedFolderId(folderId);
+  const handleOpenOptionsModal = (id) => {
+    setSelectedFolderId(id);
     setIsOptionsModalOpen(true);
   };
 
   const handleOpenRenameModal = () => {
     const folder = folders.find((f) => f.id === selectedFolderId);
-    setRenameFolderName(folder.title);
+    if (folder) setRenameFolderName(folder.title);
     setIsOptionsModalOpen(false);
     setIsRenameModalOpen(true);
   };
 
   const handleRenameModalSubmit = () => {
-    if (renameFolderName.trim()) {
-      const trimmedFolderName = renameFolderName.trim().slice(0, 10);
-      setFolders(
-        folders.map((folder) =>
-          folder.id === selectedFolderId
-            ? { ...folder, title: trimmedFolderName }
-            : folder
-        )
+    const name = renameFolderName.trim().slice(0, 10);
+    if (name) {
+      setFolders((prev) =>
+        prev.map((f) => (f.id === selectedFolderId ? { ...f, title: name } : f))
       );
       setRenameFolderName("");
       setIsRenameModalOpen(false);
@@ -86,12 +82,10 @@ const Bookmark = () => {
     setSelectedFolderId(null);
   };
 
-  const handleCheckboxChange = (folderId) => {
-    if (selectedFolders.includes(folderId)) {
-      setSelectedFolders(selectedFolders.filter((id) => id !== folderId));
-    } else {
-      setSelectedFolders([...selectedFolders, folderId]);
-    }
+  const handleCheckboxChange = (id) => {
+    setSelectedFolders((prev) =>
+      prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id]
+    );
   };
 
   const handleDeleteFolder = () => {
@@ -101,24 +95,23 @@ const Bookmark = () => {
   };
 
   const handleDeleteModalSubmit = () => {
-    setFolders(folders.filter((folder) => !selectedFolders.includes(folder.id)));
-    setSelectedFolders([]);
-    setIsDeleteModalOpen(false);
-
-    if (selectedFolderId && selectedFolders.includes(selectedFolderId)) {
+    setFolders((prev) => prev.filter((f) => !selectedFolders.includes(f.id)));
+    if (selectedFolders.includes(selectedFolderId)) {
       navigate("/bookmark");
       setSelectedFolderId(null);
     }
+    setSelectedFolders([]);
+    setIsDeleteModalOpen(false);
   };
 
   const handleDeleteModalCancel = () => {
     setIsDeleteModalOpen(false);
   };
 
-  const handleFolderClick = (folderId, folderTitle) => {
+  const handleFolderClick = (id) => {
     setIsLoading(true);
     setTimeout(() => {
-      navigate(`/bookmark/${folderId}`);
+      navigate(`/bookmark/${id}`);
       setIsLoading(false);
     }, 1000);
   };
@@ -139,9 +132,7 @@ const Bookmark = () => {
                 <div className={bookmarkStyle.buttons}>
                   {selectedFolderId === null && (
                     <>
-                      <button className={bookmarkStyle.btn} onClick={handleAddFolder}>
-                        폴더 추가
-                      </button>
+                      <button className={bookmarkStyle.btn} onClick={handleAddFolder}>폴더 추가</button>
                       <button
                         className={bookmarkStyle.btn}
                         onClick={handleDeleteFolder}
@@ -165,7 +156,7 @@ const Bookmark = () => {
                       <div
                         key={folder.id}
                         className={bookmarkStyle.bookmarkItem}
-                        onClick={() => handleFolderClick(folder.id, folder.title)}
+                        onClick={() => handleFolderClick(folder.id)}
                         style={{ cursor: "pointer" }}
                       >
                         <div className={bookmarkStyle.bookmarkCard}>
@@ -221,21 +212,20 @@ const Bookmark = () => {
                 isOpen={isAddModalOpen}
                 onClose={handleAddModalCancel}
                 title="폴더 추가"
-                children={
-                  <input
-                    type="text"
-                    value={newFolderName}
-                    onChange={(e) => setNewFolderName(e.target.value)}
-                    maxLength={10}
-                    placeholder="폴더 이름 (최대 10자)"
-                    className={bookmarkStyle.modalInput}
-                  />
-                }
                 onConfirm={handleAddModalSubmit}
                 confirmText="확인"
                 cancelText="취소"
                 onCancel={handleAddModalCancel}
-              />
+              >
+                <input
+                  type="text"
+                  value={newFolderName}
+                  onChange={(e) => setNewFolderName(e.target.value)}
+                  maxLength={10}
+                  placeholder="폴더 이름 (최대 10자)"
+                  className={bookmarkStyle.modalInput}
+                />
+              </Modal>
 
               {/* 옵션 모달 */}
               <Modal
@@ -245,38 +235,38 @@ const Bookmark = () => {
                   setSelectedFolderId(null);
                 }}
                 title="옵션"
-                children={
-                  <div className={bookmarkStyle.optionsContainer}>
-                    <button className={bookmarkStyle.optionButton} onClick={handleOpenRenameModal}>
-                      이름 변경
-                    </button>
-                    <button className={bookmarkStyle.optionButton}>삭제</button>
-                  </div>
-                }
-              />
+              >
+                <div className={bookmarkStyle.optionsContainer}>
+                  <button className={bookmarkStyle.optionButton} onClick={handleOpenRenameModal}>
+                    이름 변경
+                  </button>
+                  <button className={bookmarkStyle.optionButton} onClick={handleDeleteFolder}>
+                    삭제
+                  </button>
+                </div>
+              </Modal>
 
-              {/* 폴더 이름 변경 모달 */}
+              {/* 이름 변경 모달 */}
               <Modal
                 isOpen={isRenameModalOpen}
                 onClose={handleRenameModalCancel}
                 title="폴더 이름 변경"
-                children={
-                  <input
-                    type="text"
-                    value={renameFolderName}
-                    onChange={(e) => setRenameFolderName(e.target.value)}
-                    maxLength={10}
-                    placeholder="새 폴더 이름 (최대 10자)"
-                    className={bookmarkStyle.modalInput}
-                  />
-                }
                 onConfirm={handleRenameModalSubmit}
                 confirmText="확인"
                 cancelText="취소"
                 onCancel={handleRenameModalCancel}
-              />
+              >
+                <input
+                  type="text"
+                  value={renameFolderName}
+                  onChange={(e) => setRenameFolderName(e.target.value)}
+                  maxLength={10}
+                  placeholder="새 폴더 이름 (최대 10자)"
+                  className={bookmarkStyle.modalInput}
+                />
+              </Modal>
 
-              {/* 삭제 확인 모달 */}
+              {/* 삭제 모달 */}
               <Modal
                 isOpen={isDeleteModalOpen}
                 onClose={handleDeleteModalCancel}
@@ -286,7 +276,7 @@ const Bookmark = () => {
                 confirmText="삭제"
                 cancelText="취소"
                 onCancel={handleDeleteModalCancel}
-                confirmButtonType="danger" // 삭제 버튼은 빨간색으로 표시
+                confirmButtonType="danger"
               />
             </main>
           </div>
