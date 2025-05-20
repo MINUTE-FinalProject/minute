@@ -1,8 +1,8 @@
 // src/pages/Admin/Notice/ManagerNoticeDetail.jsx (또는 해당 파일의 실제 경로)
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import styles from '../../assets/styles/ManagerNoticeDetail.module.css';
 import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
-import styles from './ManagerNoticeDetail.module.css';
 
 const sampleNotices = {
     'sticky': { id: 'sticky', isImportant: true, title: '이벤트 당첨자 발표 안내 (필독)', author: '관리자', views: 1024, createdAt: '2025.05.10', content: "안녕하세요. 사용자 여러분께 안내 말씀드립니다.\n\n보다 안정적인 서비스 제공을 위해 아래와 같이 서버 점검을 실시할 예정입니다.\n점검 시간 동안에는 서비스 이용이 일시적으로 중단될 수 있으니 양해 부탁드립니다.\n\n- 점검 일시: 2025년 5월 15일 (목) 02:00 ~ 04:00 (2시간)\n- 점검 내용: 서버 안정화 및 성능 개선 작업\n\n항상 최선을 다하는 서비스가 되겠습니다.\n감사합니다." },

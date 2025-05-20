@@ -5,9 +5,9 @@ import reportOffIcon from "../../assets/images/able-alarm.png";
 import likeOffIcon from "../../assets/images/b_thumbup.png";
 import reportOnIcon from "../../assets/images/disable-alarm.png";
 import likeOnIcon from "../../assets/images/thumbup.png";
+import styles from '../../assets/styles/ManagerFreeboardDetail.module.css';
 import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
 import Pagination from '../../components/Pagination/Pagination';
-import styles from './ManagerFreeboardDetail.module.css';
 
 const LOGGED_IN_ADMIN_ID = 'adminUser'; 
 

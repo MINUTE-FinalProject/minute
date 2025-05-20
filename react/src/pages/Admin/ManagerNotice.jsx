@@ -2,9 +2,9 @@
 import { useEffect, useState } from 'react'; // React import 추가
 import { Link, useNavigate } from 'react-router-dom';
 import searchButtonIcon from "../../assets/images/search_icon.png";
+import styles from '../../assets/styles/ManagerNotice.module.css';
 import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
 import Pagination from '../../components/Pagination/Pagination';
-import styles from './ManagerNotice.module.css';
 
 const generateInitialNotices = (count = 35) => {
     // ... (기존 generateInitialNotices 함수 내용 유지)

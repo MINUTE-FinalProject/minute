@@ -1,8 +1,8 @@
 // src/pages/Admin/Notice/ManagerNoticeEdit.jsx (또는 해당 파일의 실제 경로)
 import { useEffect, useState } from 'react'; // React import 추가
 import { useNavigate, useParams } from 'react-router-dom';
+import styles from '../../assets/styles/ManagerNoticeEdit.module.css';
 import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
-import styles from './ManagerNoticeEdit.module.css';
 
 const sampleNotices = {
     'sticky': { id: 'sticky', isImportant: true, title: '이벤트 당첨자 발표 안내 (필독)', author: '관리자', views: 1024, createdAt: '25.04.21', content: "기존 중요 공지 내용입니다..." },

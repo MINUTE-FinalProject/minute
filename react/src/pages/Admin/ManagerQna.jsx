@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import reportOffIcon from '../../assets/images/able-alarm.png';
 import reportOnIcon from '../../assets/images/disable-alarm.png';
 import searchButtonIcon from '../../assets/images/search_icon.png';
+import styles from '../../assets/styles/ManagerQna.module.css';
 import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
 import Pagination from '../../components/Pagination/Pagination';
-import styles from './ManagerQna.module.css';
 
 const generateInitialQnaData = (count = 42) => {
     // ... (기존 generateInitialQnaData 함수 내용 유지)

@@ -3,8 +3,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import reportOffIcon from '../../assets/images/able-alarm.png';
 import reportOnIcon from '../../assets/images/disable-alarm.png';
+import styles from '../../assets/styles/ManagerQnaDetail.module.css';
 import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
-import styles from './ManagerQnaDetail.module.css';
 
 const getMockQnaDetailById = (qnaId) => {
     // ... (기존 getMockQnaDetailById 함수 내용 유지)

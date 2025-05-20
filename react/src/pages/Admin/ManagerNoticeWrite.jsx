@@ -1,8 +1,8 @@
 // src/pages/Admin/Notice/ManagerNoticeWrite.jsx (또는 해당 파일의 실제 경로)
 import { useState } from 'react'; // React import 추가
 import { useNavigate } from 'react-router-dom';
+import styles from "../../assets/styles/ManagerNoticeWrite.module.css";
 import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 경로 확인
-import styles from "./ManagerNoticeWrite.module.css";
 
 function ManagerNoticeWrite() {
     const navigate = useNavigate();

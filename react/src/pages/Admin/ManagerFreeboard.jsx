@@ -6,9 +6,9 @@ import likeOffIcon from "../../assets/images/b_thumbup.png";
 import reportOnIcon from "../../assets/images/disable-alarm.png";
 import searchButtonIcon from "../../assets/images/search_icon.png";
 import likeOnIcon from "../../assets/images/thumbup.png";
+import styles from '../../assets/styles/ManagerFreeboard.module.css';
 import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
 import Pagination from '../../components/Pagination/Pagination';
-import styles from './ManagerFreeboard.module.css';
 
 const CURRENT_ADMIN_ID = '관리자1';
 
