@@ -157,7 +157,7 @@
 
 /* --- 타입별 모달 컨텐츠 스타일링 --- */
 .content-error .modalTitle { color: #dc3545; }
-.content-success .modalTitle { color: #28a745; } /* 사용자용 성공 모달 제목은 초록색 유지 */
+.content-success .modalTitle { color: #ff3366; } /* 사용자용 성공 모달 제목은 초록색 유지 */
 
 
 /* === 사용자용 'success' 타입 모달의 확인 버튼 스타일 (검정색으로 변경) === */
