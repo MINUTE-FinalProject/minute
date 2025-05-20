@@ -58,6 +58,7 @@
     max-width: 100%;
     height: auto;
     border-radius: 6px;
+    max-height: 215px;
 }
 
 /* 실제 입력 폼 내용을 감싸는 div */
@@ -89,11 +90,13 @@
     margin-bottom: 15px;
 }
 
+/* === 제목 입력칸 포커스 스타일 수정 === */
 .info:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+    border-color: #FF69B4; /* 핑크색 테두리로 변경 */
+    box-shadow: 0 0 0 0.2rem rgba(255, 105, 180, 0.25); /* 핑크색 그림자 효과로 변경 */
     outline: none;
 }
+/* === 제목 입력칸 포커스 스타일 수정 끝 === */
 
 /* 내용 입력 textarea */
 .textbox {
@@ -108,11 +111,13 @@
     min-height: 150px;
 }
 
+/* === 내용 입력칸 포커스 스타일 수정 === */
 .textbox:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+    border-color: #FF69B4; /* 핑크색 테두리로 변경 */
+    box-shadow: 0 0 0 0.2rem rgba(255, 105, 180, 0.25); /* 핑크색 그림자 효과로 변경 */
     outline: none;
 }
+/* === 내용 입력칸 포커스 스타일 수정 끝 === */
 
 /* 수정 버튼을 감싸는 div */
 .edit { /* 클래스명 변경됨 */
@@ -123,7 +128,7 @@
 /* 수정 버튼 (작성 버튼과 동일한 스타일 재사용 가능) */
 .submitButton {
     padding: 10px 25px;
-    background-color: #000000; 
+    background-color: #000000;
     color: white;
     border: none;
     border-radius: 6px;
@@ -134,7 +139,7 @@
 }
 
 .submitButton:hover {
-    background-color: #333333; 
+    background-color: #333333;
 }
 
 /* 모바일 등 작은 화면 반응형 (선택적 예시) */

@@ -1,134 +1,135 @@
-/* ManagerNoticeDetail.module.css */
+/* ManagerNoticeDetail.module.css (상단 링크 스타일 변경, 하단 목록 버튼 스타일 제거) */
 
 .container {
   display: flex;
-  flex-direction: row;
-  margin-top: 45px; /* 고정 헤더 높이에 따라 조절 */
+  /* flex-direction: row; */ /* AdminLayout 사용 시 이 컴포넌트의 최상위 div는 row일 필요 없음 */
+  margin-top: 45px; 
   background-color: #f4f6f8;
   min-height: calc(100vh - 45px);
+  flex: 1; /* AdminLayout의 자식으로서 공간을 채우도록 추가 */
 }
 
-.managerContent { /* 관리자 페이지 공통 메인 콘텐츠 영역 스타일 */
+.managerContent { 
   flex: 1;
   margin: 20px;
   padding: 30px 35px;
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex; /* 내부 요소(pageHeader, noticeDetailCard 등) 정렬 위해 */
+  flex-direction: column; /* 세로로 배치 */
 }
 
-/* 페이지 상단 제목 영역 (목록으로 돌아가기 링크 포함 가능) */
-.titleArea {
+/* === 상단 링크/제목 영역 스타일 (다른 상세 페이지와 통일) === */
+.pageHeader {
   margin-bottom: 25px;
-  padding-bottom: 15px;
+  padding-bottom: 20px;
   border-bottom: 1px solid #dfe3e8;
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* 제목과 링크 양쪽 정렬 위해 */
+  text-align: center; 
 }
-
-.backToListLink {
-  font-size: 1em;
-  color: #007bff;
+.toListLink { 
   text-decoration: none;
-  font-weight: 500;
+  color: #2c3e50; 
+  transition: color 0.2s ease-in-out;
 }
-.backToListLink:hover {
-  text-decoration: underline;
+.toListLink:hover {
+  color: #FF69B4; /* 자유게시판 관리의 핑크색 계열 호버 */
 }
-/* 만약 페이지의 주 제목을 h1으로 사용한다면 */
-.titleArea h1 { 
-  font-size: 1.8em; /* 상세페이지이므로 목록페이지 h1보다 약간 작게 */
+.toListLink h1 { 
+  font-size: 2.2em; 
   font-weight: 600;
-  color: #2c3e50;
   margin: 0;
+  display: inline-block; 
 }
+/* 기존 .titleArea, .backToListLink 스타일은 제거 또는 주석 처리 */
+/*
+.titleArea { ... }
+.backToListLink { ... }
+.titleArea h1 { ... }
+*/
 
 
-/* 공지 상세 내용 카드 */
 .noticeDetailCard {
   border: 1px solid #e0e0e0;
   border-radius: 6px;
-  background-color: #fff; /* 내부 카드는 흰색 */
-  /* box-shadow: 0 1px 3px rgba(0,0,0,0.04); */ /* 필요시 아주 연한 그림자 */
+  background-color: #fff; 
+  /* display: flex; flex-direction: column; /* 내부 요소 정렬 */
+  /* flex-grow: 1; /* 내용이 많을 때 카드도 늘어나도록 */
 }
 
-/* 정보 바 (중요, 제목, 작성자, 날짜 등) */
 .infoBar {
   display: flex;
-  flex-wrap: wrap; /* 작은 화면에서 줄바꿈 대비 */
+  flex-wrap: wrap; 
   justify-content: space-between;
-  align-items: flex-start; /* 중요태그와 제목이 세로로 쌓일 수 있으므로 */
+  align-items: flex-start; 
   padding: 20px 25px;
-  border-bottom: 1px solid #f0f0f0; /* 내용과 구분선 */
-  gap: 10px; /* 좌우 그룹간 최소 간격 */
+  border-bottom: 1px solid #f0f0f0; 
+  gap: 10px; 
 }
 
 .infoLeft {
   display: flex;
-  flex-direction: column; /* 중요 태그와 제목을 세로로 */
+  flex-direction: column; 
   align-items: flex-start;
-  gap: 8px; /* 중요 태그와 제목 사이 간격 */
-  margin-right: 20px; /* 오른쪽 정보와의 간격 */
+  gap: 8px; 
+  margin-right: 20px; 
+  flex-grow: 1; /* 제목이 길어질 수 있으므로 공간 확보 */
 }
 
-.importantTag { /* 공지사항 목록의 .importantTag 와 동일하게 */
-  display: inline-block;
-  padding: 4px 10px;
-  font-size: 0.8em;
-  font-weight: bold;
-  color: white;
-  background-color: #dc3545; /* 또는 #FF3366 */
+.importantTag { 
+  display: inline-block; padding: 4px 10px; font-size: 0.8em;
+  font-weight: bold; color: white; background-color: #dc3545; 
   border-radius: 12px;
 }
 
-.noticeTitleText { /* 상세 페이지에서의 공지 제목 */
-  font-size: 1.8em; /* 목록의 h1보다는 크고, 페이지 타이틀보다는 작거나 유사하게 */
+.noticeTitleText { 
+  font-size: 1.8em; 
   font-weight: 600;
   color: #333;
   line-height: 1.3;
+  word-break: break-word; /* 제목이 매우 길 경우 대비 */
 }
 
 .infoRight {
   display: flex;
   flex-direction: column;
-  align-items: flex-end; /* 오른쪽 정렬 */
+  align-items: flex-end; 
   gap: 6px;
   font-size: 0.85em;
   color: #555;
-  white-space: nowrap; /* 날짜 등이 줄바꿈되지 않도록 */
+  white-space: nowrap; 
+  flex-shrink: 0; /* 오른쪽 정보가 줄어들지 않도록 */
 }
-.author, .createdAt, .views {
-  /* 개별 스타일 필요시 */
-}
+.author, .createdAt, .views { /* 개별 스타일 불필요 */ }
 
-
-/* 공지 내용 본문 */
 .contentBody {
   padding: 25px;
-  min-height: 200px; /* 최소 높이 */
+  min-height: 200px; 
   line-height: 1.7;
   font-size: 1em;
   color: #343a40;
   word-break: break-word;
+  white-space: pre-wrap; /* \n을 줄바꿈으로 */
 }
 .contentBody br {
-  content: "";
-  display: block;
-  margin-bottom: 0.6em;
+  display: none; /* white-space: pre-wrap 사용 시 <br/> 불필요 */
 }
 
-/* 수정/삭제/목록 버튼 영역 */
 .actionsContainer {
   margin-top: 30px;
   padding-top: 20px;
-  border-top: 1px solid #e9ecef; /* 내용과 버튼 영역 구분선 */
+  border-top: 1px solid #e9ecef; 
   display: flex;
-  justify-content: space-between; /* 목록 버튼은 왼쪽, 수정/삭제는 오른쪽 */
+  justify-content: flex-end; /* 수정/삭제 버튼 그룹을 오른쪽으로 */
   align-items: center;
 }
+.actionsContainer > div { /* 수정/삭제 버튼 그룹 */
+    display: flex;
+    gap: 8px; /* 버튼 사이 간격 */
+}
 
-.actionButton { /* 관리자 페이지 공통 버튼 스타일 (검은색 배경) */
+
+.actionButton { 
   padding: 8px 18px;
   border: 1px solid #000000;
   border-radius: 5px;
@@ -138,43 +139,30 @@
   font-size: 0.9em;
   font-weight: 500;
   transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-  margin-left: 8px; /* 버튼 간 간격 (오른쪽 그룹) */
+  /* margin-left: 8px; /* .actionsContainer > div 에서 gap으로 처리 */
 }
-.actionButton:first-child { /* 오른쪽 그룹의 첫번째 버튼은 margin-left 없음 */
-    /* margin-left: 0; */ /* 적용안하려면 .actionsContainer > div > button:first-child 로 */
-}
+/* .actionButton:first-child { } /* 불필요 */
 
-.listButton { /* 목록 버튼은 다른 스타일을 줄 수 있음 */
-  background-color: #6c757d; /* 예시: 회색 계열 */
+
+/* 목록 버튼 스타일 제거 또는 주석 처리 */
+/*
+.listButton { 
+  background-color: #6c757d; 
   border-color: #6c757d;
-  margin-left: 0; /* 목록 버튼은 왼쪽에 있으므로 */
+  margin-left: 0; 
 }
 .listButton:hover {
   background-color: #5a6268;
   border-color: #545b62;
 }
+*/
 
+.editButton, /* 수정/삭제 버튼은 기본 .actionButton 스타일 사용 */
+.deleteButton {
+  /* 특별한 추가 스타일이 없다면 비워둠 */
+}
 .editButton:hover,
 .deleteButton:hover {
   background-color: #333333;
   border-color: #333333;
-}
-
-/* 만약 수정/삭제 버튼 색상을 다르게 하고 싶다면 개별 클래스에 정의 */
-.editButton {
-  /* .actionButton 스타일 상속 */
-}
-.deleteButton {
-  /* .actionButton 스타일 상속 */
-  /* background-color: #dc3545; /* 예시: 삭제 버튼은 빨간색 */
-  /* border-color: #dc3545; */
-}
-/* .deleteButton:hover {
-  background-color: #c82333;
-  border-color: #bd2130;
-} */
-
-/* 목록으로 돌아가기 링크(페이지 상단)에 대한 버튼 스타일 (선택 사항) */
-.listButtonLink {
-    /* .actionButton과 유사한 스타일 적용 가능 */
 }

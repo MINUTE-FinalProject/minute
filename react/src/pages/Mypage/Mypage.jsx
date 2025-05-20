@@ -43,6 +43,9 @@ function Mypage2() {
                 <li>
                   <Link to="/bookmark">북마크</Link>
                 </li>
+                <li>
+                  <Link to="/Like">기록</Link>
+                </li>
               </ul>
             </div>
           </div>
