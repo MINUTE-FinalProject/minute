@@ -105,13 +105,13 @@
 
 /* --- 기본 버튼 타입 (confirmButtonType, cancelButtonType) --- */
 .primary {
-  background-color: #007bff; /* 기본 파란색 (다른 타입 모달에서 primary로 사용 시) */
+  background-color: #ff3366; /* 기본 파란색 (다른 타입 모달에서 primary로 사용 시) */
   color: white;
-  border-color: #007bff;
+  /* border-color: #007bff; */
 }
 .primary:hover {
-  background-color: #0056b3;
-  border-color: #0056b3;
+  background-color: #fc2259;
+  /* border-color: #0056b3; */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
