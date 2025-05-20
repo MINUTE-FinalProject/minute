@@ -1,59 +1,120 @@
-import { useEffect, useState } from 'react'; // useState, useEffect 추가
-import { Link } from 'react-router-dom';
-import xIcon from '../../assets/images/x.png'; // X 아이콘 import (경로 확인 필요)
+// src/pages/QnA/QnaWrite.jsx (또는 해당 파일의 실제 경로)
+import { useEffect, useState } from 'react'; // React import 추가
+import { Link, useNavigate } from 'react-router-dom'; // useNavigate 추가
+import xIcon from '../../assets/images/x.png';
+import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
 import MypageNav from '../../components/MypageNavBar/MypageNav';
 import qnaWriteStyle from './qnaWrite.module.css';
 
 function QnaWrite() {
+    const navigate = useNavigate(); // 페이지 이동을 위해
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const [selectedFiles, setSelectedFiles] = useState([]); // 선택된 파일 객체들을 저장
-    const [previewImages, setPreviewImages] = useState([]); // 미리보기 URL들을 저장
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [previewImages, setPreviewImages] = useState([]);
 
-    // 파일 선택 시 호출될 함수
+    // 모달 상태 관리
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalProps, setModalProps] = useState({
+        title: '',
+        message: '',
+        onConfirm: null,
+        confirmText: '확인',
+        cancelText: null,
+        type: 'default',
+        confirmButtonType: 'primary',
+        cancelButtonType: 'secondary'
+    });
+
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
-        // 최대 3개까지만 선택 가능하도록 (선택사항)
-        const newFiles = files.slice(0, 3 - selectedFiles.length);
+        const totalAllowedNew = 3 - (selectedFiles.length + files.length);
 
-        if (newFiles.length === 0 && files.length > 0) {
-            alert('이미지는 최대 3개까지 첨부할 수 있습니다.');
+        if (files.length > 0 && (selectedFiles.length + files.length > 3)) {
+            setModalProps({
+                title: '첨부파일 개수 초과',
+                message: `이미지는 최대 3개까지 첨부할 수 있습니다. (현재 ${selectedFiles.length}개 선택됨, ${files.length}개 시도)`,
+                confirmText: '확인',
+                type: 'warning',
+                confirmButtonType: 'primary'
+            });
+            setIsModalOpen(true);
+            event.target.value = null; // 파일 입력 초기화
             return;
         }
+        
+        const filesToAdd = files.slice(0, 3 - selectedFiles.length); // 실제 추가될 파일만
 
-        setSelectedFiles(prevFiles => [...prevFiles, ...newFiles]);
-
-        const newPreviewUrls = newFiles.map(file => URL.createObjectURL(file));
-        setPreviewImages(prevPreviews => [...prevPreviews, ...newPreviewUrls]);
-
-        // 파일 입력 초기화 (같은 파일을 다시 선택할 수 있도록)
+        if (filesToAdd.length > 0) {
+            setSelectedFiles(prevFiles => [...prevFiles, ...filesToAdd]);
+            const newPreviewUrls = filesToAdd.map(file => URL.createObjectURL(file));
+            setPreviewImages(prevPreviews => [...prevPreviews, ...newPreviewUrls]);
+        }
         event.target.value = null;
     };
 
-    // 이미지 제거 시 호출될 함수
     const handleRemoveImage = (indexToRemove) => {
-        // 미리보기 URL 해제
         URL.revokeObjectURL(previewImages[indexToRemove]);
-
         setSelectedFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
         setPreviewImages(prevPreviews => prevPreviews.filter((_, index) => index !== indexToRemove));
     };
 
-    // 폼 제출 핸들러 (실제 구현 필요)
     const handleSubmit = (event) => {
         event.preventDefault();
-        // title, content, selectedFiles를 사용하여 폼 데이터 구성 및 서버 전송
-        console.log({ title, content, files: selectedFiles });
-        alert('문의가 등록되었습니다. (실제 서버 연동 필요)');
-        // 성공 시 상태 초기화 또는 페이지 이동
-        // setTitle('');
-        // setContent('');
-        // setSelectedFiles([]);
-        // previewImages.forEach(url => URL.revokeObjectURL(url)); // 모든 미리보기 URL 해제
-        // setPreviewImages([]);
+        if (!title.trim()) {
+            setModalProps({ title: '입력 오류', message: '제목을 입력해주세요.', confirmText: '확인', type: 'warning', confirmButtonType: 'primary' });
+            setIsModalOpen(true);
+            return;
+        }
+        if (!content.trim()) {
+            setModalProps({ title: '입력 오류', message: '내용을 입력해주세요.', confirmText: '확인', type: 'warning', confirmButtonType: 'primary' });
+            setIsModalOpen(true);
+            return;
+        }
+
+        console.log("문의 등록 데이터:", { title, content, files: selectedFiles.map(f => f.name) });
+        // TODO: 실제 서버로 데이터 전송 로직 (API 호출)
+
+        setModalProps({
+            title: '등록 완료',
+            message: '문의가 성공적으로 등록되었습니다.',
+            confirmText: '확인',
+            type: 'success',
+            confirmButtonType: 'primary',
+            onConfirm: () => {
+                // 성공 후 상태 초기화 및 페이지 이동
+                setTitle('');
+                setContent('');
+                previewImages.forEach(url => URL.revokeObjectURL(url));
+                setSelectedFiles([]);
+                setPreviewImages([]);
+                navigate('/qna'); // Q&A 목록 페이지로 이동 (경로 확인 필요)
+            }
+        });
+        setIsModalOpen(true);
     };
 
-    // 컴포넌트 언마운트 시 미리보기 URL 해제 (메모리 누수 방지)
+    const handleCancel = () => {
+        if (title.trim() || content.trim() || selectedFiles.length > 0) {
+            setModalProps({
+                title: '작성 취소',
+                message: '작성을 취소하시겠습니까?\n입력하신 내용은 저장되지 않습니다.',
+                confirmText: '예, 취소합니다',
+                cancelText: '계속 작성',
+                onConfirm: () => {
+                    previewImages.forEach(url => URL.revokeObjectURL(url)); // URL 해제
+                    navigate('/qna'); // Q&A 목록 페이지로 이동
+                },
+                type: 'warning',
+                confirmButtonType: 'danger',
+                cancelButtonType: 'secondary'
+            });
+            setIsModalOpen(true);
+        } else {
+            navigate('/qna'); // 내용 없으면 바로 목록으로 이동
+        }
+    };
+
     useEffect(() => {
         return () => {
             previewImages.forEach(url => URL.revokeObjectURL(url));
@@ -61,19 +122,18 @@ function QnaWrite() {
     }, [previewImages]);
 
     return (
-        <form onSubmit={handleSubmit}> {/* form 태그로 감싸고 onSubmit 연결 */}
+        <>
             <MypageNav />
             <div className={qnaWriteStyle.layout}>
                 <div className={qnaWriteStyle.container}>
                     <div className={qnaWriteStyle.background}>
-
                         <div className={qnaWriteStyle.title}>
                             <Link to="/qna" className={qnaWriteStyle.pageTitleLink}>
                                 <h1>Q&A</h1>
                             </Link>
                         </div>
 
-                        <div className={qnaWriteStyle.contentArea}>
+                        <form onSubmit={handleSubmit} className={qnaWriteStyle.contentArea}> {/* form 태그 위치 변경 */}
                             <div className={qnaWriteStyle.info}>
                                 <label htmlFor="qnaFormTitle" className={qnaWriteStyle.label}>제목</label>
                                 <input
@@ -96,11 +156,14 @@ function QnaWrite() {
                                     value={content}
                                     onChange={(e) => setContent(e.target.value)}
                                     required
+                                    rows="10" // qnaWrite.module.css 에서 min-height 설정 있으므로 rows는 보조적
                                 ></textarea>
                             </div>
 
-                            <div className={qnaWriteStyle.imgSection}> {/* 클래스명 변경 img -> imgSection */}
-                                <label htmlFor="qnaFormImages" className={qnaWriteStyle.label}>이미지 첨부 (최대 3개)</label>
+                            <div className={qnaWriteStyle.imgSection}>
+                                <label htmlFor="qnaFormImages" className={qnaWriteStyle.label}>
+                                    이미지 첨부 (현재 {selectedFiles.length}개 / 최대 3개)
+                                </label>
                                 <input
                                     type="file"
                                     id="qnaFormImages"
@@ -108,6 +171,7 @@ function QnaWrite() {
                                     accept="image/*"
                                     onChange={handleFileChange}
                                     style={{ display: 'none' }}
+                                    disabled={selectedFiles.length >= 3}
                                 />
                                 <div className={qnaWriteStyle.imagePreviewContainer}>
                                     {previewImages.map((previewUrl, index) => (
@@ -123,38 +187,38 @@ function QnaWrite() {
                                             </button>
                                         </div>
                                     ))}
-                                    {/* 이미지 첨부 버튼 (플레이스홀더 역할) - 최대 3개까지 */}
-                                    {previewImages.length < 3 && (
+                                    {selectedFiles.length < 3 && (
                                         <div
                                             className={qnaWriteStyle.imagePlaceholder}
                                             onClick={() => document.getElementById('qnaFormImages').click()}
                                             role="button"
                                             tabIndex={0}
-                                            onKeyPress={(e) => { if (e.key === 'Enter') document.getElementById('qnaFormImages').click(); }}
+                                            onKeyPress={(e) => { if (e.key === 'Enter' || e.key === ' ') document.getElementById('qnaFormImages').click(); }}
                                         >
-                                            + 이미지 추가 ({previewImages.length}/3)
+                                            + 이미지 추가 ({selectedFiles.length}/3)
                                         </div>
                                     )}
                                 </div>
                             </div>
 
                             <div className={qnaWriteStyle.buttons}>
-                                {/* '업로드' 버튼은 파일 선택 input을 트리거하는 용도라면 유지, 아니면 제거 */}
-                                {/* <button
-                                    type="button"
-                                    onClick={() => document.getElementById('qnaFormImages').click()}
-                                >
-                                    업로드
-                                </button> */}
-                                <button type="submit" className={qnaWriteStyle.submitButton}> {/* 클래스 추가 */}
+                                <button type="button" onClick={handleCancel} className={`${qnaWriteStyle.actionButton} ${qnaWriteStyle.cancelButton}`}> {/* actionButton 클래스 추가 */}
+                                    취소
+                                </button>
+                                <button type="submit" className={`${qnaWriteStyle.actionButton} ${qnaWriteStyle.submitButton}`}>
                                     작성
                                 </button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
-        </form>
+            <Modal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                {...modalProps}
+            />
+        </>
     );
 }
 

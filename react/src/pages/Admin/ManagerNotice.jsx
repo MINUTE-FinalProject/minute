@@ -1,11 +1,13 @@
-// ManagerNotice.jsx (체크박스/버튼 클릭 시 페이지 이동 방지)
-import { useEffect, useState } from 'react';
+// src/pages/Admin/Notice/ManagerNotice.jsx (또는 해당 파일의 실제 경로)
+import { useEffect, useState } from 'react'; // React import 추가
 import { Link, useNavigate } from 'react-router-dom';
-import searchButtonIcon from "../../assets/images/search_icon.png"; // 실제 경로로 수정해주세요
-import Pagination from '../../components/Pagination/Pagination'; // 실제 경로로 수정해주세요
-import styles from './ManagerNotice.module.css'; // 실제 경로로 수정해주세요
+import searchButtonIcon from "../../assets/images/search_icon.png";
+import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
+import Pagination from '../../components/Pagination/Pagination';
+import styles from './ManagerNotice.module.css';
 
 const generateInitialNotices = (count = 35) => {
+    // ... (기존 generateInitialNotices 함수 내용 유지)
     const notices = [];
     const authors = [
         { id: 'adminUser', nickname: '관리자' }, { id: 'editor01', nickname: '편집자A' }, { id: 'staff02', nickname: '운영팀B' }
@@ -49,6 +51,19 @@ function ManagerNotice() {
     const [importanceFilter, setImportanceFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
 
+    // 모달 상태 관리
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalProps, setModalProps] = useState({
+        title: '',
+        message: '',
+        onConfirm: null,
+        confirmText: '확인',
+        cancelText: null,
+        type: 'default',
+        confirmButtonType: 'primary',
+        cancelButtonType: 'secondary'
+    });
+
     useEffect(() => {
         const loadedNotices = generateInitialNotices();
         setAllNotices(loadedNotices);
@@ -70,7 +85,7 @@ function ManagerNotice() {
                 notice.authorNickname.toLowerCase().includes(lowerSearchTerm)
             );
         }
-        // 날짜 필터 로직은 여기에 추가 (필요시)
+        // 날짜 필터 로직 (필요시 구현)
 
         setNoticesToDisplay(filtered);
         setCurrentPage(1);
@@ -84,6 +99,7 @@ function ManagerNotice() {
     const areAllInCurrentPageImportant = currentDisplayedNotices.length > 0 && currentDisplayedNotices.every(n => n.isImportant);
 
     const handleToggleImportant = (id) => {
+        // 중요도 변경은 즉시 반영 (모달 없이)
         setAllNotices(prevNotices => {
             const updatedNotices = prevNotices.map(notice =>
                 notice.id === id ? { ...notice, isImportant: !notice.isImportant } : notice
@@ -100,8 +116,6 @@ function ManagerNotice() {
     };
 
     const handleToggleAllImportantInCurrentPage = (e) => {
-        // 전체 선택 체크박스 클릭 시 행 클릭 이벤트 전파 방지를 위해 추가 (필요시)
-        // e.stopPropagation(); // 만약 헤더 체크박스 클릭이 다른 동작을 유발한다면
         const newImportantState = e.target.checked;
         setAllNotices(prevNotices => {
             const currentIds = currentDisplayedNotices.map(n => n.id);
@@ -123,20 +137,42 @@ function ManagerNotice() {
         navigate(`/admin/managerNoticeEdit/${id}`);
     };
 
-    const handleDelete = (id) => {
-        if (window.confirm(`공지사항 ID: ${id}를 정말 삭제하시겠습니까?`)) {
-            setAllNotices(prevNotices => {
-                const updatedNotices = prevNotices.filter(notice => notice.id !== id);
-                const sorted = updatedNotices.sort((a, b) => {
-                    if (a.isImportant !== b.isImportant) return a.isImportant ? -1 : 1;
-                    const idA = parseInt(a.id.split('-')[1]);
-                    const idB = parseInt(b.id.split('-')[1]);
-                    return idB - idA;
-                });
-                let counter = 1;
-                return sorted.map(n => ({ ...n, displayNo: n.isImportant ? '중요' : counter++ }));
+    // --- 공지사항 삭제 처리 (Modal 적용) ---
+    const processDeleteNotice = (idToDelete) => {
+        setAllNotices(prevNotices => {
+            const updatedNotices = prevNotices.filter(notice => notice.id !== idToDelete);
+            const sorted = updatedNotices.sort((a, b) => {
+                if (a.isImportant !== b.isImportant) return a.isImportant ? -1 : 1;
+                const idA = parseInt(a.id.split('-')[1] || 0); // 'sticky' 같은 경우 대비
+                const idB = parseInt(b.id.split('-')[1] || 0);
+                return idB - idA;
             });
-        }
+            let counter = 1;
+            return sorted.map(n => ({ ...n, displayNo: n.isImportant ? '중요' : counter++ }));
+        });
+        // TODO: API로 실제 삭제 요청
+
+        setModalProps({
+            title: "삭제 완료",
+            message: `공지사항 (ID: ${idToDelete})이(가) 성공적으로 삭제되었습니다.`,
+            confirmText: "확인",
+            type: "adminSuccess", // 또는 'success' (핑크 버튼 원하시면)
+            confirmButtonType: 'primary'
+        });
+        setIsModalOpen(true);
+    };
+
+    const handleDelete = (id, noticeTitle) => {
+        setModalProps({
+            title: "공지사항 삭제 확인",
+            message: `"${noticeTitle}" (ID: ${id}) 공지사항을 정말 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`,
+            onConfirm: () => processDeleteNotice(id),
+            confirmText: "삭제",
+            cancelText: "취소",
+            type: "adminConfirm", // 또는 'adminWarning'
+            confirmButtonType: 'danger'
+        });
+        setIsModalOpen(true);
     };
 
     const handlePageChange = (pageNumber) => {
@@ -175,7 +211,7 @@ function ManagerNotice() {
                                 <th>닉네임</th>
                                 <th className={styles.titleHeaderColumn}>제목</th>
                                 <th>작성일</th>
-                                <th onClick={(e) => e.stopPropagation()}> {/* 헤더 체크박스 셀도 전파 방지 */}
+                                <th onClick={(e) => e.stopPropagation()}> 
                                     <input
                                         type="checkbox"
                                         title="현재 페이지 전체 중요도 설정/해제"
@@ -183,7 +219,7 @@ function ManagerNotice() {
                                         onChange={handleToggleAllImportantInCurrentPage}
                                         disabled={currentDisplayedNotices.length === 0}
                                         className={styles.headerCheckbox}
-                                        onClick={(e) => e.stopPropagation()} // 체크박스 자체의 클릭도 전파 막기
+                                        onClick={(e) => e.stopPropagation()} 
                                     /> 중요
                                 </th>
                                 <th>수정</th>
@@ -205,7 +241,7 @@ function ManagerNotice() {
                                             <input
                                                 type="checkbox"
                                                 checked={notice.isImportant}
-                                                onClick={(e) => { // onChange 대신 onClick 사용하고 stopPropagation 명시적 호출
+                                                onClick={(e) => { 
                                                     e.stopPropagation(); 
                                                     handleToggleImportant(notice.id);
                                                 }}
@@ -216,7 +252,8 @@ function ManagerNotice() {
                                             <button onClick={(e) => { e.stopPropagation(); handleEdit(notice.id); }} className={`${styles.actionButton} ${styles.editButton}`}>수정</button>
                                         </td>
                                         <td className={styles.actionCell} onClick={(e) => e.stopPropagation()}>
-                                            <button onClick={(e) => { e.stopPropagation(); handleDelete(notice.id); }} className={`${styles.actionButton} ${styles.deleteButton}`}>삭제</button>
+                                            {/* handleDelete 호출 시 notice.title도 전달 */}
+                                            <button onClick={(e) => { e.stopPropagation(); handleDelete(notice.id, notice.title); }} className={`${styles.actionButton} ${styles.deleteButton}`}>삭제</button>
                                         </td>
                                     </tr>
                                 ))
@@ -235,6 +272,11 @@ function ManagerNotice() {
                     </div>
                 </main>
             </div>
+            <Modal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                {...modalProps}
+            />
         </>
     );
 }

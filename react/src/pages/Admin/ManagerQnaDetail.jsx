@@ -1,14 +1,13 @@
-// ManagerQnaDetail.jsx (상단 링크, 버튼 색상, 목록 버튼 제거 등 수정)
+// src/pages/Admin/Qna/ManagerQnaDetail.jsx (또는 해당 파일의 실제 경로)
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import reportOffIcon from '../../assets/images/able-alarm.png';
 import reportOnIcon from '../../assets/images/disable-alarm.png';
-// import searchButtonIcon from '../../assets/images/search_icon.png'; // 상세 페이지에서는 사용 안 함
-// import Pagination from '../../components/Pagination/Pagination'; // 댓글 페이지네이션 없으면 불필요
+import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
 import styles from './ManagerQnaDetail.module.css';
 
-// 예시 데이터 함수 (실제 API 호출로 대체 필요)
 const getMockQnaDetailById = (qnaId) => {
+    // ... (기존 getMockQnaDetailById 함수 내용 유지)
     const mockData = {
         '1': {
             id: '1', status: '미답변', title: '비밀번호를 잊어버렸어요. (답변 없는 예시)',
@@ -36,14 +35,13 @@ const getMockQnaDetailById = (qnaId) => {
             isReportedByAdmin: true,
         }
     };
-    // qnaId가 문자열로 들어올 수 있으므로, mockData 키와 타입 일치시킴
     return mockData[String(qnaId)] || mockData['2']; 
 };
 
 
 function ManagerQnaDetail() {
     const { qnaId } = useParams();
-    const navigate = useNavigate();
+    const navigate = useNavigate(); // navigate 선언
 
     const [qnaPost, setQnaPost] = useState(null);
     const [adminReply, setAdminReply] = useState('');
@@ -52,16 +50,29 @@ function ManagerQnaDetail() {
     const [editedAdminAnswerContent, setEditedAdminAnswerContent] = useState('');
     const adminAnswerEditInputRef = useRef(null);
 
+    // 모달 상태 관리
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalProps, setModalProps] = useState({
+        title: '',
+        message: '',
+        onConfirm: null,
+        confirmText: '확인',
+        cancelText: null,
+        type: 'default',
+        confirmButtonType: 'primary',
+        cancelButtonType: 'secondary'
+    });
+
     useEffect(() => {
         setIsLoading(true);
-        const currentQnaIdToDisplay = qnaId || '2'; // qnaId가 없을 경우 기본값
+        const currentQnaIdToDisplay = qnaId || '2';
         const fetchedQna = getMockQnaDetailById(currentQnaIdToDisplay);
         
         setQnaPost(fetchedQna);
         if (fetchedQna && fetchedQna.adminAnswer) {
             setEditedAdminAnswerContent(fetchedQna.adminAnswer.content);
         } else {
-            setEditedAdminAnswerContent(''); // 답변 없을 시 수정 내용도 초기화
+            setEditedAdminAnswerContent('');
         }
         setIsLoading(false);
     }, [qnaId]);
@@ -79,17 +90,39 @@ function ManagerQnaDetail() {
 
     const handleSubmitReply = () => {
         if (!adminReply.trim()) {
-            alert("답변 내용을 입력해주세요.");
+            setModalProps({
+                title: '입력 오류',
+                message: '답변 내용을 입력해주세요.',
+                confirmText: '확인',
+                type: 'adminWarning',
+                confirmButtonType: 'primary'
+            });
+            setIsModalOpen(true);
             return;
         }
-        alert("답변이 등록되었습니다. (실제 저장은 구현 필요)");
+        // TODO: API로 답변 등록 요청
+
+        const newAnswer = { 
+            author: '관리자', // 현재 로그인된 관리자 정보 사용
+            createdAt: new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit'}).replace(/\.$/, '').replace(/ /g, ''), 
+            content: adminReply 
+        };
         setQnaPost(prev => ({
             ...prev,
-            adminAnswer: { author: '관리자', createdAt: new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit'}).replace(/\.$/, '').replace(/ /g, ''), content: adminReply },
+            adminAnswer: newAnswer,
             status: '답변완료'
         }));
         setAdminReply('');
         setEditedAdminAnswerContent(adminReply); // 수정용 상태도 업데이트
+        
+        setModalProps({
+            title: '답변 등록 완료',
+            message: '답변이 성공적으로 등록되었습니다.',
+            confirmText: '확인',
+            type: 'adminSuccess', // 핑크 버튼 원하시면 'success'
+            confirmButtonType: 'primary'
+        });
+        setIsModalOpen(true);
     };
 
     const handleAdminAnswerDoubleClick = () => {
@@ -103,15 +136,32 @@ function ManagerQnaDetail() {
 
     const handleSaveAdminAnswerEdit = () => {
         if (!editedAdminAnswerContent.trim()) {
-            alert("답변 내용은 비워둘 수 없습니다.");
+            setModalProps({
+                title: '입력 오류',
+                message: '답변 내용은 비워둘 수 없습니다.',
+                confirmText: '확인',
+                type: 'adminWarning',
+                confirmButtonType: 'primary'
+            });
+            setIsModalOpen(true);
             return;
         }
-        alert("답변이 수정되었습니다. (실제 저장은 구현 필요)");
+        // TODO: API로 답변 수정 요청
+
         setQnaPost(prev => ({
             ...prev,
-            adminAnswer: { ...prev.adminAnswer, content: editedAdminAnswerContent }
+            adminAnswer: { ...prev.adminAnswer, content: editedAdminAnswerContent, createdAt: new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit'}).replace(/\.$/, '').replace(/ /g, '') } // 수정일자 업데이트
         }));
         setIsEditingAdminAnswer(false);
+
+        setModalProps({
+            title: '답변 수정 완료',
+            message: '답변이 성공적으로 수정되었습니다.',
+            confirmText: '확인',
+            type: 'adminSuccess', // 핑크 버튼 원하시면 'success'
+            confirmButtonType: 'primary'
+        });
+        setIsModalOpen(true);
     };
 
     const handleCancelAdminAnswerEdit = () => {
@@ -121,22 +171,63 @@ function ManagerQnaDetail() {
         setIsEditingAdminAnswer(false);
     };
     
+    const processDeleteAdminAnswer = () => {
+        // TODO: API로 답변 삭제 요청
+        setQnaPost(prev => ({ ...prev, adminAnswer: null, status: '미답변' }));
+        setIsEditingAdminAnswer(false);
+        setEditedAdminAnswerContent(''); 
+
+        setModalProps({
+            title: '답변 삭제 완료',
+            message: '답변이 성공적으로 삭제되었습니다.',
+            confirmText: '확인',
+            type: 'adminSuccess', // 핑크 버튼 원하시면 'success'
+            confirmButtonType: 'primary'
+        });
+        setIsModalOpen(true);
+    };
+
     const handleDeleteAdminAnswer = () => {
-        if (window.confirm("정말로 이 답변을 삭제하시겠습니까?")) {
-            alert("답변이 삭제되었습니다. (실제 저장은 구현 필요)");
-            setQnaPost(prev => ({ ...prev, adminAnswer: null, status: '미답변' }));
-            setIsEditingAdminAnswer(false);
-            setEditedAdminAnswerContent(''); // 수정 내용도 초기화
-        }
+        setModalProps({
+            title: '답변 삭제 확인',
+            message: '정말로 이 답변을 삭제하시겠습니까?',
+            onConfirm: processDeleteAdminAnswer,
+            confirmText: '삭제',
+            cancelText: '취소',
+            type: 'adminConfirm', // 또는 'adminWarning'
+            confirmButtonType: 'danger'
+        });
+        setIsModalOpen(true);
+    };
+
+    const processToggleQnaReport = (newState) => {
+        setQnaPost(prev => ({ ...prev, isReportedByAdmin: newState }));
+        // TODO: API로 신고 상태 업데이트
+        setModalProps({
+            title: '상태 변경 완료',
+            message: `문의글의 관리자 신고 상태가 ${newState ? "'신고됨'" : "'신고 해제됨'"}으로 변경되었습니다.`,
+            confirmText: '확인',
+            type: 'adminSuccess', // 핑크 버튼 원하시면 'success'
+            confirmButtonType: 'primary'
+        });
+        setIsModalOpen(true);
     };
 
     const handleToggleQnaReport = () => {
         if (!qnaPost) return;
         const newReportedState = !qnaPost.isReportedByAdmin;
-        const confirmAction = newReportedState ? "이 문의글을 관리자 신고 상태로 변경하시겠습니까?" : "이 문의글의 관리자 신고 상태를 해제하시겠습니까?";
-        if (window.confirm(confirmAction)) {
-            setQnaPost(prev => ({ ...prev, isReportedByAdmin: newReportedState }));
-        }
+        const confirmActionMessage = newReportedState ? "이 문의글을 관리자 신고 상태로 변경하시겠습니까?" : "이 문의글의 관리자 신고 상태를 해제하시겠습니까?";
+        
+        setModalProps({
+            title: '신고 상태 변경 확인',
+            message: confirmActionMessage,
+            onConfirm: () => processToggleQnaReport(newReportedState),
+            confirmText: newReportedState ? '신고 처리' : '신고 해제',
+            cancelText: '취소',
+            type: 'adminConfirm', // 또는 'adminWarning'
+            confirmButtonType: newReportedState ? 'danger' : 'primary' // 신고 처리는 danger, 해제는 primary
+        });
+        setIsModalOpen(true);
     };
 
     const handleAdminAnswerEditKeyDown = (event) => {
@@ -150,11 +241,15 @@ function ManagerQnaDetail() {
     };
 
     if (isLoading || !qnaPost) {
-        // 로딩/에러 시에도 전체 레이아웃 구조 유지
         const message = isLoading ? "데이터를 불러오는 중입니다..." : (qnaPost ? "" : "문의글을 찾을 수 없습니다.");
         return (
             <div className={styles.container}>
-                <main className={styles.detailContentCard}> {/* 클래스명 통일 */}
+                <main className={styles.detailContentCard}>
+                    <div className={styles.pageHeader}> {/* 헤더는 유지 */}
+                        <Link to="/admin/qna-management" className={styles.toListLink}>
+                            <h1>문의 관리</h1>
+                        </Link>
+                    </div>
                     <div className={isLoading ? styles.loadingContainer : styles.errorContainer}>
                         {message || "오류가 발생했습니다."}
                     </div>
@@ -164,62 +259,80 @@ function ManagerQnaDetail() {
     }
 
     return (
-        // 다른 상세 페이지와 동일한 .container > .detailContentCard 구조 사용
-        <div className={styles.container}>
-            <main className={styles.detailContentCard}> {/* 클래스명 통일 */}
-                {/* === 상단 링크/제목 영역 (자유게시판 상세와 유사하게) === */}
-                <div className={styles.pageHeader}>
-                    <Link to="/admin/qna-management" className={styles.toListLink}>
-                        <h1>문의 관리</h1> {/* << 텍스트 변경 */}
-                    </Link>
-                </div>
-
-                <div className={styles.userQuestionArea}>
-                    <div className={styles.infoBar}>
-                        <div className={styles.infoBarLeft}>
-                            <span className={`${styles.statusTag} ${qnaPost.status === '답변완료' ? styles.answered : styles.unanswered}`}>
-                                {qnaPost.status}
-                            </span>
-                            <h2 className={styles.postTitle}>{qnaPost.title}</h2> {/* << h1 -> h2로 변경 (페이지당 h1은 하나 권장) */}
-                        </div>
-                        <button
-                            onClick={handleToggleQnaReport}
-                            className={`${styles.iconButton} ${styles.qnaReportButton} ${qnaPost.isReportedByAdmin ? styles.reportedActive : ''}`}
-                            title={qnaPost.isReportedByAdmin ? "문의글 신고됨 (해제하려면 클릭)" : "문의글 신고하기"}
-                        >
-                            <img
-                                src={qnaPost.isReportedByAdmin ? reportOnIcon : reportOffIcon}
-                                alt={qnaPost.isReportedByAdmin ? "신고됨" : "신고하기"}
-                                className={styles.buttonIcon}
-                            />
-                        </button>
-                    </div>
-                    <div className={styles.metaInfo}>
-                        <span className={styles.author}>작성자: {qnaPost.authorNickname} (ID: {qnaPost.authorId})</span>
-                        <span className={styles.createdAt}>작성일: {qnaPost.createdAt}</span>
+        <>
+            {/* MypageNav는 관리자 페이지에서는 일반적으로 사용하지 않으므로 필요시 주석 해제 또는 제거 */}
+            {/* <MypageNav/> */}
+            <div className={styles.container}>
+                <main className={styles.detailContentCard}>
+                    <div className={styles.pageHeader}>
+                        <Link to="/admin/qna-management" className={styles.toListLink}>
+                            <h1>문의 관리</h1>
+                        </Link>
                     </div>
 
-                    <div className={styles.contentBody}>
-                        {qnaPost.content.split('\n').map((line, index) => (
-                            <React.Fragment key={index}>{line}{index < qnaPost.content.split('\n').length -1 &&<br />}</React.Fragment>
-                        ))}
-                    </div>
-
-                    {qnaPost.images && qnaPost.images.length > 0 && (
-                        <div className={styles.imageAttachmentSection}>
-                            <p className={styles.attachmentTitle}>첨부파일:</p>
-                            <div className={styles.imageList}>
-                                {qnaPost.images.map((imgSrc, index) => (
-                                    <img key={index} src={imgSrc} alt={`첨부이미지 ${index + 1}`} className={styles.attachedImage} />
-                                ))}
+                    <div className={styles.userQuestionArea}>
+                        <div className={styles.infoBar}>
+                            <div className={styles.infoBarLeft}>
+                                <span className={`${styles.statusTag} ${qnaPost.status === '답변완료' ? styles.answered : styles.unanswered}`}>
+                                    {qnaPost.status}
+                                </span>
+                                <h2 className={styles.postTitle}>{qnaPost.title}</h2>
                             </div>
+                            <button
+                                onClick={handleToggleQnaReport}
+                                className={`${styles.iconButton} ${styles.qnaReportButton} ${qnaPost.isReportedByAdmin ? styles.reportedActive : ''}`}
+                                title={qnaPost.isReportedByAdmin ? "문의글 신고됨 (해제하려면 클릭)" : "문의글 신고하기"}
+                            >
+                                <img
+                                    src={qnaPost.isReportedByAdmin ? reportOnIcon : reportOffIcon}
+                                    alt={qnaPost.isReportedByAdmin ? "신고됨" : "신고하기"}
+                                    className={styles.buttonIcon}
+                                />
+                            </button>
                         </div>
-                    )}
-                </div>
+                        <div className={styles.metaInfo}>
+                            <span className={styles.author}>작성자: {qnaPost.authorNickname} (ID: {qnaPost.authorId})</span>
+                            <span className={styles.createdAt}>작성일: {qnaPost.createdAt}</span>
+                        </div>
 
-                <div className={styles.adminResponseArea}>
-                    {qnaPost.adminAnswer && qnaPost.adminAnswer.content ? (
-                        isEditingAdminAnswer ? (
+                        <div className={styles.contentBody}>
+                            {qnaPost.content.split('\n').map((line, index) => (
+                                <React.Fragment key={index}>{line}{index < qnaPost.content.split('\n').length -1 &&<br />}</React.Fragment>
+                            ))}
+                        </div>
+
+                        {qnaPost.images && qnaPost.images.length > 0 && (
+                            <div className={styles.imageAttachmentSection}>
+                                <p className={styles.attachmentTitle}>첨부파일:</p>
+                                <div className={styles.imageList}>
+                                    {qnaPost.images.map((imgSrc, index) => (
+                                        <img key={index} src={imgSrc} alt={`첨부이미지 ${index + 1}`} className={styles.attachedImage} />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className={styles.adminResponseArea}>
+                        {qnaPost.adminAnswer && qnaPost.adminAnswer.content && !isEditingAdminAnswer ? (
+                            <div className={styles.answerDisplaySection}>
+                                <div className={styles.answerHeader}>
+                                    <h4 className={styles.responseTitle}>등록된 답변</h4>
+                                    <button onClick={handleDeleteAdminAnswer} className={`${styles.button} ${styles.deleteAnswerButton}`}>삭제</button>
+                                </div>
+                                <div className={styles.adminAnswerItem} onDoubleClick={handleAdminAnswerDoubleClick} title="더블클릭하여 수정">
+                                    <div className={styles.adminAnswerMeta}>
+                                        <span className={styles.adminAnswerAuthor}>{qnaPost.adminAnswer.author}</span>
+                                        <span className={styles.adminAnswerDate}>{qnaPost.adminAnswer.createdAt}</span>
+                                    </div>
+                                    <div className={styles.adminAnswerContent}>
+                                        {qnaPost.adminAnswer.content.split('\n').map((line, index) => (
+                                            <React.Fragment key={index}>{line}{index < qnaPost.adminAnswer.content.split('\n').length -1 && <br />}</React.Fragment>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        ) : isEditingAdminAnswer ? (
                             <div className={styles.answerEditSection}>
                                 <h4 className={styles.responseTitle}>답변 수정</h4>
                                 <textarea
@@ -240,52 +353,31 @@ function ManagerQnaDetail() {
                                 </div>
                             </div>
                         ) : (
-                            <div className={styles.answerDisplaySection}>
-                                <div className={styles.answerHeader}>
-                                    <h4 className={styles.responseTitle}>등록된 답변</h4>
-                                    <button onClick={handleDeleteAdminAnswer} className={`${styles.button} ${styles.deleteAnswerButton}`}>삭제</button>
-                                </div>
-                                <div className={styles.adminAnswerItem} onDoubleClick={handleAdminAnswerDoubleClick} title="더블클릭하여 수정">
-                                    <div className={styles.adminAnswerMeta}>
-                                        <span className={styles.adminAnswerAuthor}>{qnaPost.adminAnswer.author}</span>
-                                        <span className={styles.adminAnswerDate}>{qnaPost.adminAnswer.createdAt}</span>
-                                    </div>
-                                    <div className={styles.adminAnswerContent}>
-                                        {qnaPost.adminAnswer.content.split('\n').map((line, index) => (
-                                            <React.Fragment key={index}>{line}{index < qnaPost.adminAnswer.content.split('\n').length -1 && <br />}</React.Fragment>
-                                        ))}
-                                    </div>
+                            <div className={styles.answerInputSection}>
+                                <h4 className={styles.responseTitle}>답변 작성</h4>
+                                <textarea
+                                    className={styles.answerTextarea}
+                                    value={adminReply}
+                                    onChange={handleReplyChange}
+                                    placeholder="답변을 입력하세요..."
+                                    rows="10"
+                                ></textarea>
+                                <div className={styles.buttonGroup}>
+                                    <button type="button" onClick={handleSubmitReply} className={`${styles.button} ${styles.submitButton}`}>
+                                        답변 등록
+                                    </button>
                                 </div>
                             </div>
-                        )
-                    ) : (
-                        <div className={styles.answerInputSection}>
-                            <h4 className={styles.responseTitle}>답변 작성</h4>
-                            <textarea
-                                className={styles.answerTextarea}
-                                value={adminReply}
-                                onChange={handleReplyChange}
-                                placeholder="답변을 입력하세요..."
-                                rows="10"
-                            ></textarea>
-                            <div className={styles.buttonGroup}>
-                                <button type="button" onClick={handleSubmitReply} className={`${styles.button} ${styles.submitButton}`}>
-                                    답변 등록
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-                
-                {/* === 목록 버튼 제거됨 === */}
-                {/* <div className={styles.actionButtonsBottom}>
-                    <button type="button" onClick={() => navigate('/admin/qna-management')} className={`${styles.button} ${styles.listButton}`}>
-                        목록
-                    </button>
-                </div> 
-                */}
-            </main>
-        </div>
+                        )}
+                    </div>
+                </main>
+            </div>
+            <Modal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                {...modalProps}
+            />
+        </>
     );
 }
 
