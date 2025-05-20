@@ -1,14 +1,22 @@
+// src/Like.jsx
 import React, { useState } from "react";
 import styles from "./Like.module.css";
 import MypageNav from "../../components/MypageNavBar/MypageNav";
+import Modal from "../../components/Modal/Modal"; // Modal 컴포넌트 import
 
 const VIDEO_WIDTH = 220;
 const GAP = 20;
 const VISIBLE_COUNT = 6;
 const SCROLL_STEP = VIDEO_WIDTH + GAP;
 
-const likedVideos = [];
-const recentWatched = [];
+// 더미 데이터로 초기화 (오류 방지용)
+const likedVideos = [
+  { id: 1, title: "Sample Video 1", thumbnail: "https://via.placeholder.com/220x124", likedAt: "2025-05-19" },
+  { id: 2, title: "Sample Video 2", thumbnail: "https://via.placeholder.com/220x124", likedAt: "2025-05-18" },
+];
+const recentWatched = [
+  { id: 3, title: "Recent Video 1", thumbnail: "https://via.placeholder.com/220x124" },
+];
 
 const Like = () => {
   const [videos, setVideos] = useState(likedVideos);
@@ -36,8 +44,10 @@ const Like = () => {
 
   const handleDelete = () => {
     const updated = [...videos];
-    updated.splice(modal.index, 1);
-    setVideos(updated);
+    if (modal.index >= 0 && modal.index < updated.length) {
+      updated.splice(modal.index, 1);
+      setVideos(updated);
+    }
     closeModal();
   };
 
@@ -52,20 +62,22 @@ const Like = () => {
 
   const handleSaveBookmark = () => {
     if (!selectedFolderId) {
-      alert("폴더를 선택해주세요.");
+      setBookmarkMsg(true);
+      setTimeout(() => setBookmarkMsg(false), 2000);
+      setFolderModal(false);
       return;
     }
-
+    setBookmarkMsg(true);
+    setTimeout(() => setBookmarkMsg(false), 2000);
     setFolderModal(false);
     setSelectedFolderId(null);
-    setBookmarkMsg(true);
-
-    setTimeout(() => setBookmarkMsg(false), 2000);
   };
 
   const handleCreateFolder = () => {
     if (newFolderName.trim() === "") {
-      alert("폴더 이름을 입력해주세요.");
+      setBookmarkMsg(true);
+      setTimeout(() => setBookmarkMsg(false), 2000);
+      setCreateFolderModal(false);
       return;
     }
 
@@ -88,6 +100,9 @@ const Like = () => {
     setModal({ show: false, index: -1 });
     setFolderModal(false);
     setCreateFolderModal(false);
+    setBookmarkMsg(false);
+    setSelectedFolderId(null);
+    setNewFolderName("");
   };
 
   const getFilteredVideos = () => {
@@ -106,10 +121,10 @@ const Like = () => {
           <div
             key={video.id}
             className={styles.videoItem}
-            style={{ backgroundImage: `url(${video.thumbnail})` }}
+            style={{ backgroundImage: `url(${video.thumbnail || 'https://via.placeholder.com/220x124'})` }}
           >
             <div className={styles.videoTitle}>
-              <span>{video.title}</span>
+              <span>{video.title || 'No Title'}</span>
               <button className={styles.moreBtn} onClick={() => setModal({ show: true, index })}>⋯</button>
             </div>
           </div>
@@ -156,68 +171,104 @@ const Like = () => {
         )}
 
         {/* 삭제/북마크 모달 */}
-        {modal.show && (
-          <div className={styles.modal}>
-            <button onClick={handleDelete}>삭제</button>
-            <button onClick={openFolderModal}>북마크에 저장</button>
-            <button onClick={closeModal}>닫기</button>
-          </div>
-        )}
+        <Modal
+          isOpen={modal.show}
+          onClose={closeModal}
+          title="옵션"
+          children={
+            <div className={styles.optionsContainer}>
+              <button className={styles.optionButton} onClick={handleDelete}>
+                삭제
+              </button>
+              <button className={styles.optionButton} onClick={openFolderModal}>
+                북마크에 저장
+              </button>
+            </div>
+          }
+          cancelText="취소"
+          onCancel={closeModal}
+        />
 
         {/* 폴더 선택 모달 */}
-        {folderModal && (
-          <div className={styles.modal}>
-            <h3>저장할 폴더 선택</h3>
-            <ul className={styles.folderList}>
-              {folders.map((folder) => (
-                <li key={folder.id}>
-                  <label>
-                    <input
-                      type="radio"
-                      name="folder"
-                      value={folder.id}
-                      checked={selectedFolderId === folder.id}
-                      onChange={() => setSelectedFolderId(folder.id)}
-                    />
-                    {folder.name}
-                  </label>
-                </li>
-              ))}
-            </ul>
-            <button onClick={handleSaveBookmark}>저장</button>
-            <button onClick={() => setFolderModal(false)}>취소</button>
-            <button onClick={() => {
-              setFolderModal(false);
-              setCreateFolderModal(true);
-            }}>
-              새 폴더 만들기
-            </button>
-          </div>
-        )}
+        <Modal
+          isOpen={folderModal}
+          onClose={() => {
+            setFolderModal(false);
+            setSelectedFolderId(null);
+          }}
+          title="저장할 폴더 선택"
+          children={
+            <>
+              <ul className={styles.folderList}>
+                {folders.map((folder) => (
+                  <li key={folder.id}>
+                    <label className={styles.folderLabel}>
+                      <input
+                        type="radio"
+                        name="folder"
+                        value={folder.id}
+                        checked={selectedFolderId === folder.id}
+                        onChange={() => setSelectedFolderId(folder.id)}
+                      />
+                      {folder.name}
+                    </label>
+                  </li>
+                ))}
+              </ul>
+              <button
+                className={styles.newFolderButton}
+                onClick={() => {
+                  setFolderModal(false);
+                  setCreateFolderModal(true);
+                }}
+              >
+                새 폴더 만들기
+              </button>
+            </>
+          }
+          onConfirm={handleSaveBookmark}
+          confirmText="저장"
+          cancelText="취소"
+        />
 
         {/* 폴더 생성 모달 */}
-        {createFolderModal && (
-          <div className={styles.modal}>
-            <h3>새 폴더 만들기</h3>
+        <Modal
+          isOpen={createFolderModal}
+          onClose={() => {
+            setCreateFolderModal(false);
+            if (folders.length > 0) setFolderModal(true);
+          }}
+          title="새 폴더 만들기"
+          children={
             <input
               type="text"
               maxLength={10}
               placeholder="폴더 이름 입력"
               value={newFolderName}
               onChange={(e) => setNewFolderName(e.target.value)}
+              className={styles.modalInput}
             />
-            <button onClick={handleCreateFolder}>생성</button>
-            <button onClick={() => {
-              setCreateFolderModal(false);
-              if (folders.length > 0) setFolderModal(true);
-            }}>취소</button>
-          </div>
-        )}
+          }
+          onConfirm={handleCreateFolder}
+          confirmText="생성"
+          cancelText="취소"
+        />
 
-        {/* 북마크 저장 메시지 */}
-        {bookmarkMsg && (
-          <div className={styles.bookmarkMessage}>북마크에 저장되었습니다.</div>
-        )}
+        {/* 북마크 저장 메시지 모달 */}
+        <Modal
+          isOpen={bookmarkMsg}
+          onClose={closeModal}
+          title="알림"
+          message={
+            selectedFolderId === null && newFolderName.trim() === ""
+              ? "폴더를 선택하거나 이름을 입력해주세요."
+              : newFolderName.trim() === ""
+              ? "폴더 이름을 입력해주세요."
+              : "북마크에 저장되었습니다."
+          }
+          onConfirm={closeModal}
+          confirmText="확인"
+        />
       </div>
     </div>
   );

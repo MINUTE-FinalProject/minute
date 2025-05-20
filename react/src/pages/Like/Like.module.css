@@ -1,3 +1,4 @@
+/* src/Like.module.css */
 /* Wrapper */
 .wrapper {
   height: 100vh;
@@ -29,7 +30,6 @@
   margin-bottom: 20px;
 }
 
-
 /* Filter Menu */
 .filterMenu {
   margin-bottom: 25px;
@@ -56,7 +56,6 @@
   border-color: #bbb;
   color: #444;
 }
-
 
 .filterButton.active {
   background: #ff3366;
@@ -158,88 +157,89 @@
   color: white;
 }
 
-/* Modal */
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #fff;
-  width: 320px;
-  padding: 30px 25px;
-  border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
-  z-index: 2000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  font-family: 'Noto Sans KR', sans-serif;
-}
-
-.modal button {
-  width: 100%;
-  padding: 14px 0;
-  font-size: 17px;
-  font-weight: 600;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  user-select: none;
-}
-
-.modal button:nth-child(1) {
-  background-color: #FF3366;
-  color: white;
-}
-
-.modal button:nth-child(2),
-.modal button:nth-child(3) {
-  background-color: #e1e1e1;
-  color: #333;
-}
-
-.modal button:nth-child(2):hover,
-.modal button:nth-child(2):focus,
-.modal button:nth-child(3):hover,
-.modal button:nth-child(3):focus {
-  background-color: #ccc;
-}
-
-/* Bookmark message */
-.bookmarkMessage {
-  position: fixed;
-  bottom: 450px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #ff3366;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 25px;
-  font-weight: 600;
-  user-select: none;
-  z-index: 2500;
-  animation: fadeinout 2.5s forwards;
-}
-
-.sectionTitle{
+/* Section Title */
+.sectionTitle {
   margin-top: 80px;
   margin-bottom: 20px;
 }
 
+/* No Data */
+.noData {
+  color: #666;
+  font-size: 16px;
+  text-align: center;
+  margin-top: 40px;
+}
 
-@keyframes fadeinout {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(20px);
-  }
-  10%, 90% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(20px);
-  }
+/* 모달 내부 입력 필드 스타일 */
+.modalInput {
+  width: 100%;
+  padding: 10px;
+  margin: 15px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+/* 폴더 선택 모달 스타일 */
+.folderList {
+  list-style: none;
+  padding: 0;
+  margin: 15px 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.folderLabel {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.folderLabel input {
+  margin-right: 10px;
+}
+
+/* 새 폴더 만들기 버튼 스타일 */
+.newFolderButton {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background-color: #f7f7f7;
+  text-align: center;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+  margin-top: 10px;
+}
+
+.newFolderButton:hover {
+  background-color: #e0e0e0;
+}
+
+/* 옵션 모달 내부 버튼 스타일 */
+.optionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.optionButton {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background-color: #f7f7f7;
+  text-align: center;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.optionButton:hover {
+  background-color: #e0e0e0;
 }
