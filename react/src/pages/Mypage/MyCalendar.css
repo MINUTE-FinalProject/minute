@@ -88,3 +88,20 @@
 .react-calendar__year-view .react-calendar__tile, .react-calendar__decade-view .react-calendar__tile, .react-calendar__century-view .react-calendar__tile {
   padding: 10px;
 }
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-top: 2px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.plan-dot {
+  background-color: pink; /* 또는 원하는 색 */
+}
+
+.checklist-dot {
+  background-color: black;
+}

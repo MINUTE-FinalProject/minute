@@ -1,7 +1,21 @@
 import MypageNav from "../../components/MypageNavBar/MypageNav";
 import calendarpageStyle from "./Calendarpage.module.css";
+import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
+import { useState } from "react";
 
 function Calendarpage() {
+  // 모달 상태 관리
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalProps, setModalProps] = useState({
+      title: '',
+      message: '',
+      onConfirm: null,
+      confirmText: '확인',
+      cancelText: null,
+      type: 'default',
+      confirmButtonType: 'primary',
+      cancelButtonType: 'secondary'
+  });
   return (
     <>
     <MypageNav />
@@ -12,7 +26,7 @@ function Calendarpage() {
         <div className={calendarpageStyle.mainBox}>
           <div className={calendarpageStyle.listSection}>
             <div className={calendarpageStyle.listTitle}>
-              <h3>list</h3>
+              <h3>Check-List</h3>
             </div>
             <div className={calendarpageStyle.listContent}>
               <ul>
@@ -320,7 +334,7 @@ function Calendarpage() {
 
           <div className={calendarpageStyle.planSection}>
             <div className={calendarpageStyle.planTitle}>
-              <h3>plan</h3>
+              <h3>Plan</h3>
             </div>
             <div className={calendarpageStyle.planText}>
               <p>부산 여행</p>
@@ -386,10 +400,42 @@ function Calendarpage() {
               <p>13:00 카페 도착</p>
             </div>
             <div className={calendarpageStyle.planIcons}>
-              <button className={calendarpageStyle.saveButton}>
+              <button className={calendarpageStyle.saveButton}
+              onClick={() => {
+                  setModalProps({
+                    title: '저장 완료',
+                    message: 'Check-list, Plan이 저장되었습니다.',
+                    confirmText: '확인',
+                    type: 'success',
+                    confirmButtonType: 'primary',
+                    onConfirm: () => setIsModalOpen(false) // 확인 버튼 누르면 모달 닫기
+                  });
+                  setIsModalOpen(true);
+                }}
+              >
                 <img src="/src/assets/images/save.png" />
               </button>
-              <button className={calendarpageStyle.deleteButton}>
+              <button className={calendarpageStyle.deleteButton}
+                onClick={() => {
+                  setModalProps({
+                    title: '삭제 확인',
+                    message: 'Check-list, Plan을 정말 삭제하시겠습니까?',
+                    confirmText: '삭제',
+                    cancelText: '취소',
+                    type: 'warning',
+                    confirmButtonType: 'danger',
+                    onConfirm: () => {
+                      console.log("삭제되었습니다.");
+                      setIsModalOpen(false);
+                    },
+                    onCancel: () => {
+                      console.log("삭제 취소됨");
+                      setIsModalOpen(false);
+                    }
+                  });
+                  setIsModalOpen(true);
+                }}
+              >
                 <img src="/src/assets/images/delete.png" />
               </button>
             </div>
@@ -407,6 +453,19 @@ function Calendarpage() {
       </div>
         </div>
       </div>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={modalProps.title}
+        message={modalProps.message}
+        onConfirm={modalProps.onConfirm}
+        confirmText={modalProps.confirmText}
+        cancelText={modalProps.cancelText}
+        onCancel={modalProps.onCancel}
+        type={modalProps.type}
+        confirmButtonType={modalProps.confirmButtonType}
+        cancelButtonType={modalProps.cancelButtonType}
+      />
     </>
   );
 }

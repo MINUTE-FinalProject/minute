@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { Link } from "react-router-dom";
@@ -8,6 +8,26 @@ import styles from "./Mypage.module.css";
 
 function Mypage2() {
   const [value, onChange] = useState(new Date());
+  const [dotData, setDotData] = useState({});
+
+  useEffect(() => {
+    const yearMonth = value.toISOString().slice(0, 7); // yyyy-MM
+
+    fetch(`http://localhost:8080/mypage/dots?userId=test123&yearMonth=${yearMonth}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log("📌 dotData 확인:", data); // ← 이거로 진짜 오는지 체크
+        setDotData(data);
+      })
+      .catch(err => console.error("dot 불러오기 실패", err));
+  }, [value]);
+
+  // 날짜 포맷 맞춰주는 함수 (yyyy-mm-dd)
+  const formatDate = (date) => {
+    return date.toISOString().split('T')[0];
+  };
+
+
   return (
     <>
     <MypageNav/>
@@ -59,6 +79,25 @@ function Mypage2() {
                   next2Label={null}
                   prev2Label={null}
                   showNeighboringMonth={false}
+                  tileContent={({ date }) => {
+                    const dateStr = formatDate(date);
+                    const dotType = dotData[dateStr];
+
+                    if (dotType === 'plan') {
+                      return <div className="dot plan-dot" />;
+                    } else if (dotType === 'checklist') {
+                      return <div className="dot checklist-dot" />;
+                    } else if (dotType === 'both') {
+                      return (
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px' }}>
+                          <div className="dot plan-dot" />
+                          <div className="dot checklist-dot" />
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+
                 />
               </div>
               <div className={styles.planList}>
