@@ -2,8 +2,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import banner from "../../assets/images/banner.png";
+import freeboardWriteStyle from "../../assets/styles/freeboardWrite.module.css";
 import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 경로 확인
-import freeboardWriteStyle from "./freeboardWrite.module.css";
 
 function FreeboardWrite() {
     const freeboardPath = "/freeboard";

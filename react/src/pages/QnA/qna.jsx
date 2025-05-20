@@ -2,10 +2,10 @@
 import { useEffect, useState } from 'react'; // React import 추가
 import { Link, useNavigate } from 'react-router-dom';
 import searchButtonIcon from "../../assets/images/search_icon.png";
+import qnaStyle from "../../assets/styles/qna.module.css";
 import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
 import MypageNav from '../../components/MypageNavBar/MypageNav';
 import Pagination from "../../components/Pagination/Pagination";
-import qnaStyle from "./qna.module.css";
 
 const LOGGED_IN_USER_AUTHOR_NAME = '김*진';
 

@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import banner from "../../assets/images/banner.png";
-import freeboardDetailStyle from './freeboardDetail.module.css';
+import freeboardDetailStyle from '../../assets/styles/freeboardDetail.module.css';
 
 import reportOffIcon from "../../assets/images/able-alarm.png";
 import likeOffIcon from "../../assets/images/b_thumbup.png";

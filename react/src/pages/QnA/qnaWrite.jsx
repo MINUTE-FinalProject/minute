@@ -2,9 +2,9 @@
 import { useEffect, useState } from 'react'; // React import 추가
 import { Link, useNavigate } from 'react-router-dom'; // useNavigate 추가
 import xIcon from '../../assets/images/x.png';
+import qnaWriteStyle from '../../assets/styles/qnaWrite.module.css';
 import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
 import MypageNav from '../../components/MypageNavBar/MypageNav';
-import qnaWriteStyle from './qnaWrite.module.css';
 
 function QnaWrite() {
     const navigate = useNavigate(); // 페이지 이동을 위해

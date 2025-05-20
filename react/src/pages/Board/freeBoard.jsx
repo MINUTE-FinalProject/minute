@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"; // React import 추가
 import { Link, useNavigate } from "react-router-dom";
 import banner from "../../assets/images/banner.png";
-import FreeBoardStyle from "./freeBoard.module.css";
+import FreeBoardStyle from "../../assets/styles/freeboard.module.css";
 
 import Modal from "../../components/Modal/Modal"; // Modal 컴포넌트 import
 import Pagination from "../../components/Pagination/Pagination";

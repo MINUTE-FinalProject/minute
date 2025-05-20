@@ -1,9 +1,9 @@
 // src/pages/QnA/qnaDetail.jsx
 import React, { useEffect, useState } from 'react'; // useState, useEffect 추가
 import { Link, useNavigate, useParams } from 'react-router-dom'; // useParams, useNavigate 추가
+import qnaDetailStyle from '../../assets/styles/qnaDetail.module.css';
 import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
 import MypageNav from '../../components/MypageNavBar/MypageNav';
-import qnaDetailStyle from './qnaDetail.module.css';
 
 // 예시 데이터베이스 (useEffect에서 qnaId를 기반으로 조회)
 const mockQnaDatabase = {

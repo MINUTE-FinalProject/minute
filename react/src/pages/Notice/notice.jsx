@@ -1,9 +1,9 @@
 // src/pages/Notice/notice.js (또는 해당 파일의 실제 경로)
 import { useEffect, useState } from 'react'; // React import 추가
 import { Link, useNavigate } from 'react-router-dom';
+import noticeStyle from "../../assets/styles/notice.module.css";
 import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
 import Pagination from '../../components/Pagination/Pagination';
-import noticeStyle from "./notice.module.css";
 
 const generateInitialNotices = (count = 28) => {
     // ... (기존 generateInitialNotices 함수 내용 유지)

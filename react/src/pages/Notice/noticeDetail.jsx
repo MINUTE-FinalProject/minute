@@ -1,8 +1,8 @@
 // src/pages/Notice/NoticeDetail.jsx (또는 해당 파일의 실제 경로)
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom'; // useNavigate는 현재 이 로직에선 불필요할 수 있음
+import NoticeDetailStyle from "../../assets/styles/noticeDetail.module.css";
 import Modal from '../../components/Modal/Modal';
-import NoticeDetailStyle from "./noticeDetail.module.css";
 
 // 샘플 데이터베이스
 const mockNoticeDatabase = {

@@ -2,9 +2,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import xIcon from '../../assets/images/x.png';
+import qnaEditStyle from '../../assets/styles/qnaEdit.module.css';
 import Modal from '../../components/Modal/Modal';
 import MypageNav from '../../components/MypageNavBar/MypageNav';
-import qnaEditStyle from './qnaEdit.module.css';
 
 // QnaDetail.jsx의 mockQnaDatabase와 키 형식을 일치시킵니다.
 const mockQnaDatabaseForEdit = {

@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import banner from "../../assets/images/banner.png";
+import freeboardEditStyle from '../../assets/styles/freeboardEdit.module.css';
 import Modal from '../../components/Modal/Modal';
-import freeboardEditStyle from './freeboardEdit.module.css';
 
 function FreeboardEdit() {
     const { postId } = useParams();
