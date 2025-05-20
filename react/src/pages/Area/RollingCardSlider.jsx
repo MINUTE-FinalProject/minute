@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import styles from "./RollingCardSlider.module.css";
+import styles from "../../assets/styles/RollingCardSlider.module.css";
 
 const RollingCardSlider = () => {
   const sliderRef = useRef(null);

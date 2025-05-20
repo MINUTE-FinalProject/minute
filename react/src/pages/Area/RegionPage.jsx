@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
+import styles from "../../assets/styles/GangwondoPage.module.css";
 import Header from "../../components/Header/Header";
-import styles from "./GangwondoPage.module.css";
 import RollingCardSlider from "./RollingCardSlider";
 // ↓ 이미지 import
 import searchIcon from "../../assets/images/searchIcon.png";
