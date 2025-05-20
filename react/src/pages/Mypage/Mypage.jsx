@@ -1,32 +1,48 @@
 import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import { Link } from "react-router-dom";
+import { data, Link } from "react-router-dom";
 import '../../assets/styles/MyCalendar.css';
 import styles from "../../assets/styles/Mypage.module.css";
 import MypageNav from "../../components/MypageNavBar/MypageNav";
 
 function Mypage2() {
+  // 선택된 날짜
   const [value, onChange] = useState(new Date());
+  // 보이는 달(월 초)가 바뀔 때 업데이트
+  const [activeStartDate, setActiveStartDate] = useState(value);
+  // dot 데이터
   const [dotData, setDotData] = useState({});
+  // 선택된 날짜의 Plan / Checklist 내용
+  const [dailyData, setDailyData] = useState({plan: null, checklist: []});
 
+  // 날짜 포맷 맞춰주는 함수 (yyyy-mm-dd)
+  const formatDate = date => date.toLocaleDateString('en-CA');
+
+  // 달 변경 시 dotData 가져오기
   useEffect(() => {
-    const yearMonth = value.toISOString().slice(0, 7); // yyyy-MM
+    const yearMonth = `${activeStartDate.getFullYear()}-${String(activeStartDate.getMonth()+1).padStart(2,'0')}`;
 
     fetch(`http://localhost:8080/mypage/dots?userId=test123&yearMonth=${yearMonth}`)
       .then(res => res.json())
       .then(data => {
-        console.log("📌 dotData 확인:", data); // ← 이거로 진짜 오는지 체크
+        console.log("dotData 확인:", data); // 데이터 확인
         setDotData(data);
       })
       .catch(err => console.error("dot 불러오기 실패", err));
+  }, [activeStartDate]);
+
+  // 선택된 날짜 변경 시 dailyData 가져오기
+  useEffect(() => {
+    const dateStr = formatDate(value);
+    fetch(`http://localhost:8080/mypage/data?userId=test123&date=${dateStr}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log("dailyData 확인: ", data);
+        setDailyData(data);
+      })
+      .catch(err => console.log("dailyData 불러오기 실패", err));
   }, [value]);
-
-  // 날짜 포맷 맞춰주는 함수 (yyyy-mm-dd)
-  const formatDate = (date) => {
-    return date.toISOString().split('T')[0];
-  };
-
 
   return (
     <>
@@ -76,32 +92,41 @@ function Mypage2() {
                   locale="en"
                   onChange={onChange}
                   value={value}
+                  // ② 달 네비게이션(<,>) 클릭 시 호출
+                  onActiveStartDateChange={({ activeStartDate }) => {
+                    setActiveStartDate(activeStartDate);
+                  }}
                   next2Label={null}
                   prev2Label={null}
                   showNeighboringMonth={false}
-                  tileContent={({ date }) => {
-                    const dateStr = formatDate(date);
-                    const dotType = dotData[dateStr];
+                  tileContent={({ date, view }) => {
+                    if (view !== 'month') return null;
+                    const key = formatDate(date);
+                    const type = dotData[key];
+                    if (!type) return null;
 
-                    if (dotType === 'plan') {
-                      return <div className="dot plan-dot" />;
-                    } else if (dotType === 'checklist') {
-                      return <div className="dot checklist-dot" />;
-                    } else if (dotType === 'both') {
-                      return (
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px' }}>
-                          <div className="dot plan-dot" />
-                          <div className="dot checklist-dot" />
-                        </div>
-                      );
-                    }
-                    return null;
+                    return (
+                      <div className="dot-container">
+                        { (type === 'plan' || type === 'both') && <div className="dot plan-dot" /> }
+                        { (type === 'checklist' || type === 'both') && <div className="dot checklist-dot" /> }
+                      </div>
+                    );
                   }}
-
                 />
               </div>
               <div className={styles.planList}>
-                Check-List
+                <div className={styles.sectionTitle}>Check-List</div>
+                <ul className={styles.listPreview}>
+                  {dailyData.checklist.length > 0
+                    ? dailyData.checklist.map(item => (
+                        <li key={item.checklistId}>
+                          {item.itemContent}
+                          {item.checked ? ' ✅' : ''}
+                        </li>
+                      ))
+                    : <li className={styles.empty}>등록된 체크리스트가 없습니다.</li>
+                  }
+                </ul>
                 <button className={styles.editButton}>
                   <Link to="/calendar">
                     <img src="/src/assets/images/edit_white.png" alt="list"/>
@@ -110,13 +135,17 @@ function Mypage2() {
               </div>
             </div>
             <div className={styles.planRightWrap}>
-              <div className={styles.planContext}>
-                Plan
+              <div className={styles.sectionTitle}>Plan</div>
                 <button className={styles.editButton}>
                   <Link to="/calendar">
                     <img src="/src/assets/images/edit_black.png" alt="일정 수정"/>
                   </Link>
                 </button>
+                <div className={styles.planContext}>
+                  {dailyData.plan
+                    ? <p className={styles.planPreview}>{dailyData.plan.planContent}</p>
+                    : <p className={styles.empty}>등록된 플랜이 없습니다.</p>
+                  }
               </div>
             </div>
           </div>

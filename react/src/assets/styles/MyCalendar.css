@@ -45,6 +45,8 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  padding-top: 5px;
+
 }
 
 /*hover, focus, 선택됐을 시 */
@@ -89,19 +91,26 @@
   padding: 10px;
 }
 
+.dot-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 12px;           /* dot이 찰칵 보일 높이 */
+  margin-top: 2px;
+  gap: 2px;
+}
+
 .dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  margin-top: 2px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .plan-dot {
-  background-color: pink; /* 또는 원하는 색 */
+  background-color: pink;
 }
 
 .checklist-dot {
-  background-color: black;
+  background-color: #f5e286;
 }
+
