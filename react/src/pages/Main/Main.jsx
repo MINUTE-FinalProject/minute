@@ -1,6 +1,6 @@
+import divStyle from "../../assets/styles/Main.module.css";
 import Header from "../../components/Header/Header";
 import SearchBar from "../../components/MainSearchBar/SearchBar";
-import divStyle from "./Main.module.css";
 
 function Main() {
   return (

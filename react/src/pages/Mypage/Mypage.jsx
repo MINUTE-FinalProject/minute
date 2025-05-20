@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { Link } from "react-router-dom";
+import '../../assets/styles/MyCalendar.css';
+import styles from "../../assets/styles/Mypage.module.css";
 import MypageNav from "../../components/MypageNavBar/MypageNav";
-import './MyCalendar.css';
-import styles from "./Mypage.module.css";
 
 function Mypage2() {
   const [value, onChange] = useState(new Date());

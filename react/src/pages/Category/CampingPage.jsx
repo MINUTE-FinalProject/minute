@@ -1,6 +1,6 @@
 import { useState } from "react";
+import styles from "../../assets/styles/CampingPage.module.css";
 import SearchBar from "../../components/MainSearchBar/SearchBar";
-import styles from "./CampingPage.module.css";
 
 function CampingPage() {
   const [visibleItems, setVisibleItems] = useState(5);

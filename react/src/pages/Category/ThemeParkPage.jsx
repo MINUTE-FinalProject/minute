@@ -1,6 +1,6 @@
 import { useState } from "react";
+import styles from '../../assets/styles/ThemeParkPage.module.css';
 import SearchBar from "../../components/MainSearchBar/SearchBar";
-import styles from './ThemeParkPage.module.css';
 
 function ThemeParkPage(){
  const [visibleItems, setVisibleItems] = useState(5);

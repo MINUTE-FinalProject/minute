@@ -1,6 +1,6 @@
 import { useState } from "react";
+import styles from "../../assets/styles/ShortsVideoPage.module.css";
 import Header from "../../components/Header/Header";
-import styles from "./ShortsVideoPage.module.css";
 
 function ShortsVideoPage() {
   // 로그인 상태 (예시: false면 미로그인 상태)

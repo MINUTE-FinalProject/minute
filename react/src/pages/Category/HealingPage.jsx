@@ -1,6 +1,6 @@
 import { useState } from "react";
+import styles from "../../assets/styles/HealingPage.module.css";
 import SearchBar from "../../components/MainSearchBar/SearchBar";
-import styles from "./HealingPage.module.css";
 
 function HealingPage() {
   const [visibleItems, setVisibleItems] = useState(5);

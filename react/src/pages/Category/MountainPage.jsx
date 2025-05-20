@@ -1,6 +1,6 @@
 import { useState } from "react";
+import styles from '../../assets/styles/MountainPage.module.css';
 import SearchBar from "../../components/MainSearchBar/SearchBar";
-import styles from './MountainPage.module.css';
 
 function MountainPage(){
   const [visibleItems, setVisibleItems] = useState(5);
