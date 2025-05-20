@@ -1,5 +1,5 @@
 import MypageNav from "../../components/MypageNavBar/MypageNav";
-import calendarpageStyle from "./Calendarpage.module.css";
+import calendarpageStyle from "../../assets/styles/Calendarpage.module.css";
 import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
 import { useState } from "react";
 
