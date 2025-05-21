@@ -5,6 +5,7 @@ import { data, Link } from "react-router-dom";
 import '../../assets/styles/MyCalendar.css';
 import styles from "../../assets/styles/Mypage.module.css";
 import MypageNav from "../../components/MypageNavBar/MypageNav";
+import FiveDayForecast from '../Calendar/FiveDayForecast';
 
 function Mypage2() {
   // 선택된 날짜
@@ -115,23 +116,7 @@ function Mypage2() {
                 />
               </div>
               <div className={styles.planList}>
-                <div className={styles.sectionTitle}>Check-List</div>
-                <ul className={styles.listPreview}>
-                  {dailyData.checklist.length > 0
-                    ? dailyData.checklist.map(item => (
-                        <li key={item.checklistId}>
-                          {item.itemContent}
-                          {item.checked ? ' ✅' : ''}
-                        </li>
-                      ))
-                    : <li className={styles.empty}>등록된 체크리스트가 없습니다.</li>
-                  }
-                </ul>
-                <button className={styles.editButton}>
-                  <Link to="/calendar">
-                    <img src="/src/assets/images/edit_white.png" alt="list"/>
-                  </Link>
-                </button>
+                <FiveDayForecast/>
               </div>
             </div>
             <div className={styles.planRightWrap}>
