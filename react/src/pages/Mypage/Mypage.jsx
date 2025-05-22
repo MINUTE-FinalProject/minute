@@ -4,7 +4,7 @@ import 'react-calendar/dist/Calendar.css';
 import { data, Link } from "react-router-dom";
 import '../../assets/styles/MyCalendar.css';
 import styles from "../../assets/styles/Mypage.module.css";
-import calStyles from "../../assets/styles/CalendarPage2.module.css";
+import calStyles from "../../assets/styles/CalendarPage.module.css";
 import MypageNav from "../../components/MypageNavBar/MypageNav";
 import FiveDayForecast from '../Calendar/FiveDayForecast';
 
