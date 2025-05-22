@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import { data, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
+import calStyles from "../../assets/styles/CalendarPage.module.css";
 import '../../assets/styles/MyCalendar.css';
 import styles from "../../assets/styles/Mypage.module.css";
-import calStyles from "../../assets/styles/CalendarPage.module.css";
 import MypageNav from "../../components/MypageNavBar/MypageNav";
 import FiveDayForecast from '../Calendar/FiveDayForecast';
 
@@ -175,52 +175,79 @@ function Mypage2() {
         <div className={styles.rightWrap}>
           <div className={styles.mapWrap}>
             <ul>
-              <li>
+              <li className={styles.mapItem}>
                 <Link to="/area/gyeonggido" className={styles.linkStyle}>
-                  <img src="/src/assets/images/1.png" alt="맵 경기도" />
+                  <div className={styles.imageWrapper}>
+                    <img src="/src/assets/images/1.png" alt="맵 경기도" />
+                    <button className={styles.mapButton}></button>
+                  </div>
                 </Link>
               </li>
-              <li>
-                  <Link to="/area/gangwondo" className={styles.linkStyle}>
+              <li className={styles.mapItem}>
+                <Link to="/area/gangwondo" className={styles.linkStyle}>
+                  <div className={styles.imageWrapper}>
                     <img src="/src/assets/images/2.png" alt="맵 강원도" />
+                    <button className={styles.mapButton}></button>
+                  </div>
                 </Link>
               </li>
-              <li>
+              <li className={styles.mapItem}>
                 <Link to="/area/gyeongsandbuk" className={styles.linkStyle}>
-                  <img src="/src/assets/images/3.png" alt="맵 경상북도" />
+                  <div className={styles.imageWrapper}>
+                    <img src="/src/assets/images/3.png" alt="맵 경상북도" />
+                    <button className={styles.mapButton}></button>
+                  </div>
                 </Link>
               </li>
-              <li>
+              <li className={styles.mapItem}>
                 <Link to="/area/chungcheongbuk" className={styles.linkStyle}>
-                  <img src="/src/assets/images/4.png" alt="맵 충청북도" />
+                  <div className={styles.imageWrapper}>
+                    <img src="/src/assets/images/4.png" alt="맵 충청북도" />
+                    <button className={styles.mapButton}></button>
+                  </div>
                 </Link>
               </li>
-              <li>
+              <li className={styles.mapItem}>
                 <Link to="/area/chungcheongnam" className={styles.linkStyle}>
-                  <img src="/src/assets/images/5.png" alt="맵 충청남도" />
-                </Link>  
+                  <div className={styles.imageWrapper}>
+                    <img src="/src/assets/images/5.png" alt="맵 충청남도" />
+                    <button className={styles.mapButton}></button>
+                  </div>
+                </Link>
               </li>
-              <li>
+               <li className={styles.mapItem}>
                 <Link to="/area/jeollabuk" className={styles.linkStyle}>
-                  <img src="/src/assets/images/6.png" alt="맵 전라북도" />
-                </Link>  
-              </li>
+                  <div className={styles.imageWrapper}>
+                    <img src="/src/assets/images/6.png" alt="맵 전라북도" />
+                    <button className={styles.mapButton}></button>
+                  </div>
+                </Link>
+              </li>   
               <li>
                 <img src="/src/assets/images/7.png" alt="맵 " />
               </li>
-              <li>
+              <li className={styles.mapItem}>
                 <Link to="/area/gyeongsangnam" className={styles.linkStyle}>
-                  <img src="/src/assets/images/8.png" alt="맵 경상남도" />
-                </Link>  
-              </li>
-              <li>
-                <Link to="/area/jeollanam" className={styles.linkStyle}>
-                  <img src="/src/assets/images/9.png" alt="맵 전라남도" />
+                  <div className={styles.imageWrapper}>
+                    <img src="/src/assets/images/8.png" alt="맵 경상남도" />
+                    <button className={styles.mapButton}></button>
+                  </div>
                 </Link>
               </li>
-              <li>
+              <li className={styles.mapItem}>
+                <Link to="/area/jeollanam" className={styles.linkStyle}>
+                  <div className={styles.imageWrapper}>
+                    <img src="/src/assets/images/9.png" alt="맵 전라남도" />
+                    <button className={styles.mapButton}></button>
+                  </div>
+                </Link>
+              </li>
+              <li className={styles.mapItem}>
                 <Link to="/area/jeju" className={styles.linkStyle}>
-                  <img src="/src/assets/images/10.png" alt="맵 제주도" />
+                  <div className={styles.imageWrapper}>
+                    <img src="/src/assets/images/10.png" alt="맵 제주도" />
+                    <button className={styles.mapButton}></button>
+                  </div>
                 </Link>
               </li>
             </ul>
