@@ -4,10 +4,35 @@ import 'react-calendar/dist/Calendar.css';
 import { data, Link } from "react-router-dom";
 import '../../assets/styles/MyCalendar.css';
 import styles from "../../assets/styles/Mypage.module.css";
+import calStyles from "../../assets/styles/CalendarPage2.module.css";
 import MypageNav from "../../components/MypageNavBar/MypageNav";
 import FiveDayForecast from '../Calendar/FiveDayForecast';
 
 function Mypage2() {
+  // 예시 데이터
+  const initialPlans = [
+  {
+    id: 1,
+    date: "2025-05-22",
+    title: "팀 미팅",
+    description: "오전 10시에 팀원들과 주간 회의",
+    start: "10:00",
+    end: "11:00",
+    color: "#FADADD",
+  },
+  {
+    id: 2,
+    date: "2025-05-22",
+    title: "코드 리뷰",
+    description: "PR 릴리즈 전 리뷰",
+    start: "14:00",
+    end: "15:00",
+    color: "#FADADD",
+  }
+  ];
+  const [plans, setPlans] = useState(initialPlans);
+
+
   // 선택된 날짜
   const [value, onChange] = useState(new Date());
   // 보이는 달(월 초)가 바뀔 때 업데이트
@@ -120,18 +145,30 @@ function Mypage2() {
               </div>
             </div>
             <div className={styles.planRightWrap}>
-              <div className={styles.sectionTitle}>Plan</div>
-                <button className={styles.editButton}>
-                  <Link to="/calendar">
-                    <img src="/src/assets/images/edit_black.png" alt="일정 수정"/>
-                  </Link>
-                </button>
-                <div className={styles.planContext}>
-                  {dailyData.plan
-                    ? <p className={styles.planPreview}>{dailyData.plan.planContent}</p>
-                    : <p className={styles.empty}>등록된 플랜이 없습니다.</p>
-                  }
-              </div>
+              <button className={styles.editButton}>
+                <Link to='/calendar'>
+                  <img src="/src/assets/images/editing.png" alt="수정" />
+                </Link>
+              </button>
+              <div className={styles.plan}>
+                {plans
+                  .filter(p => p.date === formatDate(value))
+                  .map(p => (
+                    <div
+                      key={p.id}
+                      className={calStyles.planCard}
+                      style={{ background: p.color }}
+                    >
+                      <h4 className={calStyles.planTitle}>{p.title}</h4>
+                      {/* {p.description && (
+                        <p className={calStyles.planDesc}>{p.description}</p>
+                      )} */}
+                      <small className={calStyles.planTime}>
+                        {p.start} - {p.end}
+                      </small>
+                    </div>
+                  ))}
+                </div>
             </div>
           </div>
         </div>
@@ -144,8 +181,8 @@ function Mypage2() {
                 </Link>
               </li>
               <li>
-                 <Link to="/area/gangwondo" className={styles.linkStyle}>
-                  <img src="/src/assets/images/2.png" alt="맵 강원도" />
+                  <Link to="/area/gangwondo" className={styles.linkStyle}>
+                    <img src="/src/assets/images/2.png" alt="맵 강원도" />
                 </Link>
               </li>
               <li>

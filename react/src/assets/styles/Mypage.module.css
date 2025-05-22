@@ -145,7 +145,7 @@
 
 .planRightWrap {
   width: 40%;
-  background-color: #f6f6f6;
+  background-color: #1f1f1f;
   border-radius: 10px;
   padding: 20px;
   box-sizing: border-box;
@@ -167,6 +167,15 @@
   align-items: center;
   height: 875px;
   position: relative;
+}
+.plan {
+  padding-top: 40px;
+  overflow-y: auto;
+  scrollbar-width: none;   /* Firefox */
+  -ms-overflow-style: none;/* IE 10+ */
+}
+.plan::-webkit-scrollbar {
+  display: none;           /* Chrome, Safari */
 }
 .editButton{
   background: none;
