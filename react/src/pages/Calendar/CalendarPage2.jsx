@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { startOfWeek, addDays, format, differenceInMinutes } from "date-fns";
+import { startOfWeek, addDays, format } from "date-fns";
 
 import MypageNav from "../../components/MypageNavBar/MypageNav";
 import Modal from "../../components/Modal/Modal";
@@ -7,7 +7,7 @@ import styles from "../../assets/styles/CalendarPage2.module.css";
 import WeatherWidget from "./WeatherWidget";
 import FiveDayForecast from "./FiveDayForecast";
 
-export default function CalendarPage2() {
+function CalendarPage2() {
   const today = new Date();
   const todayStr = format(today, "yyyy-MM-dd");
   const [weekStart, setWeekStart] = useState(
@@ -147,21 +147,26 @@ export default function CalendarPage2() {
             <div className={styles.weekHeader}>
               <button
                 className={styles.arrowBtn}
-                onClick={() =>
-                  setWeekStart((ws) => addDays(ws, -7))
-                }
+                onClick={() => {
+                  const newStart = addDays(weekStart, -7);
+                  setWeekStart(newStart);
+                  // 주 시작일을 selectedDate로 설정
+                  setSelectedDate(format(newStart, "yyyy-MM-dd"));
+                }}
               >
-                &lt;
+                <img src="src/assets/images/left.png" alt="left arrow" />
               </button>
               {weekDays.map((d) => {
                 const ds = format(d, "yyyy-MM-dd");
-                const isSel = ds === selectedDate;
+                const isToday = ds === todayStr;
+                const isSel = !isToday && ds === selectedDate;
                 return (
                   <div
                     key={ds}
                     className={[
                       styles.dayBox,
-                      isSel && styles.selectedBox,
+                      isToday ? styles.todayBox
+                              : isSel && styles.selectedBox,
                     ]
                       .filter(Boolean)
                       .join(" ")}
@@ -178,11 +183,14 @@ export default function CalendarPage2() {
               })}
               <button
                 className={styles.arrowBtn}
-                onClick={() =>
-                  setWeekStart((ws) => addDays(ws, 7))
-                }
+                onClick={() =>{
+                  const newStart = addDays(weekStart, 7);
+                  setWeekStart(newStart);
+                  // 주 시작일을 selectedDate로 설정
+                  setSelectedDate(format(newStart, "yyyy-MM-dd"));
+                }}
               >
-                &gt;
+                <img src="src/assets/images/right.png" alt="left arrow" />
               </button>
             </div>
 
@@ -346,26 +354,30 @@ export default function CalendarPage2() {
                         }}
                         onClick={() => openAddPlan(p)}
                       >
+
                         <h4 className={styles.planTitle}>
                           {p.title}
                         </h4>
-                        {p.description && (
-                          <p className={styles.planDesc}>
-                            {p.description}
-                          </p>
-                        )}
-                        <small className={styles.planTime}>
-                          {p.start} - {p.end}
-                        </small>
-                        <button
-                          className={styles.deletePlanBtn}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removePlan(p.id);
-                          }}
-                        >
-                          ✕
-                        </button>
+
+                        <div className={styles.planBody}>
+                          {p.description && (
+                            <p className={styles.planDesc}>
+                              {p.description}
+                            </p>
+                          )}
+                          <small className={styles.planTime}>
+                            {p.start} - {p.end}
+                          </small>
+                        </div>
+                          <button
+                            className={styles.deletePlanBtn}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removePlan(p.id);
+                            }}
+                          >
+                            ✕
+                          </button>
                       </div>
                     );
                   })}
@@ -465,3 +477,5 @@ export default function CalendarPage2() {
     </>
   );
 }
+
+export default CalendarPage2
