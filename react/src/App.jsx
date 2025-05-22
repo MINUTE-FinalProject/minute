@@ -27,7 +27,7 @@ import SeoulPage from "./pages/Area/SeoulPage";
 
 import Bookmark from "./pages/Bookmark/bookmark";
 import Search from "./pages/Bookmark/search";
-import Calendarpage from "./pages/Calendar/Calendarpage";
+// import Calendarpage from "./pages/Calendar/Calendarpage";
 import Mypage from "./pages/Mypage/Mypage";
 
 import Notice from "./pages/Notice/notice";
@@ -76,6 +76,7 @@ import ReportedMemberDetail from './pages/Admin/ReportedMemberDetail';
 import ReportedMembers from './pages/Admin/ReportedMembers';
 import ReportedPosts from "./pages/Admin/ReportedPosts";
 import Like from './pages/Like/Like';
+import CalendarPage2 from "./pages/Calendar/Calendarpage2";
 
 function App() {
   return (
@@ -152,7 +153,8 @@ function App() {
         <Route path="bookmark/:folderId" element={<div className="mypage1"><Bookmark /> </div>} />
 
         <Route path="mypage" element={<div className="mypage1"><Mypage /></div>} />
-        <Route path="calendar" element={<div className="mypage1"><Calendarpage /></div>} />
+        {/* <Route path="calendar" element={<div className="mypage1"><Calendarpage /></div>} /> */}
+        <Route path="calendar" element={<div className="mypage1"><CalendarPage2 /></div>} />
 
         <Route path="qna" element={<div className="mypage1"><Qna /></div>} />
         <Route path="qnaDetail" element={<div className="mypage1"><QnaDetail /></div>} />

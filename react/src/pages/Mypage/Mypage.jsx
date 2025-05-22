@@ -1,32 +1,74 @@
 import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import { Link } from "react-router-dom";
+import { data, Link } from "react-router-dom";
 import '../../assets/styles/MyCalendar.css';
 import styles from "../../assets/styles/Mypage.module.css";
+import calStyles from "../../assets/styles/CalendarPage2.module.css";
 import MypageNav from "../../components/MypageNavBar/MypageNav";
+import FiveDayForecast from '../Calendar/FiveDayForecast';
 
 function Mypage2() {
-  const [value, onChange] = useState(new Date());
-  const [dotData, setDotData] = useState({});
+  // 예시 데이터
+  const initialPlans = [
+  {
+    id: 1,
+    date: "2025-05-22",
+    title: "팀 미팅",
+    description: "오전 10시에 팀원들과 주간 회의",
+    start: "10:00",
+    end: "11:00",
+    color: "#FADADD",
+  },
+  {
+    id: 2,
+    date: "2025-05-22",
+    title: "코드 리뷰",
+    description: "PR 릴리즈 전 리뷰",
+    start: "14:00",
+    end: "15:00",
+    color: "#FADADD",
+  }
+  ];
+  const [plans, setPlans] = useState(initialPlans);
 
+
+  // 선택된 날짜
+  const [value, onChange] = useState(new Date());
+  // 보이는 달(월 초)가 바뀔 때 업데이트
+  const [activeStartDate, setActiveStartDate] = useState(value);
+  // dot 데이터
+  const [dotData, setDotData] = useState({});
+  // 선택된 날짜의 Plan / Checklist 내용
+  const [dailyData, setDailyData] = useState({plan: null, checklist: []});
+
+  // 날짜 포맷 맞춰주는 함수 (yyyy-mm-dd)
+  const formatDate = date => date.toLocaleDateString('en-CA');
+
+  // 달 변경 시 dotData 가져오기
   useEffect(() => {
-    const yearMonth = value.toISOString().slice(0, 7); // yyyy-MM
+    const yearMonth = `${activeStartDate.getFullYear()}-${String(activeStartDate.getMonth()+1).padStart(2,'0')}`;
 
     fetch(`http://localhost:8080/mypage/dots?userId=test123&yearMonth=${yearMonth}`)
       .then(res => res.json())
       .then(data => {
-        console.log("📌 dotData 확인:", data); // ← 이거로 진짜 오는지 체크
+        console.log("dotData 확인:", data); // 데이터 확인
         setDotData(data);
       })
       .catch(err => console.error("dot 불러오기 실패", err));
+  }, [activeStartDate]);
+
+  // 선택된 날짜 변경 시 dailyData 가져오기
+  useEffect(() => {
+    const dateStr = formatDate(value);
+    fetch(`http://localhost:8080/mypage/data?userId=test123&date=${dateStr}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log("dailyData 확인: ", data);
+        setDailyData(data);
+      })
+      .catch(err => console.log("dailyData 불러오기 실패", err));
   }, [value]);
-
-  // 날짜 포맷 맞춰주는 함수 (yyyy-mm-dd)
-  const formatDate = (date) => {
-    return date.toISOString().split('T')[0];
-  };
-
 
   return (
     <>
@@ -76,48 +118,57 @@ function Mypage2() {
                   locale="en"
                   onChange={onChange}
                   value={value}
+                  // ② 달 네비게이션(<,>) 클릭 시 호출
+                  onActiveStartDateChange={({ activeStartDate }) => {
+                    setActiveStartDate(activeStartDate);
+                  }}
                   next2Label={null}
                   prev2Label={null}
                   showNeighboringMonth={false}
-                  tileContent={({ date }) => {
-                    const dateStr = formatDate(date);
-                    const dotType = dotData[dateStr];
+                  tileContent={({ date, view }) => {
+                    if (view !== 'month') return null;
+                    const key = formatDate(date);
+                    const type = dotData[key];
+                    if (!type) return null;
 
-                    if (dotType === 'plan') {
-                      return <div className="dot plan-dot" />;
-                    } else if (dotType === 'checklist') {
-                      return <div className="dot checklist-dot" />;
-                    } else if (dotType === 'both') {
-                      return (
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px' }}>
-                          <div className="dot plan-dot" />
-                          <div className="dot checklist-dot" />
-                        </div>
-                      );
-                    }
-                    return null;
+                    return (
+                      <div className="dot-container">
+                        { (type === 'plan' || type === 'both') && <div className="dot plan-dot" /> }
+                        { (type === 'checklist' || type === 'both') && <div className="dot checklist-dot" /> }
+                      </div>
+                    );
                   }}
-
                 />
               </div>
               <div className={styles.planList}>
-                Check-List
-                <button className={styles.editButton}>
-                  <Link to="/calendar">
-                    <img src="/src/assets/images/edit_white.png" alt="list"/>
-                  </Link>
-                </button>
+                <FiveDayForecast/>
               </div>
             </div>
             <div className={styles.planRightWrap}>
-              <div className={styles.planContext}>
-                Plan
-                <button className={styles.editButton}>
-                  <Link to="/calendar">
-                    <img src="/src/assets/images/edit_black.png" alt="일정 수정"/>
-                  </Link>
-                </button>
-              </div>
+              <button className={styles.editButton}>
+                <Link to='/calendar'>
+                  <img src="/src/assets/images/editing.png" alt="수정" />
+                </Link>
+              </button>
+              <div className={styles.plan}>
+                {plans
+                  .filter(p => p.date === formatDate(value))
+                  .map(p => (
+                    <div
+                      key={p.id}
+                      className={calStyles.planCard}
+                      style={{ background: p.color }}
+                    >
+                      <h4 className={calStyles.planTitle}>{p.title}</h4>
+                      {/* {p.description && (
+                        <p className={calStyles.planDesc}>{p.description}</p>
+                      )} */}
+                      <small className={calStyles.planTime}>
+                        {p.start} - {p.end}
+                      </small>
+                    </div>
+                  ))}
+                </div>
             </div>
           </div>
         </div>
@@ -130,8 +181,8 @@ function Mypage2() {
                 </Link>
               </li>
               <li>
-                 <Link to="/area/gangwondo" className={styles.linkStyle}>
-                  <img src="/src/assets/images/2.png" alt="맵 강원도" />
+                  <Link to="/area/gangwondo" className={styles.linkStyle}>
+                    <img src="/src/assets/images/2.png" alt="맵 강원도" />
                 </Link>
               </li>
               <li>

@@ -91,7 +91,7 @@
 
 .profileNavbar {
   width: 80%;
-  background-color: #000;
+  background-color: #1f1f1f;
   color: #fff;
   border-radius: 10px;
   margin: 20px auto;
@@ -137,19 +137,15 @@
 .planList {
   width: 100%;
   height: 200px;
-  background-color: #000;
-  color: #fff;
+  background-color: #1f1f1f;
   border-radius: 10px;
-  padding: 20px;
-  box-sizing: border-box;
-  position: relative;
   margin-top: 75px;
   font-size: 20px;
 }
 
 .planRightWrap {
   width: 40%;
-  background-color: #d9d9d9;
+  background-color: #1f1f1f;
   border-radius: 10px;
   padding: 20px;
   box-sizing: border-box;
@@ -161,7 +157,7 @@
 
 .rightWrap {
   flex: 0 0 30%;
-  background-color: #ddd;
+  background-color: #f6f6f6;
   margin-left: 75px;
   margin-top: 20px;
   border-radius: 10px;
@@ -171,6 +167,15 @@
   align-items: center;
   height: 875px;
   position: relative;
+}
+.plan {
+  padding-top: 40px;
+  overflow-y: auto;
+  scrollbar-width: none;   /* Firefox */
+  -ms-overflow-style: none;/* IE 10+ */
+}
+.plan::-webkit-scrollbar {
+  display: none;           /* Chrome, Safari */
 }
 .editButton{
   background: none;
@@ -183,7 +188,7 @@
 }
 
 .planContext {
-  font-size: 20px;
+  font-size: 15px;
 }
 
 .mapWrap {
