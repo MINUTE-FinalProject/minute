@@ -1,11 +1,11 @@
-import React, { useRef, useState, useEffect } from "react";
-import { startOfWeek, addDays, format } from "date-fns";
+import { addDays, format, startOfWeek } from "date-fns";
+import { useRef, useState } from "react";
 
-import MypageNav from "../../components/MypageNavBar/MypageNav";
-import Modal from "../../components/Modal/Modal";
 import styles from "../../assets/styles/CalendarPage.module.css";
-import WeatherWidget from "./WeatherWidget";
+import Modal from "../../components/Modal/Modal";
+import MypageNav from "../../components/MypageNavBar/MypageNav";
 import FiveDayForecast from "./FiveDayForecast";
+import WeatherWidget from "./WeatherWidget";
 
 function CalendarPage2() {
   const today = new Date();
