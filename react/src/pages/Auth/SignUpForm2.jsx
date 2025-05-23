@@ -81,12 +81,14 @@ function SignUpForm2() {
       navigate("/signupcomplete"); // 회원가입 후 이동할 경로
     } catch (error) {
       const code = error.response?.data?.code;
-      const newErrors = { email: '', nickname: '', phone: '', general: '' };
+      const newErrors = { email: '', nickname: '', phone: '', general: '',validate:'' };
 
       if (code === 'DE') {
         newErrors.email = '이미 사용 중인 이메일입니다.';
       } else if (code === 'DN') {
         newErrors.nickname = '이미 사용 중인 닉네임입니다.';
+      } else if (code === "VF") {
+        newErrors.validate("입력값이 올바르지 않습니다.");
       } else if (code === 'DP') {
         newErrors.phone = '이미 사용 중인 전화번호입니다.';
       } else {
@@ -119,6 +121,7 @@ function SignUpForm2() {
             setUserName(e.target.value)} 
             className={styles.textBox} required />
         </div>
+        
         <div className={styles.form}>
           <label className={styles.label}>gender</label>
           <div className={styles.genderGroup}>
@@ -204,7 +207,7 @@ function SignUpForm2() {
         </div>
 
         <div className={styles.err}>
-                          {errors.all}
+                          {errors.all},{errors.validate}
                         </div>
         <div className={styles.form}>
           <button

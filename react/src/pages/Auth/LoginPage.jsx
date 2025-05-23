@@ -21,28 +21,48 @@ function LoginPage() {
         userId,
         userPw,
       });
-      const token = response.data.token;
-      alert('로그인 성공!');
-      localStorage.setItem('token', token);
-      navigate("/");
-       
-    } catch (err) {
-    console.error(err);
 
-    if (err.response && err.response.data) {
-      const data = err.response.data;
-      if (data.code === "SF") {
-        setErrorMsg("존재하지 않는 아이디입니다.");
-      } else if (data.code === "IP") {
-        setErrorMsg("비밀번호가 올바르지 않습니다.");
+      const token = response.data.token;
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('token', token);
+      
+      const userInfoRes = await axios.get(`http://localhost:8080/api/v1/user/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      withCredentials: true,
+      });
+      
+      const data = userInfoRes.data;
+
+      if (data.code === "SU") {
+        const userRole = data.role || "USER";
+        if (userRole === "ADMIN") {
+          navigate("/admin"); // 관리자
+        } else {
+          navigate("/"); // 일반유저
+        }
       } else {
-        setErrorMsg("로그인 실패: 알 수 없는 오류입니다.");
+        setErrorMsg("사용자 정보를 불러오는 데 실패했습니다.");
       }
-    } else {
-      setErrorMsg("서버와 통신할 수 없습니다.");
+      } catch (err) {
+      console.error(err);
+      if (err.response && err.response.data) {
+        const data = err.response.data;
+        if (data.code === "SF") {
+          setErrorMsg("존재하지 않는 아이디입니다.");
+        } else if (data.code === "IP") {
+          setErrorMsg("비밀번호가 올바르지 않습니다.");
+        } else if (data.code === "VF") {
+          setErrorMsg("입력값이 올바르지 않습니다.");
+        } else {
+          setErrorMsg("로그인 실패: 알 수 없는 오류입니다.");
+        }
+      } else {
+        setErrorMsg("서버와 통신할 수 없습니다.");
+      }
     }
-  }
-};
+  };
 
   return (
     <form onSubmit={handleSignIn}>

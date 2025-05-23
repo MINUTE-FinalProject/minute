@@ -48,6 +48,8 @@ function SignUpForm() {
           setErrorMessage('이미 사용 중인 아이디입니다.');
         } else if (code === 'IP') {
           setErrorMessage('비밀번호는 8~20자여야 합니다.');
+        } else if (code === "VF") {
+        setErrorMsg("입력값이 올바르지 않습니다.");
         } else {
           setErrorMessage('오류가 발생했습니다. 다시 시도해주세요.');
         }
