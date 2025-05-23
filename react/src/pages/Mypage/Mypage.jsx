@@ -9,6 +9,9 @@ import MypageNav from "../../components/MypageNavBar/MypageNav";
 import FiveDayForecast from '../Calendar/FiveDayForecast';
 
 function Mypage2() {
+  const token = localStorage.getItem('token');
+  // console.log(token);
+
   // 예시 데이터
   const initialPlans = [
   {
@@ -49,26 +52,36 @@ function Mypage2() {
   useEffect(() => {
     const yearMonth = `${activeStartDate.getFullYear()}-${String(activeStartDate.getMonth()+1).padStart(2,'0')}`;
 
-    fetch(`http://localhost:8080/mypage/dots?userId=test123&yearMonth=${yearMonth}`)
+    fetch(`http://localhost:8080/api/v1/mypage/dots?yearMonth=${yearMonth}`, {
+      headers: {Authorization: `Bearer ${token}`}
+    })
       .then(res => res.json())
-      .then(data => {
-        console.log("dotData 확인:", data); // 데이터 확인
-        setDotData(data);
+      .then(dataArray => {
+        console.log("raw dotData: ", dataArray);
+        // 배열을 {'2025-05-20':'plan',...} 형태의 map으로 변환
+        const map = dataArray.reduce((acc, {date, type}) => {
+          acc[date] = type;
+          return acc;
+        }, {});
+        console.log('mapped dotData:', map)
+        setDotData(map);
       })
       .catch(err => console.error("dot 불러오기 실패", err));
   }, [activeStartDate]);
 
   // 선택된 날짜 변경 시 dailyData 가져오기
-  useEffect(() => {
-    const dateStr = formatDate(value);
-    fetch(`http://localhost:8080/mypage/data?userId=test123&date=${dateStr}`)
-      .then(res => res.json())
-      .then(data => {
-        console.log("dailyData 확인: ", data);
-        setDailyData(data);
-      })
-      .catch(err => console.log("dailyData 불러오기 실패", err));
-  }, [value]);
+  // useEffect(() => {
+  //   const dateStr = formatDate(value);
+  //   fetch(`http://localhost:8080/api/v1/mypage/data?date=${dateStr}`, {
+  //     headers: {Authorization: `Bearer ${token}`}
+  //   })
+  //     .then(res => res.json())
+  //     .then(data => {
+  //       console.log("dailyData 확인: ", data);
+  //       setDailyData(data);
+  //     })
+  //     .catch(err => console.log("dailyData 불러오기 실패", err));
+  // }, [value]);
 
   return (
     <>
