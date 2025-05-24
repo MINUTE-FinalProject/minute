@@ -91,7 +91,7 @@
 
 .profileNavbar {
   width: 80%;
-  background-color: #000;
+  background-color: #1f1f1f;
   color: #fff;
   border-radius: 10px;
   margin: 20px auto;
@@ -137,19 +137,15 @@
 .planList {
   width: 100%;
   height: 200px;
-  background-color: #000;
-  color: #fff;
+  background-color: #1f1f1f;
   border-radius: 10px;
-  padding: 20px;
-  box-sizing: border-box;
-  position: relative;
   margin-top: 75px;
   font-size: 20px;
 }
 
 .planRightWrap {
   width: 40%;
-  background-color: #d9d9d9;
+  background-color: #1f1f1f;
   border-radius: 10px;
   padding: 20px;
   box-sizing: border-box;
@@ -161,7 +157,7 @@
 
 .rightWrap {
   flex: 0 0 30%;
-  background-color: #ddd;
+  background-color: #f6f6f6;
   margin-left: 75px;
   margin-top: 20px;
   border-radius: 10px;
@@ -171,6 +167,15 @@
   align-items: center;
   height: 875px;
   position: relative;
+}
+.plan {
+  padding-top: 40px;
+  overflow-y: auto;
+  scrollbar-width: none;   /* Firefox */
+  -ms-overflow-style: none;/* IE 10+ */
+}
+.plan::-webkit-scrollbar {
+  display: none;           /* Chrome, Safari */
 }
 .editButton{
   background: none;
@@ -183,7 +188,7 @@
 }
 
 .planContext {
-  font-size: 20px;
+  font-size: 15px;
 }
 
 .mapWrap {
@@ -198,7 +203,7 @@
 }
 
 .linkStyle {
-  text-decoration: none; /* 기본 링크 스타일 제거 */
+  text-decoration: none; 
   display: block;
 }
 
@@ -213,6 +218,7 @@
 .mapWrap > ul >  li  {
   max-width: 250px;
   width: 100%;
+  position: relative;
 }
 
 
@@ -224,6 +230,18 @@
 .mapWrap > ul >li> a > img {
   width: 100%;
   height: auto;
+}
+
+/* 지도 조각 위에 투명 버튼 */
+.mapButton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0); 
+  cursor: pointer;
+  border: none;
 }
 
 /* 지도 위치는 이미지와 동일하게 유지 */
