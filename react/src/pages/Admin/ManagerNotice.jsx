@@ -218,7 +218,7 @@ function ManagerNotice() {
                             <tbody>
                                 {noticesToDisplay.map((notice) => (
                                     <tr key={notice.id} onClick={() => handleRowClick(notice.id)} className={`${styles.clickableRow} ${notice.isImportant ? styles.importantRow : ''}`}>
-                                        <td>{notice.isImportant ? <span className={styles.importantTag}>{notice.displayNo}</span> : notice.displayNo}</td>
+                                        <td>{notice.displayNo}</td>
                                         <td>{notice.authorId}</td>
                                         <td>{notice.authorNickname}</td>
                                         <td className={styles.titleDataColumn}>{notice.title}</td>
