@@ -251,6 +251,21 @@
   min-height: 0;
 }
 
+/* 스크롤 컨테이너에 높이+스크롤 */
+.scheduleGridContainer {
+  position: relative;
+  height: calc(100vh - 200px); /* 필요에 따라 조정 */
+  overflow-y: auto;
+}
+
+/* .scheduleGrid 는 기존 grid 레이아웃 유지 */
+.scheduleGrid {
+  display: grid;
+  grid-template-columns: 50px 1fr;
+  /* grid-template-rows: repeat(144, 1fr); 등 기존 설정 */
+}
+
+
 .scheduleGrid {
   display: grid;
   grid-template-columns: 60px 1fr;
@@ -283,20 +298,6 @@
   grid-column: 2;
   grid-row: 1 / span 1440;
 }
-
-/* .planCard {
-  overflow: hidden;
-  position: relative;
-  grid-column: 2;
-  word-break: break-word;
-  background: #FADADD;
-  border-radius: 6px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.2);
-  overflow-y: auto;  
-} */
 
 .planCard {
   display: flex;

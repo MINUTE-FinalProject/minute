@@ -10,31 +10,16 @@ import FiveDayForecast from '../Calendar/FiveDayForecast';
 
 function Mypage2() {
   const token = localStorage.getItem('token');
-  // console.log(token);
 
-  // 예시 데이터
-  const initialPlans = [
-  {
-    id: 1,
-    date: "2025-05-22",
-    title: "팀 미팅",
-    description: "오전 10시에 팀원들과 주간 회의",
-    start: "10:00",
-    end: "11:00",
-    color: "#FADADD",
-  },
-  {
-    id: 2,
-    date: "2025-05-22",
-    title: "코드 리뷰",
-    description: "PR 릴리즈 전 리뷰",
-    start: "14:00",
-    end: "15:00",
-    color: "#FADADD",
-  }
-  ];
-  const [plans, setPlans] = useState(initialPlans);
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const today = new Date();
+    return today.toLocaleDateString('en-CA');
+  })
 
+  const [dailyData, setDailyData] = useState({
+    plans: [],
+    checklists: []
+  });
 
   // 선택된 날짜
   const [value, onChange] = useState(new Date());
@@ -43,7 +28,7 @@ function Mypage2() {
   // dot 데이터
   const [dotData, setDotData] = useState({});
   // 선택된 날짜의 Plan / Checklist 내용
-  const [dailyData, setDailyData] = useState({plan: null, checklist: []});
+  // const [dailyData, setDailyData] = useState({plan: null, checklist: []});
 
   // 날짜 포맷 맞춰주는 함수 (yyyy-mm-dd)
   const formatDate = date => date.toLocaleDateString('en-CA');
@@ -69,19 +54,23 @@ function Mypage2() {
       .catch(err => console.error("dot 불러오기 실패", err));
   }, [activeStartDate]);
 
-  // 선택된 날짜 변경 시 dailyData 가져오기
-  // useEffect(() => {
-  //   const dateStr = formatDate(value);
-  //   fetch(`http://localhost:8080/api/v1/mypage/data?date=${dateStr}`, {
-  //     headers: {Authorization: `Bearer ${token}`}
-  //   })
-  //     .then(res => res.json())
-  //     .then(data => {
-  //       console.log("dailyData 확인: ", data);
-  //       setDailyData(data);
-  //     })
-  //     .catch(err => console.log("dailyData 불러오기 실패", err));
-  // }, [value]);
+  // 선택된 날짜 변경 시 details 가져오기
+  useEffect(() => {
+    if (!selectedDate) return;
+    const dateStr = formatDate(value);
+    fetch(`http://localhost:8080/api/v1/mypage/details?travelDate=${selectedDate}`, {
+      headers: {Authorization: `Bearer ${token}`}
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log("details 확인: ", data);
+        setDailyData({
+          plans: data.plans,
+          checklists: data.checklists
+        });
+      })
+      .catch(err => console.log("details 불러오기 실패", err));
+  }, [selectedDate]);
 
   return (
     <>
@@ -129,7 +118,10 @@ function Mypage2() {
               <div className={styles.calendar}>
                 <Calendar
                   locale="en"
-                  onChange={onChange}
+                  onChange={date => {
+                    onChange(date);
+                    setSelectedDate(formatDate(date));
+                  }}
                   value={value}
                   // ② 달 네비게이션(<,>) 클릭 시 호출
                   onActiveStartDateChange={({ activeStartDate }) => {
@@ -159,29 +151,28 @@ function Mypage2() {
             </div>
             <div className={styles.planRightWrap}>
               <button className={styles.editButton}>
-                <Link to='/calendar'>
+                <Link to={`/calendar?date=${selectedDate}`}>
                   <img src="/src/assets/images/editing.png" alt="수정" />
                 </Link>
               </button>
+              {/* 선택된 날짜의 일정 미리보기 */}
               <div className={styles.plan}>
-                {plans
-                  .filter(p => p.date === formatDate(value))
-                  .map(p => (
-                    <div
-                      key={p.id}
-                      className={calStyles.planCard}
-                      style={{ background: p.color }}
-                    >
-                      <h4 className={calStyles.planTitle}>{p.title}</h4>
-                      {/* {p.description && (
-                        <p className={calStyles.planDesc}>{p.description}</p>
-                      )} */}
-                      <small className={calStyles.planTime}>
-                        {p.start} - {p.end}
-                      </small>
-                    </div>
-                  ))}
-                </div>
+                {dailyData.plans.length === 0
+                  ? <p>등록된 일정이 없습니다.</p>
+                  : dailyData.plans.map(plan => (
+                      <div
+                        key={plan.planId}
+                        className={calStyles.planCard}
+                        style={{ background: '#FADADD', marginBottom: '8px' }}  // dot 컬러와 맞춰 주세요
+                      >
+                        <h4 className={calStyles.planTitle}>{plan.title}</h4>
+                        <small className={calStyles.planTime}>
+                          {plan.startTime.slice(0,5)} - {plan.endTime.slice(0,5)}
+                        </small>
+                      </div>
+                    ))
+                }
+              </div>
             </div>
           </div>
         </div>
@@ -228,7 +219,7 @@ function Mypage2() {
                   </div>
                 </Link>
               </li>
-               <li className={styles.mapItem}>
+              <li className={styles.mapItem}>
                 <Link to="/area/jeollabuk" className={styles.linkStyle}>
                   <div className={styles.imageWrapper}>
                     <img src="/src/assets/images/6.png" alt="맵 전라북도" />

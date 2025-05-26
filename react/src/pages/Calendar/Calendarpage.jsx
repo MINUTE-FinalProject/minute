@@ -1,5 +1,5 @@
 import { addDays, format, startOfWeek } from "date-fns";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import styles from "../../assets/styles/CalendarPage.module.css";
 import Modal from "../../components/Modal/Modal";
@@ -8,6 +8,8 @@ import FiveDayForecast from "./FiveDayForecast";
 import WeatherWidget from "./WeatherWidget";
 
 function CalendarPage2() {
+  const token = localStorage.getItem('token');
+
   const today = new Date();
   const todayStr = format(today, "yyyy-MM-dd");
   const [weekStart, setWeekStart] = useState(
@@ -20,7 +22,7 @@ function CalendarPage2() {
   );
 
   // === Checklist 상태 === //
-  const [items, setItems] = useState([{ id: 1, text: "충전기 챙기기" }]);
+  const [checklists, setChecklists] = useState([]);
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [newItemText, setNewItemText] = useState("");
   const [editItemId, setEditItemId] = useState(null);
@@ -61,7 +63,7 @@ function CalendarPage2() {
 
   const addItem = () => {
     if (!newItemText.trim()) return;
-    setItems((prev) => [
+    setChecklists((prev) => [
       ...prev,
       { id: Date.now(), text: newItemText.trim() },
     ]);
@@ -73,7 +75,7 @@ function CalendarPage2() {
       setEditItemId(null);
       return;
     }
-    setItems((prev) =>
+    setChecklists((prev) =>
       prev.map((it) =>
         it.id === editItemId ? { ...it, text: editItemText } : it
       )
@@ -81,7 +83,7 @@ function CalendarPage2() {
     setEditItemId(null);
   };
   const removeItem = (id) =>
-    setItems((prev) => prev.filter((it) => it.id !== id));
+    setChecklists((prev) => prev.filter((it) => it.id !== id));
 
   // === Plan 상태 === //
   const [plans, setPlans] = useState([]);
@@ -131,6 +133,47 @@ function CalendarPage2() {
   const removePlan = (id) =>
     setPlans((prev) => prev.filter((p) => p.id !== id));
   const todaysPlans = plans.filter((p) => p.date === selectedDate);
+
+  useEffect(() => {
+  if (!selectedDate) return;
+  fetch(
+    `http://localhost:8080/api/v1/mypage/details?travelDate=${selectedDate}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  )
+    .then((res) => {
+      if (!res.ok) throw new Error(res.status);
+      return res.json();
+    })
+    .then((data) => {
+      // data.plans  → [{ planId, title, description, startTime, endTime }, …]
+      setPlans(
+        data.plans.map((p) => ({
+          id:       p.planId,
+          date:     selectedDate,
+          title:    p.title,
+          description: p.description,
+          start:    p.startTime.slice(0, 5), // "HH:mm"
+          end:      p.endTime.slice(0, 5),
+          color:    "#FADADD",
+        }))
+      );
+      // data.checklists → [{ checklistId, planId, itemContent, isChecked }, …]
+      setChecklists(
+        data.checklists.map((c) => ({
+          id:      c.checklistId,
+          planId:  c.planId,
+          text:    c.itemContent,
+          checked: c.isChecked,
+        }))
+      );
+    })
+    .catch(console.error);
+  }, [selectedDate]);
+  
 
   return (
     <>
@@ -243,7 +286,7 @@ function CalendarPage2() {
 
                 {/* Item List */}
                 <ul className={styles.listContent}>
-                  {items.map((it) => (
+                  {checklists.map((it) => (
                     <li
                       key={it.id}
                       data-id={it.id}

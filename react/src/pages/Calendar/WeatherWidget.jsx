@@ -1,4 +1,3 @@
-// src/pages/Calendar/WeatherWidget.jsx
 import React, { useEffect, useState } from "react";
 import styles from "../../assets/styles/WeatherWidget.module.css";
 
