@@ -2,34 +2,61 @@ import { useEffect, useState } from "react";
 import styles from "../../assets/styles/ShortsVideoPage.module.css";
 import Header from "../../components/Header/Header";
 
+// 1. 지역 배열
+const regions = [
+  "서울", "부산", "강원도", "경기도",
+  "충청북도", "충청남도", "경상북도", "경상남도",
+  "전라북도", "전라남도", "제주도"
+];
+
+// 2. 랜덤 지역 반환 함수
+function getRandomRegion() {
+  const idx = Math.floor(Math.random() * regions.length);
+  return regions[idx];
+}
+
 function ShortsVideoPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // 유튜브 쇼츠 리스트 & 재생중인 인덱스
   const [shorts, setShorts] = useState([]);
   const [currentIdx, setCurrentIdx] = useState(0);
-  // 좋아요/싫어요 상태(영상마다 분리)
+
+  // 좋아요/싫어요 상태 (영상별)
   const [likes, setLikes] = useState({});
   const [dislikes, setDislikes] = useState({});
-  // 폴더
+
+  // 폴더 관련
   const [isFolderOpen, setIsFolderOpen] = useState(false);
   const [folders, setFolders] = useState([]);
   const [newFolderName, setNewFolderName] = useState("");
   const [selectedFolder, setSelectedFolder] = useState(null);
-  // 로그인 유도 모달
+
+  // 로그인 모달
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
-  // 유튜브 쇼츠 불러오기 (예시: 서울 쇼츠)
+  // 지역 저장
+  const [region, setRegion] = useState(getRandomRegion());
+
+  // 3. 자동 저장/불러오기 (최초 1회, region 변경시)
   useEffect(() => {
-    fetch(`/api/v1/youtube/shorts?region=한국&maxResults=15`)
+    // 1. 유튜브 API → DB 저장
+    fetch(`/api/v1/youtube/shorts/save?region=${region}&maxResults=15`, {
+      method: "POST",
+    })
+      .then(() => {
+        // 2. DB에서 영상 조회
+        return fetch(`/api/v1/youtube/db/shorts?region=${region}&maxResults=15`);
+      })
       .then(res => res.json())
       .then(data => {
         setShorts(Array.isArray(data) ? data : []);
         setCurrentIdx(0);
-      });
-  }, []);
+      })
+      .catch(console.error);
+  }, [region]);
 
-  // 좋아요/싫어요 토글 핸들러
+  // 좋아요/싫어요
   const handleThumbUpClick = () => {
     if (!isLoggedIn) return setIsLoginModalOpen(true);
     setLikes(prev => ({ ...prev, [currentIdx]: !prev[currentIdx] }));
@@ -41,7 +68,7 @@ function ShortsVideoPage() {
     setLikes(prev => ({ ...prev, [currentIdx]: false }));
   };
 
-  // 폴더 관련
+  // 폴더 기능
   const handleStarClick = () => {
     if (!isLoggedIn) return setIsLoginModalOpen(true);
     setIsFolderOpen(prev => !prev);
@@ -65,8 +92,11 @@ function ShortsVideoPage() {
   const closeLoginModal = () => setIsLoginModalOpen(false);
   const handleLogin = () => { setIsLoggedIn(true); setIsLoginModalOpen(false); };
 
-  // 현재 영상
+  // 현재 영상 (DB 저장 구조 맞춰서)
   const video = shorts[currentIdx];
+
+  // 🔥 (선택) 지역 바꾸기 기능
+  const handleRegionChange = e => setRegion(e.target.value);
 
   return (
     <>
@@ -74,17 +104,24 @@ function ShortsVideoPage() {
       <div className={styles.container}>
         <div className={styles.searchbar}>
           <input type="text" className={styles.searchInput} placeholder="검색..." />
+          {/* 지역 선택 드롭다운 (선택사항) */}
+          <select value={region} onChange={handleRegionChange} style={{marginLeft: 12}}>
+            {regions.map(r => (
+              <option key={r} value={r}>{r}</option>
+            ))}
+          </select>
         </div>
 
         <div className={styles.mainContent}>
           <div className={styles.contentWrap}>
             <div className={styles.shortVideo}>
-              {video && video.id?.videoId ? (
+              {/* DB 구조에 따라 YoutubeVideo 객체라면 videoId 바로 있음 */}
+              {video && (video.youtubeVideoId || video.id?.videoId) ? (
                 <iframe
                   width="470"
                   height="720"
-                  src={`https://www.youtube.com/embed/${video.id.videoId}?autoplay=1`}
-                  title={video.snippet?.title || ""}
+                  src={`https://www.youtube.com/embed/${video.youtubeVideoId || video.id.videoId}?autoplay=1`}
+                  title={video.title || video.snippet?.title || ""}
                   frameBorder="0"
                   allow="autoplay; encrypted-media"
                   allowFullScreen

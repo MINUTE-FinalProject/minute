@@ -5,6 +5,9 @@ import Header from "../../components/Header/Header";
 import RollingCardSlider from "./RollingCardSlider";
 
 function RegionPage({ regionName, backgroundImages, cities }) {
+  // ⬇ 상단 대표 영상(DB 기반)
+  const [regionShorts, setRegionShorts] = useState([]);
+  // 기존 도시별 등등
   const [selectImage, setSelectImage] = useState("");
   const [visibleRows, setVisibleRows] = useState(
     Object.fromEntries(cities.map((city) => [city, 1]))
@@ -13,13 +16,31 @@ function RegionPage({ regionName, backgroundImages, cities }) {
   const [loading, setLoading] = useState(
     Object.fromEntries(cities.map((city) => [city, true]))
   );
-  const [modalVideoId, setModalVideoId] = useState(null); // 👈 모달 상태
+  const [modalVideoId, setModalVideoId] = useState(null);
 
+  // 배경이미지 랜덤
   useEffect(() => {
     const random = Math.floor(Math.random() * backgroundImages.length);
     setSelectImage(backgroundImages[random]);
   }, [backgroundImages]);
 
+  // ⬇⬇ [NEW] 지역별 대표영상: 자동 저장 + DB 조회
+  useEffect(() => {
+    // (1) DB 저장(최초 1회/이미 있으면 그냥 ok)
+    fetch(`/api/v1/youtube/shorts/save?region=${regionName}&maxResults=10`, {
+      method: "POST",
+    })
+      .then(() =>
+        // (2) 저장 후, DB에서 영상 리스트 불러오기!
+        fetch(`/api/v1/youtube/db/shorts?region=${regionName}&maxResults=10`)
+      )
+      .then((res) => res.json())
+      .then((data) => setRegionShorts(Array.isArray(data) ? data : []))
+      .catch(console.error);
+  }, [regionName]);
+  // ⬆⬆
+
+  // 기존: 도시별 영상 불러오기
   useEffect(() => {
     cities.forEach((city) => {
       setLoading((prev) => ({ ...prev, [city]: true }));
@@ -63,10 +84,63 @@ function RegionPage({ regionName, backgroundImages, cities }) {
             <img src={searchIcon} alt="검색" className={styles.searchIcon} />
           </button>
         </div>
+
+        {/* 상단 대표 영상(자동 DB저장 & 조회) */}
+        <div style={{ margin: "32px 0 20px 0" }}>
+          <h2 style={{ fontWeight: "bold", fontSize: 23, margin: "10px 0 8px" }}>
+            {regionName} 인기 쇼츠
+          </h2>
+          <div style={{
+            display: "flex",
+            gap: 15,
+            flexWrap: "wrap",
+            minHeight: 210
+          }}>
+            {regionShorts.length === 0 ? (
+              <div style={{ color: "#888", fontSize: 17, margin: "30px 0" }}>로딩중...</div>
+            ) : (
+              regionShorts.map((item, i) => (
+                <div
+                  key={item.youtubeVideoId || i}
+                  style={{
+                    width: 250,
+                    background: "#f5f5f5",
+                    borderRadius: 12,
+                    boxShadow: "0 2px 7px #0002",
+                    padding: 10,
+                    cursor: "pointer"
+                  }}
+                  onClick={() => setModalVideoId(item.youtubeVideoId)}
+                >
+                  <iframe
+                    width="220"
+                    height="124"
+                    src={`https://www.youtube.com/embed/${item.youtubeVideoId}`}
+                    title={item.title}
+                    allowFullScreen
+                    style={{ borderRadius: "10px" }}
+                  />
+                  <div style={{
+                    marginTop: 7,
+                    fontWeight: "bold",
+                    fontSize: 15,
+                    minHeight: 34,
+                    lineHeight: 1.1,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis"
+                  }}>
+                    {item.title}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+        {/* 기존 롤링 슬라이더 등등 ↓ */}
         <div className={styles.sliderContainer}>
           <RollingCardSlider
             region={regionName}
-            setModalVideoId={setModalVideoId} // 👈 슬라이더에도 모달 setter 전달!
+            setModalVideoId={setModalVideoId}
           />
         </div>
       </div>
@@ -88,7 +162,7 @@ function RegionPage({ regionName, backgroundImages, cities }) {
                     key={i}
                     className={styles.card}
                     style={{ cursor: "pointer" }}
-                    onClick={() => setModalVideoId(item.id?.videoId)} // 👈 카드 클릭시 모달 오픈
+                    onClick={() => setModalVideoId(item.id?.videoId)}
                   >
                     {item.snippet?.thumbnails?.medium?.url ? (
                       <img
@@ -128,7 +202,6 @@ function RegionPage({ regionName, backgroundImages, cities }) {
               ))
             )}
           </div>
-          {/* 더보기 버튼 */}
           {cityVideos[city] && cityVideos[city].length > visibleRows[city] * 5 && visibleRows[city] < 3 && (
             <button
               className={styles.moreButton}
