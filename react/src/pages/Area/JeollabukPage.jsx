@@ -5,7 +5,7 @@ import RegionPage from "./RegionPage";
 function JeollabukPage() {
   return (
     <RegionPage
-      // regionName="전라북도"
+      regionName="전라북도"
       backgroundImages={[bg1, bg2]}
       cities={["전주", "군산", "남원"]}
     />

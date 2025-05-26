@@ -5,7 +5,7 @@ import RegionPage from "./RegionPage";
 function SeoulPage() {
   return (
     <RegionPage
-      // regionName="서울특별시"
+      regionName="서울특별시"
        backgroundImages={[bg1, bg2]}
       cities={["강남", "종로", "홍대"]}
     />
