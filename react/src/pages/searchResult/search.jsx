@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import styles from "../../assets/styles/search.module.css";
-import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
+import Header from '../../components/Header/Header';
+import SearchBar from '../../components/MainSearchBar/SearchBar';
+
 
 function Search() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -25,7 +27,8 @@ function Search() {
     <>
       <div className={styles.container}>
         <Header />
-        <header className={styles.header}>
+        <SearchBar showTitle={false} compact={true}  className={styles.searchCompact}/>
+        {/* <header className={styles.header}>
           <div className={styles.searchBarWrapper}>
             <div className={styles.searchBar}>
               <input type="text" placeholder="검색..." />
@@ -34,7 +37,7 @@ function Search() {
               </button>
             </div>
           </div>
-        </header>
+        </header> */}
         <div className={styles.grid}>
           {currentItems.map((item) => (
             <div key={item.id} className={styles.gridItem}>

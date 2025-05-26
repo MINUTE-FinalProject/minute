@@ -35,6 +35,7 @@ function Mypage2() {
 
   // 달 변경 시 dotData 가져오기
   useEffect(() => {
+    if (!token) return;
     const yearMonth = `${activeStartDate.getFullYear()}-${String(activeStartDate.getMonth()+1).padStart(2,'0')}`;
 
     fetch(`http://localhost:8080/api/v1/mypage/dots?yearMonth=${yearMonth}`, {
@@ -52,11 +53,11 @@ function Mypage2() {
         setDotData(map);
       })
       .catch(err => console.error("dot 불러오기 실패", err));
-  }, [activeStartDate]);
+  }, [activeStartDate,token]);
 
   // 선택된 날짜 변경 시 details 가져오기
   useEffect(() => {
-    if (!selectedDate) return;
+    if(!token || !selectedDate) return;
     const dateStr = formatDate(value);
     fetch(`http://localhost:8080/api/v1/mypage/details?travelDate=${selectedDate}`, {
       headers: {Authorization: `Bearer ${token}`}
@@ -70,7 +71,7 @@ function Mypage2() {
         });
       })
       .catch(err => console.log("details 불러오기 실패", err));
-  }, [selectedDate]);
+  }, [selectedDate,token]);
 
   return (
     <>
