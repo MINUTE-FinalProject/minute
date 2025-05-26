@@ -5,7 +5,7 @@ import RegionPage from "./RegionPage";
 function JeollanamPage() {
   return (
     <RegionPage
-      // regionName="전라남도"
+      regionName="전라남도"
       backgroundImages={[bg1, bg2]}
       cities={["여수", "순천", "담양"]}
     />

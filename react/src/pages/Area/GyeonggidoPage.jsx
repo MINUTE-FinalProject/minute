@@ -6,7 +6,7 @@ import RegionPage from "./RegionPage";
 function GyeonggidoPage() {
   return (
     <RegionPage
-      // regionName="경기도"
+      regionName="경기도"
       backgroundImages={[bg1, bg2]}
       cities={["가평", "수원", "파주  "]}
     />

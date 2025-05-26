@@ -5,7 +5,7 @@ import RegionPage from "./RegionPage";
 function BusanPage() {
   return (
     <RegionPage
-      // regionName="부산광역시"
+      regionName="부산"
       backgroundImages={[bg1, bg2]}
       cities={["해운대", "광안리", "서면"]}
     />
