@@ -76,4 +76,6 @@
   border: none;
   cursor: pointer;
   margin-top: 20px;
+  margin: 20px auto 0; /* 여기 핵심: 가운데 정렬 */
+  display: block;
 }

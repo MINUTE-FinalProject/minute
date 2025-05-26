@@ -43,6 +43,7 @@ function CheckDelete() {
                     <label htmlFor="agree">해당 내용을 모두 확인했으며, 회원탈퇴에 동의합니다.</label>
                 </div>
 
+               
                 <button className={styles.da_btn}>회원 탈퇴</button>
             </div>
         </div>
