@@ -9,14 +9,6 @@ const GAP = 20;
 const VISIBLE_COUNT = 6;
 const SCROLL_STEP = VIDEO_WIDTH + GAP;
 
-// 더미 데이터로 초기화 (오류 방지용)
-// const likedVideos = [
-//   { id: 1, title: "Sample Video 1", thumbnail: "https://via.placeholder.com/220x124", likedAt: "2025-05-19" },
-//   { id: 2, title: "Sample Video 2", thumbnail: "https://via.placeholder.com/220x124", likedAt: "2025-05-18" },
-// ];
-// const recentWatched = [
-//   { id: 3, title: "Recent Video 1", thumbnail: "https://via.placeholder.com/220x124" },
-// ];
 
 const Like = () => {
   const [likedVideos, setLikedVideos] = useState([]);
@@ -187,17 +179,22 @@ const Like = () => {
       )}
       <div className={likeStyle.videoList} id={containerId}>
         {videoList.map((video, index) => (
-          <div
-            key={video.videoId}
-            className={likeStyle.videoItem}
-            style={{
-              backgroundImage: `url(${
-                video.thumbnailUrl || "https://via.placeholder.com/220x124"
-              })`,
-            }}
-          >
-            <div className={likeStyle.videoTitle}>
-              <span>{video.videoTitle || "No Title"}</span>
+          <div key={video.videoId} className={likeStyle.videoItem}>
+            {/* 1. 썸네일 영역 */}
+            <div className={likeStyle.thumbnailWrapper}>
+              <img
+                src={video.thumbnailUrl || "https://via.placeholder.com/220x124"}
+                alt={video.videoTitle || "No Title"}
+                className={likeStyle.thumbnail}
+                loading="lazy"
+              />
+            </div>
+
+            {/* 2. 텍스트 정보 영역 */}
+            <div className={likeStyle.textWrapper}>
+              <span className={likeStyle.videoTitleText}>
+                {video.videoTitle || "No Title"}
+              </span>
               <button
                 className={likeStyle.moreBtn}
                 onClick={() => setModal({ show: true, index })}

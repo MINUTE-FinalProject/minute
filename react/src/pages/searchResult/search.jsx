@@ -1,67 +1,101 @@
-import { useState } from 'react';
+import axios from "axios";
+import { useEffect, useState } from "react";
 import styles from "../../assets/styles/search.module.css";
-import Footer from '../../components/Footer/Footer';
-import Header from '../../components/Header/Header';
-import SearchBar from '../../components/MainSearchBar/SearchBar';
-
+import Header from "../../components/Header/Header";
+import SearchBar from "../../components/MainSearchBar/SearchBar";
 
 function Search() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
-  const totalItems = 100;
+  const [videos, setVideos] = useState([]); // 영상
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1); // 페이지 수 기본 첫번째
+  const itemsPerPage = 20; // 20개씩 보여주고
 
-  const items = Array.from({ length: totalItems }, (_, index) => ({
-    id: index + 1,
-    title: `제목 ${index + 1}`
-  }));
+  // url 쿼리에서 검색어 추출
+  const queryParams = new URLSearchParams(window.location.search);
+  const query = queryParams.get("query") || "";
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
+  // 검색어가 바뀔 때마다 API 호출
+  useEffect(() => {
+    if (!query) {
+      setVideos([]);
+      return;
+    }
+    setLoading(true);
+    axios
+      .get("/api/v1/videos", { params: { keyword: query } })
+      .then((res) => setVideos(res.data))
+      .catch((err) => setError(err))
+      .finally(() => setLoading(false));
+    setCurrentPage(1);
+  }, [query]);
 
+  const totalItems = videos.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIdx = (currentPage - 1) * itemsPerPage;
+  const currentItems = videos.slice(startIdx, startIdx + itemsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <>
-      <div className={styles.container}>
-        <Header />
-        <SearchBar showTitle={false} compact={true}  className={styles.searchCompact}/>
-        {/* <header className={styles.header}>
-          <div className={styles.searchBarWrapper}>
-            <div className={styles.searchBar}>
-              <input type="text" placeholder="검색..." />
-              <button className={styles.searchIcon}>
-                <img src="/src/assets/images/searchIcon.png" alt="" width="20" height="20" />
-              </button>
-            </div>
-          </div>
-        </header> */}
-        <div className={styles.grid}>
-          {currentItems.map((item) => (
-            <div key={item.id} className={styles.gridItem}>
-              <div className={styles.itemContent}>
-                <div className={styles.placeholder}></div>
-                <h3>{item.title}</h3>
-                <p>{item.content}</p>
+      <div className={styles.pageWrapper}>
+        <div className={styles.container}>
+          <SearchBar
+            showTitle={false}
+            compact={true}
+            className={styles.searchCompact}
+            textboxClassName={styles.textboxCompact}
+          />
+
+          {loading && <div className={styles.status}>로딩 중...</div>}
+          {error && (
+            <div className={styles.status}>에러 발생: {error.message}</div>
+          )}
+
+          {!loading && !error && (
+            <>
+              {query && (
+                <h2 className={styles.title}>
+                  “{query}” 검색 결과 ({totalItems})
+                </h2>
+              )}
+              <div className={styles.grid}>
+                {currentItems.map((video) => (
+                  <div key={video.videoId} className={styles.gridItem}>
+                     <div className={styles.thumbnailWrapper}>
+                      <img
+                        src={video.thumbnailUrl}
+                        alt={video.videoTitle}
+                        className={styles.thumbnail}
+                      />
+                      </div>
+                       <div className={styles.textWrapper}>
+                      <h3>{video.videoTitle}</h3>
+                      <p>{video.channelName}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
-          ))}
-        </div>
-        <div className={styles.pagination}>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
-            <button
-              key={number}
-              onClick={() => paginate(number)}
-              className={currentPage === number ? styles.active : ''}
-            >
-              {number}
-            </button>
-          ))}
+              {totalPages > 1 && (
+                <div className={styles.pagination}>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (number) => (
+                      <button
+                        key={number}
+                        onClick={() => paginate(number)}
+                        className={currentPage === number ? styles.active : ""}
+                      >
+                        {number}
+                      </button>
+                    )
+                  )}
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
-      <Footer />
     </>
   );
 }

@@ -20,18 +20,15 @@ import divStyle from "./SearchBar.module.css";
   ]
 
 /**
- * @param {{ showTitle?: boolean; compact?: boolean }} props
+ *  @param {{ showTitle?: boolean; compact?: boolean; className?: string; textboxClassName?: string }} props
  *  - showTitle: 타이틀 표시 여부 (기본 true)
  *  - compact: compact 모드일 때 CSS 변화 (기본 false)
+ *  - className: 추가 컨테이너 클래스
+ *  - textboxClassName: textbox에 추가할 클래스
  */
 
-function SearchBar({showTitle=true, compact = false, className = ''}) {
-   const containerClass = [
-    divStyle.search,
-    compact ? divStyle.searchCompact : '',
-    className
-  ].filter(Boolean).join(' ');
-
+function SearchBar({showTitle=true, compact = false, className = '', textboxClassName =''}) {
+  
   const token = localStorage.getItem("accessToken") || "";
   const userId = localStorage.getItem("userId") || "";
   const containerRef = useRef(null); // 검색창 영역, 바깥영역 클릭했을 때 드롭다운을 닫기 위해 
@@ -42,6 +39,18 @@ function SearchBar({showTitle=true, compact = false, className = ''}) {
   const [popular, setPopular] = useState([]); // 인기 검색어 리스트
   const [open, setOpen] = useState(false);  // 드롭다운 여부
 
+  // container , textbox 클래스 조합
+   const containerClass = [
+    divStyle.search,
+    compact ? divStyle.searchCompact : '',
+    className
+  ].filter(Boolean).join(' ');
+
+  const textboxClass = [
+    divStyle.textbox,
+    compact ? divStyle.textboxCompact : '',
+    textboxClassName
+  ].filter(Boolean).join(' ');
 
 
   // 검색창 클릭시 최근,인기검색어 조회
@@ -134,7 +143,7 @@ function SearchBar({showTitle=true, compact = false, className = ''}) {
    return (
    <div className={containerClass} ref={containerRef}>
       {showTitle && <h1 className={divStyle.mainTitle}>MIN:UTE</h1>}
-      <div className={divStyle.textbox}>
+      <div className={textboxClass}>
         <input
           type="text"
           placeholder="검색어를 입력하세요"
