@@ -6,7 +6,7 @@ import RegionPage from "./RegionPage";
 function ChungcheongnamPage() {
   return (
     <RegionPage
-      // regionName="충청남도"
+      regionName="충청남도"
       backgroundImages={[bg1, bg2]}
       cities={["태안", "공주", "보령"]}
     />
