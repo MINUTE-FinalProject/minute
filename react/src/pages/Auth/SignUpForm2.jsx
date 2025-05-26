@@ -76,7 +76,8 @@ function SignUpForm2() {
         userGender
       };
 
-      await axios.post('http://localhost:8080/api/v1/auth/sign-up', requestBody);
+      await axios.post('http://localhost:8080/api/v1/auth/sign-up', requestBody,  {withCredentials: true
+});
       alert("회원가입 성공");
       navigate("/signupcomplete"); // 회원가입 후 이동할 경로
     } catch (error) {

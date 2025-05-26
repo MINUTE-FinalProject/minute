@@ -64,6 +64,7 @@
   box-sizing: border-box;
   font-size: 20px;
   height: 43px;
+  text-decoration: none;
 }
 
 .img {
