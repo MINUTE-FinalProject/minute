@@ -123,7 +123,6 @@ function ShortsVideoPage() {
               </ul>
             </div>
           </div>
-
           <div className={styles.arrowWrap}>
             <ul>
               <li>
@@ -179,8 +178,8 @@ function ShortsVideoPage() {
             <button onClick={handleNavigateToLogin} className={styles.loginModalButton}>로그인 페이지로 이동</button>
             <button onClick={closeLoginModal} className={`${styles.loginModalButton} ${styles.closeButton}`}>닫기</button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </>
   );
 }

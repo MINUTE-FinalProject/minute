@@ -96,20 +96,21 @@ function SearchBar({showTitle=true, compact = false, className = '', textboxClas
   }
 
   // 검색 실행 또는 지역 페이지로 이동
-  const handleSearch = async() => {
-    const term = searchInput.trim();
-    if(!term) return;
+  const handleSearchTerm = async(term) => {
+    const kw = term ? term.trim() : searchInput.trim();
+    if(!kw) return;
     
     // 검색한건 다 저장
-    await saveSearch(term);
+    await saveSearch(kw);
 
     // 지역 페이지 이동
-    const region = regionList.find(r => r.name === term);
+    const region = regionList.find(r => r.name === kw);
     if(region) {
       navigate(`/area/${region.slug}`);
     }else{
-       navigate(`/search?query=${encodeURIComponent(term)}`);
+       navigate(`/search?query=${encodeURIComponent(kw)}`);
     }    
+    setSearchInput(kw);
     setOpen(false);
   };
 
@@ -121,7 +122,7 @@ function SearchBar({showTitle=true, compact = false, className = '', textboxClas
           headers: {Authorization: `Bearer ${token}`}
         }
       );
-      await loadSuggestions();
+      loadSuggestions();
       // setRecent(prev => prev.filter(item => item.searchId !== searchId));
     }catch(e){
       console.error("삭제 실패", e);
@@ -151,7 +152,7 @@ function SearchBar({showTitle=true, compact = false, className = '', textboxClas
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           onFocus={loadSuggestions}
-          onKeyDown={e=> e.key === "Enter" && handleSearch()}
+          onKeyDown={e=> e.key === "Enter" && handleSearchTerm()}
         />
         {open && (
           <div className={divStyle.dropdown}>
@@ -159,13 +160,10 @@ function SearchBar({showTitle=true, compact = false, className = '', textboxClas
               <div className={divStyle.sectionTitle}>최근 검색어</div>
               {recent.length > 0 
                 ? recent.map(item => (
-                  <div key={item.searchId} className={divStyle.suggestionItem}>
-                    <span  
-                      onClick={() => {
-                        setSearchInput(item.keyword);
-                        setOpen(false);
-                        handleSearch();
-                    }}>{item.keyword}</span>
+                  <div key={item.searchId} 
+                  className={divStyle.suggestionItem}
+                  onClick={()=>{handleSearchTerm(item.keyword)}}>
+                    <span>{item.keyword}</span>
                     <button 
                     className={divStyle.deleteButton}
                     onClick={(e)=>{
@@ -188,8 +186,7 @@ function SearchBar({showTitle=true, compact = false, className = '', textboxClas
                     key={idx}
                     className={divStyle.suggestionItem}
                     onClick={() => {
-                      setSearchInput(keyword);
-                      setOpen(false);
+                      handleSearchTerm(keyword)
                     }}
                   >
                     {keyword}
