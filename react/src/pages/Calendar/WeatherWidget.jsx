@@ -20,9 +20,18 @@ export default function WeatherWidget() {
       return;
     }
     navigator.geolocation.getCurrentPosition(async ({ coords }) => {
+      const { latitude, longitude } = coords;
+      const key = import.meta.env.VITE_OWM_KEY;
       try {
-        const { latitude, longitude } = coords;
-        const key = import.meta.env.VITE_OWM_KEY;
+        // Geocoding API 예시
+        const geoRes = await fetch(
+          `https://api.openweathermap.org/geo/1.0/reverse` +
+          `?lat=${latitude}&lon=${longitude}&limit=1&appid=${key}`
+        );
+        if (!geoRes.ok) throw new Error("geocode 실패");
+        const [geo] = await geoRes.json();
+        // 가능하면 로컬네임 중 영어(en)을 우선, 아니면 기본 name
+        const cityName = geo.local_names?.en || geo.name;
 
         // 현재 날씨
         const wRes = await fetch(
@@ -58,7 +67,7 @@ export default function WeatherWidget() {
           temp: Math.round(wData.main.temp),
           main: wData.weather[0].main
         });
-        setCity(wData.name);
+        setCity(cityName);
         setDailyMap(map);
       } catch {
         setError("날씨 정보를 불러올 수 없습니다.");
