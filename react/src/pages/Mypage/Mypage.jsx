@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -9,6 +10,10 @@ import MypageNav from "../../components/MypageNavBar/MypageNav";
 function Mypage2() {
   const [value, onChange] = useState(new Date());
   const [dotData, setDotData] = useState({});
+  const [userInfo, setUserInfo] = useState(null);
+
+  const userId = localStorage.getItem("userId");
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const yearMonth = value.toISOString().slice(0, 7); // yyyy-MM
@@ -27,6 +32,32 @@ function Mypage2() {
     return date.toISOString().split('T')[0];
   };
 
+  //사용자 정보 조회
+  useEffect(() => {
+    axios.get(`http://localhost:8080/api/v1/user/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`, 
+      },withCredentials: true
+    })
+    .then(res => {
+      const data = res.data;
+
+      
+      if (data.code === "SU") { 
+        setUserInfo({
+          userName: data.userName,
+          userNickName: data.userNickName,       
+          userPhone: data.userPhone,
+          profileImage: data.profileImage,
+          userEmail: data.userEmail
+        });
+      } else {
+        alert("사용자 정보를 불러오는데 실패했습니다.");
+      }
+    })
+    .catch(() => alert("서버와 연결 실패"));
+  }, [userId, token]);
+
 
   return (
     <>
@@ -37,16 +68,18 @@ function Mypage2() {
           <div className={styles.profileWrap}>
             <div className={styles.profileContent}>
               <div className={styles.profile}>
-                <h1 className={styles.profileNickName}>SuMinJi</h1>
+                <h1 className={styles.profileNickName}>{userInfo?.userNickName || "닉네임"}</h1>
                 <div className={styles.profileImg}>
                   <img src="/src/assets/images/cute.png" alt="프로필 이미지" />
                 </div>
               </div>
+
               <div className={styles.profileInfo}>
-                <p className={styles.profileName}>수민지</p>
-                <p className={styles.profileNumber}>010-1234-5678</p>
-                <p className={styles.profileEmail}>suminji@gmail.com</p>
+                <p className={styles.profileName}>{userInfo?.userName || "이름"}</p>
+                <p className={styles.profileNumber}>{userInfo?.userPhone || "전화번호"}</p>
+                <p className={styles.profileEmail}>{userInfo?.userEmail || "이메일"}</p>
               </div>
+
             </div>
             <div className={styles.profileNavbar}>
               <ul>
