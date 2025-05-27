@@ -11,6 +11,20 @@ import FiveDayForecast from '../Calendar/FiveDayForecast';
 
 function Mypage2() {
   const token = localStorage.getItem('token');
+  const [userInfo, setUserInfo] = useState(null);
+
+  useEffect(() => {
+    if (!token) return;
+    fetch('http://localhost:8080/api/v1/auth/sign-up/validate', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        if (!res.ok) throw new Error(res.status);
+        return res.json();
+      })
+      .then(data => setUserInfo(data))
+      .catch(console.error);
+  }, [token]);
 
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date();
