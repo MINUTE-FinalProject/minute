@@ -48,7 +48,6 @@ function Mypage2() {
   // 달 변경 시 dotData 가져오기
   useEffect(() => {
     if (!token) return;
-    if (!token) return;
     const yearMonth = `${activeStartDate.getFullYear()}-${String(activeStartDate.getMonth()+1).padStart(2,'0')}`;
 
     fetch(`http://localhost:8080/api/v1/mypage/dots?yearMonth=${yearMonth}`, {
@@ -67,7 +66,6 @@ function Mypage2() {
       })
       .catch(err => console.error("dot 불러오기 실패", err));
   }, [activeStartDate, token]);
-  }, [activeStartDate,token]);
 
   // 선택된 날짜 변경 시 plans 가져오기
   useEffect(() => {
@@ -89,21 +87,6 @@ function Mypage2() {
     })
     .catch(err => console.error("마이페이지 일정 불러오기 실패", err));
 }, [selectedDate, token]);
-    if(!token || !selectedDate) return;
-    const dateStr = formatDate(value);
-    fetch(`http://localhost:8080/api/v1/mypage/details?travelDate=${selectedDate}`, {
-      headers: {Authorization: `Bearer ${token}`}
-    })
-      .then(res => res.json())
-      .then(data => {
-        console.log("details 확인: ", data);
-        setDailyData({
-          plans: data.plans,
-          checklists: data.checklists
-        });
-      })
-      .catch(err => console.log("details 불러오기 실패", err));
-  }, [selectedDate,token]);
 
   return (
     <>
