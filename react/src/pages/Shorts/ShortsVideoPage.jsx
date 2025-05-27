@@ -5,6 +5,7 @@ import Header from "../../components/Header/Header";
 function ShortsVideoPage() {
   // 로그인 상태 (예시: false면 미로그인 상태)
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   const [thumbUp, setThumbUp] = useState("/src/assets/images/b_thumbup.png");
   const [thumbDown, setThumbDown] = useState("/src/assets/images/b_thumbdowm.png");
@@ -15,8 +16,7 @@ function ShortsVideoPage() {
   const [newFolderName, setNewFolderName] = useState("");
   const [selectedFolder, setSelectedFolder] = useState(null);
 
-  // 로그인 유도 모달 상태
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
 
   const handleThumbUpClick = () => {
     if (!isLoggedIn) {
@@ -85,6 +85,7 @@ function ShortsVideoPage() {
       <Header />
       <div className={styles.container}>
         <div className={styles.searchbar}>
+          {/* 검색 기능 구현 시 input 및 관련 로직 추가 */}
           <input type="text" className={styles.searchInput} placeholder="검색..." />
         </div>
 
@@ -123,7 +124,6 @@ function ShortsVideoPage() {
             </div>
           </div>
 
-          {/* arrowWrap을 contentWrap 밖으로 분리 */}
           <div className={styles.arrowWrap}>
             <ul>
               <li>
@@ -135,56 +135,49 @@ function ShortsVideoPage() {
             </ul>
           </div>
 
-          {/* 폴더 모달 */}
-          <div
-            className={styles.folderModal}
-            style={{ bottom: isFolderOpen ? "120px" : "-100%" }}
-          >
-            <div className={styles.folderInputWrap}>
-              <input
-                type="text"
-                className={styles.folderInput}
-                placeholder="새 폴더 이름"
-                value={newFolderName}
-                onChange={e => setNewFolderName(e.target.value)}
-              />
-              <button className={styles.folderBtn} onClick={handleAddFolder}>
-                +
-              </button>
+          {isLoggedIn && isFolderModalOpen && (
+            <div className={styles.folderModal}>
+              <div className={styles.folderInputWrap}>
+                <input
+                  type="text"
+                  className={styles.folderInput}
+                  placeholder="새 폴더 이름 (최대 10자)"
+                  value={newFolderName}
+                  onChange={e => setNewFolderName(e.target.value.slice(0, 10))} // 글자 수 제한
+                  maxLength={10}
+                />
+                <button className={styles.folderBtn} onClick={handleAddFolder}>
+                  +
+                </button>
+              </div>
+              <ul className={styles.folderList}>
+                {folders.length === 0 ? (
+                  <li className={styles.emptyFolder}>폴더가 없습니다.</li>
+                ) : (
+                  folders.map(folder => (
+                    <li
+                      key={folder.folderId}
+                      className={styles.folderItem}
+                      onClick={() => handleFolderItemClick(folder)}
+                    >
+                      {/* <img src={folderIconImg} alt="folder" className={styles.folderIcon} /> */}
+                      <span className={styles.folderName}>{folder.folderName}</span>
+                    </li>
+                  ))
+                )}
+              </ul>
             </div>
-            <ul className={styles.folderList}>
-              {folders.length === 0 ? (
-                <li className={styles.emptyFolder}>폴더가 없습니다.</li>
-              ) : (
-                folders.map(folder => (
-                  <li
-                    key={folder}
-                    className={styles.folderItem}
-                    onClick={() => handleFolderClick(folder)}
-                  >
-                    <img
-                      src="/src/assets/images/folder_icon.png"
-                      alt="folder"
-                      className={styles.folderIcon}
-                    />
-                    <span className={styles.folderName}>{folder}</span>
-                    {selectedFolder === folder && (
-                      <span className={styles.checkmark}>✔</span>
-                    )}
-                  </li>
-                ))
-              )}
-            </ul>
-          </div>
+          )}
         </div>
       </div>
 
-      {/* 로그인 유도 모달 */}
       {isLoginModalOpen && (
         <div className={styles.loginModalOverlay} onClick={closeLoginModal}>
           <div className={styles.loginModal} onClick={e => e.stopPropagation()}>
             <h2>로그인이 필요합니다</h2>
-            <button onClick={handleLogin}>로그인</button>
+            <p>이 기능을 사용하려면 로그인을 해주세요.</p>
+            <button onClick={handleNavigateToLogin} className={styles.loginModalButton}>로그인 페이지로 이동</button>
+            <button onClick={closeLoginModal} className={`${styles.loginModalButton} ${styles.closeButton}`}>닫기</button>
           </div>
         </div>
       )}

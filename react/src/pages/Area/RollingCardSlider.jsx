@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "../../assets/styles/RollingCardSlider.module.css";
 
-const RollingCardSlider = () => {
+const RollingCardSlider = ({ region, setModalVideoId }) => {
   const sliderRef = useRef(null);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/v1/youtube/slider")
+    setLoading(true);
+    fetch(`/api/v1/youtube/slider?region=${encodeURIComponent(region)}`)
       .then((res) => {
         if (!res.ok) return [];
         return res.json();
@@ -20,11 +21,9 @@ const RollingCardSlider = () => {
         setVideos([]);
         setLoading(false);
       });
-  }, []);
+  }, [region]);
 
-  // 샘플 카드(로딩/에러시)
-  const EMPTY_CARD_COUNT = 10;
-
+  // 드래그 슬라이드 (생략 가능, 기존과 동일)
   const isDragging = useRef(false);
   const startX = useRef(0);
   const scrollLeft = useRef(0);
@@ -34,7 +33,6 @@ const RollingCardSlider = () => {
     startX.current = e.pageX - sliderRef.current.offsetLeft;
     scrollLeft.current = sliderRef.current.scrollLeft;
   };
-
   const handleMouseMove = (e) => {
     if (!isDragging.current) return;
     e.preventDefault();
@@ -42,28 +40,22 @@ const RollingCardSlider = () => {
     const walk = (x - startX.current) * 1.2;
     sliderRef.current.scrollLeft = scrollLeft.current - walk;
   };
-
-  const handleMouseUp = () => {
-    isDragging.current = false;
-  };
-
-  const handleMouseLeave = () => {
-    isDragging.current = false;
-  };
+  const handleMouseUp = () => { isDragging.current = false; };
+  const handleMouseLeave = () => { isDragging.current = false; };
 
   const handleScrollLeft = () => {
-    sliderRef.current.scrollBy({
-      left: -180,
-      behavior: "smooth",
-    });
+    sliderRef.current.scrollBy({ left: -180, behavior: "smooth" });
+  };
+  const handleScrollRight = () => {
+    sliderRef.current.scrollBy({ left: 180, behavior: "smooth" });
   };
 
-  const handleScrollRight = () => {
-    sliderRef.current.scrollBy({
-      left: 180,
-      behavior: "smooth",
-    });
-  };
+  // 빈 카드(로딩/오류)
+  const placeholderCards = [...Array(10).keys()].map((i) => (
+    <div key={i} className={styles.card}>
+      <div style={{ color: "gray", fontSize: "13px" }}>카드 {i + 1}</div>
+    </div>
+  ));
 
   return (
     <div className={styles.sliderWrapper}>
@@ -84,53 +76,44 @@ const RollingCardSlider = () => {
         onMouseLeave={handleMouseLeave}
       >
         <div className={styles.sliderTrack}>
-          {/* 1. 로딩 중엔 빈 카드들 */}
-          {loading ? (
-            [...Array(EMPTY_CARD_COUNT)].map((_, i) => (
-              <div key={i} className={styles.card}></div>
-            ))
-          )
-          // 2. 정상 데이터 있으면 영상 카드들
-          : Array.isArray(videos) && videos.length > 0 ? (
-            videos.map((item, i) => (
-              <div key={i} className={styles.card}>
-                <a
-                  href={`https://youtube.com/watch?v=${item.id?.videoId ?? ""}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ display: "block", height: "100%" }}
-                >
-                  <img
-                    src={item.snippet?.thumbnails?.medium?.url ?? ""}
-                    alt={item.snippet?.title ?? ""}
-                    style={{
-                      width: "100%",
-                      height: "70%",
-                      objectFit: "cover",
-                      borderRadius: "5px",
-                    }}
-                  />
-                  <div style={{ fontSize: "13px", marginTop: "7px" }}>
-                    {(item.snippet?.title ?? "").length > 40
-                      ? item.snippet?.title.slice(0, 40) + "..."
-                      : item.snippet?.title}
+          {loading
+            ? placeholderCards
+            : Array.isArray(videos) && videos.length > 0
+              ? videos.map((item, i) => (
+                  <div
+                    key={i}
+                    className={styles.card}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setModalVideoId(item.id?.videoId)} // 👈 클릭시 모달
+                  >
+                    {item.snippet?.thumbnails?.medium?.url ? (
+                      <img
+                        src={item.snippet.thumbnails.medium.url}
+                        alt={item.snippet.title ?? ""}
+                        style={{ width: "100%", height: "70%", objectFit: "cover", borderRadius: "5px" }}
+                      />
+                    ) : (
+                      <div style={{ width: "100%", height: "70%", background: "#ccc", borderRadius: "5px" }} />
+                    )}
+                    <div style={{ fontSize: "13px", marginTop: "7px" }}>
+                      {(item.snippet?.title ?? "").length > 40
+                        ? item.snippet?.title.slice(0, 40) + "..."
+                        : item.snippet?.title}
+                    </div>
                   </div>
-                </a>
-              </div>
-            ))
-          )
-          // 3. 실패(에러/빈 배열): 빈 카드 + 안내문구
-          : (
-            [...Array(EMPTY_CARD_COUNT)].map((_, i) => (
-              <div key={i} className={styles.card} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                {i === 0 && (
-                  <span style={{ color: "gray", fontSize: "14px", padding: "7px", textAlign: "center" }}>
-                    유튜브 영상을 불러올 수 없습니다.
-                  </span>
-                )}
-              </div>
-            ))
-          )}
+                ))
+              : (
+                [...Array(10)].map((_, i) => (
+                  <div key={i} className={styles.card} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    {i === 0 && (
+                      <span style={{ color: "gray", fontSize: "14px", padding: "7px", textAlign: "center" }}>
+                        유튜브 영상을 불러올 수 없습니다.
+                      </span>
+                    )}
+                  </div>
+                ))
+              )
+          }
         </div>
       </div>
     </div>

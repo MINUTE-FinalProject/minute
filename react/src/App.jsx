@@ -26,9 +26,9 @@ import JeollanamPage from "./pages/Area/JeollanamPage";
 import SeoulPage from "./pages/Area/SeoulPage";
 
 import Bookmark from "./pages/Bookmark/bookmark";
-import Search from "./pages/Bookmark/search";
 import CalendarPage from "./pages/Calendar/Calendarpage";
 import Mypage from "./pages/Mypage/Mypage";
+import Search from "./pages/searchResult/search";
 
 import Notice from "./pages/Notice/notice";
 import NoticeDetail from "./pages/Notice/noticeDetail";

@@ -2,8 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import img from "../../assets/images/loginBg1.png";
 import styles from "../../assets/styles/LoginPage.module.css";
 
-import axios from "axios";
-import { useState } from "react";
+import axios from 'axios';
+import { useState } from 'react';
 
 function LoginPage() {
   const [userId, setUserId] = useState("");
@@ -27,32 +27,12 @@ function LoginPage() {
     });
 
       const token = response.data.token;
-      localStorage.setItem("userId", userId);
-      localStorage.setItem("token", token);
-
-      // 사용자 정보 조회
-      const userInfoRes = await axios.get(
-        `http://localhost:8080/api/v1/user/${userId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        }
-      );
-
-      const data = userInfoRes.data;
-
-      if (data.code === "SU") {
-        const userRole = data.role ?? "USER"; 
-        if (userRole === "ADMIN") {
-          navigate("/admin"); // 관리자 페이지로 이동
-        } else {
-          navigate("/"); // 일반 사용자 홈으로 이동
-        }
-      } else {
-        setErrorMsg("사용자 정보를 불러오는 데 실패했습니다.");
-      }
+      alert('로그인 성공!');
+      localStorage.setItem('token', token);
+      navigate("/");
+       
     } catch (err) {
-      console.error(err);
+    console.error(err);
 
       if (err.response && err.response.data) {
         const serverMsg = err.response.data.message;
@@ -81,48 +61,41 @@ function LoginPage() {
   };
 
   return (
-    <form onSubmit={handleSignIn} className={styles.loginWrap}>
+    <form onSubmit={handleSignIn}>
+    <div className={styles.loginWrap}>
       <div className={styles.backImg}>
         <img className={styles.img1} src={img} alt="Login Background" />
       </div>
       <div className={styles.loginBox}>
         <Link to="/">
-          <h1 className={styles.logo}>MIN:UTE</h1>
+        <h1 className={styles.logo}>MIN:UTE</h1>
         </Link>
-
-        <input
-          type="text"
-          value={userId}
-          placeholder="Id"
-          onChange={(e) => setUserId(e.target.value)}
-          className={styles.input}
-          required
-          autoComplete="username"
-          aria-label="User ID"
-        />
-        <input
-          type="password"
-          value={userPw}
-          placeholder="Password"
-          onChange={(e) => setUserPw(e.target.value)}
-          className={styles.input1}
-          required
-          autoComplete="current-password"
-          aria-label="Password"
-        />
-
-        {errorMsg && <div className={styles.err}>{errorMsg}</div>}
-
-        <button className={styles.btn} type="submit">
-          Login
-        </button>
-
+        <div className="formGroup">
+          <input type="text" 
+                 value={userId}
+                 placeholder="Id" 
+                 onChange={(e) => setUserId(e.target.value)}
+                 className={styles.input} />
+          <input
+            type="password"
+            value={userPw}
+            placeholder="Password"
+            onChange={(e) => setUserPw(e.target.value)}
+            className={styles.input1}
+            required
+          />
+          <div className={styles.err}>
+            {errorMsg}
+          </div>
+          <button className={styles.btn}>Login</button>
+        </div>
         <div className={styles.links}>
           <Link to="/findid">아이디찾기</Link> |{" "}
           <Link to="/findpwd">비밀번호찾기</Link> |{" "}
           <Link to="/SignUpForm">회원가입</Link>
         </div>
       </div>
+    </div>
     </form>
   );
 }

@@ -5,7 +5,7 @@ import RegionPage from "./RegionPage";
 function GangwondoPage() {
   return (
     <RegionPage
-      // regionName="강원도"
+      regionName="강원도"
       backgroundImages={[bg1, bg2]}
       cities={["강릉", "속초", "평창"]}
     />
