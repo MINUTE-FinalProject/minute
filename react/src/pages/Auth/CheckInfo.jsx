@@ -232,7 +232,7 @@ function CheckInfo() {
             <button
               className={`${styles.modibtn} ${isNicknameChanged ? styles.active : ''}`}
               disabled={!isNicknameChanged}
-              onClick={() => handleUpdate("userNickname", nickname)}
+              onClick={() => handleUpdate("userNickName", nickname)}
             >
               수정
             </button>

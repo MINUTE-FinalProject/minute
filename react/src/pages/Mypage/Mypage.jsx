@@ -82,16 +82,18 @@ function Mypage2() {
           <div className={styles.profileWrap}>
             <div className={styles.profileContent}>
               <div className={styles.profile}>
-                <h1 className={styles.profileNickName}>SuMinJi</h1>
+                <h1 className={styles.profileNickName}>{userInfo?.userNickName || "닉네임"}</h1>
                 <div className={styles.profileImg}>
                   <img src="/src/assets/images/cute.png" alt="프로필 이미지" />
                 </div>
               </div>
+
               <div className={styles.profileInfo}>
-                <p className={styles.profileName}>수민지</p>
-                <p className={styles.profileNumber}>010-1234-5678</p>
-                <p className={styles.profileEmail}>suminji@gmail.com</p>
+                <p className={styles.profileName}>{userInfo?.userName || "이름"}</p>
+                <p className={styles.profileNumber}>{userInfo?.userPhone || "전화번호"}</p>
+                <p className={styles.profileEmail}>{userInfo?.userEmail || "이메일"}</p>
               </div>
+
             </div>
             <div className={styles.profileNavbar}>
               <ul>

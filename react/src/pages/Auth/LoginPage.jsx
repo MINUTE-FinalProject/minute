@@ -18,10 +18,16 @@ function LoginPage() {
     console.log("로그인 시도:", { userId, userPw });
 
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/auth/sign-in', {
-        userId,
-        userPw,
-      });
+      // 로그인 요청
+      const response = await axios.post(
+        "http://localhost:8080/api/v1/auth/sign-in",
+        { userId, userPw },{
+      headers: {
+        'Content-Type': 'application/json'
+      },
+         withCredentials: true 
+    });
+
       const token = response.data.token;
       alert('로그인 성공!');
       localStorage.setItem('token', token);
@@ -30,20 +36,31 @@ function LoginPage() {
     } catch (err) {
     console.error(err);
 
-    if (err.response && err.response.data) {
-      const data = err.response.data;
-      if (data.code === "SF") {
-        setErrorMsg("존재하지 않는 아이디입니다.");
-      } else if (data.code === "IP") {
-        setErrorMsg("비밀번호가 올바르지 않습니다.");
+      if (err.response && err.response.data) {
+        const serverMsg = err.response.data.message;
+
+        if (serverMsg === "정지된 계정입니다.") {
+          setErrorMsg("정지된 계정입니다. 관리자에게 문의하세요.");
+        } else {
+          switch (err.response.data.code) {
+            case "SF":
+              setErrorMsg("존재하지 않는 아이디입니다.");
+              break;
+            case "IP":
+              setErrorMsg("비밀번호가 올바르지 않습니다.");
+              break;
+            case "VF":
+              setErrorMsg("입력값이 올바르지 않습니다.");
+              break;
+            default:
+              setErrorMsg(serverMsg || "로그인 실패: 알 수 없는 오류입니다.");
+          }
+        }
       } else {
-        setErrorMsg("로그인 실패: 알 수 없는 오류입니다.");
+        setErrorMsg("서버와 통신할 수 없습니다.");
       }
-    } else {
-      setErrorMsg("서버와 통신할 수 없습니다.");
     }
-  }
-};
+  };
 
   return (
     <form onSubmit={handleSignIn}>
