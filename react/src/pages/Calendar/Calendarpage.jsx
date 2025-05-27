@@ -9,7 +9,7 @@ import WeatherWidget from "./WeatherWidget";
 
 function CalendarPage2() {
   const token = localStorage.getItem('token');
-
+  
   const today = new Date();
   const todayStr = format(today, "yyyy-MM-dd");
   const [weekStart, setWeekStart] = useState(
@@ -28,6 +28,159 @@ function CalendarPage2() {
   const [editItemId, setEditItemId] = useState(null);
   const [editItemText, setEditItemText] = useState("");
   const listRef = useRef(null);
+
+  // === Plan 상태 === //
+  const [plans, setPlans] = useState([]);
+  const [isAddingPlan, setIsAddingPlan] = useState(false);
+  const [newPlan, setNewPlan] = useState({
+    title: "",
+    description: "",
+    startTime: "00:00",
+    endTime: "01:00",
+  });
+  const [editPlanId, setEditPlanId] = useState(null);
+
+  // 한 번에 Plan + Checklist 가져오기
+  const fetchAll = () => {
+    const headers = { Authorization: `Bearer ${token}` };
+    const planUrl      = `http://localhost:8080/api/v1/plans?date=${selectedDate}`;
+    const checklistUrl = `http://localhost:8080/api/v1/checklists?date=${selectedDate}`;
+
+    Promise.all([
+      fetch(planUrl,      { headers }).then(res => res.ok ? res.json() : Promise.reject(res.status)),
+      fetch(checklistUrl, { headers }).then(res => res.ok ? res.json() : Promise.reject(res.status)),
+    ])
+    .then(([planData, checklistData]) => {
+      setPlans(planData);
+      setChecklists(
+        checklistData.map(c => ({
+          id:      c.checklistId,
+          planId:  c.planId,
+          text:    c.itemContent,
+          checked: c.isChecked,
+        }))
+      );
+    })
+
+    .catch(err => console.error("fetchAll error:", err));
+  };
+
+  useEffect(() => {
+    if (!token) return;
+    fetchAll();
+  }, [selectedDate, token]);
+
+  // 컴포넌트 최상단(훅 선언 직후)에 추가
+  // const fetchPlans = () => {
+  //   fetch(`http://localhost:8080/api/v1/plans?date=${selectedDate}`, {
+  //     headers: { Authorization: `Bearer ${token}` },
+  //   })
+  //     .then(res => {
+  //       if (!res.ok) throw new Error(res.status);
+  //       return res.json();
+  //     })
+  //     .then(data => {
+  //       console.log(data);
+  //       // PlanResponseDTO 배열 그대로 받는다고 가정
+  //       setPlans(data);
+  //     })
+  //     .catch(console.error);
+  // };
+
+
+
+
+  // 날짜 변경마다 Plan+Checklist 재조회
+  // useEffect(() => {
+  //   if(!token) return;
+  //   // Plan 목록
+  //   fetch(`http://localhost:8080/api/v1/calendar/details?date=${selectedDate}`, {
+  //     headers: { Authorization: `Bearer ${token}` },
+  //   })
+  //     .then(res => {
+  //       if (!res.ok) throw new Error(res.status);
+  //       return res.json();
+  //     })
+  //     .then(data => setPlans(Array.isArray(data.plans) ? data.plans : []))
+  //     .catch(console.error);
+
+    // Checklist (캘린더 상세) 조회
+    // fetch(`http://localhost:8080/api/v1/mypage/plans?date=${selectedDate}`, {
+    //   headers: { Authorization: `Bearer ${token}` },
+    // })
+    //   .then(res => res.json())
+    //   .then(data => {
+    //     setChecklists(
+    //       data.checklists.map(c => ({
+    //         id: c.checklistId,
+    //         planId: c.planId,
+    //         text: c.itemContent,
+    //         checked: c.isChecked,
+    //       }))
+    //     );
+    //   })
+    //   .catch(console.error);
+  // }, [selectedDate, token]);
+
+  // Plan CRUD 함수
+  const createPlan = () => {
+    fetch("http://localhost:8080/api/v1/plans", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        travelDate: selectedDate,
+        title: newPlan.title,
+        description: newPlan.description,
+        startTime: newPlan.startTime,
+        endTime: newPlan.endTime,
+      }),
+    })
+    .then(res => { if (!res.ok) throw new Error(res.status); return res.json(); })
+    .then(() => {
+      setIsAddingPlan(false);
+      setNewPlan({ title: "", description: "", startTime: "09:00", endTime: "10:00" });
+      fetchAll();
+    })
+    .catch(console.error);
+  };
+
+  const updatePlan = () => {
+    fetch(`http://localhost:8080/api/v1/plans/${editPlanId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        travelDate: selectedDate,
+        title: newPlan.title,
+        description: newPlan.description,
+        startTime: newPlan.startTime,
+        endTime: newPlan.endTime,
+      }),
+    })
+    .then(res => { if (!res.ok) throw new Error(res.status); return res.json(); })
+    .then(() => {
+      setIsAddingPlan(false);
+      setEditPlanId(null);
+      fetchAll();
+    })
+    .catch(console.error);
+  };
+
+  const deletePlan = planId => {
+    fetch(`http://localhost:8080/api/v1/plans/${planId}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then(res => { if (!res.ok) throw new Error(res.status); 
+      fetchAll(); })
+    .catch(console.error);
+  };
+
 
   // 외부 클릭 시 edit/add 모드 취소 로직
   const onListSectionClick = (e) => {
@@ -63,116 +216,100 @@ function CalendarPage2() {
 
   const addItem = () => {
     if (!newItemText.trim()) return;
-    setChecklists((prev) => [
-      ...prev,
-      { id: Date.now(), text: newItemText.trim() },
-    ]);
-    setNewItemText("");
-    setIsAddingItem(false);
+    fetch("http://localhost:8080/api/v1/checklists", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        planId: editPlanId,
+        travelDate: selectedDate,
+        itemContent: newItemText,
+        isChecked: false,
+      }),
+    })
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(() => {
+      setNewItemText("");
+      setIsAddingItem(false);
+      fetchAll();
+    })
+    .catch(console.error);
   };
-  const saveItem = () => {
-    if (!editItemText.trim()) {
-      setEditItemId(null);
-      return;
-    }
-    setChecklists((prev) =>
-      prev.map((it) =>
-        it.id === editItemId ? { ...it, text: editItemText } : it
-      )
-    );
-    setEditItemId(null);
-  };
-  const removeItem = (id) =>
-    setChecklists((prev) => prev.filter((it) => it.id !== id));
 
-  // === Plan 상태 === //
-  const [plans, setPlans] = useState([]);
-  const [isAddingPlan, setIsAddingPlan] = useState(false);
-  const [newPlan, setNewPlan] = useState({
-    title: "",
-    description: "",
-    start: "00:00",
-    end: "01:00",
-  });
-  const [editPlanId, setEditPlanId] = useState(null);
+  const saveItem = () => {
+    if (!editItemText.trim()) { setEditItemId(null); return; }
+    fetch(`http://localhost:8080/api/v1/checklists/${editItemId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        planId: null,
+        travelDate: selectedDate,
+        itemContent: editItemText,
+        isChecked: false,
+      }),
+    })
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(() => {
+      setEditItemId(null);
+      fetchAll();
+    })
+    .catch(console.error);
+  };
+
+  const removeItem = (id) => {
+    fetch(`http://localhost:8080/api/v1/checklists/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    .then(r => { if (!r.ok) throw new Error(r.status); fetchAll(); })
+    .catch(console.error);
+  };
+
+  
 
   const openAddPlan = (plan = null) => {
     if (plan) {
-      setEditPlanId(plan.id);
+      setEditPlanId(plan.planId);
       setNewPlan({
         title: plan.title,
         description: plan.description,
-        start: plan.start,
-        end: plan.end,
+        startTime: plan.startTime,
+        endTime: plan.endTime,
       });
     } else {
       setEditPlanId(null);
-      setNewPlan({ title: "", description: "", start: "00:00", end: "01:00" });
+      setNewPlan({ title: "", description: "", startTime: "00:00", endTime: "01:00" });
     }
     setIsAddingPlan(true);
   };
 
-  const addPlan = () => {
-    if (!newPlan.title.trim()) {
-      setIsAddingPlan(false);
-      return;
-    }
-    if (editPlanId) {
-      setPlans((prev) =>
-        prev.map((p) => (p.id === editPlanId ? { ...p, ...newPlan } : p))
-      );
-    } else {
-      setPlans((prev) => [
-        ...prev,
-        { id: Date.now(), date: selectedDate, ...newPlan, color: "#FADADD" },
-      ]);
-    }
-    setEditPlanId(null);
-    setIsAddingPlan(false);
-  };
-  const removePlan = (id) =>
-    setPlans((prev) => prev.filter((p) => p.id !== id));
-  const todaysPlans = plans.filter((p) => p.date === selectedDate);
-
-  useEffect(() => {
-  if (!selectedDate) return;
-  fetch(
-    `http://localhost:8080/api/v1/mypage/details?travelDate=${selectedDate}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  )
-    .then((res) => {
-      if (!res.ok) throw new Error(res.status);
-      return res.json();
-    })
-    .then((data) => {
-      // data.plans  → [{ planId, title, description, startTime, endTime }, …]
-      setPlans(
-        data.plans.map((p) => ({
-          id:       p.planId,
-          date:     selectedDate,
-          title:    p.title,
-          description: p.description,
-          start:    p.startTime.slice(0, 5), // "HH:mm"
-          end:      p.endTime.slice(0, 5),
-          color:    "#FADADD",
-        }))
-      );
-      // data.checklists → [{ checklistId, planId, itemContent, isChecked }, …]
-      setChecklists(
-        data.checklists.map((c) => ({
-          id:      c.checklistId,
-          planId:  c.planId,
-          text:    c.itemContent,
-          checked: c.isChecked,
-        }))
-      );
-    })
-    .catch(console.error);
-  }, [selectedDate]);
+  // const addPlan = () => {
+  //   if (!newPlan.title.trim()) {
+  //     setIsAddingPlan(false);
+  //     return;
+  //   }
+  //   if (editPlanId) {
+  //     setPlans((prev) =>
+  //       prev.map((p) => (p.id === editPlanId ? { ...p, ...newPlan } : p))
+  //     );
+  //   } else {
+  //     setPlans((prev) => [
+  //       ...prev,
+  //       { id: Date.now(), date: selectedDate, ...newPlan, color: "#FADADD" },
+  //     ]);
+  //   }
+  //   setEditPlanId(null);
+  //   setIsAddingPlan(false);
+  // };
+  // const removePlan = (id) =>
+  //   setPlans((prev) => prev.filter((p) => p.id !== id));
+  
+  const todaysPlans = plans.filter((p) => p.travelDate === selectedDate);
   
 
   return (
@@ -379,8 +516,8 @@ function CalendarPage2() {
                   </div>
                   <div className={styles.cells} />
                   {todaysPlans.map((p) => {
-                    const [sh, sm] = p.start.split(":").map(Number);
-                    const [eh, em] = p.end.split(":").map(Number);
+                    const [sh, sm] = p.startTime.split(":").map(Number);
+                    const [eh, em] = p.endTime.split(":").map(Number);
                     // 분단위 그대로 계산
                     const startTotal = sh * 60 + sm;              // ex. 1:30 → 90
                     const duration   = eh * 60 + em - startTotal;  // ex. 2:15 - 1:30 = 45분
@@ -388,7 +525,7 @@ function CalendarPage2() {
                     const rowSpan  = duration;
                     return (
                       <div
-                        key={p.id}
+                        key={p.planId}
                         className={styles.planCard}
                         style={{
                           gridColumn: 2,
@@ -409,14 +546,14 @@ function CalendarPage2() {
                             </p>
                           )}
                           <small className={styles.planTime}>
-                            {p.start} - {p.end}
+                            {p.startTime.slice(0,5)} - {p.endTime.slice(0,5)}
                           </small>
                         </div>
                           <button
                             className={styles.deletePlanBtn}
                             onClick={(e) => {
                               e.stopPropagation();
-                              removePlan(p.id);
+                              deletePlan(p.planId);
                             }}
                           >
                             ✕
@@ -450,7 +587,7 @@ function CalendarPage2() {
         title={editPlanId ? "일정 수정" : "새 일정 추가"}
         confirmText="저장"
         cancelText="취소"
-        onConfirm={addPlan}
+        onConfirm={editPlanId ? updatePlan : createPlan}
         onCancel={() => setIsAddingPlan(false)}
       >
         <div className={styles.modalContent}>
@@ -476,11 +613,11 @@ function CalendarPage2() {
                 min="00:00"
                 max="23:59"
                 step="60"
-                value={newPlan.start}
+                value={newPlan.startTime}
                 onChange={(e) =>
                   setNewPlan((np) => ({
                     ...np,
-                    start: e.target.value,
+                    startTime: e.target.value,
                   }))
                 }
               />
@@ -490,11 +627,11 @@ function CalendarPage2() {
                 min="00:00"
                 max="23:59"
                 step="60"
-                value={newPlan.end}
+                value={newPlan.endTime}
                 onChange={(e) =>
                   setNewPlan((np) => ({
                     ...np,
-                    end: e.target.value,
+                    endTime: e.target.value,
                   }))
                 }
               />
