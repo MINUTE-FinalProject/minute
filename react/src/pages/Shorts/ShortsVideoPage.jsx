@@ -16,8 +16,7 @@ function ShortsVideoPage() {
   const [newFolderName, setNewFolderName] = useState("");
   const [selectedFolder, setSelectedFolder] = useState(null);
 
-  // 로그인 유도 모달 상태
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
 
   const handleThumbUpClick = () => {
     if (!isLoggedIn) {

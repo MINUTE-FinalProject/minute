@@ -4,7 +4,6 @@ import styles from "../../assets/styles/LoginPage.module.css";
 
 import axios from 'axios';
 import { useState } from 'react';
-import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
   const [userId, setUserId] = useState("");
