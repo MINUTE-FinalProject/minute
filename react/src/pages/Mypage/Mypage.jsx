@@ -10,20 +10,36 @@ import FiveDayForecast from '../Calendar/FiveDayForecast';
 
 function Mypage2() {
   const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('userId'); 
   const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
-    if (!token) return;
-    fetch('http://localhost:8080/api/v1/auth/sign-up/validate', {
-      headers: { Authorization: `Bearer ${token}` }
+    axios.get(`http://localhost:8080/api/v1/user/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`, 
+      },withCredentials: true
     })
-      .then(res => {
-        if (!res.ok) throw new Error(res.status);
-        return res.json();
-      })
-      .then(data => setUserInfo(data))
-      .catch(console.error);
-  }, [token]);
+    .then(res => {
+      console.log(res.data);
+      
+      const data = res.data;
+
+      
+      if (data.code === "SU") { 
+        setUserInfo({
+          userName: data.userName,
+          userNickName: data.userNickName,
+          profileImage: data.profileImage,
+          userPhone: data.userPhone,
+          userEmail: data.userEmail
+        });
+
+      } else {
+        alert("사용자 정보를 불러오는데 실패했습니다.");
+      }
+    })
+    .catch(() => alert("서버와 연결 실패"));
+  }, [userId, token]);
 
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date();
@@ -98,7 +114,7 @@ function Mypage2() {
               <div className={styles.profile}>
                 <h1 className={styles.profileNickName}>{userInfo?.userNickName || "닉네임"}</h1>
                 <div className={styles.profileImg}>
-                  <img src="/src/assets/images/cute.png" alt="프로필 이미지" />
+                  <img src={userInfo?.profileImage || "/src/assets/images/cute.png"} alt="프로필 이미지" />
                 </div>
               </div>
 
@@ -176,19 +192,23 @@ function Mypage2() {
               <div className={styles.plan}>
                 {dailyData.plans.length === 0
                   ? <p>등록된 일정이 없습니다.</p>
-                  : dailyData.plans.map(plan => (
-                      <div
-                        key={plan.planId}
-                        className={calStyles.planCard}
-                        style={{ background: '#FADADD', marginBottom: '8px' }}  // dot 컬러와 맞춰 주세요
-                      >
-                        <h4 className={calStyles.planTitle}>{plan.title}</h4>
-                        <small className={calStyles.planTime}>
-                          {plan.startTime.slice(0,5)} - {plan.endTime.slice(0,5)}
-                        </small>
-                      </div>
-                    ))
+                  : // 문자열 "HH:MM" 포맷이므로 localeCompare 만으로도 순서대로 정렬이 가능합니다.
+                    [...dailyData.plans]
+                      .sort((a, b) => a.startTime.localeCompare(b.startTime))
+                      .map(plan => (
+                        <div
+                          key={plan.planId}
+                          className={calStyles.planCard}
+                          style={{ background: '#FADADD', marginBottom: '8px' }}
+                        >
+                          <h4 className={calStyles.planTitle}>{plan.title}</h4>
+                          <small className={calStyles.planTime}>
+                            {plan.startTime.slice(0,5)} - {plan.endTime.slice(0,5)}
+                          </small>
+                        </div>
+                      ))
                 }
+
               </div>
             </div>
           </div>
