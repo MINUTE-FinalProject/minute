@@ -17,7 +17,13 @@ function ThemeParkPage(){
         <ul>
           {Array.from({ length: visibleItems }).map((_, index) => (
             <li key={index} className={styles.videoItem}>
-              <div className={styles.videoTitle}>캠핑 영상 {index + 1}</div>
+              <img
+                className={styles.videoThumbnail}
+                src=""
+                alt=""
+              />
+              <div className={styles.videoTitle}>영상제목 {index + 1}</div>
+              <p className={styles.videoDescription}>영상설명</p>
             </li>
           ))}
         </ul>

@@ -2,31 +2,76 @@ import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { Link } from "react-router-dom";
+import calStyles from "../../assets/styles/CalendarPage.module.css";
 import '../../assets/styles/MyCalendar.css';
 import styles from "../../assets/styles/Mypage.module.css";
 import MypageNav from "../../components/MypageNavBar/MypageNav";
+import FiveDayForecast from '../Calendar/FiveDayForecast';
 
 function Mypage2() {
+  const token = localStorage.getItem('token');
+
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const today = new Date();
+    return today.toLocaleDateString('en-CA');
+  })
+
+  const [dailyData, setDailyData] = useState({
+    plans: [],
+    checklists: []
+  });
+
+  // 선택된 날짜
   const [value, onChange] = useState(new Date());
+  // 보이는 달(월 초)가 바뀔 때 업데이트
+  const [activeStartDate, setActiveStartDate] = useState(value);
+  // dot 데이터
   const [dotData, setDotData] = useState({});
-
-  useEffect(() => {
-    const yearMonth = value.toISOString().slice(0, 7); // yyyy-MM
-
-    fetch(`http://localhost:8080/mypage/dots?userId=test123&yearMonth=${yearMonth}`)
-      .then(res => res.json())
-      .then(data => {
-        console.log("📌 dotData 확인:", data); // ← 이거로 진짜 오는지 체크
-        setDotData(data);
-      })
-      .catch(err => console.error("dot 불러오기 실패", err));
-  }, [value]);
+  // 선택된 날짜의 Plan / Checklist 내용
+  // const [dailyData, setDailyData] = useState({plan: null, checklist: []});
 
   // 날짜 포맷 맞춰주는 함수 (yyyy-mm-dd)
-  const formatDate = (date) => {
-    return date.toISOString().split('T')[0];
-  };
+  const formatDate = date => date.toLocaleDateString('en-CA');
 
+  // 달 변경 시 dotData 가져오기
+  useEffect(() => {
+    if (!token) return;
+    const yearMonth = `${activeStartDate.getFullYear()}-${String(activeStartDate.getMonth()+1).padStart(2,'0')}`;
+
+    fetch(`http://localhost:8080/api/v1/mypage/dots?yearMonth=${yearMonth}`, {
+      headers: {Authorization: `Bearer ${token}`}
+    })
+      .then(res => res.json())
+      .then(dataArray => {
+        console.log("raw dotData: ", dataArray);
+        // 배열을 {'2025-05-20':'plan',...} 형태의 map으로 변환
+        const map = dataArray.reduce((acc, {date, type}) => {
+          acc[date] = type;
+          return acc;
+        }, {});
+        console.log('mapped dotData:', map)
+        setDotData(map);
+      })
+      .catch(err => console.error("dot 불러오기 실패", err));
+  }, [activeStartDate,token]);
+
+  // 선택된 날짜 변경 시 details 가져오기
+  useEffect(() => {
+    if(!token || !selectedDate) return;
+    const dateStr = formatDate(value);
+    fetch(`http://localhost:8080/api/v1/mypage/details?travelDate=${selectedDate}`, {
+      headers: {Authorization: `Bearer ${token}`}
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log("details 확인: ", data);
+        setDailyData({
+          plans: data.plans,
+          checklists: data.checklists
+        });
+      })
+      .catch(err => console.log("details 불러오기 실패", err));
+  }, [selectedDate,token]);
 
   return (
     <>
@@ -74,49 +119,60 @@ function Mypage2() {
               <div className={styles.calendar}>
                 <Calendar
                   locale="en"
-                  onChange={onChange}
+                  onChange={date => {
+                    onChange(date);
+                    setSelectedDate(formatDate(date));
+                  }}
                   value={value}
+                  // ② 달 네비게이션(<,>) 클릭 시 호출
+                  onActiveStartDateChange={({ activeStartDate }) => {
+                    setActiveStartDate(activeStartDate);
+                  }}
                   next2Label={null}
                   prev2Label={null}
                   showNeighboringMonth={false}
-                  tileContent={({ date }) => {
-                    const dateStr = formatDate(date);
-                    const dotType = dotData[dateStr];
+                  tileContent={({ date, view }) => {
+                    if (view !== 'month') return null;
+                    const key = formatDate(date);
+                    const type = dotData[key];
+                    if (!type) return null;
 
-                    if (dotType === 'plan') {
-                      return <div className="dot plan-dot" />;
-                    } else if (dotType === 'checklist') {
-                      return <div className="dot checklist-dot" />;
-                    } else if (dotType === 'both') {
-                      return (
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '2px' }}>
-                          <div className="dot plan-dot" />
-                          <div className="dot checklist-dot" />
-                        </div>
-                      );
-                    }
-                    return null;
+                    return (
+                      <div className="dot-container">
+                        { (type === 'plan' || type === 'both') && <div className="dot plan-dot" /> }
+                        { (type === 'checklist' || type === 'both') && <div className="dot checklist-dot" /> }
+                      </div>
+                    );
                   }}
-
                 />
               </div>
               <div className={styles.planList}>
-                Check-List
-                <button className={styles.editButton}>
-                  <Link to="/calendar">
-                    <img src="/src/assets/images/edit_white.png" alt="list"/>
-                  </Link>
-                </button>
+                <FiveDayForecast/>
               </div>
             </div>
             <div className={styles.planRightWrap}>
-              <div className={styles.planContext}>
-                Plan
-                <button className={styles.editButton}>
-                  <Link to="/calendar">
-                    <img src="/src/assets/images/edit_black.png" alt="일정 수정"/>
-                  </Link>
-                </button>
+              <button className={styles.editButton}>
+                <Link to={`/calendar?date=${selectedDate}`}>
+                  <img src="/src/assets/images/editing.png" alt="수정" />
+                </Link>
+              </button>
+              {/* 선택된 날짜의 일정 미리보기 */}
+              <div className={styles.plan}>
+                {dailyData.plans.length === 0
+                  ? <p>등록된 일정이 없습니다.</p>
+                  : dailyData.plans.map(plan => (
+                      <div
+                        key={plan.planId}
+                        className={calStyles.planCard}
+                        style={{ background: '#FADADD', marginBottom: '8px' }}  // dot 컬러와 맞춰 주세요
+                      >
+                        <h4 className={calStyles.planTitle}>{plan.title}</h4>
+                        <small className={calStyles.planTime}>
+                          {plan.startTime.slice(0,5)} - {plan.endTime.slice(0,5)}
+                        </small>
+                      </div>
+                    ))
+                }
               </div>
             </div>
           </div>
@@ -124,52 +180,79 @@ function Mypage2() {
         <div className={styles.rightWrap}>
           <div className={styles.mapWrap}>
             <ul>
-              <li>
+              <li className={styles.mapItem}>
                 <Link to="/area/gyeonggido" className={styles.linkStyle}>
-                  <img src="/src/assets/images/1.png" alt="맵 경기도" />
+                  <div className={styles.imageWrapper}>
+                    <img src="/src/assets/images/1.png" alt="맵 경기도" />
+                    <button className={styles.mapButton}></button>
+                  </div>
                 </Link>
               </li>
-              <li>
-                 <Link to="/area/gangwondo" className={styles.linkStyle}>
-                  <img src="/src/assets/images/2.png" alt="맵 강원도" />
+              <li className={styles.mapItem}>
+                <Link to="/area/gangwondo" className={styles.linkStyle}>
+                  <div className={styles.imageWrapper}>
+                    <img src="/src/assets/images/2.png" alt="맵 강원도" />
+                    <button className={styles.mapButton}></button>
+                  </div>
                 </Link>
               </li>
-              <li>
+              <li className={styles.mapItem}>
                 <Link to="/area/gyeongsandbuk" className={styles.linkStyle}>
-                  <img src="/src/assets/images/3.png" alt="맵 경상북도" />
+                  <div className={styles.imageWrapper}>
+                    <img src="/src/assets/images/3.png" alt="맵 경상북도" />
+                    <button className={styles.mapButton}></button>
+                  </div>
                 </Link>
               </li>
-              <li>
+              <li className={styles.mapItem}>
                 <Link to="/area/chungcheongbuk" className={styles.linkStyle}>
-                  <img src="/src/assets/images/4.png" alt="맵 충청북도" />
+                  <div className={styles.imageWrapper}>
+                    <img src="/src/assets/images/4.png" alt="맵 충청북도" />
+                    <button className={styles.mapButton}></button>
+                  </div>
                 </Link>
               </li>
-              <li>
+              <li className={styles.mapItem}>
                 <Link to="/area/chungcheongnam" className={styles.linkStyle}>
-                  <img src="/src/assets/images/5.png" alt="맵 충청남도" />
-                </Link>  
+                  <div className={styles.imageWrapper}>
+                    <img src="/src/assets/images/5.png" alt="맵 충청남도" />
+                    <button className={styles.mapButton}></button>
+                  </div>
+                </Link>
               </li>
-              <li>
+              <li className={styles.mapItem}>
                 <Link to="/area/jeollabuk" className={styles.linkStyle}>
-                  <img src="/src/assets/images/6.png" alt="맵 전라북도" />
-                </Link>  
-              </li>
+                  <div className={styles.imageWrapper}>
+                    <img src="/src/assets/images/6.png" alt="맵 전라북도" />
+                    <button className={styles.mapButton}></button>
+                  </div>
+                </Link>
+              </li>   
               <li>
                 <img src="/src/assets/images/7.png" alt="맵 " />
               </li>
-              <li>
+              <li className={styles.mapItem}>
                 <Link to="/area/gyeongsangnam" className={styles.linkStyle}>
-                  <img src="/src/assets/images/8.png" alt="맵 경상남도" />
-                </Link>  
-              </li>
-              <li>
-                <Link to="/area/jeollanam" className={styles.linkStyle}>
-                  <img src="/src/assets/images/9.png" alt="맵 전라남도" />
+                  <div className={styles.imageWrapper}>
+                    <img src="/src/assets/images/8.png" alt="맵 경상남도" />
+                    <button className={styles.mapButton}></button>
+                  </div>
                 </Link>
               </li>
-              <li>
+              <li className={styles.mapItem}>
+                <Link to="/area/jeollanam" className={styles.linkStyle}>
+                  <div className={styles.imageWrapper}>
+                    <img src="/src/assets/images/9.png" alt="맵 전라남도" />
+                    <button className={styles.mapButton}></button>
+                  </div>
+                </Link>
+              </li>
+              <li className={styles.mapItem}>
                 <Link to="/area/jeju" className={styles.linkStyle}>
-                  <img src="/src/assets/images/10.png" alt="맵 제주도" />
+                  <div className={styles.imageWrapper}>
+                    <img src="/src/assets/images/10.png" alt="맵 제주도" />
+                    <button className={styles.mapButton}></button>
+                  </div>
                 </Link>
               </li>
             </ul>

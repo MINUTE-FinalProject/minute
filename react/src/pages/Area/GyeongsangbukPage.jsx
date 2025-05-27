@@ -5,7 +5,7 @@ import RegionPage from "./RegionPage";
 function GyeongsangbukPage() {
   return (
     <RegionPage
-      // regionName="경상북도"
+      regionName="경상북도"
       backgroundImages={[bg1, bg2]}
       cities={["경주", "안동", "포항"]}
     />
