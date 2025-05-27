@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import styles from "../../assets/styles/search.module.css";
-import Header from "../../components/Header/Header";
 import SearchBar from "../../components/MainSearchBar/SearchBar";
 
 function Search() {
@@ -24,6 +23,11 @@ function Search() {
     setLoading(true);
     axios
       .get("/api/v1/videos", { params: { keyword: query } })
+        const token = localStorage.getItem("accessToken");
+        axios.get("/api/v1/videos", {
+          params: { keyword: query },
+          headers: { Authorization: `Bearer ${token}` }
+        })
       .then((res) => setVideos(res.data))
       .catch((err) => setError(err))
       .finally(() => setLoading(false));
