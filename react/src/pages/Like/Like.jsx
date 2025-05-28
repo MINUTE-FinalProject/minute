@@ -10,8 +10,8 @@ const GAP = 20;
 const VISIBLE_COUNT = 6;
 const SCROLL_STEP = VIDEO_WIDTH + GAP;
 
-export default function Like() {
-  // const navigate = useNavigate(); // 현재 사용되지 않음
+function Like() {
+  const navigate = useNavigate();
   const [likedVideos, setLikedVideos] = useState([]);
   const [recentWatched, setRecentWatched] = useState([]);
   const [filter, setFilter] = useState("전체");
@@ -86,10 +86,18 @@ export default function Like() {
     closeAllModals();
   };
 
-  const getFilteredVideos = () =>
-    filter === "최근"
-      ? [...likedVideos].sort((a, b) => new Date(b.likedAt || 0) - new Date(a.likedAt || 0)) // likedAt 필드가 없을 경우 대비
-      : likedVideos;
+  // 최근선택 시 7일이내 필터링
+  const getFilteredVideos = () => {
+    if (filter === "최근") {
+      const oneWeekAgo = new Date(); // 지금 이 시각
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7); // 7일 전 이 시각까지 포함
+  
+      return likedVideos
+        .filter(video => new Date(video.createdAt) >= oneWeekAgo)
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+    return likedVideos;
+  };
 
   const renderVideos = (videoList, containerId, type) => (
     <div className={styles.videoListWrapper}>
@@ -114,8 +122,8 @@ export default function Like() {
           </div>
         ))}
       </div>
-      {videoList.length > VISIBLE_COUNT && (
-        <button className={styles.arrow} onClick={() => scroll(containerId, 1)}>›</button>
+      {videoList.length >= VISIBLE_COUNT && (
+        <button className={likeStyle.arrow} onClick={() => scroll(containerId, 1)}>›</button>
       )}
     </div>
   );
@@ -134,8 +142,14 @@ export default function Like() {
         </div>
         {getFilteredVideos().length > 0 ? renderVideos(getFilteredVideos(), 'likedVideoList', 'like') : <p className={styles.noData}>좋아요 한 영상이 없습니다.</p>}
 
-        <h2 className={styles.sectionTitle}>최근 시청한 영상</h2>
-        {recentWatched.length > 0 ? renderVideos(recentWatched, 'recentVideoList', 'history') : <p className={styles.noData}>최근 시청한 영상이 없습니다.</p>}
+        <h2 className={likeStyle.sectionTitle}>최근 시청한 영상</h2>
+        {recentWatched.length
+          ? renderVideos(
+              [...recentWatched].sort((a, b) => new Date(b.watchedAt) - new Date(a.watchedAt)), // ← 여기 정렬
+              'recentVideoList',
+              'history'
+            )
+          : <p className={likeStyle.noData}>최근 시청한 영상이 없습니다.</p>}
 
         <Modal
           isOpen={modal.show}
@@ -159,3 +173,4 @@ export default function Like() {
     </div>
   );
 }
+export default Like;

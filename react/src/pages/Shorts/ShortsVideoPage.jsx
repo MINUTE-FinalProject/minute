@@ -14,7 +14,7 @@ import starIcon from "../../assets/images/star.png";
 import thumbDownIcon from "../../assets/images/thumbdowm.png";
 import thumbUpIcon from "../../assets/images/thumbup.png";
 
-export default function ShortsVideoPage() {
+function ShortsVideoPage() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [shorts, setShorts] = useState([]);
@@ -37,7 +37,7 @@ export default function ShortsVideoPage() {
   }, []);
 
   useEffect(() => {
-    axios.get("/api/v1/youtube/shorts", { params: { maxResults: 100 } })
+    axios.get("/api/v1/youtube/shorts", { params: { region: "KR" , maxResults: 50 } })
       .then(res => {
         if (Array.isArray(res.data)) {
           setShorts(res.data);
@@ -50,6 +50,7 @@ export default function ShortsVideoPage() {
   const video = shorts[currentIdx];
   const videoId = video?.id?.videoId || null;
 
+  // 좋아요 처리
   const handleThumbUpClick = async () => {
     if (!videoId) return;
     if (!isLoggedIn) { setIsLoginModalOpen(true); return; }
@@ -58,9 +59,11 @@ export default function ShortsVideoPage() {
     const isNowLiked = !!likes[videoId];
     try {
       if (!isNowLiked) {
-        await axios.post(`/api/v1/auth/${userId}/videos/${videoId}/like`, null, { headers: { Authorization: `Bearer ${token}` } });
+        await axios.post(`/api/v1/auth/${userId}/videos/${videoId}/like`, 
+        null, { headers: { Authorization: `Bearer ${token}` } });
       } else {
-        await axios.delete(`/api/v1/auth/${userId}/videos/${videoId}/like`, { headers: { Authorization: `Bearer ${token}` } });
+        await axios.delete(`/api/v1/auth/${userId}/videos/${videoId}/like`,
+         { headers: { Authorization: `Bearer ${token}` } });
       }
       setLikes(prev => ({ ...prev, [videoId]: !isNowLiked }));
       setDislikes(prev => ({ ...prev, [videoId]: false }));
@@ -69,11 +72,34 @@ export default function ShortsVideoPage() {
     }
   };
 
-  const handleThumbDownClick = () => {
+  // 싫어요 처리
+  const handleThumbDownClick = async () => {
     if (!videoId) return;
     if (!isLoggedIn) { setIsLoginModalOpen(true); return; }
-    setDislikes(prev => ({ ...prev, [videoId]: !prev[videoId] }));
-    setLikes(prev => ({ ...prev, [videoId]: false }));
+  
+    const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("token");
+    const isNowDisliked = !!dislikes[videoId];
+  
+    try {
+      if (!isNowDisliked) {
+        await axios.post(
+          `/api/v1/auth/${userId}/videos/${videoId}/dislike`,
+          null,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } else {
+        await axios.delete(
+          `/api/v1/auth/${userId}/videos/${videoId}/dislike`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      }
+  
+      setDislikes(prev => ({ ...prev, [videoId]: !isNowDisliked }));
+      setLikes(prev => ({ ...prev, [videoId]: false })); // 싫어요 누르면 좋아요 해제
+    } catch (err) {
+      console.error("싫어요 API 에러", err);
+    }
   };
 
   const handleStarClick = () => {
@@ -200,3 +226,5 @@ export default function ShortsVideoPage() {
     </>
   );
 }
+
+export default ShortsVideoPage;
