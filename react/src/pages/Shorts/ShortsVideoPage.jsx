@@ -3,22 +3,29 @@ import styles from "../../assets/styles/ShortsVideoPage.module.css";
 import Header from "../../components/Header/Header";
 import SearchBar from "../../components/MainSearchBar/SearchBar";
 
-// Icon imports
-import arrowIcon from "../../assets/images/arrow.png";
-import starOutlinedIcon from "../../assets/images/b_star.png";
-import thumbDownOutlinedIcon from "../../assets/images/b_thumbdowm.png";
-import thumbUpOutlinedIcon from "../../assets/images/b_thumbup.png";
-import starIcon from "../../assets/images/star.png";
-import thumbDownIcon from "../../assets/images/thumbdowm.png";
-import thumbUpIcon from "../../assets/images/thumbup.png";
+// 1. 지역 배열
+const regions = [
+  "서울", "부산", "강원도", "경기도",
+  "충청북도", "충청남도", "경상북도", "경상남도",
+  "전라북도", "전라남도", "제주도"
+];
+
+// 2. 랜덤 지역 반환 함수
+function getRandomRegion() {
+  const idx = Math.floor(Math.random() * regions.length);
+  return regions[idx];
+}
 
 function ShortsVideoPage() {
-  const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // 유튜브 쇼츠 리스트 & 재생중인 인덱스
   const [shorts, setShorts] = useState([]);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [likes, setLikes] = useState({});
   const [dislikes, setDislikes] = useState({});
+
+  // 폴더 관련
   const [isFolderOpen, setIsFolderOpen] = useState(false);
   const [folders, setFolders] = useState([]);
   const [newFolderName, setNewFolderName] = useState("");
@@ -32,80 +39,39 @@ function ShortsVideoPage() {
 
   // 3. 자동 저장/불러오기 (최초 1회, region 변경시)
   useEffect(() => {
-    setIsLoggedIn(!!localStorage.getItem("token"));
-  }, []);
-
-  useEffect(() => {
-    axios.get("/api/v1/youtube/shorts", { params: { region: "KR" , maxResults: 50 } })
-      .then(res => {
-        if (Array.isArray(res.data)) {
-          setShorts(res.data);
-          setCurrentIdx(0);
-        }
+    // 1. 유튜브 API → DB 저장
+    fetch(`/api/v1/youtube/shorts/save?region=${region}&maxResults=15`, {
+      method: "POST",
+    })
+      .then(() => {
+        // 2. DB에서 영상 조회
+        return fetch(`/api/v1/youtube/db/shorts?region=${region}&maxResults=15`);
       })
-      .catch(err => console.error("숏츠 로드 실패", err));
-  }, []);
+      .then(res => res.json())
+      .then(data => {
+        setShorts(Array.isArray(data) ? data : []);
+        setCurrentIdx(0);
+      })
+      .catch(console.error);
+  }, [region]);
 
-  const video = shorts[currentIdx];
-  const videoId = video?.id?.videoId || null;
-
-  // 좋아요 처리
-  const handleThumbUpClick = async () => {
-    if (!videoId) return;
-    if (!isLoggedIn) { setIsLoginModalOpen(true); return; }
-    const userId = localStorage.getItem("userId");
-    const token = localStorage.getItem("token");
-    const isNowLiked = !!likes[videoId];
-    try {
-      if (!isNowLiked) {
-        await axios.post(`/api/v1/auth/${userId}/videos/${videoId}/like`, 
-        null, { headers: { Authorization: `Bearer ${token}` } });
-      } else {
-        await axios.delete(`/api/v1/auth/${userId}/videos/${videoId}/like`,
-         { headers: { Authorization: `Bearer ${token}` } });
-      }
-      setLikes(prev => ({ ...prev, [videoId]: !isNowLiked }));
-      setDislikes(prev => ({ ...prev, [videoId]: false }));
-    } catch (err) {
-      console.error("좋아요 API 에러", err);
-    }
+  // 좋아요/싫어요
+  const handleThumbUpClick = () => {
+    if (!isLoggedIn) return setIsLoginModalOpen(true);
+    setLikes(prev => ({ ...prev, [currentIdx]: !prev[currentIdx] }));
+    setDislikes(prev => ({ ...prev, [currentIdx]: false }));
+  };
+  const handleThumbDownClick = () => {
+    if (!isLoggedIn) return setIsLoginModalOpen(true);
+    setDislikes(prev => ({ ...prev, [currentIdx]: !prev[currentIdx] }));
+    setLikes(prev => ({ ...prev, [currentIdx]: false }));
   };
 
-  // 싫어요 처리
-  const handleThumbDownClick = async () => {
-    if (!videoId) return;
-    if (!isLoggedIn) { setIsLoginModalOpen(true); return; }
-  
-    const userId = localStorage.getItem("userId");
-    const token = localStorage.getItem("token");
-    const isNowDisliked = !!dislikes[videoId];
-  
-    try {
-      if (!isNowDisliked) {
-        await axios.post(
-          `/api/v1/auth/${userId}/videos/${videoId}/dislike`,
-          null,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-      } else {
-        await axios.delete(
-          `/api/v1/auth/${userId}/videos/${videoId}/dislike`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-      }
-  
-      setDislikes(prev => ({ ...prev, [videoId]: !isNowDisliked }));
-      setLikes(prev => ({ ...prev, [videoId]: false })); // 싫어요 누르면 좋아요 해제
-    } catch (err) {
-      console.error("싫어요 API 에러", err);
-    }
-  };
-
+  // 폴더 기능
   const handleStarClick = () => {
     if (!isLoggedIn) return setIsLoginModalOpen(true);
     setIsFolderOpen(prev => !prev);
   };
-
   const handleAddFolder = () => {
     if (newFolderName.trim()) {
       setFolders(prev => [...prev, newFolderName.trim()]);
