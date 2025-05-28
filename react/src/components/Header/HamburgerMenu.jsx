@@ -1,10 +1,19 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./HamburgerMenu.module.css";
+import { MONTH_TO_REGION } from "../../pages/Recommend/monthToRegion";
 
 function HamburgerMenu({ isOpen, setIsOpen }) {
   const [showCategoryMenu, setShowCategoryMenu] = useState(false);
   const [showBoardMenu, setShowBoardMenu] = useState(false);
+  const navigate = useNavigate();
+
+  const handleMonthly = () => {
+    const month = new Date().getMonth() + 1;
+    const region = MONTH_TO_REGION[month] || 'seoul';
+    navigate(`/area/${region}`);
+    setIsOpen(false);
+  };
 
   return (
     <div className={styles.hamburgerContainer}>
@@ -41,7 +50,7 @@ function HamburgerMenu({ isOpen, setIsOpen }) {
           )}
         </div>
         <div className={styles.menuItem}>
-          <Link to="">월별추천</Link>
+          <a onClick={handleMonthly}>월별추천</a>
         </div>
       </nav>
     </div>
