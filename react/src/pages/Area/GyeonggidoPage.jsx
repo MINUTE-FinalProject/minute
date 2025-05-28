@@ -8,7 +8,7 @@ function GyeonggidoPage() {
     <RegionPage
       regionName="경기도"
       backgroundImages={[bg1, bg2]}
-      cities={["가평", "수원", "파주  "]}
+      cities={["가평", "수원", "파주"]}
     />
   );
 }

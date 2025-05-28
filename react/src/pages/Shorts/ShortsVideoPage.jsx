@@ -19,6 +19,8 @@ function ShortsVideoPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [shorts, setShorts] = useState([]);
   const [currentIdx, setCurrentIdx] = useState(0);
+
+  // 좋아요/싫어요 상태 (영상별)
   const [likes, setLikes] = useState({});
   const [dislikes, setDislikes] = useState({});
   const [isFolderOpen, setIsFolderOpen] = useState(false);
@@ -27,11 +29,10 @@ function ShortsVideoPage() {
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
-  const redirectToLogin = () => {
-    setIsLoginModalOpen(false);
-    navigate("/login");
-  };
+  // 지역 저장
+  const [region, setRegion] = useState(getRandomRegion());
 
+  // 3. 자동 저장/불러오기 (최초 1회, region 변경시)
   useEffect(() => {
     setIsLoggedIn(!!localStorage.getItem("token"));
   }, []);
@@ -102,9 +103,9 @@ function ShortsVideoPage() {
     }
   };
 
+  // 폴더 기능
   const handleStarClick = () => {
-    if (!videoId) return;
-    if (!isLoggedIn) { setIsLoginModalOpen(true); return; }
+    if (!isLoggedIn) return setIsLoginModalOpen(true);
     setIsFolderOpen(prev => !prev);
   };
 
@@ -123,6 +124,7 @@ function ShortsVideoPage() {
   const handlePrev = () => setCurrentIdx(idx => Math.max(idx - 1, 0));
   const handleNext = () => setCurrentIdx(idx => Math.min(idx + 1, shorts.length - 1));
 
+  // 로그인 모달
   const closeLoginModal = () => setIsLoginModalOpen(false);
 
   return (
@@ -137,15 +139,15 @@ function ShortsVideoPage() {
                 <iframe
                   width="470"
                   height="720"
-                  src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
-                  title={video.snippet?.title || "short video"}
+                  src={`https://www.youtube.com/embed/${video.youtubeVideoId || video.id.videoId}?autoplay=1`}
+                  title={video.title || video.snippet?.title || ""}
                   frameBorder="0"
                   allow="autoplay; encrypted-media"
                   allowFullScreen
-                  style={{ borderRadius: 18, boxShadow: "0 4px 24px rgba(0,0,0,0.18)" }}
+                  style={{ borderRadius: "18px", boxShadow: "0 4px 24px rgba(0,0,0,0.18)" }}
                 />
               ) : (
-                <p style={{ textAlign: 'center', marginTop: '50%' }}>영상이 없습니다.</p>
+                <p style={{ textAlign: "center", marginTop: "50%" }}>영상이 없습니다.</p>
               )}
             </div>
             <div className={styles.reactionWrap}>
@@ -177,6 +179,7 @@ function ShortsVideoPage() {
               </ul>
             </div>
           </div>
+
           <div className={styles.arrowWrap}>
             <ul>
               <li>
@@ -214,14 +217,6 @@ function ShortsVideoPage() {
             </div>
           )}
         </div>
-        {isLoginModalOpen && (
-          <div className={styles.loginModalOverlay} onClick={closeLoginModal}>
-            <div className={styles.loginModal} onClick={e => e.stopPropagation()}>
-              <h2>로그인이 필요합니다</h2>
-              <button onClick={redirectToLogin}>로그인</button>
-            </div>
-          </div>
-        )}
       </div>
     </>
   );
