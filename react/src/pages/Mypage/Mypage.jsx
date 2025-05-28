@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -10,31 +11,45 @@ import FiveDayForecast from '../Calendar/FiveDayForecast';
 
 function Mypage2() {
   const token = localStorage.getItem('token');
-  // console.log(token);
+  const userId = localStorage.getItem('userId'); 
+  const [userInfo, setUserInfo] = useState(null);
 
-  // 예시 데이터
-  const initialPlans = [
-  {
-    id: 1,
-    date: "2025-05-22",
-    title: "팀 미팅",
-    description: "오전 10시에 팀원들과 주간 회의",
-    start: "10:00",
-    end: "11:00",
-    color: "#FADADD",
-  },
-  {
-    id: 2,
-    date: "2025-05-22",
-    title: "코드 리뷰",
-    description: "PR 릴리즈 전 리뷰",
-    start: "14:00",
-    end: "15:00",
-    color: "#FADADD",
-  }
-  ];
-  const [plans, setPlans] = useState(initialPlans);
+  useEffect(() => {
+    axios.get(`http://localhost:8080/api/v1/user/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`, 
+      },withCredentials: true
+    })
+    .then(res => {
+      console.log(res.data);
+      
+      const data = res.data;
 
+      
+      if (data.code === "SU") { 
+        setUserInfo({
+          userName: data.userName,
+          userNickName: data.userNickName,
+          profileImage: data.profileImage,
+          userPhone: data.userPhone,
+          userEmail: data.userEmail
+        });
+
+      } else {
+        alert("사용자 정보를 불러오는데 실패했습니다.");
+      }
+    })
+    .catch(() => alert("서버와 연결 실패"));
+  }, [userId, token]);
+
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const today = new Date();
+    return today.toLocaleDateString('en-CA');
+  })
+
+  const [dailyData, setDailyData] = useState({
+    plans: []
+  });
 
   // 선택된 날짜
   const [value, onChange] = useState(new Date());
@@ -42,14 +57,13 @@ function Mypage2() {
   const [activeStartDate, setActiveStartDate] = useState(value);
   // dot 데이터
   const [dotData, setDotData] = useState({});
-  // 선택된 날짜의 Plan / Checklist 내용
-  const [dailyData, setDailyData] = useState({plan: null, checklist: []});
 
   // 날짜 포맷 맞춰주는 함수 (yyyy-mm-dd)
   const formatDate = date => date.toLocaleDateString('en-CA');
 
   // 달 변경 시 dotData 가져오기
   useEffect(() => {
+    if (!token) return;
     const yearMonth = `${activeStartDate.getFullYear()}-${String(activeStartDate.getMonth()+1).padStart(2,'0')}`;
 
     fetch(`http://localhost:8080/api/v1/mypage/dots?yearMonth=${yearMonth}`, {
@@ -67,21 +81,28 @@ function Mypage2() {
         setDotData(map);
       })
       .catch(err => console.error("dot 불러오기 실패", err));
-  }, [activeStartDate]);
+  }, [activeStartDate, token]);
 
-  // 선택된 날짜 변경 시 dailyData 가져오기
-  // useEffect(() => {
-  //   const dateStr = formatDate(value);
-  //   fetch(`http://localhost:8080/api/v1/mypage/data?date=${dateStr}`, {
-  //     headers: {Authorization: `Bearer ${token}`}
-  //   })
-  //     .then(res => res.json())
-  //     .then(data => {
-  //       console.log("dailyData 확인: ", data);
-  //       setDailyData(data);
-  //     })
-  //     .catch(err => console.log("dailyData 불러오기 실패", err));
-  // }, [value]);
+  // 선택된 날짜 변경 시 plans 가져오기
+  useEffect(() => {
+  if (!token || !selectedDate) return;
+
+  fetch(
+    `http://localhost:8080/api/v1/mypage/plans?date=${selectedDate}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  )
+    .then(res => {
+      if (!res.ok) throw new Error(res.status);
+      return res.json();
+    })
+    .then(plansArray => {
+      console.log("plans 확인: ", plansArray);
+      setDailyData({
+      plans: Array.isArray(plansArray) ? plansArray : []
+     });
+    })
+    .catch(err => console.error("마이페이지 일정 불러오기 실패", err));
+}, [selectedDate, token]);
 
   return (
     <>
@@ -92,16 +113,18 @@ function Mypage2() {
           <div className={styles.profileWrap}>
             <div className={styles.profileContent}>
               <div className={styles.profile}>
-                <h1 className={styles.profileNickName}>SuMinJi</h1>
+                <h1 className={styles.profileNickName}>{userInfo?.userNickName || "닉네임"}</h1>
                 <div className={styles.profileImg}>
-                  <img src="/src/assets/images/cute.png" alt="프로필 이미지" />
+                  <img src={userInfo?.profileImage || "/src/assets/images/cute.png"} alt="프로필 이미지" />
                 </div>
               </div>
+
               <div className={styles.profileInfo}>
-                <p className={styles.profileName}>수민지</p>
-                <p className={styles.profileNumber}>010-1234-5678</p>
-                <p className={styles.profileEmail}>suminji@gmail.com</p>
+                <p className={styles.profileName}>{userInfo?.userName || "이름"}</p>
+                <p className={styles.profileNumber}>{userInfo?.userPhone || "전화번호"}</p>
+                <p className={styles.profileEmail}>{userInfo?.userEmail || "이메일"}</p>
               </div>
+
             </div>
             <div className={styles.profileNavbar}>
               <ul>
@@ -129,7 +152,10 @@ function Mypage2() {
               <div className={styles.calendar}>
                 <Calendar
                   locale="en"
-                  onChange={onChange}
+                  onChange={date => {
+                    onChange(date);
+                    setSelectedDate(formatDate(date));
+                  }}
                   value={value}
                   // ② 달 네비게이션(<,>) 클릭 시 호출
                   onActiveStartDateChange={({ activeStartDate }) => {
@@ -159,29 +185,32 @@ function Mypage2() {
             </div>
             <div className={styles.planRightWrap}>
               <button className={styles.editButton}>
-                <Link to='/calendar'>
+                <Link to={`/calendar?date=${selectedDate}`}>
                   <img src="/src/assets/images/editing.png" alt="수정" />
                 </Link>
               </button>
+              {/* 선택된 날짜의 일정 미리보기 */}
               <div className={styles.plan}>
-                {plans
-                  .filter(p => p.date === formatDate(value))
-                  .map(p => (
-                    <div
-                      key={p.id}
-                      className={calStyles.planCard}
-                      style={{ background: p.color }}
-                    >
-                      <h4 className={calStyles.planTitle}>{p.title}</h4>
-                      {/* {p.description && (
-                        <p className={calStyles.planDesc}>{p.description}</p>
-                      )} */}
-                      <small className={calStyles.planTime}>
-                        {p.start} - {p.end}
-                      </small>
-                    </div>
-                  ))}
-                </div>
+                {dailyData.plans.length === 0
+                  ? <p>등록된 일정이 없습니다.</p>
+                  : // 문자열 "HH:MM" 포맷이므로 localeCompare 만으로도 순서대로 정렬이 가능합니다.
+                    [...dailyData.plans]
+                      .sort((a, b) => a.startTime.localeCompare(b.startTime))
+                      .map(plan => (
+                        <div
+                          key={plan.planId}
+                          className={calStyles.planCard}
+                          style={{ background: '#FADADD', marginBottom: '8px' }}
+                        >
+                          <h4 className={calStyles.planTitle}>{plan.title}</h4>
+                          <small className={calStyles.planTime}>
+                            {plan.startTime.slice(0,5)} - {plan.endTime.slice(0,5)}
+                          </small>
+                        </div>
+                      ))
+                }
+
+              </div>
             </div>
           </div>
         </div>
@@ -228,7 +257,7 @@ function Mypage2() {
                   </div>
                 </Link>
               </li>
-               <li className={styles.mapItem}>
+              <li className={styles.mapItem}>
                 <Link to="/area/jeollabuk" className={styles.linkStyle}>
                   <div className={styles.imageWrapper}>
                     <img src="/src/assets/images/6.png" alt="맵 전라북도" />

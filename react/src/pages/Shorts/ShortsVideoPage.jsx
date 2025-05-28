@@ -1,60 +1,133 @@
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "../../assets/styles/ShortsVideoPage.module.css";
 import Header from "../../components/Header/Header";
+import SearchBar from "../../components/MainSearchBar/SearchBar";
+
+// Icon imports
+import arrowIcon from "../../assets/images/arrow.png";
+import starOutlinedIcon from "../../assets/images/b_star.png";
+import thumbDownOutlinedIcon from "../../assets/images/b_thumbdowm.png";
+import thumbUpOutlinedIcon from "../../assets/images/b_thumbup.png";
+import starIcon from "../../assets/images/star.png";
+import thumbDownIcon from "../../assets/images/thumbdowm.png";
+import thumbUpIcon from "../../assets/images/thumbup.png";
 
 function ShortsVideoPage() {
-  // 로그인 상태 (예시: false면 미로그인 상태)
+  const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const [thumbUp, setThumbUp] = useState("/src/assets/images/b_thumbup.png");
-  const [thumbDown, setThumbDown] = useState("/src/assets/images/b_thumbdowm.png");
-  const [star, setStar] = useState("/src/assets/images/b_star.png");
-
+  const [shorts, setShorts] = useState([]);
+  const [currentIdx, setCurrentIdx] = useState(0);
+  const [likes, setLikes] = useState({});
+  const [dislikes, setDislikes] = useState({});
   const [isFolderOpen, setIsFolderOpen] = useState(false);
   const [folders, setFolders] = useState([]);
   const [newFolderName, setNewFolderName] = useState("");
   const [selectedFolder, setSelectedFolder] = useState(null);
-
-  // 로그인 유도 모달 상태
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
-  const handleThumbUpClick = () => {
-    if (!isLoggedIn) {
-      setIsLoginModalOpen(true);
-      setIsFolderOpen(false);
-      return;
-    }
-    setThumbUp(prev =>
-      prev === "/src/assets/images/b_thumbup.png"
-        ? "/src/assets/images/thumbup.png"
-        : "/src/assets/images/b_thumbup.png"
-    );
+  const redirectToLogin = () => {
+    setIsLoginModalOpen(false);
+    navigate("/login");
   };
 
-  const handleThumbDownClick = () => {
-    if (!isLoggedIn) {
-      setIsLoginModalOpen(true);
-      setIsFolderOpen(false);
-      return;
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem("token"));
+  }, []);
+
+  useEffect(() => {
+    const dbFetch = fetch(`/api/v1/youtube/db/shorts?maxResults=15`)
+      .then(res => res.ok ? res.json() : [])
+      .catch(() => []);
+  
+    const apiFetch = fetch(`/api/v1/youtube/shorts?maxResults=15`)
+      .then(res => res.ok ? res.json() : [])
+      .catch(() => []);
+  
+    Promise.all([dbFetch, apiFetch]).then(([dbVideos, apiVideos]) => {
+      const dbItems = Array.isArray(dbVideos)
+        ? dbVideos.map((v) => ({
+            id: { videoId: v.youtubeVideoId || v.videoId || v.youtube_video_id || v.video_id },
+            snippet: {
+              title: v.title || v.videoTitle || v.video_title,
+              description: v.description || v.videoDescription || v.video_description,
+              thumbnails: {
+                medium: { url: v.thumbnailUrl || v.thumbnail_url }
+              }
+            }
+          }))
+        : [];
+  
+      const apiItems = Array.isArray(apiVideos) ? apiVideos : [];
+      const allItems = [...dbItems, ...apiItems];
+  
+      setShorts(allItems);
+      setCurrentIdx(0);
+    });
+  }, []);
+  
+  const video = shorts[currentIdx];
+  const videoId = video?.id?.videoId || null;
+
+  // 좋아요 처리
+  const handleThumbUpClick = async () => {
+    if (!videoId) return;
+    if (!isLoggedIn) { setIsLoginModalOpen(true); return; }
+    const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("token");
+    const isNowLiked = !!likes[videoId];
+    try {
+      if (!isNowLiked) {
+        await axios.post(`/api/v1/auth/${userId}/videos/${videoId}/like`, 
+        null, { headers: { Authorization: `Bearer ${token}` } });
+      } else {
+        await axios.delete(`/api/v1/auth/${userId}/videos/${videoId}/like`,
+         { headers: { Authorization: `Bearer ${token}` } });
+      }
+      setLikes(prev => ({ ...prev, [videoId]: !isNowLiked }));
+      setDislikes(prev => ({ ...prev, [videoId]: false }));
+    } catch (err) {
+      console.error("좋아요 API 에러", err);
     }
-    setThumbDown(prev =>
-      prev === "/src/assets/images/b_thumbdowm.png"
-        ? "/src/assets/images/thumbdowm.png"
-        : "/src/assets/images/b_thumbdowm.png"
-    );
   };
 
-  // 별 클릭하면 폴더 모달 토글 (로그인 체크)
+  // 싫어요 처리
+  const handleThumbDownClick = async () => {
+    if (!videoId) return;
+    if (!isLoggedIn) { setIsLoginModalOpen(true); return; }
+  
+    const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("token");
+    const isNowDisliked = !!dislikes[videoId];
+  
+    try {
+      if (!isNowDisliked) {
+        await axios.post(
+          `/api/v1/auth/${userId}/videos/${videoId}/dislike`,
+          null,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } else {
+        await axios.delete(
+          `/api/v1/auth/${userId}/videos/${videoId}/dislike`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      }
+  
+      setDislikes(prev => ({ ...prev, [videoId]: !isNowDisliked }));
+      setLikes(prev => ({ ...prev, [videoId]: false })); // 싫어요 누르면 좋아요 해제
+    } catch (err) {
+      console.error("싫어요 API 에러", err);
+    }
+  };
+
   const handleStarClick = () => {
-    if (!isLoggedIn) {
-      setIsLoginModalOpen(true);
-      setIsFolderOpen(false);
-      return;
-    }
+    if (!videoId) return;
+    if (!isLoggedIn) { setIsLoginModalOpen(true); return; }
     setIsFolderOpen(prev => !prev);
   };
 
-  // 폴더 추가
   const handleAddFolder = () => {
     if (newFolderName.trim()) {
       setFolders(prev => [...prev, newFolderName.trim()]);
@@ -62,42 +135,44 @@ function ShortsVideoPage() {
     }
   };
 
-  // 폴더 클릭 → 별 노란색, 체크 표시
-  const handleFolderClick = folderName => {
-    setSelectedFolder(folderName);
-    setStar("/src/assets/images/star.png");
+  const handleFolderClick = (name) => {
+    setSelectedFolder(name);
     setIsFolderOpen(false);
   };
 
-  // 로그인 모달 닫기
-  const closeLoginModal = () => {
-    setIsLoginModalOpen(false);
-  };
+  const handlePrev = () => setCurrentIdx(idx => Math.max(idx - 1, 0));
+  const handleNext = () => setCurrentIdx(idx => Math.min(idx + 1, shorts.length - 1));
 
-  // 로그인 모달 내 로그인 버튼 클릭 (예시: 로그인 처리)
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-    setIsLoginModalOpen(false);
-  };
+  const closeLoginModal = () => setIsLoginModalOpen(false);
 
   return (
     <>
       <Header />
       <div className={styles.container}>
-        <div className={styles.searchbar}>
-          <input type="text" className={styles.searchInput} placeholder="검색..." />
-        </div>
-
+        <SearchBar showTitle={false} compact className={styles.searchCompact} textboxClassName={styles.textboxCompact} />
         <div className={styles.mainContent}>
           <div className={styles.contentWrap}>
             <div className={styles.shortVideo}>
-              <p style={{ textAlign: "center", marginTop: "50%" }}>영상 플레이어 영역</p>
+              {videoId ? (
+                <iframe
+                  width="470"
+                  height="720"
+                  src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+                  title={video.snippet?.title || "short video"}
+                  frameBorder="0"
+                  allow="autoplay; encrypted-media"
+                  allowFullScreen
+                  style={{ borderRadius: 18, boxShadow: "0 4px 24px rgba(0,0,0,0.18)" }}
+                />
+              ) : (
+                <p style={{ textAlign: 'center', marginTop: '50%' }}>영상이 없습니다.</p>
+              )}
             </div>
             <div className={styles.reactionWrap}>
               <ul>
                 <li>
                   <img
-                    src={thumbUp}
+                    src={videoId && likes[videoId] ? thumbUpIcon : thumbUpOutlinedIcon}
                     alt="thumbUp"
                     onClick={handleThumbUpClick}
                     className={styles.reactionIcon}
@@ -105,7 +180,7 @@ function ShortsVideoPage() {
                 </li>
                 <li>
                   <img
-                    src={thumbDown}
+                    src={videoId && dislikes[videoId] ? thumbDownIcon : thumbDownOutlinedIcon}
                     alt="thumbDown"
                     onClick={handleThumbDownClick}
                     className={styles.reactionIcon}
@@ -113,8 +188,8 @@ function ShortsVideoPage() {
                 </li>
                 <li>
                   <img
-                    src={star}
-                    alt="star"
+                    src={videoId && selectedFolder ? starIcon : starOutlinedIcon}
+                    alt="bookmark"
                     onClick={handleStarClick}
                     className={styles.reactionIcon}
                   />
@@ -122,72 +197,52 @@ function ShortsVideoPage() {
               </ul>
             </div>
           </div>
-
-          {/* arrowWrap을 contentWrap 밖으로 분리 */}
           <div className={styles.arrowWrap}>
             <ul>
               <li>
-                <img src="/src/assets/images/arrow.png" alt="up" className={styles.arrowTop} />
+                <img src={arrowIcon} alt="prev" className={styles.arrowTop} onClick={handlePrev} />
               </li>
               <li>
-                <img src="/src/assets/images/arrow.png" alt="down" className={styles.arrowBottom} />
+                <img src={arrowIcon} alt="next" className={styles.arrowBottom} onClick={handleNext} />
               </li>
             </ul>
           </div>
-
-          {/* 폴더 모달 */}
-          <div
-            className={styles.folderModal}
-            style={{ bottom: isFolderOpen ? "120px" : "-100%" }}
-          >
-            <div className={styles.folderInputWrap}>
-              <input
-                type="text"
-                className={styles.folderInput}
-                placeholder="새 폴더 이름"
-                value={newFolderName}
-                onChange={e => setNewFolderName(e.target.value)}
-              />
-              <button className={styles.folderBtn} onClick={handleAddFolder}>
-                +
-              </button>
+          {isFolderOpen && (
+            <div className={styles.folderModal} style={{ bottom: '120px' }}>
+              <div className={styles.folderInputWrap}>
+                <input
+                  type="text"
+                  className={styles.folderInput}
+                  placeholder="새 폴더 이름"
+                  value={newFolderName}
+                  onChange={e => setNewFolderName(e.target.value)}
+                />
+                <button className={styles.folderBtn} onClick={handleAddFolder}>+</button>
+              </div>
+              <ul className={styles.folderList}>
+                {folders.length === 0 ? (
+                  <li className={styles.emptyFolder}>폴더가 없습니다.</li>
+                ) : (
+                  folders.map(name => (
+                    <li key={name} className={styles.folderItem} onClick={() => handleFolderClick(name)}>
+                      <span className={styles.folderName}>{name}</span>
+                      {selectedFolder === name && <span className={styles.checkmark}>✔</span>}
+                    </li>
+                  ))
+                )}
+              </ul>
             </div>
-            <ul className={styles.folderList}>
-              {folders.length === 0 ? (
-                <li className={styles.emptyFolder}>폴더가 없습니다.</li>
-              ) : (
-                folders.map(folder => (
-                  <li
-                    key={folder}
-                    className={styles.folderItem}
-                    onClick={() => handleFolderClick(folder)}
-                  >
-                    <img
-                      src="/src/assets/images/folder_icon.png"
-                      alt="folder"
-                      className={styles.folderIcon}
-                    />
-                    <span className={styles.folderName}>{folder}</span>
-                    {selectedFolder === folder && (
-                      <span className={styles.checkmark}>✔</span>
-                    )}
-                  </li>
-                ))
-              )}
-            </ul>
-          </div>
+          )}
         </div>
+        {isLoginModalOpen && (
+          <div className={styles.loginModalOverlay} onClick={closeLoginModal}>
+            <div className={styles.loginModal} onClick={e => e.stopPropagation()}>
+              <h2>로그인이 필요합니다</h2>
+              <button onClick={redirectToLogin}>로그인</button>
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* 로그인 유도 모달 */}
-      {isLoginModalOpen && (
-        <div className={styles.loginModalOverlay} onClick={closeLoginModal}>
-          <div className={styles.loginModal} onClick={e => e.stopPropagation()}>
-            <h2>로그인이 필요합니다</h2>
-            <button onClick={handleLogin}>로그인</button>
-          </div>
-        </div>
-      )}
     </>
   );
 }

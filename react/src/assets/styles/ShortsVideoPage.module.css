@@ -43,6 +43,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  /* z-index: -1; */
 }
 
 .shortVideo {
@@ -52,7 +53,18 @@
   border-radius: 10px;
   margin-bottom: 50px;
 }
-
+.searchCompact {
+  position: relative;
+  top: auto;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+.textboxCompact {
+  border: 1px solid #ddd;
+  border-radius: 20px;
+}
 /* Reaction icons: 비디오 영역 바깥에 고정 */
 .reactionWrap {
   position: absolute;

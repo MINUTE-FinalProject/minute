@@ -6,7 +6,7 @@ import RegionPage from "./RegionPage";
 function GyeongsangnamPage() {
   return (
     <RegionPage
-      // regionName="경상남도"
+      regionName="경상남도"
       backgroundImages={[bg1, bg2]}
       cities={["통영", "거제", "진주"]}
     />

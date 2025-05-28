@@ -23,32 +23,40 @@ function Header() {
     setIsOpen(false);
   };
 
-  //user 정보 가져오기
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const token = localStorage.getItem('token');
- 
-        const response = await axios.get('http://localhost:8080/api/v1/user', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-      setUserId(response.data.userId); // API 응답에 따라 키 이름 조정
-      } catch (error) {
-        console.error('로그인 사용자 정보 불러오기 실패:', error);
-      }
+  //사용자 정보 가져오기
+useEffect(() => {
+  if (!isLoggedIn) {
+    setUserId('');
+    return;
+  }
+
+  const fetchUser = async () => {
+    try {
+      const token = localStorage.getItem('token');
+
+      const response = await axios.get('http://localhost:8080/api/v1/user', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      });
+
+      setUserId(response.data.userId);
+    } catch (error) {
+      console.error('로그인 사용자 정보 불러오기 실패:', error);
+    }
   };
 
-    fetchUser();
-  }, []);
+  fetchUser();
+}, [isLoggedIn]);
 
   //로그아웃
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
-    window.location.href = "/"; // 로그아웃 후 홈으로 이동
-  };
+  localStorage.removeItem("token");
+  setIsLoggedIn(false);
+  setUserId('');  // userId 초기화 추가
+  window.location.href = "/";
+};
 
   return (
     <div className={HeaderStyle.header}>
