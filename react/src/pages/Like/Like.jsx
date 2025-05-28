@@ -10,7 +10,7 @@ const GAP = 20;
 const VISIBLE_COUNT = 6;
 const SCROLL_STEP = VIDEO_WIDTH + GAP;
 
-export default function Like() {
+function Like() {
   const navigate = useNavigate();
   const [likedVideos, setLikedVideos] = useState([]);
   const [recentWatched, setRecentWatched] = useState([]);
@@ -114,10 +114,18 @@ export default function Like() {
     setNewFolderName("");
   };
 
-  const getFilteredVideos = () =>
-    filter === "최근"
-      ? [...likedVideos].sort((a, b) => new Date(b.likedAt) - new Date(a.likedAt))
-      : likedVideos;
+  // 최근선택 시 7일이내 필터링
+  const getFilteredVideos = () => {
+    if (filter === "최근") {
+      const oneWeekAgo = new Date(); // 지금 이 시각
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7); // 7일 전 이 시각까지 포함
+  
+      return likedVideos
+        .filter(video => new Date(video.createdAt) >= oneWeekAgo)
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+    return likedVideos;
+  };
 
   const renderVideos = (videoList, containerId, type) => (
     <div className={likeStyle.videoListWrapper}>
@@ -137,7 +145,7 @@ export default function Like() {
           </div>
         ))}
       </div>
-      {videoList.length > VISIBLE_COUNT && (
+      {videoList.length >= VISIBLE_COUNT && (
         <button className={likeStyle.arrow} onClick={() => scroll(containerId, 1)}>›</button>
       )}
     </div>
@@ -158,7 +166,13 @@ export default function Like() {
         {getFilteredVideos().length ? renderVideos(getFilteredVideos(), 'likedVideoList', 'like') : <p className={likeStyle.noData}>좋아요 한 영상이 없습니다.</p>}
 
         <h2 className={likeStyle.sectionTitle}>최근 시청한 영상</h2>
-        {recentWatched.length ? renderVideos(recentWatched, 'recentVideoList', 'history') : <p className={likeStyle.noData}>최근 시청한 영상이 없습니다.</p>}
+        {recentWatched.length
+          ? renderVideos(
+              [...recentWatched].sort((a, b) => new Date(b.watchedAt) - new Date(a.watchedAt)), // ← 여기 정렬
+              'recentVideoList',
+              'history'
+            )
+          : <p className={likeStyle.noData}>최근 시청한 영상이 없습니다.</p>}
 
         <Modal
           isOpen={modal.show}
@@ -223,3 +237,4 @@ export default function Like() {
     </div>
   );
 }
+export default Like;
