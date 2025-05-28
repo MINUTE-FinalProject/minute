@@ -38,16 +38,36 @@ function ShortsVideoPage() {
   }, []);
 
   useEffect(() => {
-    axios.get("/api/v1/youtube/shorts", { params: { region: "KR" , maxResults: 50 } })
-      .then(res => {
-        if (Array.isArray(res.data)) {
-          setShorts(res.data);
-          setCurrentIdx(0);
-        }
-      })
-      .catch(err => console.error("숏츠 로드 실패", err));
+    const dbFetch = fetch(`/api/v1/youtube/db/shorts?maxResults=15`)
+      .then(res => res.ok ? res.json() : [])
+      .catch(() => []);
+  
+    const apiFetch = fetch(`/api/v1/youtube/shorts?maxResults=15`)
+      .then(res => res.ok ? res.json() : [])
+      .catch(() => []);
+  
+    Promise.all([dbFetch, apiFetch]).then(([dbVideos, apiVideos]) => {
+      const dbItems = Array.isArray(dbVideos)
+        ? dbVideos.map((v) => ({
+            id: { videoId: v.youtubeVideoId || v.videoId || v.youtube_video_id || v.video_id },
+            snippet: {
+              title: v.title || v.videoTitle || v.video_title,
+              description: v.description || v.videoDescription || v.video_description,
+              thumbnails: {
+                medium: { url: v.thumbnailUrl || v.thumbnail_url }
+              }
+            }
+          }))
+        : [];
+  
+      const apiItems = Array.isArray(apiVideos) ? apiVideos : [];
+      const allItems = [...dbItems, ...apiItems];
+  
+      setShorts(allItems);
+      setCurrentIdx(0);
+    });
   }, []);
-
+  
   const video = shorts[currentIdx];
   const videoId = video?.id?.videoId || null;
 
