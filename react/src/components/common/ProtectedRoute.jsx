@@ -18,6 +18,6 @@ const ProtectedRoute = ({ children }) => {
 
     // 로그인한 사용자라면 요청한 페이지(children)를 렌더링합니다.
     return children;
-};
+}; //제발 실행 잘되라~~
 
 export default ProtectedRoute;
