@@ -78,7 +78,7 @@ function RegionPage({ regionName, backgroundImages, cities }) {
   const [loading, setLoading] = useState(
     Object.fromEntries(cities.map((city) => [city, true]))
   );
-  const [modalVideoId, setModalVideoId] = useState(null); // 👈 모달 상태
+  const [modalVideoId, setModalVideoId] = useState(null);
 
   // 민지 - 날씨 로딩 상태 & 데이터
   const [loadingWeather, setLoadingWeather] = useState(
@@ -93,25 +93,45 @@ function RegionPage({ regionName, backgroundImages, cities }) {
     setSelectImage(backgroundImages[random]);
   }, [backgroundImages]);
 
+  // 🚩 DB + 유튜브 API 영상 합치기
   useEffect(() => {
     cities.forEach((city) => {
       setLoading((prev) => ({ ...prev, [city]: true }));
-      fetch(`/api/v1/youtube/region?region=${encodeURIComponent(city)}`)
-        .then((res) => {
-          if (!res.ok) return [];
-          return res.json();
-        })
-        .then((data) => {
-          setCityVideos((prev) => ({
-            ...prev,
-            [city]: Array.isArray(data) ? data : [],
-          }));
-          setLoading((prev) => ({ ...prev, [city]: false }));
-        })
-        .catch(() => {
-          setCityVideos((prev) => ({ ...prev, [city]: [] }));
-          setLoading((prev) => ({ ...prev, [city]: false }));
-        });
+
+      // DB에서 영상 가져오기
+      const dbFetch = fetch(`/api/v1/youtube/db/shorts?region=${encodeURIComponent(city)}&maxResults=20`)
+        .then((res) => res.ok ? res.json() : [])
+        .catch(() => []);
+
+      // 유튜브 API에서 영상 가져오기
+      const ytFetch = fetch(`/api/v1/youtube/region?region=${encodeURIComponent(city)}`)
+        .then((res) => res.ok ? res.json() : [])
+        .catch(() => []);
+
+      Promise.all([dbFetch, ytFetch]).then(([dbVideos, ytVideos]) => {
+        // DB 데이터를 유튜브API 데이터 구조로 변환!
+        const dbItems = Array.isArray(dbVideos)
+          ? dbVideos.map((v) => ({
+              id: { videoId: v.youtubeVideoId || v.videoId || v.youtube_video_id || v.video_id },
+              snippet: {
+                title: v.title || v.videoTitle || v.video_title,
+                description: v.description || v.videoDescription || v.video_description,
+                thumbnails: {
+                  medium: { url: v.thumbnailUrl || v.thumbnail_url }
+                }
+              }
+            }))
+          : [];
+
+        const ytItems = Array.isArray(ytVideos) ? ytVideos : [];
+        const allVideos = [...dbItems, ...ytItems];
+
+        setCityVideos((prev) => ({
+          ...prev,
+          [city]: allVideos,
+        }));
+        setLoading((prev) => ({ ...prev, [city]: false }));
+      });
     });
   }, [cities]);
 
@@ -164,7 +184,7 @@ function RegionPage({ regionName, backgroundImages, cities }) {
         <div className={styles.sliderContainer}>
           <RollingCardSlider
             region={regionName}
-            setModalVideoId={setModalVideoId} // 👈 슬라이더에도 모달 setter 전달!
+            setModalVideoId={setModalVideoId}
           />
         </div>
       </div>
@@ -193,7 +213,7 @@ function RegionPage({ regionName, backgroundImages, cities }) {
                     key={i}
                     className={styles.card}
                     style={{ cursor: "pointer" }}
-                    onClick={() => setModalVideoId(item.id?.videoId)} // 👈 카드 클릭시 모달 오픈
+                    onClick={() => setModalVideoId(item.id?.videoId)}
                   >
                     {item.snippet?.thumbnails?.medium?.url ? (
                       <img
@@ -213,6 +233,9 @@ function RegionPage({ regionName, backgroundImages, cities }) {
                       style={{
                         fontSize: "15px",
                         marginTop: "7px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
                       }}
                     >
                       {(item.snippet?.title ?? "").length > 35
