@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -10,6 +11,36 @@ import FiveDayForecast from '../Calendar/FiveDayForecast';
 
 function Mypage2() {
   const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('userId'); 
+  const [userInfo, setUserInfo] = useState(null);
+
+  useEffect(() => {
+    axios.get(`http://localhost:8080/api/v1/user/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`, 
+      },withCredentials: true
+    })
+    .then(res => {
+      console.log(res.data);
+      
+      const data = res.data;
+
+      
+      if (data.code === "SU") { 
+        setUserInfo({
+          userName: data.userName,
+          userNickName: data.userNickName,
+          profileImage: data.profileImage,
+          userPhone: data.userPhone,
+          userEmail: data.userEmail
+        });
+
+      } else {
+        alert("사용자 정보를 불러오는데 실패했습니다.");
+      }
+    })
+    .catch(() => alert("서버와 연결 실패"));
+  }, [userId, token]);
 
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date();
@@ -17,8 +48,7 @@ function Mypage2() {
   })
 
   const [dailyData, setDailyData] = useState({
-    plans: [],
-    checklists: []
+    plans: []
   });
 
   // 선택된 날짜
@@ -27,8 +57,6 @@ function Mypage2() {
   const [activeStartDate, setActiveStartDate] = useState(value);
   // dot 데이터
   const [dotData, setDotData] = useState({});
-  // 선택된 날짜의 Plan / Checklist 내용
-  // const [dailyData, setDailyData] = useState({plan: null, checklist: []});
 
   // 날짜 포맷 맞춰주는 함수 (yyyy-mm-dd)
   const formatDate = date => date.toLocaleDateString('en-CA');
@@ -55,23 +83,26 @@ function Mypage2() {
       .catch(err => console.error("dot 불러오기 실패", err));
   }, [activeStartDate, token]);
 
-  // 선택된 날짜 변경 시 details 가져오기
+  // 선택된 날짜 변경 시 plans 가져오기
   useEffect(() => {
-    if (!token || !selectedDate) return;
-    // const dateStr = formatDate(value);
-    fetch(`http://localhost:8080/api/v1/mypage/details?travelDate=${selectedDate}`, {
-      headers: {Authorization: `Bearer ${token}`}
+  if (!token || !selectedDate) return;
+
+  fetch(
+    `http://localhost:8080/api/v1/mypage/plans?date=${selectedDate}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  )
+    .then(res => {
+      if (!res.ok) throw new Error(res.status);
+      return res.json();
     })
-      .then(res => res.json())
-      .then(data => {
-        console.log("details 확인: ", data);
-        setDailyData({
-          plans: data.plans,
-          checklists: data.checklists
-        });
-      })
-      .catch(err => console.log("details 불러오기 실패", err));
-  }, [selectedDate, token]);
+    .then(plansArray => {
+      console.log("plans 확인: ", plansArray);
+      setDailyData({
+      plans: Array.isArray(plansArray) ? plansArray : []
+     });
+    })
+    .catch(err => console.error("마이페이지 일정 불러오기 실패", err));
+}, [selectedDate, token]);
 
   return (
     <>
@@ -82,16 +113,18 @@ function Mypage2() {
           <div className={styles.profileWrap}>
             <div className={styles.profileContent}>
               <div className={styles.profile}>
-                <h1 className={styles.profileNickName}>SuMinJi</h1>
+                <h1 className={styles.profileNickName}>{userInfo?.userNickName || "닉네임"}</h1>
                 <div className={styles.profileImg}>
-                  <img src="/src/assets/images/cute.png" alt="프로필 이미지" />
+                  <img src={userInfo?.profileImage || "/src/assets/images/cute.png"} alt="프로필 이미지" />
                 </div>
               </div>
+
               <div className={styles.profileInfo}>
-                <p className={styles.profileName}>수민지</p>
-                <p className={styles.profileNumber}>010-1234-5678</p>
-                <p className={styles.profileEmail}>suminji@gmail.com</p>
+                <p className={styles.profileName}>{userInfo?.userName || "이름"}</p>
+                <p className={styles.profileNumber}>{userInfo?.userPhone || "전화번호"}</p>
+                <p className={styles.profileEmail}>{userInfo?.userEmail || "이메일"}</p>
               </div>
+
             </div>
             <div className={styles.profileNavbar}>
               <ul>
@@ -160,19 +193,23 @@ function Mypage2() {
               <div className={styles.plan}>
                 {dailyData.plans.length === 0
                   ? <p>등록된 일정이 없습니다.</p>
-                  : dailyData.plans.map(plan => (
-                      <div
-                        key={plan.planId}
-                        className={calStyles.planCard}
-                        style={{ background: '#FADADD', marginBottom: '8px' }}  // dot 컬러와 맞춰 주세요
-                      >
-                        <h4 className={calStyles.planTitle}>{plan.title}</h4>
-                        <small className={calStyles.planTime}>
-                          {plan.startTime.slice(0,5)} - {plan.endTime.slice(0,5)}
-                        </small>
-                      </div>
-                    ))
+                  : // 문자열 "HH:MM" 포맷이므로 localeCompare 만으로도 순서대로 정렬이 가능합니다.
+                    [...dailyData.plans]
+                      .sort((a, b) => a.startTime.localeCompare(b.startTime))
+                      .map(plan => (
+                        <div
+                          key={plan.planId}
+                          className={calStyles.planCard}
+                          style={{ background: '#FADADD', marginBottom: '8px' }}
+                        >
+                          <h4 className={calStyles.planTitle}>{plan.title}</h4>
+                          <small className={calStyles.planTime}>
+                            {plan.startTime.slice(0,5)} - {plan.endTime.slice(0,5)}
+                          </small>
+                        </div>
+                      ))
                 }
+
               </div>
             </div>
           </div>

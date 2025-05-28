@@ -26,9 +26,9 @@ import JeollanamPage from "./pages/Area/JeollanamPage";
 import SeoulPage from "./pages/Area/SeoulPage";
 
 import Bookmark from "./pages/Bookmark/bookmark";
-import Search from "./pages/Bookmark/search";
 import CalendarPage from "./pages/Calendar/Calendarpage";
 import Mypage from "./pages/Mypage/Mypage";
+import Search from "./pages/searchResult/search";
 
 import Notice from "./pages/Notice/notice";
 import NoticeDetail from "./pages/Notice/noticeDetail";
@@ -89,6 +89,7 @@ function App() {
           <Route path="healing" element={<HealingPage />} />
           <Route path="mountain" element={<MountainPage />} />
           <Route path="themepark" element={<ThemeParkPage />} />
+          <Route path="search" element={<Search />} />
 
           <Route path="area">
             <Route index element={<GangwondoPage />} />
@@ -164,7 +165,7 @@ function App() {
         <Route path="like" element={<div className="mypage1"><Like /></div>} />
 
         <Route path="/login" element={<LoginPage />} />
-        <Route path="search" element={<Search />} />
+        
         <Route path="shorts" element={<ShortsVideoPage />} />
         <Route path="/*" element={<NotFound />} />
       </Routes>
