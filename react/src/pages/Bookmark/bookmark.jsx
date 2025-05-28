@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import apiClient from '../../api/apiClient.js';
-import MypageNav from "../../components/MypageNavBar/MypageNav";
-import Modal from "../../components/Modal/Modal";
+import apiClient from '../../api/apiClient.js'; // 경로가 올바른지 확인해주세요.
+import MypageNav from "../../components/MypageNavBar/MypageNav"; // 경로가 올바른지 확인해주세요.
+import Modal from "../../components/Modal/Modal"; // 경로가 올바른지 확인해주세요.
 import bookmarkStyle from "../../assets/styles/bookmark.module.css";
 
 const Bookmark = () => {
   const navigate = useNavigate();
   const { folderId: urlFolderId } = useParams();
   const [folders, setFolders] = useState([]);
-  const [selectedFolderId, setSelectedFolderId] = useState(null);
+  const [selectedFolderId, setSelectedFolderId] = useState(null); // UI 상에서 현재 선택/표시된 폴더 ID
+  const [folderIdPendingAction, setFolderIdPendingAction] = useState(null); // 이름 변경/삭제 액션 대상 ID
   const [selectedFolderVideos, setSelectedFolderVideos] = useState([]);
   const [newFolderName, setNewFolderName] = useState("");
   const [renameFolderName, setRenameFolderName] = useState("");
@@ -39,10 +40,10 @@ const Bookmark = () => {
       const id = parseInt(urlFolderId);
       if (isNaN(id)) {
         console.error("URL에서 가져온 folderId가 유효한 숫자가 아닙니다:", urlFolderId);
-        navigate("/bookmark", { replace: true }); // 혹은 오류 페이지로 이동
+        navigate("/bookmark", { replace: true });
         return;
       }
-      setSelectedFolderId(id);
+      setSelectedFolderId(id); // 현재 보고 있는 폴더 ID 설정
       apiClient
         .get(`/folder/${id}/videos`)
         .then((res) => {
@@ -53,9 +54,10 @@ const Bookmark = () => {
           setSelectedFolderVideos([]);
         });
     } else {
-      setSelectedFolderVideos([]); // folderId가 없으면 비디오 목록 초기화
+      setSelectedFolderId(null); // URL에 폴더 ID가 없으면 선택된 폴더 ID도 초기화
+      setSelectedFolderVideos([]);
     }
-  }, [urlFolderId, navigate]); // navigate를 의존성 배열에 추가
+  }, [urlFolderId, navigate]);
 
   const handleAddModalSubmit = () => {
     const name = newFolderName.trim().slice(0, 10);
@@ -63,7 +65,7 @@ const Bookmark = () => {
       apiClient
         .post("/folder", { folderName: name })
         .then((res) => {
-          setFolders((prev) => [res.data, ...prev]); // 새 폴더를 맨 앞에 추가
+          setFolders((prev) => [res.data, ...prev]);
           setNewFolderName("");
           setIsAddModalOpen(false);
         })
@@ -75,31 +77,45 @@ const Bookmark = () => {
 
   const handleRenameModalSubmit = () => {
     const newName = renameFolderName.trim().slice(0, 10);
-    if (newName && selectedFolderId !== null) {
+    if (newName && folderIdPendingAction !== null) {
       apiClient
-        .put(`/folder/${selectedFolderId}`, { folderName: newName })
+        .put(`/folder/${folderIdPendingAction}`, { folderName: newName })
         .then(() => {
           setFolders((prev) =>
             prev.map((f) =>
-              f.folderId === selectedFolderId ? { ...f, folderName: newName } : f
+              f.folderId === folderIdPendingAction ? { ...f, folderName: newName } : f
             )
           );
+          // 만약 현재 URL의 폴더가 이름 변경된 폴더와 같다면, selectedFolderId에 해당하는 폴더 이름도 업데이트 (UI표시용)
+          if (selectedFolderId === folderIdPendingAction) {
+            // folders 상태가 이미 업데이트 되었으므로, 헤더 등은 자동으로 반영될 것임.
+          }
           setRenameFolderName("");
           setIsRenameModalOpen(false);
+          setFolderIdPendingAction(null); // 작업 완료 후 정리
         })
         .catch((err) => {
           console.error("***** 폴더 이름 변경 실패! *****:", err);
+          setIsRenameModalOpen(false);
+          setFolderIdPendingAction(null);
         });
+    } else if (!newName) {
+        console.warn("새 폴더 이름이 비어있습니다.");
+    } else {
+        console.error("이름 변경할 폴더 ID가 유효하지 않습니다 (pending action).", folderIdPendingAction);
+        setIsRenameModalOpen(false);
+        setFolderIdPendingAction(null);
     }
   };
 
   const handleDeleteModalSubmit = () => {
-    if (selectedFolderId === null || typeof selectedFolderId === 'undefined') {
-      console.error("삭제할 폴더 ID가 유효하지 않습니다.");
+    if (folderIdPendingAction === null || typeof folderIdPendingAction === 'undefined') {
+      console.error("삭제할 폴더 ID가 유효하지 않습니다 (pending action).", folderIdPendingAction);
       setIsDeleteModalOpen(false);
+      setFolderIdPendingAction(null);
       return;
     }
-    const idToDelete = selectedFolderId;
+    const idToDelete = folderIdPendingAction;
     apiClient
       .delete(`/folder/${idToDelete}`)
       .then(() => {
@@ -107,12 +123,17 @@ const Bookmark = () => {
         if (urlFolderId && parseInt(urlFolderId) === idToDelete) {
           navigate("/bookmark"); // 현재 보고 있는 폴더가 삭제되면 기본 북마크 페이지로 이동
         }
+        // 만약 삭제된 폴더가 UI상 현재 선택된 폴더(selectedFolderId)였다면 초기화
+        if (selectedFolderId === idToDelete) {
+            setSelectedFolderId(null);
+        }
         setIsDeleteModalOpen(false);
-        setSelectedFolderId(null); // 선택된 폴더 ID 초기화
+        setFolderIdPendingAction(null); // 작업 완료 후 정리
       })
       .catch((err) => {
         console.error("***** 폴더 삭제 실패! *****:", err);
         setIsDeleteModalOpen(false);
+        setFolderIdPendingAction(null);
       });
   };
 
@@ -128,37 +149,52 @@ const Bookmark = () => {
 
   const handleOpenOptionsModal = (currentFolderId) => {
     console.warn(`handleOpenOptionsModal: 옵션 모달 열기 시도. 폴더 ID: ${currentFolderId}`);
-    setSelectedFolderId(currentFolderId);
+    setSelectedFolderId(currentFolderId); // 옵션이 열린 폴더를 UI상 선택된 폴더로 설정
     const folder = folders.find((f) => f.folderId === currentFolderId);
     if (folder) {
-      setRenameFolderName(folder.folderName);
+      setRenameFolderName(folder.folderName); // 이름 변경 입력 필드 초기값 설정
     }
     setIsOptionsModalOpen(true);
   };
 
   const handleOpenRenameModal = () => {
-    console.warn(`handleOpenRenameModal: 이름 변경 모달 열기 시도. 현재 선택된 폴더 ID: ${selectedFolderId}`);
-    setIsOptionsModalOpen(false);
-    setIsRenameModalOpen(true);
+    const currentId = selectedFolderId; // 옵션 모달이 닫히면서 selectedFolderId가 null이 되기 전 값 사용
+    console.warn(`handleOpenRenameModal: 이름 변경 모달 열기 시도. 현재 선택된 폴더 ID: ${currentId}`);
+    
+    setIsOptionsModalOpen(false); // 옵션 모달 닫기 (이때 selectedFolderId가 null로 바뀔 수 있음 - options modal의 onClose 로직에 따라)
+
+    if (currentId !== null) {
+        setFolderIdPendingAction(currentId); // 실제 이름 변경할 ID를 pendingAction에 저장
+        // setRenameFolderName은 handleOpenOptionsModal에서 이미 설정됨
+        setIsRenameModalOpen(true);
+    } else {
+        console.error("이름 변경을 위한 폴더 ID가 없습니다.");
+    }
   };
 
   const handleRenameModalCancel = () => {
     setRenameFolderName("");
     setIsRenameModalOpen(false);
+    setFolderIdPendingAction(null); // 취소 시 pending ID 정리
   };
 
   const handleDeleteFolder = () => {
-    console.warn("handleDeleteFolder: 삭제 모달 열기 시도. 현재 옵션 폴더 ID:", selectedFolderId);
-    if (selectedFolderId !== null) {
+    const currentId = selectedFolderId; // 옵션 모달이 닫히면서 selectedFolderId가 null이 되기 전 값 사용
+    console.warn("handleDeleteFolder: 삭제 모달 열기 시도. 현재 옵션 폴더 ID:", currentId);
+
+    setIsOptionsModalOpen(false); // 옵션 모달 닫기
+
+    if (currentId !== null) {
+      setFolderIdPendingAction(currentId); // 실제 삭제할 ID를 pendingAction에 저장
       setIsDeleteModalOpen(true);
     } else {
       console.warn("삭제할 폴더가 선택되지 않았습니다 (옵션 메뉴 통해 선택되지 않음).");
     }
-    setIsOptionsModalOpen(false);
   };
 
   const handleDeleteModalCancel = () => {
     setIsDeleteModalOpen(false);
+    setFolderIdPendingAction(null); // 취소 시 pending ID 정리
   };
 
   const handleFolderClick = (currentFolderId) => {
@@ -168,7 +204,6 @@ const Bookmark = () => {
       return;
     }
     setIsLoading(true);
-    // 사용자 경험을 위해 약간의 딜레이 후 페이지 이동 (선택 사항)
     setTimeout(() => {
       navigate(`/bookmark/${currentFolderId}`);
       setIsLoading(false);
@@ -220,18 +255,18 @@ const Bookmark = () => {
                             <div className={bookmarkStyle.placeholderImage}>
                               {video.thumbnailUrl ? (
                                 <img src={video.thumbnailUrl} alt={videoTitle} style={{ width: '100%', height: 'auto', objectFit: 'cover' }}/>
-                              ) : videoUrl.includes("youtube.com/embed") || videoUrl.includes("youtu.be") ? ( // YouTube URL 패턴 개선
+                              ) : videoUrl.includes("youtube.com/watch?v=") || videoUrl.includes("youtu.be/") ? (
                                 <iframe
                                   width="100%"
-                                  src={videoUrl.includes("youtu.be") ? `https://www.youtube.com/embed/${videoUrl.split('/').pop().split('?')[0]}` : videoUrl.replace("watch?v=", "embed/")} // youtu.be 및 watch?v= 링크 처리
+                                  src={`https://www.youtube.com/embed/${videoUrl.includes("youtu.be/") ? videoUrl.split('/').pop().split('?')[0] : videoUrl.split('v=')[1].split('&')[0]}`}
                                   title={videoTitle}
                                   frameBorder="0"
                                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                   allowFullScreen
                                   style={{ aspectRatio: '16/9' }}
                                 ></iframe>
-                              ): (
-                                <video controls width="100%" height="auto" preload="metadata">
+                              ) : ( // 일반 비디오 URL 또는 기타 임베드 (YouTube 외)
+                                <video controls width="100%" height="auto" preload="metadata" style={{ aspectRatio: '16/9' }}>
                                   <source src={videoUrl} type="video/mp4" />
                                   Your browser does not support the video tag.
                                 </video>
@@ -259,9 +294,7 @@ const Bookmark = () => {
                         }}
                       >
                         <div className={bookmarkStyle.bookmarkCard}>
-                          <div className={bookmarkStyle.placeholderImage}>
-                            {/* 폴더 아이콘 또는 대표 이미지를 표시할 수 있습니다. */}
-                          </div>
+                          <div className={bookmarkStyle.placeholderImage}></div>
                         </div>
                         <div className={bookmarkStyle.bookmarkFooter}>
                           <div className={bookmarkStyle.bookmarkTitle}>{f.folderName}</div>
@@ -269,7 +302,7 @@ const Bookmark = () => {
                             className={bookmarkStyle.bookmarkOptions}
                             onClick={(e) => {
                               console.warn("옵션(⋯) 버튼 클릭됨 - 이벤트 전파 중지 시도");
-                              e.stopPropagation(); // 폴더 클릭 이벤트 전파 방지
+                              e.stopPropagation();
                               handleOpenOptionsModal(f.folderId);
                             }}
                           >
@@ -286,16 +319,30 @@ const Bookmark = () => {
               <Modal isOpen={isAddModalOpen} onClose={handleAddModalCancel} title="폴더 추가" onConfirm={handleAddModalSubmit} confirmText="확인" cancelText="취소">
                 <input type="text" value={newFolderName} onChange={(e) => setNewFolderName(e.target.value)} maxLength={10} placeholder="폴더 이름을 입력하세요 (최대 10자)" className={bookmarkStyle.modalInput}/>
               </Modal>
-              <Modal isOpen={isOptionsModalOpen} onClose={() => { setIsOptionsModalOpen(false); setSelectedFolderId(null); }} title="폴더 옵션" confirmText="이름 변경" cancelText="삭제" onConfirm={handleOpenRenameModal} onCancel={handleDeleteFolder}>
+              
+              <Modal 
+                isOpen={isOptionsModalOpen} 
+                onClose={() => { 
+                  setIsOptionsModalOpen(false); 
+                  setSelectedFolderId(null); // 옵션 모달을 그냥 닫으면 UI상 선택된 폴더 ID 초기화
+                }} 
+                title="폴더 옵션" 
+                confirmText="이름 변경" 
+                cancelText="삭제" 
+                onConfirm={handleOpenRenameModal} 
+                onCancel={handleDeleteFolder}
+              >
                 <p>폴더에 대한 작업을 선택하세요.</p>
               </Modal>
+
               <Modal isOpen={isRenameModalOpen} onClose={handleRenameModalCancel} title="폴더 이름 변경" onConfirm={handleRenameModalSubmit} confirmText="변경" cancelText="취소">
                 <input type="text" value={renameFolderName} onChange={(e) => setRenameFolderName(e.target.value)} maxLength={10} placeholder="새 폴더 이름을 입력하세요 (최대 10자)" className={bookmarkStyle.modalInput}/>
               </Modal>
+
               <Modal isOpen={isDeleteModalOpen} onClose={handleDeleteModalCancel} title="폴더 삭제" onConfirm={handleDeleteModalSubmit} confirmText="삭제" cancelText="취소">
                 <p>
-                  {selectedFolderId && folders.find(f => f.folderId === selectedFolderId)
-                    ? `'${folders.find(f => f.folderId === selectedFolderId).folderName}' 폴더를 삭제하시겠습니까?`
+                  {folderIdPendingAction && folders.find(f => f.folderId === folderIdPendingAction)
+                    ? `'${folders.find(f => f.folderId === folderIdPendingAction).folderName}' 폴더를 삭제하시겠습니까?`
                     : "선택한 폴더를 삭제하시겠습니까?"}
                   <br />(폴더 내 북마크도 모두 삭제됩니다.)
                 </p>
