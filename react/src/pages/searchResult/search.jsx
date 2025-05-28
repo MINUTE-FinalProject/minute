@@ -23,7 +23,7 @@ function Search() {
     setLoading(true);
     axios
       .get("/api/v1/videos", { params: { keyword: query } })
-        const token = localStorage.getItem("accessToken");
+        const token = localStorage.getItem("token");
         axios.get("/api/v1/videos", {
           params: { keyword: query },
           headers: { Authorization: `Bearer ${token}` }
