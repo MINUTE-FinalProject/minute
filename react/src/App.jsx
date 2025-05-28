@@ -89,6 +89,7 @@ function App() {
           <Route path="healing" element={<HealingPage />} />
           <Route path="mountain" element={<MountainPage />} />
           <Route path="themepark" element={<ThemeParkPage />} />
+          <Route path="search" element={<Search />} />
 
           <Route path="area">
             <Route index element={<GangwondoPage />} />
@@ -164,7 +165,7 @@ function App() {
         <Route path="like" element={<div className="mypage1"><Like /></div>} />
 
         <Route path="/login" element={<LoginPage />} />
-        <Route path="search" element={<Search />} />
+        
         <Route path="shorts" element={<ShortsVideoPage />} />
         <Route path="/*" element={<NotFound />} />
       </Routes>
