@@ -125,7 +125,7 @@ function App() {
 
           {/* 👇 자유게시판 글수정 페이지에 ProtectedRoute 적용 */}
           <Route 
-            path="freeboardEdit/:id" 
+            path="freeboardEdit/:postId" 
             element={
               <ProtectedRoute> {/* ProtectedRoute로 감싸기 */}
                 <div className="mainContentWithFixedHeader"><FreeboardEdit /></div>
