@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styles from "../../assets/styles/ShortsVideoPage.module.css";
 import Header from "../../components/Header/Header";
 import SearchBar from "../../components/MainSearchBar/SearchBar";
@@ -16,9 +16,17 @@ import thumbUpIcon from "../../assets/images/thumbup.png";
 
 function ShortsVideoPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // 1. 카드 클릭시 state로 넘어온 데이터 받기
+  const passedShorts = location.state?.shorts || [];
+  const passedStartIdx = location.state?.startIdx || 0;
+
+  // 2. state로 넘어온 데이터가 있으면 그걸로 시작, 없으면 fetch
+  const [shorts, setShorts] = useState(passedShorts);
+  const [currentIdx, setCurrentIdx] = useState(passedStartIdx);
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [shorts, setShorts] = useState([]);
-  const [currentIdx, setCurrentIdx] = useState(0);
   const [likes, setLikes] = useState({});
   const [dislikes, setDislikes] = useState({});
   const [isFolderOpen, setIsFolderOpen] = useState(false);
@@ -27,16 +35,14 @@ function ShortsVideoPage() {
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
-  const redirectToLogin = () => {
-    setIsLoginModalOpen(false);
-    navigate("/login");
-  };
-
+  // 3. fetch only if direct 접근 등으로 state 없을 때만!
   useEffect(() => {
     setIsLoggedIn(!!localStorage.getItem("token"));
   }, []);
 
   useEffect(() => {
+    if (passedShorts && passedShorts.length > 0) return; // state 있으면 fetch 안함
+
     const dbFetch = fetch(`/api/v1/youtube/db/shorts?maxResults=15`)
       .then(res => res.ok ? res.json() : [])
       .catch(() => []);
@@ -65,8 +71,8 @@ function ShortsVideoPage() {
       setShorts(allItems);
       setCurrentIdx(0);
     });
-  }, []);
-  
+  }, [passedShorts]);
+
   const video = shorts[currentIdx];
   const videoId = video?.id?.videoId || null;
 
@@ -140,8 +146,13 @@ function ShortsVideoPage() {
     setIsFolderOpen(false);
   };
 
-  const handlePrev = () => setCurrentIdx(idx => Math.max(idx - 1, 0));
-  const handleNext = () => setCurrentIdx(idx => Math.min(idx + 1, shorts.length - 1));
+  // 순환형: 맨끝-맨처음 자연스럽게 이동
+  const handlePrev = () => {
+    setCurrentIdx(idx => (idx - 1 + shorts.length) % shorts.length);
+  };
+  const handleNext = () => {
+    setCurrentIdx(idx => (idx + 1) % shorts.length);
+  };
 
   const closeLoginModal = () => setIsLoginModalOpen(false);
 
@@ -238,7 +249,7 @@ function ShortsVideoPage() {
           <div className={styles.loginModalOverlay} onClick={closeLoginModal}>
             <div className={styles.loginModal} onClick={e => e.stopPropagation()}>
               <h2>로그인이 필요합니다</h2>
-              <button onClick={redirectToLogin}>로그인</button>
+              <button onClick={() => { setIsLoginModalOpen(false); navigate("/login"); }}>로그인</button>
             </div>
           </div>
         )}

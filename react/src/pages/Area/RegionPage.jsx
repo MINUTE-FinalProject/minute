@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import searchIcon from "../../assets/images/searchIcon.png";
 import styles from "../../assets/styles/GangwondoPage.module.css";
 import Header from "../../components/Header/Header";
@@ -13,14 +14,13 @@ function RegionPage({ regionName, backgroundImages, cities }) {
   const [loading, setLoading] = useState(
     Object.fromEntries(cities.map((city) => [city, true]))
   );
-  const [modalVideoId, setModalVideoId] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const random = Math.floor(Math.random() * backgroundImages.length);
     setSelectImage(backgroundImages[random]);
   }, [backgroundImages]);
 
-  // 🚩 DB + 유튜브 API 영상 합치기
   useEffect(() => {
     cities.forEach((city) => {
       setLoading((prev) => ({ ...prev, [city]: true }));
@@ -71,6 +71,16 @@ function RegionPage({ regionName, backgroundImages, cities }) {
     });
   };
 
+  // 카드 클릭 시 ShortsVideoPage로 이동 & 순서 정보 전달
+  const handleCardClick = (item, idx, allItems) => {
+    navigate("/shorts", {
+      state: {
+        shorts: allItems,
+        startIdx: idx,
+      },
+    });
+  };
+
   return (
     <>
       <Header />
@@ -86,7 +96,7 @@ function RegionPage({ regionName, backgroundImages, cities }) {
         <div className={styles.sliderContainer}>
           <RollingCardSlider
             region={regionName}
-            setModalVideoId={setModalVideoId}
+            setModalVideoId={() => {}}
           />
         </div>
       </div>
@@ -108,7 +118,7 @@ function RegionPage({ regionName, backgroundImages, cities }) {
                     key={i}
                     className={styles.card}
                     style={{ cursor: "pointer" }}
-                    onClick={() => setModalVideoId(item.id?.videoId)}
+                    onClick={() => handleCardClick(item, i, cityVideos[city].slice(0, visibleRows[city] * 5))}
                   >
                     {item.snippet?.thumbnails?.medium?.url ? (
                       <img
@@ -151,7 +161,6 @@ function RegionPage({ regionName, backgroundImages, cities }) {
               ))
             )}
           </div>
-          {/* 더보기 버튼 */}
           {cityVideos[city] && cityVideos[city].length > visibleRows[city] * 5 && visibleRows[city] < 3 && (
             <button
               className={styles.moreButton}
@@ -162,28 +171,6 @@ function RegionPage({ regionName, backgroundImages, cities }) {
           )}
         </div>
       ))}
-      {/* 공통 모달 */}
-      {modalVideoId && (
-        <div className={styles.modalBackdrop} onClick={() => setModalVideoId(null)}>
-          <div
-            className={styles.modalContent}
-            onClick={e => e.stopPropagation()}
-          >
-            <button className={styles.modalCloseBtn} onClick={() => setModalVideoId(null)}>
-              &times;
-            </button>
-            <iframe
-              width="450"
-              height="800"
-              src={`https://www.youtube.com/embed/${modalVideoId}?autoplay=1`}
-              title="YouTube video player"
-              frameBorder="0"
-              allow="autoplay; encrypted-media"
-              allowFullScreen
-            />
-          </div>
-        </div>
-      )}
     </>
   );
 }
