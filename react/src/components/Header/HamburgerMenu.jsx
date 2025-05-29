@@ -8,6 +8,9 @@ function HamburgerMenu({ isOpen, setIsOpen }) {
   const [showBoardMenu, setShowBoardMenu] = useState(false);
   const navigate = useNavigate();
 
+  const token = localStorage.getItem("token");
+  const isLoggedIn = Boolean(token);
+
   const handleMonthly = () => {
     const month = new Date().getMonth() + 1;
     const region = MONTH_TO_REGION[month] || 'seoul';
@@ -49,9 +52,11 @@ function HamburgerMenu({ isOpen, setIsOpen }) {
             </div>
           )}
         </div>
-        <div className={styles.menuItem}>
-          <a onClick={handleMonthly}>월별추천</a>
-        </div>
+        {isLoggedIn && (
+          <div className={styles.menuItem}>
+            <a onClick={handleMonthly}>월별추천</a>
+          </div>
+        )}
       </nav>
     </div>
   );
