@@ -29,7 +29,7 @@ import divStyle from "./SearchBar.module.css";
 
 function SearchBar({showTitle=true, compact = false, className = '', textboxClassName =''}) {
   
-  const token = localStorage.getItem("accessToken") || "";
+  const token = localStorage.getItem("token") || "";
   const userId = localStorage.getItem("userId") || "";
   const containerRef = useRef(null); // 검색창 영역, 바깥영역 클릭했을 때 드롭다운을 닫기 위해 
   const navigate = useNavigate();
@@ -105,11 +105,14 @@ function SearchBar({showTitle=true, compact = false, className = '', textboxClas
 
     // 지역 페이지 이동
     const region = regionList.find(r => r.name === kw);
-    if(region) {
+
+     if (region && token) {
+      // 로그인 상태 && 지역명인 경우 지역 페이지로
       navigate(`/area/${region.slug}`);
-    }else{
-       navigate(`/search?query=${encodeURIComponent(kw)}`);
-    }    
+    } else {
+      // 로그인 안 했거나 일반 검색어인 경우 결과 페이지로
+      navigate(`/search?query=${encodeURIComponent(kw)}`);
+    }  
     setSearchInput(kw);
     setOpen(false);
   };
