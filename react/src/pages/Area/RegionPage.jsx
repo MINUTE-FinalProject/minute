@@ -71,7 +71,6 @@ function RegionPage({ regionName, backgroundImages, cities }) {
     });
   };
 
-  // 카드 클릭 시 ShortsVideoPage로 이동 & 순서 정보 전달
   const handleCardClick = (item, idx, allItems) => {
     navigate("/shorts", {
       state: {

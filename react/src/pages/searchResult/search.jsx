@@ -46,7 +46,6 @@ function Search() {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  // 카드 클릭 시 ShortsVideoPage에서 재생 가능한 구조로 변환해서 전달
   const handleCardClick = (video, idx, allItems) => {
     const formattedList = allItems.map(v => ({
       id: { videoId: v.videoId },

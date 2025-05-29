@@ -95,8 +95,7 @@ html, body {
   bottom: 20px;
   width: 100%;
   display: flex;
-  justify-content: flex-end; /* ✅ 슬라이더를 오른쪽에 붙임 */
-  box-sizing: border-box;
+  justify-content: flex-end;
   z-index: 3;
 }
 
