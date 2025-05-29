@@ -105,6 +105,8 @@ function ManagerFreeboard() {
             console.log("[Admin] Received data:", data); // 응답 데이터 로깅
 
             if (data && data.content) {
+                // 👇 이 로그를 통해 API가 실제 어떤 데이터를 보내주는지 확인합니다.
+            console.log("[Admin] Received data.content (아이템 목록):", JSON.parse(JSON.stringify(data.content))); 
                 setItems(data.content);
                 setTotalPages(data.totalPages || 0);
                 // API 응답의 currentPage가 0-based이면 +1, 1-based이면 그대로 사용
@@ -143,6 +145,8 @@ function ManagerFreeboard() {
         setSearchTerm(''); 
         setSortOrder('latest'); 
         setDateRange({ start: '', end: '' }); 
+        setItems([]); // <<<--- 탭 변경 시 items 배열을 비워줍니다!
+        setError(null); // 에러 상태도 초기화
     };
     
     const handleSearch = (e) => {
