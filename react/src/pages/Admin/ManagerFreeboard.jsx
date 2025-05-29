@@ -261,7 +261,7 @@ function ManagerFreeboard() {
                                 <th>작성일</th>
                                 {activeTab !== 'myComments' && <th>조회수</th>}
                                 <th>좋아요수</th>
-                                <th>신고</th> {/* 신고 컬럼은 유지 */}
+                                <th>신고</th> 
                             </tr>
                         </thead>
                         <tbody>

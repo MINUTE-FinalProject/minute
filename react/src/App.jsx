@@ -141,7 +141,7 @@ function App() {
             <Route path="member-detail/:id" element={<MemberDetail />} />
 
             <Route path="managerFreeboard" element={<ManagerFreeboard />} />
-            <Route path="managerFreeboardDetail/:id" element={<ManagerFreeboardDetail />} />
+            <Route path="managerFreeboardDetail/:postId" element={<ManagerFreeboardDetail />} />
 
             <Route path="managerNotice" element={<ManagerNotice />} />
             <Route path="managerNoticeDetail/:id" element={<ManagerNoticeDetail />} />
