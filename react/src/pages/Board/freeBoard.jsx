@@ -393,7 +393,7 @@ function FreeBoard() {
                                         } else { // 전체 목록 탭
                                             canReport = !isMyOwnItem; // 내 글이 아니면 신고 가능
                                             if (canReport) {
-                                                isAlreadyReportedByMe = item.isReportedByCurrentUser || false;
+                                                isAlreadyReportedByMe = item.reportedByCurrentUser || false;
                                             }
                                         }
                                     }

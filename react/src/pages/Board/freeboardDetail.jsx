@@ -68,7 +68,7 @@ function FreeboardDetail() {
             if (token) headers.Authorization = `Bearer ${token}`;
             
             const response = await axios.get(`${API_BASE_URL}/board/free/${postId}`, { headers });
-            setPost(response.data); // FreeboardPostResponseDTO (isLikedByCurrentUser, isReportedByCurrentUser 포함 가정)
+            setPost(response.data); // FreeboardPostResponseDTO (isLikedByCurrentUser, reportedByCurrentUser 포함 가정)
         } catch (err) {
             console.error("Error fetching post detail:", err);
             setError(err.response?.data?.message || "게시글을 불러오는 데 실패했습니다. 존재하지 않거나 삭제된 게시글일 수 있습니다.");
@@ -162,11 +162,11 @@ function FreeboardDetail() {
     };
 
     const processPostReport = async () => {
-        if (!isUserLoggedIn() || !post || post.userId === getLoggedInUserId() || post.isReportedByCurrentUser) return;
+        if (!isUserLoggedIn() || !post || post.userId === getLoggedInUserId() || post.reportedByCurrentUser) return;
         try {
             const token = getToken();
             await axios.post(`${API_BASE_URL}/board/free/${post.postId}/report`, {}, { headers: { Authorization: `Bearer ${token}` }});
-            setPost(prev => ({ ...prev, isReportedByCurrentUser: true }));
+            setPost(prev => ({ ...prev, reportedByCurrentUser: true }));
             setModalProps({ title: '신고 완료', message: '게시물이 성공적으로 신고되었습니다.', type: 'success', confirmButtonType: 'primary' });
         } catch (err) { 
             setModalProps({ title: '오류', message: err.response?.data?.message || "게시글 신고에 실패했습니다.", type: 'error' });
@@ -179,7 +179,7 @@ function FreeboardDetail() {
             setModalProps({ title: "로그인 필요", message: "신고는 로그인 후 가능합니다.", type: 'warning', onConfirm: () => navigate("/login")});
             setIsModalOpen(true); return; 
         }
-        if (!post || post.isReportedByCurrentUser || post.userId === getLoggedInUserId()) return;
+        if (!post || post.reportedByCurrentUser || post.userId === getLoggedInUserId()) return;
         setModalProps({
             title: '게시물 신고', message: '이 게시물을 신고하시겠습니까?\n신고 후에는 취소할 수 없습니다.',
             onConfirm: processPostReport, confirmText: '신고하기', cancelText: '취소', type: 'warning', confirmButtonType: 'danger'
@@ -252,7 +252,7 @@ function FreeboardDetail() {
         try {
             const token = getToken();
             await axios.post(`${API_BASE_URL}/board/free/comments/${commentIdToReport}/report`, {}, { headers: { Authorization: `Bearer ${token}` }});
-            setComments(prev => prev.map(c => c.commentId === commentIdToReport ? {...c, isReportedByCurrentUser: true } : c));
+            setComments(prev => prev.map(c => c.commentId === commentIdToReport ? {...c, reportedByCurrentUser: true } : c));
             setModalProps({ title: '신고 완료', message: `댓글 ID ${commentIdToReport}이(가) 신고되었습니다.`, type: 'success', confirmButtonType: 'primary'});
         } catch (err) {
             setModalProps({ title: '오류', message: err.response?.data?.message || "댓글 신고에 실패했습니다.", type: 'error' });
@@ -265,15 +265,15 @@ function FreeboardDetail() {
             setModalProps({ title: "로그인 필요", message: "신고는 로그인 후 가능합니다.", type: 'warning', onConfirm: () => navigate("/login")});
             setIsModalOpen(true); return;
         }
-        // isReportedByCurrentUser, authorRole은 백엔드 DTO에 포함되어 있다고 가정
-        if (comment.isReportedByCurrentUser || comment.userId === getLoggedInUserId() || comment.authorRole === 'ADMIN') {
+        // reportedByCurrentUser, authorRole은 백엔드 DTO에 포함되어 있다고 가정
+        if (comment.reportedByCurrentUser || comment.userId === getLoggedInUserId() || comment.authorRole === 'ADMIN') {
             if (comment.userId === getLoggedInUserId()) {
                  setModalProps({ title: '신고 불가', message: '자신의 댓글은 신고할 수 없습니다.', type: 'warning'});
                  setIsModalOpen(true);
             } else if (comment.authorRole === 'ADMIN') {
                  setModalProps({ title: '신고 불가', message: '관리자 댓글은 신고할 수 없습니다.', type: 'warning'});
                  setIsModalOpen(true);
-            } else if (comment.isReportedByCurrentUser) {
+            } else if (comment.reportedByCurrentUser) {
                  setModalProps({ title: '알림', message: '이미 신고한 댓글입니다.', type: 'info'});
                  setIsModalOpen(true);
             }
@@ -448,11 +448,11 @@ function FreeboardDetail() {
                         {isUserLoggedIn() && !isPostAuthor && ( // 로그인했고, 내 글이 아닐 때만 신고 버튼 표시
                              <button
                                 onClick={handlePostReportClick}
-                                className={`${freeboardDetailStyle.iconButton} ${post.isReportedByCurrentUser ? freeboardDetailStyle.reported : ''}`}
-                                disabled={post.isReportedByCurrentUser} // 이미 신고했으면 비활성화
-                                title={post.isReportedByCurrentUser ? "신고됨" : "신고하기"}
+                                className={`${freeboardDetailStyle.iconButton} ${post.reportedByCurrentUser ? freeboardDetailStyle.reported : ''}`}
+                                disabled={post.reportedByCurrentUser} // 이미 신고했으면 비활성화
+                                title={post.reportedByCurrentUser ? "신고됨" : "신고하기"}
                             >
-                                <img src={post.isReportedByCurrentUser ? reportOnIcon : reportOffIcon} alt="신고" className={freeboardDetailStyle.buttonIcon} />
+                                <img src={post.reportedByCurrentUser ? reportOnIcon : reportOffIcon} alt="신고" className={freeboardDetailStyle.buttonIcon} />
                             </button>
                         )}
                     </div>
@@ -487,7 +487,7 @@ function FreeboardDetail() {
                         comments.map(comment => {
                             const isOwnComment = isUserLoggedIn() && comment.userId === getLoggedInUserId();
                             const isAdminComment = comment.authorRole === 'ADMIN'; 
-                            const isCommentReportedByCurrentUser = comment.isReportedByCurrentUser || false;
+                            const isCommentReportedByCurrentUser = comment.reportedByCurrentUser || false;
 
                             return (
                                 <div key={comment.commentId} id={`comment-${comment.commentId}`} className={freeboardDetailStyle.commentItem}>
