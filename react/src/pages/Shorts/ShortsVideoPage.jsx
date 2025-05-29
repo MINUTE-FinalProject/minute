@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styles from "../../assets/styles/ShortsVideoPage.module.css";
 import Header from "../../components/Header/Header";
 import SearchBar from "../../components/MainSearchBar/SearchBar";
@@ -15,6 +15,7 @@ import thumbDownIcon from "../../assets/images/thumbdowm.png";
 import thumbUpIcon from "../../assets/images/thumbup.png";
 
 function ShortsVideoPage() {
+  const {videoId:paramVideoId} = useParams(); // URL에서 videoId 파라미터 받음 
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [shorts, setShorts] = useState([]);
@@ -27,15 +28,54 @@ function ShortsVideoPage() {
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
+  // 로그인이 필요합니다 로그인 버튼 클릭시 로그인 페이지로 이동
   const redirectToLogin = () => {
     setIsLoginModalOpen(false);
     navigate("/login");
   };
 
+  // 좋아요, 싫어요 상태 초기 로드
   useEffect(() => {
-    setIsLoggedIn(!!localStorage.getItem("token"));
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
+    setIsLoggedIn(!!token);
+  
+    if (token && userId) {
+      // 좋아요 불러오기
+      axios.get(`/api/v1/auth/${userId}/likes`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(res => {
+        const likeMap = {};
+        res.data.forEach(video => {
+          likeMap[video.videoId] = true;
+        });
+        setLikes(likeMap);
+      })
+      .catch(err => {
+        console.error("초기 좋아요 불러오기 실패", err);
+      });
+  
+      // 싫어요 불러오기
+      axios.get(`/api/v1/auth/${userId}/dislikes`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(res => {
+        const dislikeMap = {};
+        res.data.forEach(video => {
+          console.log("불러온 싫어요 videoId:", video.videoId); 
+          dislikeMap[video.videoId] = true;
+        });
+        console.log("초기 싫어요 맵:", dislikeMap);
+        setDislikes(dislikeMap);
+      })
+      .catch(err => {
+        console.error("초기 싫어요 불러오기 실패", err.response?.status, err.response?.data);
+      });
+    }
   }, []);
 
+  // 영상 API 불러오기 및 필터링
   useEffect(() => {
     const dbFetch = fetch(`/api/v1/youtube/db/shorts?maxResults=15`)
       .then(res => res.ok ? res.json() : [])
@@ -61,30 +101,95 @@ function ShortsVideoPage() {
   
       const apiItems = Array.isArray(apiVideos) ? apiVideos : [];
       const allItems = [...dbItems, ...apiItems];
+
+       // 싫어요한 영상은 필터링
+       let filtered = allItems;
+       if (isLoggedIn) {
+          filtered = allItems.filter(video => {
+           const id = video?.id?.videoId || video?.videoId || null;
+           return !dislikes[id];
+         });
+       }
   
       setShorts(allItems);
-      setCurrentIdx(0);
+     
+      // URL 파라미터 videoId가 있으면 해당 영상 인덱스 찾기
+      if(paramVideoId) {
+        const idx = allItems.findIndex(video => {
+          const id = video?.id?.videoId || video?.videoId || video?.youtubeVideoId || null;
+          return id === paramVideoId;
+        });
+        setCurrentIdx(idx !== -1 ? idx : 0);
+      } else {
+        setCurrentIdx(0);
+      }
     });
-  }, []);
+  }, [paramVideoId, dislikes, isLoggedIn]);
   
-  const video = shorts[currentIdx];
-  const videoId = video?.id?.videoId || null;
+  const filteredShorts = shorts; // 이미 필터링된 shorts를 사용
+  const video = filteredShorts[currentIdx];
+  const videoId = video?.id?.videoId || video?.videoId || null;
+
+   // 시청 기록 저장
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    if (!filteredShorts.length) return;
+  
+    
+    const video = filteredShorts[currentIdx];
+    const videoId = video?.id?.videoId || video?.videoId || null;
+    if (!videoId) return;
+  
+    const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("token");
+  
+    axios.post(
+      `/api/v1/auth/${userId}/watch-history`,
+      { videoId },
+      { headers: { Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json" } }
+    ).catch(err => {
+      console.error("시청 기록 저장 실패", err);
+    });
+  
+  }, [currentIdx, shorts, isLoggedIn]);
 
   // 좋아요 처리
   const handleThumbUpClick = async () => {
-    if (!videoId) return;
-    if (!isLoggedIn) { setIsLoginModalOpen(true); return; }
+    // const video = shorts[currentIdx];
+    // const videoId = video?.id?.videoId || null;
+  
+    if (!videoId || videoId === "null") {
+      console.error("videoId가 null이거나 유효하지 않음:", videoId);
+      return;
+    }
+  
+    if (!isLoggedIn) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+  
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
     const isNowLiked = !!likes[videoId];
+  
+    console.log("좋아요 요청 URL:", `/api/v1/auth/${userId}/videos/${videoId}/like`);
+    console.log("현재 videoId:", videoId);
+  
     try {
       if (!isNowLiked) {
-        await axios.post(`/api/v1/auth/${userId}/videos/${videoId}/like`, 
-        null, { headers: { Authorization: `Bearer ${token}` } });
+        await axios.post(
+          `/api/v1/auth/${userId}/videos/${videoId}/like`,
+          null,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
       } else {
-        await axios.delete(`/api/v1/auth/${userId}/videos/${videoId}/like`,
-         { headers: { Authorization: `Bearer ${token}` } });
+        await axios.delete(
+          `/api/v1/auth/${userId}/videos/${videoId}/like`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
       }
+  
       setLikes(prev => ({ ...prev, [videoId]: !isNowLiked }));
       setDislikes(prev => ({ ...prev, [videoId]: false }));
     } catch (err) {
@@ -95,11 +200,15 @@ function ShortsVideoPage() {
   // 싫어요 처리
   const handleThumbDownClick = async () => {
     if (!videoId) return;
-    if (!isLoggedIn) { setIsLoginModalOpen(true); return; }
+    if (!isLoggedIn) {
+      setIsLoginModalOpen(true);
+      return;
+    }
   
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
     const isNowDisliked = !!dislikes[videoId];
+    const isNowLiked = !!likes[videoId];
   
     try {
       if (!isNowDisliked) {
@@ -108,20 +217,23 @@ function ShortsVideoPage() {
           null,
           { headers: { Authorization: `Bearer ${token}` } }
         );
+        setDislikes(prev => ({ ...prev, [videoId]: true }));
+        if (isNowLiked) {
+          setLikes(prev => ({ ...prev, [videoId]: false }));
+        }
       } else {
         await axios.delete(
           `/api/v1/auth/${userId}/videos/${videoId}/dislike`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
+        setDislikes(prev => ({ ...prev, [videoId]: false }));
       }
-  
-      setDislikes(prev => ({ ...prev, [videoId]: !isNowDisliked }));
-      setLikes(prev => ({ ...prev, [videoId]: false })); // 싫어요 누르면 좋아요 해제
     } catch (err) {
       console.error("싫어요 API 에러", err);
     }
   };
-
+  
+  // 북마크 클릭
   const handleStarClick = () => {
     if (!videoId) return;
     if (!isLoggedIn) { setIsLoginModalOpen(true); return; }
@@ -177,6 +289,7 @@ function ShortsVideoPage() {
                     onClick={handleThumbUpClick}
                     className={styles.reactionIcon}
                   />
+                  {/* <span>{video.likes}</span> 좋아요 숫자 반영할 거 */}
                 </li>
                 <li>
                   <img
