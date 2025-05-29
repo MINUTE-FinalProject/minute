@@ -112,7 +112,7 @@ function App() {
           <Route path="noticeDetail/:id" element={<div className="mainContentWithFixedHeader"><NoticeDetail /></div>} />
 
           <Route path="freeboard" element={<div className="mainContentWithFixedHeader"><FreeBoard /></div>} />
-          <Route path="freeboardDetail/:id" element={<div className="mainContentWithFixedHeader"><FreeboardDetail /></div>} />
+          <Route path="freeboardDetail/:postId" element={<div className="mainContentWithFixedHeader"><FreeboardDetail /></div>} />
           {/* 👇 자유게시판 글쓰기 페이지에 ProtectedRoute 적용 */}
           <Route 
             path="freeboardWrite" 
