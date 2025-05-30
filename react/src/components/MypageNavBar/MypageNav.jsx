@@ -65,11 +65,13 @@ function MypageNav() {
                         </div>
                     )}
                     </div>
-
                     <div className={styles.menuItem}>
-                    <Link to="" onClick={() => setIsOpen(false)}>
-                        월별추천
-                    </Link>
+                        <Link to="" onClick={() => setIsOpen(false)}>
+                            월별추천
+                        </Link>
+                    </div>
+                    <div className={styles.menuItem}>
+                        <Link to="/shorts" onClick={() => setIsOpen(false)}>숏츠</Link>
                     </div>
                 </nav>
             </div>

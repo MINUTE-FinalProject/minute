@@ -167,6 +167,9 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         
         <Route path="shorts" element={<ShortsVideoPage />} />
+
+        {/* 좋아요 or 시청한 기록 페이지에서 영상 클릭 시 숏츠 페이지로 이동 */}
+        <Route path="/shorts/:videoId" element={<ShortsVideoPage />} />
         <Route path="/*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
