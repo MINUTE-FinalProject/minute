@@ -1,11 +1,11 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import apiClient from "../../api/apiClient";
 import styles from "../../assets/styles/ShortsVideoPage.module.css";
 import Header from "../../components/Header/Header";
 import SearchBar from "../../components/MainSearchBar/SearchBar";
 
-// Icon imports
+// Icon imports (기존과 동일)
 import arrowIcon from "../../assets/images/arrow.png";
 import starOutlinedIcon from "../../assets/images/b_star.png";
 import thumbDownOutlinedIcon from "../../assets/images/b_thumbdowm.png";
@@ -15,341 +15,268 @@ import thumbDownIcon from "../../assets/images/thumbdowm.png";
 import thumbUpIcon from "../../assets/images/thumbup.png";
 
 function ShortsVideoPage() {
-  const {videoId:paramVideoId} = useParams(); // URL에서 videoId 파라미터 받음 
-  const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [shorts, setShorts] = useState([]);
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const [likes, setLikes] = useState({});
-  const [dislikes, setDislikes] = useState({});
-  const [isFolderOpen, setIsFolderOpen] = useState(false);
-  const [folders, setFolders] = useState([]);
-  const [newFolderName, setNewFolderName] = useState("");
-  const [selectedFolder, setSelectedFolder] = useState(null);
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const { videoId: paramVideoId } = useParams();
+    const navigate = useNavigate();
 
-  // 로그인이 필요합니다 로그인 버튼 클릭시 로그인 페이지로 이동
-  const redirectToLogin = () => {
-    setIsLoginModalOpen(false);
-    navigate("/login");
-  };
-
-  // 좋아요, 싫어요 상태 초기 로드
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId");
-    setIsLoggedIn(!!token);
-  
-    if (token && userId) {
-      // 좋아요 불러오기
-      axios.get(`/api/v1/auth/${userId}/likes`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      .then(res => {
-        const likeMap = {};
-        res.data.forEach(video => {
-          likeMap[video.videoId] = true;
-        });
-        setLikes(likeMap);
-      })
-      .catch(err => {
-        console.error("초기 좋아요 불러오기 실패", err);
-      });
-  
-      // 싫어요 불러오기
-      axios.get(`/api/v1/auth/${userId}/dislikes`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      .then(res => {
-        const dislikeMap = {};
-        res.data.forEach(video => {
-          console.log("불러온 싫어요 videoId:", video.videoId); 
-          dislikeMap[video.videoId] = true;
-        });
-        console.log("초기 싫어요 맵:", dislikeMap);
-        setDislikes(dislikeMap);
-      })
-      .catch(err => {
-        console.error("초기 싫어요 불러오기 실패", err.response?.status, err.response?.data);
-      });
-    }
-  }, []);
-
-  // 영상 API 불러오기 및 필터링
-  useEffect(() => {
-    const dbFetch = fetch(`/api/v1/youtube/db/shorts?maxResults=15`)
-      .then(res => res.ok ? res.json() : [])
-      .catch(() => { console.error("Error fetching DB shorts"); return []; });
-  
-    const apiFetch = fetch(`/api/v1/youtube/shorts?maxResults=15`) // 'region' 파라미터 관련 오류 가능성
-      .then(res => res.ok ? res.json() : [])
-      .catch(() => { console.error("Error fetching API shorts"); return []; });
-  
-    Promise.all([dbFetch, apiFetch]).then(([dbVideos, apiVideos]) => {
-      const dbItems = Array.isArray(dbVideos)
-        ? dbVideos.map((v) => ({
-            id: { videoId: v.youtubeVideoId || v.videoId || v.youtube_video_id || v.video_id },
-            snippet: {
-              title: v.title || v.videoTitle || v.video_title,
-              description: v.description || v.videoDescription || v.video_description,
-              thumbnails: { medium: { url: v.thumbnailUrl || v.thumbnail_url } }
-            }
-          }))
-        : [];
-      const apiItems = Array.isArray(apiVideos) ? apiVideos : [];
-      const allItems = [...dbItems, ...apiItems];
-
-       // 싫어요한 영상은 필터링
-       let filtered = allItems;
-       if (isLoggedIn) {
-          filtered = allItems.filter(video => {
-           const id = video?.id?.videoId || video?.videoId || null;
-           return !dislikes[id];
-         });
-       }
-  
-      setShorts(allItems);
-     
-      // URL 파라미터 videoId가 있으면 해당 영상 인덱스 찾기
-      if(paramVideoId) {
-        const idx = allItems.findIndex(video => {
-          const id = video?.id?.videoId || video?.videoId || video?.youtubeVideoId || null;
-          return id === paramVideoId;
-        });
-        setCurrentIdx(idx !== -1 ? idx : 0);
-      } else {
-        setCurrentIdx(0);
-      }
+    const [userInfo, setUserInfo] = useState({
+        isLoggedIn: false,
+        userId: null,
     });
-  }, [paramVideoId, dislikes, isLoggedIn]);
-  
-  const filteredShorts = shorts; // 이미 필터링된 shorts를 사용
-  const video = filteredShorts[currentIdx];
-  const videoId = video?.id?.videoId || video?.videoId || null;
 
-   // 시청 기록 저장
-  useEffect(() => {
-    if (!isLoggedIn) return;
-    if (!filteredShorts.length) return;
-  
-    
-    const video = filteredShorts[currentIdx];
-    const videoId = video?.id?.videoId || video?.videoId || null;
-    if (!videoId) return;
-  
-    const userId = localStorage.getItem("userId");
-    const token = localStorage.getItem("token");
-  
-    axios.post(
-      `/api/v1/auth/${userId}/watch-history`,
-      { videoId },
-      { headers: { Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json" } }
-    ).catch(err => {
-      console.error("시청 기록 저장 실패", err);
-    });
-  
-  }, [currentIdx, shorts, isLoggedIn]);
+    const [shorts, setShorts] = useState([]);
+    const [currentIdx, setCurrentIdx] = useState(0);
+    const [likes, setLikes] = useState({});
+    const [dislikes, setDislikes] = useState({});
+    const [bookmarks, setBookmarks] = useState({});
+    const [folders, setFolders] = useState([]);
 
-  // 좋아요 처리
-  const handleThumbUpClick = async () => {
-    // const video = shorts[currentIdx];
-    // const videoId = video?.id?.videoId || null;
-  
-    if (!videoId || videoId === "null") {
-      console.error("videoId가 null이거나 유효하지 않음:", videoId);
-      return;
-    }
-  
-    if (!isLoggedIn) {
-      setIsLoginModalOpen(true);
-      return;
-    }
-  
-    const userId = localStorage.getItem("userId");
-    const token = localStorage.getItem("token");
-    const isNowLiked = !!likes[videoId];
-  
-    console.log("좋아요 요청 URL:", `/api/v1/auth/${userId}/videos/${videoId}/like`);
-    console.log("현재 videoId:", videoId);
-  
-    try {
-      if (!isNowLiked) {
-        await axios.post(
-          `/api/v1/auth/${userId}/videos/${videoId}/like`,
-          null,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-      } else {
-        await axios.delete(
-          `/api/v1/auth/${userId}/videos/${videoId}/like`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-      }
-  
-      setLikes(prev => ({ ...prev, [videoId]: !isNowLiked }));
-      setDislikes(prev => ({ ...prev, [videoId]: false }));
-    } catch (err) {
-      console.error("좋아요 API 에러:", err.response?.data || err.message);
-    }
-  };
+    // UI 상태
+    const [isFolderOpen, setIsFolderOpen] = useState(false);
+    const [newFolderName, setNewFolderName] = useState("");
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
-  const handleThumbDownClick = async () => {
-    if (!videoId) return;
-    if (!isLoggedIn) {
-      setIsLoginModalOpen(true);
-      return;
-    }
-  
-    const userId = localStorage.getItem("userId");
-    const token = localStorage.getItem("token");
-    const isNowDisliked = !!dislikes[videoId];
-    const isNowLiked = !!likes[videoId];
-  
-    try {
-      if (!isNowDisliked) {
-        await axios.post(
-          `/api/v1/auth/${userId}/videos/${videoId}/dislike`,
-          null,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setDislikes(prev => ({ ...prev, [videoId]: true }));
-        if (isNowLiked) {
-          setLikes(prev => ({ ...prev, [videoId]: false }));
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("userId");
+        if (token && userId) {
+            setUserInfo({ isLoggedIn: true, userId: userId });
         }
-      } else {
-        await axios.delete(
-          `/api/v1/auth/${userId}/videos/${videoId}/dislike`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setDislikes(prev => ({ ...prev, [videoId]: false }));
-      }
-    } catch (err) {
-      console.error("싫어요 API 에러:", err.response?.data || err.message);
-    }
-  };
-  
-  // 북마크 클릭
-  const handleStarClick = () => {
-    if (!videoId) return;
-    if (!isLoggedIn) { setIsLoginModalOpen(true); return; }
-    setIsFolderOpen(prev => !prev);
-  };
+    }, []);
 
-  const handleAddFolder = () => {
-    if (newFolderName.trim()) {
-      setFolders(prev => [...prev, newFolderName.trim()]);
-      setNewFolderName("");
-    }
-  };
+    // 로그인 상태가 확인되면 필요한 모든 데이터를 한 번에 불러옵니다.
+    useEffect(() => {
+        if (!userInfo.isLoggedIn) return;
+        const { userId } = userInfo;
 
-  const handleFolderClick = (name) => {
-    setSelectedFolder(name);
-    setIsFolderOpen(false);
-  };
-  // --- 👆 폴더 클릭 시 영상 저장/해제 기능 수정 종료 ---
+        Promise.all([
+            apiClient.get(`/v1/auth/${userId}/likes`),
+            apiClient.get(`/v1/auth/${userId}/dislikes`),
+            apiClient.get(`/folder`),
+            apiClient.get(`/bookmarks/user/mine`),
+        ]).then(([likesRes, dislikesRes, foldersRes, bookmarksRes]) => {
+            const likeMap = likesRes.data.reduce((acc, video) => ({...acc, [video.videoId]: true }),{});
+            setLikes(likeMap);
 
-  const handlePrev = () => setCurrentIdx(idx => Math.max(idx - 1, 0));
-  const handleNext = () => setCurrentIdx(idx => Math.min(idx + 1, shorts.length - 1));
+            const dislikeMap = dislikesRes.data.reduce((acc, video) => ({...acc, [video.videoId]: true }),{});
+            setDislikes(dislikeMap);
 
-  const closeLoginModal = () => setIsLoginModalOpen(false);
+            if (Array.isArray(foldersRes.data)) setFolders(foldersRes.data);
 
-  return (
-    <>
-      <Header />
-      <div className={styles.container}>
-        <SearchBar showTitle={false} compact className={styles.searchCompact} textboxClassName={styles.textboxCompact} />
-        <div className={styles.mainContent}>
-          <div className={styles.contentWrap}>
-            <div className={styles.shortVideo}>
-              {videoId ? (
-                <iframe
-                  key={videoId} 
-                  width="470"
-                  height="720"
-                  src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
-                  title={video.snippet?.title || "short video"}
-                  frameBorder="0"
-                  allow="autoplay; encrypted-media; accelerometer; clipboard-write; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  style={{ borderRadius: 18, boxShadow: "0 4px 24px rgba(0,0,0,0.18)" }}
-                />
-              ) : (
-                <p style={{ textAlign: 'center', marginTop: '50%' }}>영상이 없습니다.</p>
-              )}
-            </div>
-            <div className={styles.reactionWrap}>
-              <ul>
-                <li>
-                  <img
-                    src={videoId && likes[videoId] ? thumbUpIcon : thumbUpOutlinedIcon}
-                    alt="thumbUp"
-                    onClick={handleThumbUpClick}
-                    className={styles.reactionIcon}
-                  />
-                  {/* <span>{video.likes}</span> 좋아요 숫자 반영할 거 */}
-                </li>
-                <li>
-                  <img
-                    src={videoId && dislikes[videoId] ? thumbDownIcon : thumbDownOutlinedIcon}
-                    alt="thumbDown"
-                    onClick={handleThumbDownClick}
-                    className={styles.reactionIcon}
-                  />
-                </li>
-                <li>
-                  <img
-                    src={videoId && selectedFolder ? starIcon : starOutlinedIcon}
-                    alt="bookmark"
-                    onClick={handleStarClick}
-                    className={styles.reactionIcon}
-                  />
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className={styles.arrowWrap}>
-            <ul>
-              <li>
-                <img src={arrowIcon} alt="prev" className={styles.arrowTop} onClick={handlePrev} />
-              </li>
-              <li>
-                <img src={arrowIcon} alt="next" className={styles.arrowBottom} onClick={handleNext} />
-              </li>
-            </ul>
-          </div>
-          {isFolderOpen && (
-            <div className={styles.folderModal} style={{ bottom: '120px' }}>
-              <div className={styles.folderInputWrap}>
-                <input type="text" className={styles.folderInput} placeholder="새 폴더 이름" value={newFolderName} onChange={e => setNewFolderName(e.target.value)} />
-                <button className={styles.folderBtn} onClick={handleAddFolder}>+</button>
-              </div>
-              <ul className={styles.folderList}>
-                {folders.length === 0 ? (
-                  <li className={styles.emptyFolder}>폴더가 없습니다.</li>
-                ) : (
-                  folders.map(folder => (
-                    <li key={folder.folderId} className={styles.folderItem} onClick={() => handleFolderClick(folder)}>
-                      <span className={styles.folderName}>{folder.folderName}</span>
-                      {currentVideoBookmarkFolderId === folder.folderId && <span className={styles.checkmark}>✔</span>}
-                    </li>
-                  ))
+            if (Array.isArray(bookmarksRes.data)) {
+                const bookmarkMap = bookmarksRes.data.reduce((acc, bookmark) => {
+                    if (bookmark.videoId && bookmark.folderId) {
+                        acc[bookmark.videoId] = bookmark.folderId;
+                    }
+                    return acc;
+                }, {});
+                setBookmarks(bookmarkMap);
+            }
+        }).catch(err => console.error("초기 데이터 로딩 실패:", err));
+    }, [userInfo.isLoggedIn, userInfo.userId]);
+
+    // 영상 목록 불러오기
+    useEffect(() => {
+        Promise.all([
+             apiClient.get(`/v1/youtube/db/shorts?maxResults=15`),
+             apiClient.get(`/v1/youtube/shorts?maxResults=15`)
+        ]).then(([dbRes, apiRes]) => {
+            const dbVideos = dbRes.data;
+            const apiVideos = apiRes.data;
+
+            const dbItems = Array.isArray(dbVideos) ? dbVideos.map(v => ({ id: { videoId: v.youtubeVideoId || v.videoId || v.youtube_video_id || v.video_id }, snippet: { title: v.title, description: v.description, thumbnails: { medium: { url: v.thumbnailUrl || v.thumbnail_url } } } })) : [];
+            const apiItems = Array.isArray(apiVideos) ? apiVideos : [];
+            
+            const allItems = [...dbItems, ...apiItems];
+            const uniqueItems = allItems.filter((item, index, self) => item?.id?.videoId && index === self.findIndex((t) => t?.id?.videoId === item.id.videoId));
+            
+            let filtered = uniqueItems;
+            if (userInfo.isLoggedIn) {
+                filtered = uniqueItems.filter(video => !dislikes[video.id.videoId]);
+            }
+            
+            setShorts(filtered);
+
+            if (paramVideoId) {
+                const idx = uniqueItems.findIndex(video => video.id.videoId === paramVideoId);
+                setCurrentIdx(idx !== -1 ? idx : 0);
+            } else {
+                setCurrentIdx(0);
+            }
+        }).catch(err => console.error("영상 목록 불러오기 실패", err));
+    }, [paramVideoId, dislikes, userInfo.isLoggedIn]);
+
+    const video = shorts[currentIdx];
+    const videoId = video?.id?.videoId || null;
+    const currentVideoBookmarkFolderId = videoId ? bookmarks[videoId] : null;
+
+    // 시청 기록 저장
+    useEffect(() => {
+        if (!userInfo.isLoggedIn || !videoId) return;
+        apiClient.post(`/v1/auth/${userInfo.userId}/watch-history`, { videoId })
+            .catch(err => console.error("시청 기록 저장 실패", err));
+    }, [currentIdx, shorts, userInfo, videoId]);
+    
+    const handleReaction = async (type) => {
+        if (!videoId) return;
+        if (!userInfo.isLoggedIn) {
+            setIsLoginModalOpen(true);
+            return;
+        }
+
+        const { userId } = userInfo;
+        const isLiked = !!likes[videoId];
+        const isDisliked = !!dislikes[videoId];
+        
+        try {
+            if (type === 'like') {
+                if (isLiked) {
+                    await apiClient.delete(`/v1/auth/${userId}/videos/${videoId}/like`);
+                } else {
+                    await apiClient.post(`/v1/auth/${userId}/videos/${videoId}/like`);
+                }
+                setLikes(prev => ({ ...prev, [videoId]: !isLiked }));
+                if (!isLiked) setDislikes(prev => ({ ...prev, [videoId]: false }));
+            } else if (type === 'dislike') {
+                if (isDisliked) {
+                    await apiClient.delete(`/v1/auth/${userId}/videos/${videoId}/dislike`);
+                } else {
+                    await apiClient.post(`/v1/auth/${userId}/videos/${videoId}/dislike`);
+                }
+                setDislikes(prev => ({ ...prev, [videoId]: !isDisliked }));
+                if (!isDisliked) setLikes(prev => ({ ...prev, [videoId]: false }));
+            }
+        } catch (err) {
+            console.error(`${type} 처리 실패`, err);
+        }
+    };
+    
+    const handleStarClick = () => {
+        if (!videoId) return;
+        if (!userInfo.isLoggedIn) {
+            setIsLoginModalOpen(true);
+            return;
+        }
+        setIsFolderOpen(prev => !prev);
+    };
+
+    const handleAddFolder = async () => {
+        if (!newFolderName.trim()) return;
+        try {
+            const res = await apiClient.post(`/folder`, { folderName: newFolderName.trim() });
+            setFolders(prev => [...prev, res.data]);
+            setNewFolderName("");
+        } catch (err) {
+            console.error("폴더 추가 실패", err);
+            alert(err.response?.data?.message || "폴더 추가에 실패했습니다.");
+        }
+    };
+
+    // --- 👇 [최종 수정] 이 함수가 핵심입니다. ---
+    const handleFolderClick = async (folder) => {
+        if (!video || !videoId || !userInfo.userId) return;
+
+        const isAlreadyBookmarkedInThisFolder = currentVideoBookmarkFolderId === folder.folderId;
+
+        try {
+            if (isAlreadyBookmarkedInThisFolder) {
+                // 북마크 삭제
+                await apiClient.delete(`/bookmarks/folder/${folder.folderId}/video/${videoId}`);
+                setBookmarks(prev => {
+                    const newBookmarks = { ...prev };
+                    delete newBookmarks[videoId];
+                    return newBookmarks;
+                });
+            } else {
+                // 백엔드 DTO에 맞게 요청 본문(requestBody)을 수정합니다.
+                const requestBody = {
+                    folderId: folder.folderId,
+                    videoUrl: `https://www.youtube.com/embed/${videoId}`
+                };
+                
+                // 수정된 requestBody로 북마크 생성 요청
+                await apiClient.post(`/bookmarks`, requestBody);
+                setBookmarks(prev => ({ ...prev, [videoId]: folder.folderId }));
+            }
+            setIsFolderOpen(false);
+        } catch (err) {
+            console.error("북마크 처리 실패", err);
+            alert(err.response?.data?.message || "북마크 처리에 실패했습니다.");
+        }
+    };
+
+    const handlePrev = () => setCurrentIdx(idx => Math.max(idx - 1, 0));
+    const handleNext = () => setCurrentIdx(idx => Math.min(idx + 1, shorts.length - 1));
+    const closeLoginModal = () => setIsLoginModalOpen(false);
+    const redirectToLogin = () => navigate("/login");
+
+    return (
+        <>
+            <Header />
+            <div className={styles.container}>
+                <SearchBar showTitle={false} compact className={styles.searchCompact} textboxClassName={styles.textboxCompact} />
+                <div className={styles.mainContent}>
+                    <div className={styles.contentWrap}>
+                        <div className={styles.shortVideo}>
+                            {videoId ? (
+                                <iframe
+                                    key={videoId} 
+                                    width="470" height="720"
+                                    src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+                                    title={video.snippet?.title || "short video"}
+                                    frameBorder="0"
+                                    allow="autoplay; encrypted-media; accelerometer; clipboard-write; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                    style={{ borderRadius: 18, boxShadow: "0 4px 24px rgba(0,0,0,0.18)" }}
+                                />
+                            ) : ( <p style={{ textAlign: 'center', marginTop: '50%' }}>영상이 없습니다.</p> )}
+                        </div>
+                        <div className={styles.reactionWrap}>
+                            <ul>
+                                <li><img src={videoId && likes[videoId] ? thumbUpIcon : thumbUpOutlinedIcon} alt="thumbUp" onClick={() => handleReaction('like')} className={styles.reactionIcon} /></li>
+                                <li><img src={videoId && dislikes[videoId] ? thumbDownIcon : thumbDownOutlinedIcon} alt="thumbDown" onClick={() => handleReaction('dislike')} className={styles.reactionIcon} /></li>
+                                <li>
+                                    <img src={currentVideoBookmarkFolderId ? starIcon : starOutlinedIcon} alt="bookmark" onClick={handleStarClick} className={styles.reactionIcon} />
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div className={styles.arrowWrap}>
+                        <ul>
+                            <li><img src={arrowIcon} alt="prev" className={styles.arrowTop} onClick={handlePrev} /></li>
+                            <li><img src={arrowIcon} alt="next" className={styles.arrowBottom} onClick={handleNext} /></li>
+                        </ul>
+                    </div>
+                    {isFolderOpen && (
+                        <div className={styles.folderModal} style={{ bottom: '120px' }}>
+                            <div className={styles.folderInputWrap}>
+                                <input type="text" className={styles.folderInput} placeholder="새 폴더 이름" value={newFolderName} onChange={e => setNewFolderName(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleAddFolder()} />
+                                <button className={styles.folderBtn} onClick={handleAddFolder}>+</button>
+                            </div>
+                            <ul className={styles.folderList}>
+                                {folders.length === 0 ? (<li className={styles.emptyFolder}>폴더가 없습니다.</li>) 
+                                : (
+                                    folders.map(folder => (
+                                        <li key={folder.folderId} className={styles.folderItem} onClick={() => handleFolderClick(folder)}>
+                                            <span className={styles.folderName}>{folder.folderName}</span>
+                                            {currentVideoBookmarkFolderId === folder.folderId && <span className={styles.checkmark}>✔</span>}
+                                        </li>
+                                    ))
+                                )}
+                            </ul>
+                        </div>
+                    )}
+                </div>
+                {isLoginModalOpen && (
+                    <div className={styles.loginModalOverlay} onClick={closeLoginModal}>
+                        <div className={styles.loginModal} onClick={e => e.stopPropagation()}>
+                            <h2>로그인이 필요합니다</h2>
+                            <button onClick={redirectToLogin}>로그인</button>
+                        </div>
+                    </div>
                 )}
-              </ul>
             </div>
-          )}
-        </div>
-        {isLoginModalOpen && (
-          <div className={styles.loginModalOverlay} onClick={closeLoginModal}>
-            <div className={styles.loginModal} onClick={e => e.stopPropagation()}>
-              <h2>로그인이 필요합니다</h2>
-              <button onClick={redirectToLogin}>로그인</button>
-            </div>
-          </div>
-        )}
-      </div>
-    </>
-  );
+        </>
+    );
 }
 
 export default ShortsVideoPage;
