@@ -1,277 +1,176 @@
-// src/Like.jsx
-import React, { useState } from "react";
-import likeStyle from "../../assets/styles/Like.module.css";
+import axios from "axios";
+import { useEffect, useState } from "react";
+// import { useNavigate } from "react-router-dom"; // 현재 이 컴포넌트에서 직접 사용하지 않음
+import styles from "../../assets/styles/Like.module.css";
+import Modal from "../../components/Modal/Modal";
 import MypageNav from "../../components/MypageNavBar/MypageNav";
-import Modal from "../../components/Modal/Modal"; // Modal 컴포넌트 import
 
 const VIDEO_WIDTH = 220;
 const GAP = 20;
 const VISIBLE_COUNT = 6;
 const SCROLL_STEP = VIDEO_WIDTH + GAP;
 
-// 더미 데이터로 초기화 (오류 방지용)
-const likedVideos = [
-  { id: 1, title: "Sample Video 1", thumbnail: "https://via.placeholder.com/220x124", likedAt: "2025-05-19" },
-  { id: 2, title: "Sample Video 2", thumbnail: "https://via.placeholder.com/220x124", likedAt: "2025-05-18" },
-];
-const recentWatched = [
-  { id: 3, title: "Recent Video 1", thumbnail: "https://via.placeholder.com/220x124" },
-];
-
-const Like = () => {
-  const [videos, setVideos] = useState(likedVideos);
+function Like() {
+  const navigate = useNavigate();
+  const [likedVideos, setLikedVideos] = useState([]);
+  const [recentWatched, setRecentWatched] = useState([]);
   const [filter, setFilter] = useState("전체");
 
-  const [modal, setModal] = useState({ show: false, index: -1 });
-  const [folderModal, setFolderModal] = useState(false);
-  const [createFolderModal, setCreateFolderModal] = useState(false);
-  const [folders, setFolders] = useState([]);
-  const [selectedFolderId, setSelectedFolderId] = useState(null);
-  const [bookmarkMsg, setBookmarkMsg] = useState(false);
-  const [newFolderName, setNewFolderName] = useState("");
+  const [modal, setModal] = useState({ show: false, index: -1, type: null, videoId: null });
+
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId"); // 백엔드가 토큰에서 userId를 추출하는 것이 보안상 더 좋습니다.
+
+  useEffect(() => {
+    if (!token || !userId) {
+      console.warn("Like.jsx: 로그인 정보가 없어 API를 호출하지 않습니다.");
+      // 필요하다면 로그인 페이지로 리다이렉트 로직 추가
+      return;
+    }
+    axios
+      .get(`/api/v1/auth/${userId}/likes`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(res => setLikedVideos(res.data || []))
+      .catch(err => console.error("좋아요 영상 API 에러:", err));
+
+    axios
+      .get(`/api/v1/auth/${userId}/watch-history`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(res => setRecentWatched(res.data || []))
+      .catch(err => console.error("시청 기록 API 에러:", err));
+  }, [token, userId]);
 
   const scroll = (containerId, direction) => {
     const container = document.getElementById(containerId);
-    if (container) {
-      const maxScrollLeft = container.scrollWidth - container.clientWidth;
-      let newScrollLeft = container.scrollLeft + direction * SCROLL_STEP;
-      container.scrollTo({
-        left: Math.min(Math.max(newScrollLeft, 0), maxScrollLeft),
-        behavior: "smooth",
-      });
-    }
+    if (!container) return;
+    const maxScrollLeft = container.scrollWidth - container.clientWidth;
+    const newScrollLeft = container.scrollLeft + direction * SCROLL_STEP;
+    container.scrollTo({ left: Math.min(Math.max(newScrollLeft, 0), maxScrollLeft), behavior: 'smooth' });
   };
 
-  const handleDelete = () => {
-    const updated = [...videos];
-    if (modal.index >= 0 && modal.index < updated.length) {
-      updated.splice(modal.index, 1);
-      setVideos(updated);
-    }
-    closeModal();
+  const closeAllModals = () => {
+    setModal({ show: false, index: -1, type: null, videoId: null });
   };
 
-  const openFolderModal = () => {
-    closeModal();
-    if (folders.length === 0) {
-      setCreateFolderModal(true);
+  const handleDelete = async () => {
+    const { type, videoId: videoIdToDelete } = modal; // videoId 직접 사용
+
+    if (!videoIdToDelete || !type) {
+      console.error("삭제할 영상의 ID 또는 타입 정보가 없습니다.");
+      closeAllModals();
+      return;
+    }
+
+    let url = "";
+    if (type === "like") {
+      url = `/api/v1/auth/${userId}/videos/${videoIdToDelete}/like`;
+    } else if (type === "history") {
+      url = `/api/v1/auth/${userId}/watch-history/${videoIdToDelete}`;
     } else {
-      setFolderModal(true);
-    }
-  };
-
-  const handleSaveBookmark = () => {
-    if (!selectedFolderId) {
-      setBookmarkMsg(true);
-      setTimeout(() => setBookmarkMsg(false), 2000);
-      setFolderModal(false);
-      return;
-    }
-    setBookmarkMsg(true);
-    setTimeout(() => setBookmarkMsg(false), 2000);
-    setFolderModal(false);
-    setSelectedFolderId(null);
-  };
-
-  const handleCreateFolder = () => {
-    if (newFolderName.trim() === "") {
-      setBookmarkMsg(true);
-      setTimeout(() => setBookmarkMsg(false), 2000);
-      setCreateFolderModal(false);
+      console.error("알 수 없는 삭제 타입입니다:", type);
+      closeAllModals();
       return;
     }
 
-    const newId = folders.length > 0
-      ? Math.max(...folders.map(f => f.id)) + 1
-      : 1;
-
-    const newFolder = {
-      id: newId,
-      name: newFolderName.trim(),
-    };
-
-    setFolders([...folders, newFolder]);
-    setNewFolderName("");
-    setCreateFolderModal(false);
-    setFolderModal(true);
+    try {
+      await axios.delete(url, { headers: { Authorization: `Bearer ${token}` } });
+      if (type === "like") {
+        setLikedVideos(prev => prev.filter(video => video.videoId !== videoIdToDelete));
+        alert("좋아요 목록에서 삭제되었습니다.");
+      } else {
+        setRecentWatched(prev => prev.filter(video => video.videoId !== videoIdToDelete));
+        alert("시청 기록에서 삭제되었습니다.");
+      }
+    } catch (err) {
+      console.error(`${type} 삭제 API 에러:`, err);
+      alert("삭제 중 오류가 발생했습니다.");
+    }
+    closeAllModals();
   };
 
-  const closeModal = () => {
-    setModal({ show: false, index: -1 });
-    setFolderModal(false);
-    setCreateFolderModal(false);
-    setBookmarkMsg(false);
-    setSelectedFolderId(null);
-    setNewFolderName("");
-  };
-
+  // 최근선택 시 7일이내 필터링
   const getFilteredVideos = () => {
-    return filter === "최근"
-      ? [...videos].sort((a, b) => new Date(b.likedAt) - new Date(a.likedAt))
-      : videos;
+    if (filter === "최근") {
+      const oneWeekAgo = new Date(); // 지금 이 시각
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7); // 7일 전 이 시각까지 포함
+  
+      return likedVideos
+        .filter(video => new Date(video.createdAt) >= oneWeekAgo)
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+    return likedVideos;
   };
 
-  const renderVideos = (videoList, containerId) => (
-    <div className={likeStyle.videoListWrapper}>
+  const renderVideos = (videoList, containerId, type) => (
+    <div className={styles.videoListWrapper}>
       {videoList.length > VISIBLE_COUNT && (
-        <button className={likeStyle.arrow} onClick={() => scroll(containerId, -1)}>‹</button>
+        <button className={styles.arrow} onClick={() => scroll(containerId, -1)}>‹</button>
       )}
-      <div className={likeStyle.videoList} id={containerId}>
-        {videoList.map((video, index) => (
-          <div
-            key={video.id}
-            className={likeStyle.videoItem}
-            style={{ backgroundImage: `url(${video.thumbnail || 'https://via.placeholder.com/220x124'})` }}
-          >
-            <div className={likeStyle.videoTitle}>
-              <span>{video.title || 'No Title'}</span>
-              <button className={likeStyle.moreBtn} onClick={() => setModal({ show: true, index })}>⋯</button>
+      <div className={styles.videoList} id={containerId}>
+        {videoList.map((video, idx) => ( // idx는 더보기 버튼의 index로만 사용
+          <div key={video.videoId || `video-${idx}`} className={styles.videoItem}>
+            <div className={styles.thumbnailWrapper}>
+              <img 
+                src={video.thumbnailUrl || "https://via.placeholder.com/220x124"} // 기본 이미지 추가
+                alt={video.videoTitle || "제목 없음"} 
+                className={styles.thumbnail} 
+                loading="lazy" 
+              />
+            </div>
+            <div className={styles.textWrapper}>
+              <span className={styles.videoTitleText}>{video.videoTitle || "제목 없음"}</span>
+              <button className={styles.moreBtn} onClick={() => setModal({ show: true, index: idx, type, videoId: video.videoId })}>⋯</button>
             </div>
           </div>
         ))}
       </div>
-      {videoList.length > VISIBLE_COUNT && (
+      {videoList.length >= VISIBLE_COUNT && (
         <button className={likeStyle.arrow} onClick={() => scroll(containerId, 1)}>›</button>
       )}
     </div>
   );
 
   return (
-    <div className={likeStyle.wrapper}>
+    <div className={styles.wrapper}>
       <MypageNav />
-      <div className={likeStyle.mainContent}>
-        <h1 className={likeStyle.header}>좋아요 한 영상</h1>
-
-        {/* 필터 버튼 */}
-        <div className={likeStyle.filterMenu}>
-          {["전체", "최근"].map((type) => (
-            <button
-              key={type}
-              className={`${likeStyle.filterButton} ${filter === type ? likeStyle.active : ""}`}
-              onClick={() => setFilter(type)}
-            >
-              {type}
+      <div className={styles.mainContent}>
+        <h1 className={styles.header}>좋아요 한 영상</h1>
+        <div className={styles.filterMenu}>
+          {['전체', '최근'].map(f => (
+            <button key={f} className={`${styles.filterButton} ${filter === f ? styles.active : ''}`} onClick={() => setFilter(f)}>
+              {f}
             </button>
           ))}
         </div>
+        {getFilteredVideos().length > 0 ? renderVideos(getFilteredVideos(), 'likedVideoList', 'like') : <p className={styles.noData}>좋아요 한 영상이 없습니다.</p>}
 
-        {/* 좋아요한 영상 리스트 */}
-        {getFilteredVideos().length > 0 ? (
-          renderVideos(getFilteredVideos(), "likedVideoList")
-        ) : (
-          <p className={likeStyle.noData}>좋아요 한 영상이 없습니다.</p>
-        )}
-
-        {/* 최근 시청한 영상 */}
         <h2 className={likeStyle.sectionTitle}>최근 시청한 영상</h2>
-        {recentWatched.length > 0 ? (
-          renderVideos(recentWatched, "recentVideoList")
-        ) : (
-          <p className={likeStyle.noData}>최근 시청한 영상이 없습니다.</p>
-        )}
+        {recentWatched.length
+          ? renderVideos(
+              [...recentWatched].sort((a, b) => new Date(b.watchedAt) - new Date(a.watchedAt)), // ← 여기 정렬
+              'recentVideoList',
+              'history'
+            )
+          : <p className={likeStyle.noData}>최근 시청한 영상이 없습니다.</p>}
 
-        {/* 삭제/북마크 모달 */}
         <Modal
           isOpen={modal.show}
-          onClose={closeModal}
+          onClose={closeAllModals}
           title="옵션"
-          children={
-            <div className={likeStyle.optionsContainer}>
-              <button className={likeStyle.optionButton} onClick={handleDelete}>
-                삭제
-              </button>
-              <button className={likeStyle.optionButton} onClick={openFolderModal}>
-                북마크에 저장
-              </button>
-            </div>
-          }
-          cancelText="취소"
-          onCancel={closeModal}
-        />
-
-        {/* 폴더 선택 모달 */}
-        <Modal
-          isOpen={folderModal}
-          onClose={() => {
-            setFolderModal(false);
-            setSelectedFolderId(null);
-          }}
-          title="저장할 폴더 선택"
-          children={
-            <>
-              <ul className={likeStyle.folderList}>
-                {folders.map((folder) => (
-                  <li key={folder.id}>
-                    <label className={likeStyle.folderLabel}>
-                      <input
-                        type="radio"
-                        name="folder"
-                        value={folder.id}
-                        checked={selectedFolderId === folder.id}
-                        onChange={() => setSelectedFolderId(folder.id)}
-                      />
-                      {folder.name}
-                    </label>
-                  </li>
-                ))}
-              </ul>
-              <button
-                className={likeStyle.newFolderButton}
-                onClick={() => {
-                  setFolderModal(false);
-                  setCreateFolderModal(true);
-                }}
-              >
-                새 폴더 만들기
-              </button>
-            </>
-          }
-          onConfirm={handleSaveBookmark}
-          confirmText="저장"
-          cancelText="취소"
-        />
-
-        {/* 폴더 생성 모달 */}
-        <Modal
-          isOpen={createFolderModal}
-          onClose={() => {
-            setCreateFolderModal(false);
-            if (folders.length > 0) setFolderModal(true);
-          }}
-          title="새 폴더 만들기"
-          children={
-            <input
-              type="text"
-              maxLength={10}
-              placeholder="폴더 이름 입력"
-              value={newFolderName}
-              onChange={(e) => setNewFolderName(e.target.value)}
-              className={likeStyle.modalInput}
-            />
-          }
-          onConfirm={handleCreateFolder}
-          confirmText="생성"
-          cancelText="취소"
-        />
-
-        {/* 북마크 저장 메시지 모달 */}
-        <Modal
-          isOpen={bookmarkMsg}
-          onClose={closeModal}
-          title="알림"
-          message={
-            selectedFolderId === null && newFolderName.trim() === ""
-              ? "폴더를 선택하거나 이름을 입력해주세요."
-              : newFolderName.trim() === ""
-              ? "폴더 이름을 입력해주세요."
-              : "북마크에 저장되었습니다."
-          }
-          onConfirm={closeModal}
-          confirmText="확인"
-        />
+          cancelText="취소" // "취소" 버튼만 제공하거나, "삭제" 버튼을 메인 액션으로 변경
+          onCancel={closeAllModals}
+          // confirmText="삭제" // 만약 모달의 기본 확인 버튼을 삭제로 사용하고 싶다면
+          // onConfirm={handleDelete}
+        >
+          <div className={styles.optionsContainer}>
+            <button className={styles.optionButton} onClick={handleDelete}>
+              {modal.type === "like" ? "좋아요 목록에서 삭제" : "시청 기록에서 삭제"}
+            </button>
+            {/* 북마크에 저장 버튼 완전 제거 */}
+          </div>
+        </Modal>
+        
+        {/* 폴더 선택, 폴더 생성, 북마크 저장 메시지 모달 완전 제거 */}
       </div>
     </div>
   );
-};
-
+}
 export default Like;

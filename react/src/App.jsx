@@ -26,9 +26,9 @@ import JeollanamPage from "./pages/Area/JeollanamPage";
 import SeoulPage from "./pages/Area/SeoulPage";
 
 import Bookmark from "./pages/Bookmark/bookmark";
-import Search from "./pages/Bookmark/search";
-import Calendarpage from "./pages/Calendar/Calendarpage";
+import CalendarPage from "./pages/Calendar/Calendarpage";
 import Mypage from "./pages/Mypage/Mypage";
+import Search from "./pages/searchResult/search";
 
 import Notice from "./pages/Notice/notice";
 import NoticeDetail from "./pages/Notice/noticeDetail";
@@ -77,6 +77,7 @@ import ReportedMembers from './pages/Admin/ReportedMembers';
 import ReportedPosts from "./pages/Admin/ReportedPosts";
 import Like from './pages/Like/Like';
 
+
 function App() {
   return (
     <BrowserRouter>
@@ -88,6 +89,7 @@ function App() {
           <Route path="healing" element={<HealingPage />} />
           <Route path="mountain" element={<MountainPage />} />
           <Route path="themepark" element={<ThemeParkPage />} />
+          <Route path="search" element={<Search />} />
 
           <Route path="area">
             <Route index element={<GangwondoPage />} />
@@ -152,7 +154,7 @@ function App() {
         <Route path="bookmark/:folderId" element={<div className="mypage1"><Bookmark /> </div>} />
 
         <Route path="mypage" element={<div className="mypage1"><Mypage /></div>} />
-        <Route path="calendar" element={<div className="mypage1"><Calendarpage /></div>} />
+        <Route path="calendar" element={<div className="mypage1"><CalendarPage /></div>} />
 
         <Route path="qna" element={<div className="mypage1"><Qna /></div>} />
         <Route path="qnaDetail" element={<div className="mypage1"><QnaDetail /></div>} />
@@ -163,7 +165,7 @@ function App() {
         <Route path="like" element={<div className="mypage1"><Like /></div>} />
 
         <Route path="/login" element={<LoginPage />} />
-        <Route path="search" element={<Search />} />
+        
         <Route path="shorts" element={<ShortsVideoPage />} />
         <Route path="/*" element={<NotFound />} />
       </Routes>

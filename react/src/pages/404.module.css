@@ -76,19 +76,19 @@
     font-size: 1rem;
     font-weight: 500;
     color: #ffffff;
-    background-color: #007bff;
+    background-color: #dc3545;
     border: none;
     border-radius: 50px;
     text-decoration: none;
     transition: background-color 0.2s ease-in-out, transform 0.1s ease;
-    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+    /* box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2); */
 }
 
 .homeButton:hover {
-    background-color: #0056b3;
+    background-color: #bd2c3b;
     transform: translateY(-1px);
 }
 .homeButton:active {
     transform: translateY(0px);
-    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
+    box-shadow: 0 2px 5px rgba(29, 29, 29, 0.2);
 }

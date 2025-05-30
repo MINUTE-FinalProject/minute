@@ -10,7 +10,6 @@ import ReportIcon from '../../assets/images/report.png';
 import UsersIcon from '../../assets/images/team.png';
 
 const Sidebar = () => {
-    // 메뉴 데이터를 객체 배열로 변경하여 경로와 아이콘도 함께 관리
     const menus = [
         { name: "마이페이지", path: "/admin", icon: MyPageIcon },
         { name: "회원관리", path: "/admin/users", icon: UsersIcon },
