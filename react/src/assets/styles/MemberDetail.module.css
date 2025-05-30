@@ -1,71 +1,94 @@
 .container {
   display: flex;
   flex-direction: row;
-  margin-top: 45px; /* 고정 헤더 높이에 따라 조절 */
-  min-height: calc(100vh - 45px);
-  background-color: #f4f6f8; 
+  margin-top: 60px;
+  min-height: calc(100vh - 60px);
+  background-color: #f0f2f5;
+  justify-content: center;
+  padding: 40px 20px;
 }
 
 .memberDetail {
-   flex: 1; /* Sidebar 제외한 나머지 공간 모두 차지 */
-  margin: 20px; /* Sidebar 및 가장자리와의 여백 */
-  padding: 30px 35px;
-  background-color: #ffffff; /* 콘텐츠 영역은 흰색 배경 (카드 형태) */
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  
-  
+  flex: 1;
+  max-width: 700px;
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
 }
 
-.memberDetail form {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  max-width: 500px;
+.memberDetail h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 40px;
+  color: #333;
+  text-align: center;
 }
 
-/* 하나의 줄 */
 .formRow {
   display: flex;
   align-items: center;
-  flex-direction: row;
-  gap: 10px;
+  margin-bottom: 24px;
+  gap: 16px;
 }
 
-/* 왼쪽 라벨 텍스트 고정 너비 */
 .formRow label {
-  width: 100px;
-  font-weight: bold;
+  width: 120px;
+  font-weight: 500;
+  font-size: 16px;
+  color: #444;
 }
 
-/* 입력창 기본 */
 .formRow input[type="text"] {
-  padding: 8px 10px;
-  font-size: 14px;
   flex: 1;
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  transition: border-color 0.2s;
 }
 
-/* 버튼 위치 */
+.formRow input[type="text"]:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
 .formRow button {
-  padding: 6px 10px;
+  padding: 8px 14px;
   font-size: 14px;
-  white-space: nowrap;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-/* 성별 라디오 버튼 전용 스타일 */
+.formRow button:disabled {
+  background-color: #bbb;
+  cursor: not-allowed;
+}
+
+.formRow button:hover:not(:disabled) {
+  background-color: #357ab7;
+}
+
+/* 성별 라디오 */
 .formRow .gender-options {
   display: flex;
-  gap: 10px;
+  gap: 20px;
   align-items: center;
+}
+
+.formRow .gender-options label {
+  font-weight: normal;
+  font-size: 15px;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .pink {
   color: #ff0066;
 }
-h2 {
-  margin-bottom: 50px;
-}
-
-
-
-
