@@ -92,6 +92,12 @@ useEffect(() => {
       <input type="text" value={member.userId} disabled />
     </div>
 
+    
+    <div className={styles.formRow}>
+      <label>권한</label>
+      <input type="text" value={member.role} disabled />
+    </div>
+
     <div className={styles.formRow}>
       <label>닉네임</label>
       <input
@@ -173,6 +179,61 @@ useEffect(() => {
         disabled
       />
     </div>
+
+    
+    <div className={styles.formRow}>
+      <button
+        className={styles.promoteButton}
+        onClick={async () => {
+          const confirmPromote = window.confirm("해당 회원을 관리자 권한으로 승격하시겠습니까?");
+          if (!confirmPromote) return;
+
+          try {
+            const res = await axios.patch(`http://localhost:8080/api/v1/admin/promote/${member.userId}`, {}, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },withCredentials: true,
+            });
+            alert("관리자 승격 완료!");
+          } catch (err) {
+            console.error("관리자 승격 실패:", err);
+            alert("관리자 승격에 실패했습니다.");
+          }
+        }}
+      >
+        관리자 승격
+      </button>
+
+      <button
+    className={styles.deleteButton}
+    onClick={async () => {
+      const confirmDelete = window.confirm("정말로 이 회원을 삭제하시겠습니까?");
+      if (!confirmDelete) return;
+
+      try {
+        const response = await axios.delete(`http://localhost:8080/api/v1/admin/delete/${member.userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        });
+
+        if (response.data.code === "SU") {
+          alert("회원이 삭제되었습니다.");
+          window.location.href = "/admin/users";
+        } else {
+          alert("삭제 실패: " + response.data.message);
+        }
+      } catch (err) {
+        console.error("회원 삭제 실패:", err);
+        alert("서버 오류");
+      }
+    }}
+  >
+    회원 삭제
+  </button>
+  </div>
+
   </main>
 </div>
 

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import img from '../../assets/images/key.png';
 import styles from '../../assets/styles/FindPwd.module.css';
 
@@ -88,6 +88,7 @@ function FindPwd2() {
 
             {errorMessage && <p className={styles.err}>{errorMessage}</p>}
 
+            <Link to="/successpwd">
             <button
               type="submit"
               className={`${styles.submit_btnf} ${isFormValid ? styles.active : styles.disabled}`}
@@ -95,6 +96,7 @@ function FindPwd2() {
             >
               Reset Password
             </button>
+            </Link>
           </form>
         </div>
       </div>

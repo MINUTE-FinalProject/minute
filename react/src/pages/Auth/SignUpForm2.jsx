@@ -27,6 +27,13 @@ function SignUpForm2() {
   const [userPhone, setUserPhone] = useState('');
   const [userGender, setUserGender] = useState('MALE');
 
+  const [isCertifiedSent, setIsCertifiedSent] = useState(false);
+  const [certificationNumber, setCertificationNumber] = useState('');
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [emailSendMessage, setEmailSendMessage] = useState('');
+  const [emailVerifyMessage, setEmailVerifyMessage] = useState('');
+
+
   const isFormValid =
     userGender &&
     userEmail &&
@@ -34,7 +41,72 @@ function SignUpForm2() {
     userNickName &&
     userPhone &&
     agree1 &&
-    agree2;
+    agree2 &&
+    emailVerified;
+
+  const isValidEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+  };
+
+  // 이메일 중복 검사 및 인증번호 전송
+  const handleSendCode = async (e) => {
+    e.preventDefault();
+    setEmailSendMessage('');
+    if (!isValidEmail(userEmail)) {
+      setEmailSendMessage('유효한 이메일 형식을 입력하세요.');
+      return;
+    }
+
+    try {
+      // 1. 이메일 중복 검사
+      const checkResponse = await axios.post('http://localhost:8080/api/v1/auth/check-email', {
+        email: userEmail,
+      });
+
+      if (checkResponse.data.exists) {
+        setEmailSendMessage('이미 사용 중인 이메일입니다.');
+        return;
+      }
+  
+      await axios.post('http://localhost:8080/api/v1/auth/find-pw', {
+        userId: userId || 'temp',
+        userEmail,
+      });
+      setIsCertifiedSent(true);
+      setEmailSendMessage('인증번호가 이메일로 전송되었습니다.');
+    } catch (error) {
+      if (error.response?.status === 409) { 
+        setEmailSendMessage('이미 사용 중인 이메일입니다.');
+      } else {
+
+
+        setEmailSendMessage('이메일 전송에 실패했습니다.');
+      }
+    }
+  };
+
+
+  //인증번호 확인
+  const handleVerifyCode = async (e) => {
+    e.preventDefault();
+    setEmailVerifyMessage('');
+    try {
+      const response = await axios.post('http://localhost:8080/api/v1/auth/verify-code', {
+        userEmail,
+        certificationNumber
+      });
+
+      if (response.status === 200) {
+        setEmailVerified(true);
+        setEmailVerifyMessage('이메일 인증 완료!');
+      }
+    } catch (error) {
+      setEmailVerifyMessage('인증번호가 일치하지 않습니다.');
+    }
+  };
+
+
 
   //약관동의 핸들러
   const handleAgreeAllChange = (e) => {
@@ -173,10 +245,55 @@ function SignUpForm2() {
 
         <div className={styles.form}>
           <label className={styles.label}>email</label>
-          <input type="text" value={userEmail} onChange={(e) => 
-            setUserEmail(e.target.value)} className={styles.textBox} required />
-            {errors.email && <p className={styles.err}>{errors.email}</p>}
+          <div className={styles.emailbox}>
+          <input
+            type="text"
+            value={userEmail}
+            onChange={(e) => {
+              setUserEmail(e.target.value);
+              setEmailVerified(false); // 이메일 수정 시 인증 취소
+            }}
+            className={styles.textBox}
+            required
+          />
+          <button
+            onClick={handleSendCode}
+            type="button"
+            className={styles.authBtn}
+            disabled={!userEmail}
+          >
+            인증번호 <br/>전송
+          </button>
+          </div>
+          {emailSendMessage && <p className={styles.err}>{emailSendMessage}</p>}
         </div>
+
+        {isCertifiedSent && (
+          <div className={styles.form}>
+            <label className={styles.label}>인증번호</label>
+            <div className={styles.emailbox}>
+            <input
+              type="text"
+              value={certificationNumber}
+              onChange={(e) => setCertificationNumber(e.target.value)}
+              className={styles.textBox}
+            />
+            <button
+              onClick={handleVerifyCode}
+              type="button"
+              className={styles.authBtn}
+            >
+              인증 확인
+            </button>
+            </div>
+            {emailVerifyMessage && (
+              <p className={styles.err}>
+                {emailVerifyMessage}
+              </p>
+            )}
+          </div>
+        )}
+
 
         <div className={styles.form}>
           <label className={styles.label}>nickname</label>

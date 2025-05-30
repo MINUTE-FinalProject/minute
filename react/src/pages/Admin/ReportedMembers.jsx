@@ -20,17 +20,22 @@ const ReportedMembers = () => {
   useEffect(() => {
     axios.get("http://localhost:8080/api/v1/user/all")
       .then(res => {
-        const users = res.data.body.userList.map(user => ({
+        // 신고 누적 1 이상인 회원만 필터링
+        const filteredUsers = res.data.body.userList.filter(user => (user.userReport || 0) >= 1);
+
+        const users = filteredUsers.map(user => ({
           reportEntryId: user.userId,
           NO: user.userNo,
           ID: user.userId,
           닉네임: user.userNickName,
           'E-mail': user.userEmail,
           성별: user.userGender === 'MALE' ? '남성' : '여성',
-          누적횟수: user.userReport || 0,  // userReport가 신고 누적횟수라고 가정
+          누적횟수: user.userReport || 0,
           회원상태: user.userStatus === 'Y' ? '정지' : '정상',
         }));
+
         setAllReportedMembers(users);
+
       })
       .catch(err => {
         console.error('신고 회원 목록 조회 실패:', err);
@@ -67,26 +72,36 @@ const ReportedMembers = () => {
   };
 
   const handleStatusChange = (e, userId, reportCount) => {
-    e.stopPropagation();
+  e.stopPropagation();
 
-    if (reportCount < 3) {
-      alert("신고 누적 3회 미만 회원은 정지할 수 없습니다.");
-      return;
-    }
-
-    // 상태 변경 API 호출
-    axios.post(`http://localhost:8080/api/v1/admin/status/${userId}`,{
-        headers: {
-    Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+  if (reportCount < 3) {
+    alert("신고 누적 3회 미만 회원은 정지할 수 없습니다.");
+    return;
   }
-    })
-      .then(() => {
-        alert("회원 상태 변경 완료.");
-        // 변경 후 다시 목록 갱신 (간단하게 재요청)
-        return axios.get("http://localhost:8080/api/v1/user/all");
-      })
-      .then(res => {
-        const users = res.data.body.userList.map(user => ({
+
+  // 토큰은 보통 상위 컴포넌트에서 받아오거나, 로컬스토리지에서 꺼내옵니다.
+  const token = localStorage.getItem('token'); // 예시
+
+  if (!token) {
+    alert("로그인이 필요합니다.");
+    return;
+  }
+
+  // 상태 변경 API 호출 - userId를 URL에 넣고, 데이터는 필요 없으면 빈 객체 {}
+  axios.patch(`http://localhost:8080/api/v1/admin/status/${userId}`, {}, {
+    headers: {
+        Authorization: `Bearer ${token}`, 
+      },withCredentials: true
+  })
+  .then(() => {
+    alert("회원 상태 변경 완료.");
+    // 변경 후 목록 다시 갱신
+    return axios.get("http://localhost:8080/api/v1/user/all");
+  })
+  .then(res => {
+    const filteredUsers = res.data.body.userList.filter(user => (user.userReport || 0) >= 1);
+
+    const users = filteredUsers.map(user => ({
           reportEntryId: user.userId,
           NO: user.userNo,
           ID: user.userId,
@@ -96,13 +111,16 @@ const ReportedMembers = () => {
           누적횟수: user.userReport || 0,
           회원상태: user.userStatus === 'Y' ? '정지' : '정상',
         }));
+
         setAllReportedMembers(users);
-      })
-      .catch(err => {
-        console.error('회원 상태 변경 실패:', err);
-        alert("회원 상태 변경 중 오류가 발생했습니다.");
-      });
-  };
+
+  })
+  .catch(err => {
+    console.error('회원 상태 변경 실패:', err);
+    alert("회원 상태 변경 중 오류가 발생했습니다.");
+  });
+};
+
 
   return (
     <div className={styles.container}>

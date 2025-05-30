@@ -68,6 +68,10 @@ body {
     display: flex;
   }
 
+  .emailbox {
+    flex-direction: row;
+    display: flex;
+  }
 
   .label {
     display: block;
@@ -219,6 +223,33 @@ body {
   margin-top: 4px;
   height: 18px;
 }
+
+.authBtn {
+  width: 110px;       
+  height: 41px;      
+  padding: 6px 12px;
+  margin-left: 50px;
+  margin-top: 3px;
+  background-color: #FF3366;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 12px;    
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.authBtn:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+  width: 110px;      
+  height: 41px;
+  font-size: 12px;
+}
+
 
   
   

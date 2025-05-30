@@ -108,3 +108,22 @@
   color: #111;
   margin-left: 10px;
 }
+
+.err {
+  color: red;
+  font-size: 12px;
+  text-align: right;
+  height: 18px;
+  margin-top: 4px;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease;
+  line-height: 18px; 
+}
+
+.err:empty {
+  opacity: 0;
+  visibility: hidden;
+  margin-top: 4px;
+  height: 18px;
+}
