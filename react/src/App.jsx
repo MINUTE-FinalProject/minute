@@ -1,6 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 
+import ProtectedRoute from "./components/common/ProtectedRoute";
+
 // Layout Components
 import AdminLayout from "./layouts/AdminLayout";
 import Layout from "./layouts/Layout";
@@ -110,9 +112,26 @@ function App() {
           <Route path="noticeDetail/:id" element={<div className="mainContentWithFixedHeader"><NoticeDetail /></div>} />
 
           <Route path="freeboard" element={<div className="mainContentWithFixedHeader"><FreeBoard /></div>} />
-          <Route path="freeboardDetail/:id" element={<div className="mainContentWithFixedHeader"><FreeboardDetail /></div>} />
-          <Route path="freeboardWrite" element={<div className="mainContentWithFixedHeader"><FreeboardWrite /></div>} />
-          <Route path="freeboardEdit/:id" element={<div className="mainContentWithFixedHeader"><FreeboardEdit /></div>} />
+          <Route path="freeboardDetail/:postId" element={<div className="mainContentWithFixedHeader"><FreeboardDetail /></div>} />
+          {/* 👇 자유게시판 글쓰기 페이지에 ProtectedRoute 적용 */}
+          <Route 
+            path="freeboardWrite" 
+            element={
+              <ProtectedRoute> {/* ProtectedRoute로 감싸기 */}
+                <div className="mainContentWithFixedHeader"><FreeboardWrite /></div>
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* 👇 자유게시판 글수정 페이지에 ProtectedRoute 적용 */}
+          <Route 
+            path="freeboardEdit/:postId" 
+            element={
+              <ProtectedRoute> {/* ProtectedRoute로 감싸기 */}
+                <div className="mainContentWithFixedHeader"><FreeboardEdit /></div>
+              </ProtectedRoute>
+            } 
+          />
 
           <Route path="admin" element={<AdminLayout />}>
             <Route index element={<ManagerMyPage />} />
@@ -122,7 +141,7 @@ function App() {
             <Route path="member-detail/:id" element={<MemberDetail />} />
 
             <Route path="managerFreeboard" element={<ManagerFreeboard />} />
-            <Route path="managerFreeboardDetail/:id" element={<ManagerFreeboardDetail />} />
+            <Route path="managerFreeboardDetail/:postId" element={<ManagerFreeboardDetail />} />
 
             <Route path="managerNotice" element={<ManagerNotice />} />
             <Route path="managerNoticeDetail/:id" element={<ManagerNoticeDetail />} />
