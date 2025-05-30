@@ -76,8 +76,9 @@ function ReportedPosts() {
 
         if (activeContentTypeTab === 'post') {
             endpoint = '/board/free/reports/posts';
-            if (dateRange.start) params.postCreatedAtStartDate = dateRange.start;
-            if (dateRange.end) params.postCreatedAtEndDate = dateRange.end;
+            // 👇 파라미터 이름을 백엔드 AdminReportedPostFilterDTO의 필드명 또는 getter/setter에 맞게 수정
+            if (dateRange.start) params.postStartDate = dateRange.start; // postCreatedAtStartDate -> postStartDate
+            if (dateRange.end) params.postEndDate = dateRange.end;     // postCreatedAtEndDate -> postEndDate
         } else if (activeContentTypeTab === 'comment') {
             endpoint = '/board/free/reports/comments';
             if (dateRange.start) params.commentCreatedAtStartDate = dateRange.start;
@@ -192,7 +193,7 @@ function ReportedPosts() {
         console.log("PATCH 요청 전송 직전 헤더 객체:", headersForRequest); 
         console.log("전송될 토큰 (getAuthHeaders 내부에서도 확인 가능):", localStorage.getItem('token'));
         // --- 👆 여기까지 추가 ---
-        
+
             await axios.patch(`${API_BASE_URL}${endpoint}`, { isHidden: newIsHidden }, {
                 headers: getAuthHeaders() // 헤더 직접 추가
             });
