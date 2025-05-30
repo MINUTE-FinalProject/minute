@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import img from '../../assets/images/cute.png';
 import img2 from '../../assets/images/edit_pencil.png';
 import styles from '../../assets/styles/CheckInfo.module.css';
 
@@ -19,6 +18,47 @@ function CheckInfo() {
 
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
+  const [profileImage, setProfileImage] = useState(null);
+
+  // 프로필 편집 버튼
+  const handleEditProfileClick = () => {
+    document.getElementById('profile-upload').click();
+  };
+
+  // 프로필 이미지 업로드
+  const handleProfileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("userId", userId);
+
+    try {
+      const response = await axios.post("http://localhost:8080/api/v1/user/profile", formData, {
+        headers: {
+        Authorization: `Bearer ${token}`, 
+      },withCredentials: true
+    })
+
+    console.log("서버 응답:", response.data);
+      if (response.data.code === "SU") {
+        const fileName = response.data.fileName; // 파일명
+        const imageUrl = `http://localhost:8080/upload/${fileName}?t=${Date.now()}`;
+        setProfileImage(imageUrl); 
+        setUserInfo(prev => ({
+          ...prev,
+          profileImage:`/upload/${fileName}`,
+        }));
+        alert("프로필 이미지가 업데이트되었습니다!");
+      } else {
+        alert("업로드 실패");
+      }
+    } catch (err) {
+      alert("서버 오류");
+    }
+  };
+
 
   //사용자 정보 조회
   useEffect(() => {
@@ -62,7 +102,7 @@ function CheckInfo() {
       });
 
       if (response.data.code === "SU") {
-        alert(`${field} 수정 완료`);
+        alert("정보 수정 완료!");
         setUserInfo(prev => ({
           ...prev,
           [field === "userPhone" ? "userPhone" : field === "userNickName" ? "userNickName" : 
@@ -94,13 +134,24 @@ function CheckInfo() {
           <label className={styles.label}>my photo</label>
           <div className={styles.imgWrapper}>
             <div className={styles.img}>
-              <img className={styles.img2} src={img} alt="프로필" />
+              <img
+                className={styles.img2}
+                src={profileImage || `http://localhost:8080${userInfo.profileImage}?t=${Date.now()}`}
+                 alt="프로필"/>
             </div>
-            <div className={styles.profileEdit}>
+            <div className={styles.profileEdit} onClick={handleEditProfileClick}>
               <img src={img2} alt="프로필 편집 아이콘" />
             </div>
+            <input
+              type="file"
+              id="profile-upload"
+              accept="image/*"
+              onChange={handleProfileChange}
+              style={{ display: "none" }}
+            />
           </div>
         </div>
+
 
 
         <div className={styles.form}>
