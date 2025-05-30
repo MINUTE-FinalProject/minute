@@ -1,5 +1,6 @@
 // src/pages/RegionPage.jsx
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import searchIcon from "../../assets/images/searchIcon.png";
 import styles from "../../assets/styles/GangwondoPage.module.css";
 import Header from "../../components/Header/Header";
@@ -93,7 +94,6 @@ function RegionPage({ regionName, backgroundImages, cities }) {
     setSelectImage(backgroundImages[random]);
   }, [backgroundImages]);
 
-  // 🚩 DB + 유튜브 API 영상 합치기
   useEffect(() => {
     cities.forEach((city) => {
       setLoading((prev) => ({ ...prev, [city]: true }));
@@ -169,6 +169,15 @@ function RegionPage({ regionName, backgroundImages, cities }) {
     });
   };
 
+  const handleCardClick = (item, idx, allItems) => {
+    navigate("/shorts", {
+      state: {
+        shorts: allItems,
+        startIdx: idx,
+      },
+    });
+  };
+
   return (
     <>
       <Header />
@@ -184,7 +193,7 @@ function RegionPage({ regionName, backgroundImages, cities }) {
         <div className={styles.sliderContainer}>
           <RollingCardSlider
             region={regionName}
-            setModalVideoId={setModalVideoId}
+            setModalVideoId={() => {}}
           />
         </div>
       </div>
@@ -213,7 +222,7 @@ function RegionPage({ regionName, backgroundImages, cities }) {
                     key={i}
                     className={styles.card}
                     style={{ cursor: "pointer" }}
-                    onClick={() => setModalVideoId(item.id?.videoId)}
+                    onClick={() => handleCardClick(item, i, cityVideos[city].slice(0, visibleRows[city] * 5))}
                   >
                     {item.snippet?.thumbnails?.medium?.url ? (
                       <img

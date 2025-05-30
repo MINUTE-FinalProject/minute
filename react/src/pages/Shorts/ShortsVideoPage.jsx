@@ -17,9 +17,17 @@ import thumbUpIcon from "../../assets/images/thumbup.png";
 function ShortsVideoPage() {
   const {videoId:paramVideoId} = useParams(); // URL에서 videoId 파라미터 받음 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // 1. 카드 클릭시 state로 넘어온 데이터 받기
+  const passedShorts = location.state?.shorts || [];
+  const passedStartIdx = location.state?.startIdx || 0;
+
+  // 2. state로 넘어온 데이터가 있으면 그걸로 시작, 없으면 fetch
+  const [shorts, setShorts] = useState(passedShorts);
+  const [currentIdx, setCurrentIdx] = useState(passedStartIdx);
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [shorts, setShorts] = useState([]);
-  const [currentIdx, setCurrentIdx] = useState(0);
   const [likes, setLikes] = useState({});
   const [dislikes, setDislikes] = useState({});
   const [isFolderOpen, setIsFolderOpen] = useState(false);
@@ -77,6 +85,8 @@ function ShortsVideoPage() {
 
   // 영상 API 불러오기 및 필터링
   useEffect(() => {
+    if (passedShorts && passedShorts.length > 0) return; // state 있으면 fetch 안함
+
     const dbFetch = fetch(`/api/v1/youtube/db/shorts?maxResults=15`)
       .then(res => res.ok ? res.json() : [])
       .catch(() => []);
@@ -252,8 +262,13 @@ function ShortsVideoPage() {
     setIsFolderOpen(false);
   };
 
-  const handlePrev = () => setCurrentIdx(idx => Math.max(idx - 1, 0));
-  const handleNext = () => setCurrentIdx(idx => Math.min(idx + 1, shorts.length - 1));
+  // 순환형: 맨끝-맨처음 자연스럽게 이동
+  const handlePrev = () => {
+    setCurrentIdx(idx => (idx - 1 + shorts.length) % shorts.length);
+  };
+  const handleNext = () => {
+    setCurrentIdx(idx => (idx + 1) % shorts.length);
+  };
 
   const closeLoginModal = () => setIsLoginModalOpen(false);
 
@@ -351,7 +366,7 @@ function ShortsVideoPage() {
           <div className={styles.loginModalOverlay} onClick={closeLoginModal}>
             <div className={styles.loginModal} onClick={e => e.stopPropagation()}>
               <h2>로그인이 필요합니다</h2>
-              <button onClick={redirectToLogin}>로그인</button>
+              <button onClick={() => { setIsLoginModalOpen(false); navigate("/login"); }}>로그인</button>
             </div>
           </div>
         )}
