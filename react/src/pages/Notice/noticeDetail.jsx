@@ -1,28 +1,28 @@
 // src/pages/Notice/NoticeDetail.jsx
 
+import axios from 'axios'; // axios import 추가
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import NoticeDetailStyle from "../../assets/styles/noticeDetail.module.css";
 import Modal from '../../components/Modal/Modal';
 
-// 데이터 로드 실패 또는 ID 없을 시 보여줄 플레이스홀더 공지사항 (유지)
 const PLACEHOLDER_NOTICE = {
     id: 'placeholder',
     isImportant: false,
     title: '샘플 공지사항 제목',
     author: '시스템',
     views: 0,
-    createdAt: 'YYYY.MM.DD', // 날짜 형식 예시
+    createdAt: 'YYYY.MM.DD',
     content: "요청하신 공지사항 정보를 불러올 수 없습니다.\n대신 샘플 공지사항 내용이 표시됩니다.\n\n페이지 구조 및 UI를 확인해주세요."
 };
 
 function NoticeDetail() {
-    const { id: noticeId } = useParams(); // URL 파라미터 'id'를 가져와서 'noticeId'라는 변수명으로 사용합니다.
+    const { id: noticeId } = useParams();
     const navigate = useNavigate();
     
     console.log("NoticeDetail Component Mounted. noticeId from URL params:", noticeId);
 
-    const [notice, setNotice] = useState(null); // API로부터 받은 공지사항 데이터
+    const [notice, setNotice] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,24 +44,11 @@ function NoticeDetail() {
             setIsLoading(true);
             setNotice(null); 
 
-            const fetchNoticeByIdFromAPI = async (idToFetch) => { // 파라미터 이름을 idToFetch로 변경하여 명확화
+            const fetchNoticeByIdFromAPI = async (idToFetch) => {
                 console.log("Fetching API for noticeId:", idToFetch); 
                 try {
-                    const response = await fetch(`/api/notices/${idToFetch}`);
-
-                    if (!response.ok) {
-                        let errorMsg = `HTTP error! status: ${response.status}`;
-                        try {
-                            const errorData = await response.json();
-                            errorMsg = errorData.message || errorMsg;
-                        } catch (jsonError) {
-                            const textError = await response.text();
-                            console.error("Response was not JSON. Response text:", textError);
-                        }
-                        throw new Error(errorMsg);
-                    }
-
-                    const data = await response.json(); 
+                    const response = await axios.get(`/api/notices/${idToFetch}`);
+                    const data = response.data; 
 
                     const dateObj = new Date(data.noticeCreatedAt);
                     const formattedDate = `${dateObj.getFullYear()}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.${String(dateObj.getDate()).padStart(2, '0')}`;
@@ -76,12 +63,20 @@ function NoticeDetail() {
                         content: data.noticeContent,
                     });
 
-                } catch (err) {
-                    console.error("Failed to fetch notice:", err.message);
+                } catch (error) {
+                    console.error("Failed to fetch notice:", error);
                     setNotice(PLACEHOLDER_NOTICE); 
+                    
+                    let errorMessage = "요청하신 공지사항을 불러올 수 없습니다. 목록으로 돌아가거나 잠시 후 다시 시도해주세요.";
+                    if (error.response && error.response.data && error.response.data.message) {
+                        errorMessage = error.response.data.message;
+                    } else if (error.message) {
+                        errorMessage = error.message;
+                    }
+
                     setModalProps({
                         title: "데이터 로드 실패",
-                        message: `${err.message}\n요청하신 공지사항을 불러올 수 없습니다. 목록으로 돌아가거나 잠시 후 다시 시도해주세요.`,
+                        message: errorMessage,
                         confirmText: "확인",
                         type: "error",
                         confirmButtonType: 'blackButton',
@@ -95,7 +90,7 @@ function NoticeDetail() {
                 }
             };
 
-            fetchNoticeByIdFromAPI(noticeId); // useEffect의 noticeId 사용
+            fetchNoticeByIdFromAPI(noticeId);
 
         } else { 
             console.warn("NoticeId is missing, invalid, or not a number:", noticeId, ". Displaying placeholder.");
@@ -111,7 +106,7 @@ function NoticeDetail() {
             });
             setIsModalOpen(true);
         }
-    }, [noticeId]); // noticeId가 변경될 때마다 useEffect 재실행
+    }, [noticeId, navigate]);
 
     if (isLoading) {
         return (
@@ -169,6 +164,7 @@ function NoticeDetail() {
                             )) : notice.content}
                         </div>
                     </div>
+                    {/* "목록으로" 버튼이 제거되었습니다. */}
                 </div>
             </div>
             <Modal
