@@ -46,7 +46,7 @@ function FindPwd2() {
       });
 
       alert('비밀번호가 성공적으로 변경되었습니다.');
-      navigate('/login');
+      navigate('/successpwd');
     } catch (err) {
       console.error(err);
       setErrorMessage('비밀번호 변경에 실패했습니다.');
@@ -88,7 +88,7 @@ function FindPwd2() {
 
             {errorMessage && <p className={styles.err}>{errorMessage}</p>}
 
-            <Link to="/successpwd">
+            
             <button
               type="submit"
               className={`${styles.submit_btnf} ${isFormValid ? styles.active : styles.disabled}`}
@@ -96,7 +96,7 @@ function FindPwd2() {
             >
               Reset Password
             </button>
-            </Link>
+           
           </form>
         </div>
       </div>
