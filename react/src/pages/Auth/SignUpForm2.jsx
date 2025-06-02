@@ -92,7 +92,7 @@ function SignUpForm2() {
     e.preventDefault();
     setEmailVerifyMessage('');
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/auth/verify-code', {
+      const response = await axios.post('http://localhost:8080/api/v1/auth/verify-code-signup', {
         userEmail,
         certificationNumber
       });
