@@ -89,6 +89,7 @@ function App() {
           <Route path="healing" element={<HealingPage />} />
           <Route path="mountain" element={<MountainPage />} />
           <Route path="themepark" element={<ThemeParkPage />} />
+          <Route path="/shorts/:videoId" element={<ShortsVideoPage />} />
           <Route path="search" element={<Search />} />
 
           <Route path="area">

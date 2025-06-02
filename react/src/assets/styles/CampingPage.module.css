@@ -94,3 +94,27 @@
 .loadMoreButton:hover {
   background-color: #333;
 }
+
+.loadingWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px; 
+  margin-top: 400px;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 6px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #ff3366; 
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* 스피너 회전 애니메이션 */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

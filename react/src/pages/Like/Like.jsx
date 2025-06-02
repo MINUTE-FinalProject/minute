@@ -37,18 +37,34 @@ function Like() {
       console.warn("Like.jsx: 로그인 정보가 없어 API를 호출하지 않습니다.");
       return;
     }
+   
+    // 좋아요 영상 가져오기 (원래대로)
     axios
       .get(`/api/v1/auth/${userId}/likes`, { headers: { Authorization: `Bearer ${token}` } })
       .then(res => setLikedVideos(res.data || []))
       .catch(err => console.error("좋아요 영상 API 에러:", err));
 
+    // 시청 기록 가져오기 + 중복 제거 + 정렬
     axios
       .get(`/api/v1/auth/${userId}/watch-history`, { headers: { Authorization: `Bearer ${token}` } })
-      .then(res => setRecentWatched(res.data || []))
+      .then(res => {
+        const rawList = res.data || [];
+        const dedupedMap = rawList.reduce((acc, video) => {
+          const vid = video.videoId;
+          const prev = acc[vid];
+          if (!prev || new Date(video.watchedAt) > new Date(prev.watchedAt)) {
+            acc[vid] = video;
+          }
+          return acc;
+        }, {});
+        const dedupedList = Object.values(dedupedMap);
+        dedupedList.sort((a, b) => new Date(b.watchedAt) - new Date(a.watchedAt));
+        setRecentWatched(dedupedList);
+      })
       .catch(err => {
         console.error("시청 기록 API 에러:", err.response?.status, err.response?.data || err.message);
+        setRecentWatched([]);
       });
-      
   }, [token, userId]);
 
   const scroll = (containerId, direction) => {
@@ -120,7 +136,12 @@ function Like() {
       <div className={styles.videoList} id={containerId}>
         {videoList.map((video, idx) => (
           <div key={video.videoId || `video-${idx}`} className={styles.videoItem}
-          onClick={() => navigate(`/shorts/${video.videoId}`)} 
+          // onClick={() => navigate(`/shorts/${video.videoId}`)} 
+          onClick={() =>
+              navigate(`/shorts/${video.videoId}`, {
+                state: { origin: type, list: videoList },
+              })
+            }
           >
             <div className={styles.thumbnailWrapper}>
               <img 

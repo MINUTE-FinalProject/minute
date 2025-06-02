@@ -1,11 +1,13 @@
+// src/pages/ShortsVideoPage.jsx
+
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import styles from "../../assets/styles/ShortsVideoPage.module.css";
 import Header from "../../components/Header/Header";
 import SearchBar from "../../components/MainSearchBar/SearchBar";
 
-// Icon imports
+// 아이콘 임포트
 import arrowIcon from "../../assets/images/arrow.png";
 import starOutlinedIcon from "../../assets/images/b_star.png";
 import thumbDownOutlinedIcon from "../../assets/images/b_thumbdowm.png";
@@ -15,331 +17,582 @@ import thumbDownIcon from "../../assets/images/thumbdowm.png";
 import thumbUpIcon from "../../assets/images/thumbup.png";
 
 function ShortsVideoPage() {
-  const {videoId:paramVideoId} = useParams(); // URL에서 videoId 파라미터 받음 
+  // 1) URL param에서 videoId를 받아옵니다.
+  const { videoId: paramVideoId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { origin, list: incomingList } = location.state || {};
+
+  // 2) 로그인 여부
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [shorts, setShorts] = useState([]);
-  const [currentIdx, setCurrentIdx] = useState(0);
+
+  // 3) 좋아요/싫어요 맵
   const [likes, setLikes] = useState({});
   const [dislikes, setDislikes] = useState({});
+
+  // ────────────────────────────────────────────────────
+  // 4) “원본 숏츠 목록(originalShorts)” + “현재 인덱스(currentOriginalIdx)”
+  //────────────────────────────────────────────────────
+  const [originalShorts, setOriginalShorts] = useState([]);
+  // currentOriginalIdx는 originalShorts의 인덱스(0 ~ originalShorts.length-1)를 가리킵니다.
+  const [currentOriginalIdx, setCurrentOriginalIdx] = useState(0);
+
+  // ────────────────────────────────────────────────────
+  // 5) 북마크(폴더) 관련 상태
+  //────────────────────────────────────────────────────
   const [isFolderOpen, setIsFolderOpen] = useState(false);
   const [folders, setFolders] = useState([]);
   const [newFolderName, setNewFolderName] = useState("");
   const [selectedFolder, setSelectedFolder] = useState(null);
+
+  // ────────────────────────────────────────────────────
+  // 6) 로그인 모달
+  //────────────────────────────────────────────────────
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
-  // 로그인이 필요합니다 로그인 버튼 클릭시 로그인 페이지로 이동
-  const redirectToLogin = () => {
-    setIsLoginModalOpen(false);
-    navigate("/login");
+  // ────────────────────────────────────────────────────
+  // 7) 토스트(간단히 상태 표시)
+  //────────────────────────────────────────────────────
+  const [toastMsg, setToastMsg] = useState("");
+  const [showToast, setShowToast] = useState(false);
+  const openToast = (msg) => {
+    setToastMsg(msg);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2000);
   };
 
-  // 좋아요, 싫어요 상태 초기 로드
+  // ────────────────────────────────────────────────────
+  // playerRef: 실제 YT.Player 인스턴스를 담는 ref
+  // playerContainerRef: DOM 상의 <div> 컨테이너 ref
+  //────────────────────────────────────────────────────
+  const playerRef = useRef(null);
+  const playerContainerRef = useRef(null);
+
+  // ────────────────────────────────────────────────────
+  // (A) originalShorts가 로드된 다음에만 YT.Player 생성
+  //────────────────────────────────────────────────────
+  useEffect(() => {
+    // 아직 영상 목록이 없으면 실행하지 않음
+    if (!originalShorts.length) return;
+
+    // 콜백: YouTube IFrame API가 준비되면 실행됨
+    function onYouTubeIframeAPIReady() {
+      // 현재 재생할 videoId
+      const initVideoId =
+        originalShorts[currentOriginalIdx]?.id?.videoId ||
+        originalShorts[currentOriginalIdx]?.videoId ||
+        "";
+
+      // 이미 playerRef에 인스턴스가 있으면 다시 생성하지 않음
+      if (playerRef.current) return;
+
+      // YT.Player 생성
+      playerRef.current = new window.YT.Player(playerContainerRef.current, {
+        videoId: initVideoId,
+        playerVars: {
+          autoplay: 1,
+          rel: 0,
+          modestbranding: 1,
+          playsinline: 1
+        },
+        events: {
+          onReady: (event) => {
+            // 준비되면 바로 재생
+            event.target.playVideo();
+          },
+          onStateChange: (evt) => {
+            if (evt.data === window.YT.PlayerState.ENDED) {
+              // ENDED 상태가 되면 동일 영상을 다시 재생
+              evt.target.playVideo();
+            }
+          },
+          onError: (err) => {
+            console.error("YT Player 에러", err);
+          },
+        },
+      });
+    }
+
+    // (1) 외부 <script src="https://www.youtube.com/iframe_api"></script> 가 이미 로드되어 있다면 바로 콜백 실행
+    if (window.YT && window.YT.Player) {
+      onYouTubeIframeAPIReady();
+    } else {
+      // (2) 아직 로드되지 않은 상태라면 전역 콜백으로 등록
+      window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+    }
+
+    // 언마운트 시 플레이어 파기
+    return () => {
+      if (playerRef.current) {
+        playerRef.current.destroy();
+        playerRef.current = null;
+      }
+      delete window.onYouTubeIframeAPIReady;
+    };
+  }, [originalShorts]); // originalShorts가 채워지는 순간에 한 번 실행
+
+  // ────────────────────────────────────────────────────
+  // (B) currentOriginalIdx가 바뀔 때마다: playerRef가 유효하면 loadVideoById만 호출
+  //────────────────────────────────────────────────────
+  useEffect(() => {
+    const nextVideoId =
+      originalShorts[currentOriginalIdx]?.id?.videoId ||
+      originalShorts[currentOriginalIdx]?.videoId ||
+      null;
+
+    if (
+      playerRef.current &&
+      typeof playerRef.current.loadVideoById === "function" &&
+      nextVideoId
+    ) {
+      // loadVideoById가 자동으로 재생(autoplay=1) 처리
+      playerRef.current.loadVideoById({
+        videoId: nextVideoId,
+        suggestedQuality: "default",
+      });
+    }
+  }, [currentOriginalIdx, originalShorts]);
+
+  // ────────────────────────────────────────────────────
+  // 8) 첫 번째 useEffect: 로그인 여부 확인 + 좋아요·싫어요 초기 로드
+  //────────────────────────────────────────────────────
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
-    setIsLoggedIn(!!token);
-  
-    if (token && userId) {
-      // 좋아요 불러오기
-      axios.get(`/api/v1/auth/${userId}/likes`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      .then(res => {
-        const likeMap = {};
-        res.data.forEach(video => {
-          likeMap[video.videoId] = true;
-        });
-        setLikes(likeMap);
-      })
-      .catch(err => {
-        console.error("초기 좋아요 불러오기 실패", err);
-      });
-  
-      // 싫어요 불러오기
-      axios.get(`/api/v1/auth/${userId}/dislikes`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      .then(res => {
-        const dislikeMap = {};
-        res.data.forEach(video => {
-          console.log("불러온 싫어요 videoId:", video.videoId); 
-          dislikeMap[video.videoId] = true;
-        });
-        console.log("초기 싫어요 맵:", dislikeMap);
-        setDislikes(dislikeMap);
-      })
-      .catch(err => {
-        console.error("초기 싫어요 불러오기 실패", err.response?.status, err.response?.data);
-      });
+    const loggedIn = Boolean(token && userId);
+    setIsLoggedIn(loggedIn);
+
+    if (loggedIn) {
+      // (1) 좋아요 상태 가져오기
+      axios
+        .get(`/api/v1/auth/${userId}/likes`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+          const likeMap = {};
+          res.data.forEach((video) => {
+            likeMap[video.videoId] = true;
+          });
+          setLikes(likeMap);
+        })
+        .catch((err) => console.error("초기 좋아요 불러오기 실패", err));
+
+      // (2) 싫어요 상태 가져오기
+      axios
+        .get(`/api/v1/auth/${userId}/dislikes`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+          const dislikeMap = {};
+          res.data.forEach((video) => {
+            dislikeMap[video.videoId] = true;
+          });
+          setDislikes(dislikeMap);
+        })
+        .catch((err) => console.error("초기 싫어요 불러오기 실패", err));
     }
   }, []);
 
-  // 영상 API 불러오기 및 필터링
+  // ────────────────────────────────────────────────────
+  // 9) 두 번째 useEffect: “원본 숏츠 목록(originalShorts)” 초기 로드
+  //    • Main.jsx에서 넘어온 incomingList가 있으면 그대로 사용
+  //    • 아니면 DB/API에서 가져오기
+  //    • paramVideoId가 있으면 그 인덱스로, 없으면 0으로 세팅
+  //────────────────────────────────────────────────────
   useEffect(() => {
+    // (1) Main.jsx에서 넘어온 리스트가 배열로 있으면 우선 사용
+    if (Array.isArray(incomingList) && incomingList.length) {
+      setOriginalShorts(incomingList);
+
+      if (paramVideoId) {
+        // paramVideoId에 해당하는 인덱스를 찾아 currentOriginalIdx에 설정
+        const idx = incomingList.findIndex((item) => {
+          const id = item?.id?.videoId || item?.videoId || null;
+          return id === paramVideoId;
+        });
+        setCurrentOriginalIdx(idx !== -1 ? idx : 0);
+      } else {
+        setCurrentOriginalIdx(0);
+      }
+      return;
+    }
+
+    // (2) incomingList 없으면, DB/API에서 가져오기
     const dbFetch = fetch(`/api/v1/youtube/db/shorts?maxResults=15`)
-      .then(res => res.ok ? res.json() : [])
+      .then((res) => (res.ok ? res.json() : []))
       .catch(() => []);
-  
+
     const apiFetch = fetch(`/api/v1/youtube/shorts?maxResults=15`)
-      .then(res => res.ok ? res.json() : [])
+      .then((res) => (res.ok ? res.json() : []))
       .catch(() => []);
-  
+
     Promise.all([dbFetch, apiFetch]).then(([dbVideos, apiVideos]) => {
+      // DB 결과를 YouTube API와 동일한 형태로 매핑
       const dbItems = Array.isArray(dbVideos)
         ? dbVideos.map((v) => ({
-            id: { videoId: v.youtubeVideoId || v.videoId || v.youtube_video_id || v.video_id },
+            id: {
+              videoId: v.youtubeVideoId || v.videoId || v.youtube_video_id || v.video_id,
+            },
             snippet: {
               title: v.title || v.videoTitle || v.video_title,
               description: v.description || v.videoDescription || v.video_description,
               thumbnails: {
-                medium: { url: v.thumbnailUrl || v.thumbnail_url }
-              }
-            }
+                medium: { url: v.thumbnailUrl || v.thumbnail_url },
+              },
+            },
           }))
         : [];
-  
-      const apiItems = Array.isArray(apiVideos) ? apiVideos : [];
-      const allItems = [...dbItems, ...apiItems];
 
-       // 싫어요한 영상은 필터링
-       let filtered = allItems;
-       if (isLoggedIn) {
-          filtered = allItems.filter(video => {
-           const id = video?.id?.videoId || video?.videoId || null;
-           return !dislikes[id];
-         });
-       }
-  
-      setShorts(allItems);
-     
-      // URL 파라미터 videoId가 있으면 해당 영상 인덱스 찾기
-      if(paramVideoId) {
-        const idx = allItems.findIndex(video => {
-          const id = video?.id?.videoId || video?.videoId || video?.youtubeVideoId || null;
+      // YouTube API 결과 (이미 {id:{videoId}, snippet:{…}} 형태라고 가정)
+      const apiItems = Array.isArray(apiVideos) ? apiVideos : [];
+
+      const allItems = [...dbItems, ...apiItems];
+      setOriginalShorts(allItems);
+
+      if (paramVideoId) {
+        const idx = allItems.findIndex((item) => {
+          const id = item?.id?.videoId || item?.videoId || null;
           return id === paramVideoId;
         });
-        setCurrentIdx(idx !== -1 ? idx : 0);
+        setCurrentOriginalIdx(idx !== -1 ? idx : 0);
       } else {
-        setCurrentIdx(0);
+        setCurrentOriginalIdx(0);
       }
     });
-  }, [paramVideoId, dislikes, isLoggedIn]);
-  
-  const filteredShorts = shorts; // 이미 필터링된 shorts를 사용
-  const video = filteredShorts[currentIdx];
-  const videoId = video?.id?.videoId || video?.videoId || null;
+  }, [paramVideoId, incomingList]);
 
-   // 시청 기록 저장
+  // ────────────────────────────────────────────────────
+  // 10) 세 번째 useEffect: “시청 기록 저장”
+  //     • isLoggedIn && originalShorts 준비된 상태에서, currentOriginalIdx 변화 시마다 호출
+  //────────────────────────────────────────────────────
   useEffect(() => {
     if (!isLoggedIn) return;
-    if (!filteredShorts.length) return;
-  
-    
-    const video = filteredShorts[currentIdx];
-    const videoId = video?.id?.videoId || video?.videoId || null;
-    if (!videoId) return;
-  
+    if (!originalShorts.length) return;
+
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
-  
-    axios.post(
-      `/api/v1/auth/${userId}/watch-history`,
-      { videoId },
-      { headers: { Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json" } }
-    ).catch(err => {
-      console.error("시청 기록 저장 실패", err);
-    });
-  
-  }, [currentIdx, shorts, isLoggedIn]);
+    const id =
+      originalShorts[currentOriginalIdx]?.id?.videoId ||
+      originalShorts[currentOriginalIdx]?.videoId ||
+      null;
+    if (!id) return;
 
-  // 좋아요 처리
+    axios
+      .post(
+        `/api/v1/auth/${userId}/watch-history`,
+        { videoId: id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .catch((err) => console.error("시청 기록 저장 실패", err));
+  }, [currentOriginalIdx, originalShorts, isLoggedIn]);
+
+  // ────────────────────────────────────────────────────
+  // 11) 좋아요 클릭 핸들러
+  //────────────────────────────────────────────────────
   const handleThumbUpClick = async () => {
-    // const video = shorts[currentIdx];
-    // const videoId = video?.id?.videoId || null;
-  
-    if (!videoId || videoId === "null") {
-      console.error("videoId가 null이거나 유효하지 않음:", videoId);
-      return;
-    }
-  
+    const currentItem = originalShorts[currentOriginalIdx];
+    if (!currentItem) return;
+    const currentVideoId = currentItem.id?.videoId || currentItem.videoId;
+    if (!currentVideoId) return;
+
     if (!isLoggedIn) {
       setIsLoginModalOpen(true);
       return;
     }
-  
+
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
-    const isNowLiked = !!likes[videoId];
-  
-    console.log("좋아요 요청 URL:", `/api/v1/auth/${userId}/videos/${videoId}/like`);
-    console.log("현재 videoId:", videoId);
-  
+    const isNowLiked = !!likes[currentVideoId];
+
     try {
       if (!isNowLiked) {
+        // 좋아요 추가
         await axios.post(
-          `/api/v1/auth/${userId}/videos/${videoId}/like`,
+          `/api/v1/auth/${userId}/videos/${currentVideoId}/like`,
           null,
           { headers: { Authorization: `Bearer ${token}` } }
         );
+        setLikes((prev) => ({ ...prev, [currentVideoId]: true }));
+
+        // 이미 싫어요(관심 없음) 상태였다면 해제
+        if (dislikes[currentVideoId]) {
+          setDislikes((prev) => {
+            const copy = { ...prev };
+            delete copy[currentVideoId];
+            return copy;
+          });
+        }
       } else {
+        // 좋아요 해제
         await axios.delete(
-          `/api/v1/auth/${userId}/videos/${videoId}/like`,
+          `/api/v1/auth/${userId}/videos/${currentVideoId}/like`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
+        setLikes((prev) => {
+          const copy = { ...prev };
+          delete copy[currentVideoId];
+          return copy;
+        });
       }
-  
-      setLikes(prev => ({ ...prev, [videoId]: !isNowLiked }));
-      setDislikes(prev => ({ ...prev, [videoId]: false }));
     } catch (err) {
       console.error("좋아요 API 에러", err);
     }
   };
 
-  // 싫어요 처리
+  // ────────────────────────────────────────────────────
+  // 12) 싫어요 클릭 핸들러 (비파괴적으로 동작)
+  //     • 눌러도 즉시 영상이 바뀌지 않고, next/prev로 이동할 때만 필터링
+  //────────────────────────────────────────────────────
   const handleThumbDownClick = async () => {
-    if (!videoId) return;
+    const currentItem = originalShorts[currentOriginalIdx];
+    if (!currentItem) return;
+    const currentVideoId = currentItem.id?.videoId || currentItem.videoId;
+    if (!currentVideoId) return;
+
     if (!isLoggedIn) {
       setIsLoginModalOpen(true);
       return;
     }
-  
+
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
-    const isNowDisliked = !!dislikes[videoId];
-    const isNowLiked = !!likes[videoId];
-  
+    const isNowDisliked = !!dislikes[currentVideoId];
+    const isNowLiked = !!likes[currentVideoId];
+
     try {
       if (!isNowDisliked) {
+        // 관심 없음 추가
         await axios.post(
-          `/api/v1/auth/${userId}/videos/${videoId}/dislike`,
+          `/api/v1/auth/${userId}/videos/${currentVideoId}/dislike`,
           null,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setDislikes(prev => ({ ...prev, [videoId]: true }));
+        setDislikes((prev) => ({ ...prev, [currentVideoId]: true }));
+
+        // 만약 좋아요가 켜져 있으면, 싫어요 누를 때 좋아요 해제
         if (isNowLiked) {
-          setLikes(prev => ({ ...prev, [videoId]: false }));
+          setLikes((prev) => {
+            const copy = { ...prev };
+            delete copy[currentVideoId];
+            return copy;
+          });
         }
+
+        // openToast("관심 없음 표시됨");
       } else {
+        // 관심 없음 해제
         await axios.delete(
-          `/api/v1/auth/${userId}/videos/${videoId}/dislike`,
+          `/api/v1/auth/${userId}/videos/${currentVideoId}/dislike`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setDislikes(prev => ({ ...prev, [videoId]: false }));
+        setDislikes((prev) => {
+          const copy = { ...prev };
+          delete copy[currentVideoId];
+          return copy;
+        });
+        // openToast("관심 없음 해제됨");
       }
     } catch (err) {
       console.error("싫어요 API 에러", err);
+      openToast("오류가 발생했습니다.");
     }
   };
-  
-  // 북마크 클릭
-  const handleStarClick = () => {
-    if (!videoId) return;
-    if (!isLoggedIn) { setIsLoginModalOpen(true); return; }
-    setIsFolderOpen(prev => !prev);
-  };
 
+  // ────────────────────────────────────────────────────
+  // 13) 북마크(폴더) 클릭 핸들러
+  //────────────────────────────────────────────────────
+  const handleStarClick = () => {
+    const currentItem = originalShorts[currentOriginalIdx];
+    if (!currentItem) return;
+    const currentVideoId = currentItem.id?.videoId || currentItem.videoId;
+    if (!currentVideoId) return;
+
+    if (!isLoggedIn) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+    setIsFolderOpen((prev) => !prev);
+  };
   const handleAddFolder = () => {
     if (newFolderName.trim()) {
-      setFolders(prev => [...prev, newFolderName.trim()]);
+      setFolders((prev) => [...prev, newFolderName.trim()]);
       setNewFolderName("");
     }
   };
-
   const handleFolderClick = (name) => {
     setSelectedFolder(name);
     setIsFolderOpen(false);
   };
 
-  const handlePrev = () => setCurrentIdx(idx => Math.max(idx - 1, 0));
-  const handleNext = () => setCurrentIdx(idx => Math.min(idx + 1, shorts.length - 1));
+  // ────────────────────────────────────────────────────
+  // 14) “이전 영상” 이동 핸들러
+  //     • disliked(관심 없음) 처리된 영상은 건너뛰고, 이전 인덱스 중 첫 번째 비-disliked 영상으로 이동
+  //────────────────────────────────────────────────────
+  const handlePrev = () => {
+    let idx = currentOriginalIdx - 1;
+    while (idx >= 0) {
+      const id = originalShorts[idx]?.id?.videoId || originalShorts[idx]?.videoId || null;
+      if (!dislikes[id]) {
+        setCurrentOriginalIdx(idx);
+        return;
+      }
+      idx--;
+    }
+    // 앞에 더 이상의 비-disliked 영상이 없으면 아무 것도 안 함
+  };
 
-  const closeLoginModal = () => setIsLoginModalOpen(false);
+  // ────────────────────────────────────────────────────
+  // 15) “다음 영상” 이동 핸들러
+  //     • disliked(관심 없음) 처리된 영상은 건너뛰고, 다음 인덱스 중 첫 번째 비-disliked 영상으로 이동
+  //────────────────────────────────────────────────────
+  const handleNext = () => {
+    let idx = currentOriginalIdx + 1;
+    while (idx < originalShorts.length) {
+      const id = originalShorts[idx]?.id?.videoId || originalShorts[idx]?.videoId || null;
+      if (!dislikes[id]) {
+        setCurrentOriginalIdx(idx);
+        return;
+      }
+      idx++;
+    }
+    // 뒤쪽에 더 이상의 비-disliked 영상이 없으면 아무 것도 안 함
+  };
+
+  // ────────────────────────────────────────────────────
+  // 16) 렌더링
+  //────────────────────────────────────────────────────
+  const videoObj = originalShorts[currentOriginalIdx];
+  const currentVideoId =
+    videoObj?.id?.videoId ||
+    videoObj?.videoId ||
+    null;
 
   return (
     <>
       <Header />
       <div className={styles.container}>
-        <SearchBar showTitle={false} compact className={styles.searchCompact} textboxClassName={styles.textboxCompact} />
+        <SearchBar
+          showTitle={false}
+          compact
+          className={styles.searchCompact}
+          textboxClassName={styles.textboxCompact}
+        />
+
         <div className={styles.mainContent}>
           <div className={styles.contentWrap}>
-            <div className={styles.shortVideo}>
-              {videoId ? (
-                <iframe
-                  width="470"
-                  height="720"
-                  src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
-                  title={video.snippet?.title || "short video"}
-                  frameBorder="0"
-                  allow="autoplay; encrypted-media"
-                  allowFullScreen
-                  style={{ borderRadius: 18, boxShadow: "0 4px 24px rgba(0,0,0,0.18)" }}
-                />
-              ) : (
-                <p style={{ textAlign: 'center', marginTop: '50%' }}>영상이 없습니다.</p>
-              )}
+            {/* ── 16-1) YouTube IFrame API가 마운트될 <div> ───────── */}
+            <div
+              className={styles.shortVideo}
+              ref={playerContainerRef} // 이곳에 YT.Player가 삽입됩니다.
+            >
+              {/* 빈 상태로 두시면 됩니다. useEffect에서 playerRef.current = new YT.Player(...) */}
             </div>
+
+            {/* ── 16-2) 좋아요·싫어요·북마크 버튼 (아이콘 + 레이블) ───── */}
             <div className={styles.reactionWrap}>
               <ul>
+                {/* 좋아요 */}
                 <li>
                   <img
-                    src={videoId && likes[videoId] ? thumbUpIcon : thumbUpOutlinedIcon}
+                    src={
+                      currentVideoId && likes[currentVideoId]
+                        ? thumbUpIcon
+                        : thumbUpOutlinedIcon
+                    }
                     alt="thumbUp"
                     onClick={handleThumbUpClick}
                     className={styles.reactionIcon}
                   />
-                  {/* <span>{video.likes}</span> 좋아요 숫자 반영할 거 */}
+                  <span className={styles.reactionLabel}>좋아요</span>
                 </li>
+
+                {/* 관심 없음(싫어요) */}
                 <li>
                   <img
-                    src={videoId && dislikes[videoId] ? thumbDownIcon : thumbDownOutlinedIcon}
+                    src={
+                      currentVideoId && dislikes[currentVideoId]
+                        ? thumbDownIcon
+                        : thumbDownOutlinedIcon
+                    }
                     alt="thumbDown"
                     onClick={handleThumbDownClick}
                     className={styles.reactionIcon}
                   />
+                  <span className={styles.reactionLabel}>관심 없음</span>
                 </li>
+
+                {/* 북마크 */}
                 <li>
                   <img
-                    src={videoId && selectedFolder ? starIcon : starOutlinedIcon}
+                    src={
+                      currentVideoId && selectedFolder ? starIcon : starOutlinedIcon
+                    }
                     alt="bookmark"
                     onClick={handleStarClick}
                     className={styles.reactionIcon}
                   />
+                  <span className={styles.reactionLabel}>북마크</span>
                 </li>
               </ul>
             </div>
           </div>
+
+          {/* ── 16-3) 이전/다음 화살표 ──────────────────────────── */}
           <div className={styles.arrowWrap}>
             <ul>
               <li>
-                <img src={arrowIcon} alt="prev" className={styles.arrowTop} onClick={handlePrev} />
+                <img
+                  src={arrowIcon}
+                  alt="prev"
+                  className={styles.arrowTop}
+                  onClick={handlePrev}
+                />
               </li>
               <li>
-                <img src={arrowIcon} alt="next" className={styles.arrowBottom} onClick={handleNext} />
+                <img
+                  src={arrowIcon}
+                  alt="next"
+                  className={styles.arrowBottom}
+                  onClick={handleNext}
+                />
               </li>
             </ul>
           </div>
+
+          {/* ── 16-4) 북마크 폴더 모달 ───────────────────────────── */}
           {isFolderOpen && (
-            <div className={styles.folderModal} style={{ bottom: '120px' }}>
+            <div className={styles.folderModal} style={{ bottom: "120px" }}>
               <div className={styles.folderInputWrap}>
                 <input
                   type="text"
                   className={styles.folderInput}
                   placeholder="새 폴더 이름"
                   value={newFolderName}
-                  onChange={e => setNewFolderName(e.target.value)}
+                  onChange={(e) => setNewFolderName(e.target.value)}
                 />
-                <button className={styles.folderBtn} onClick={handleAddFolder}>+</button>
+                <button className={styles.folderBtn} onClick={handleAddFolder}>
+                  +
+                </button>
               </div>
               <ul className={styles.folderList}>
                 {folders.length === 0 ? (
                   <li className={styles.emptyFolder}>폴더가 없습니다.</li>
                 ) : (
-                  folders.map(name => (
-                    <li key={name} className={styles.folderItem} onClick={() => handleFolderClick(name)}>
+                  folders.map((name) => (
+                    <li
+                      key={name}
+                      className={styles.folderItem}
+                      onClick={() => handleFolderClick(name)}
+                    >
                       <span className={styles.folderName}>{name}</span>
-                      {selectedFolder === name && <span className={styles.checkmark}>✔</span>}
+                      {selectedFolder === name && (
+                        <span className={styles.checkmark}>✔</span>
+                      )}
                     </li>
                   ))
                 )}
@@ -347,12 +600,21 @@ function ShortsVideoPage() {
             </div>
           )}
         </div>
+
+        {/* ── 16-5) 로그인 유도 모달 ──────────────────────────── */}
         {isLoginModalOpen && (
-          <div className={styles.loginModalOverlay} onClick={closeLoginModal}>
-            <div className={styles.loginModal} onClick={e => e.stopPropagation()}>
+          <div className={styles.loginModalOverlay} onClick={() => setIsLoginModalOpen(false)}>
+            <div className={styles.loginModal} onClick={(e) => e.stopPropagation()}>
               <h2>로그인이 필요합니다</h2>
-              <button onClick={redirectToLogin}>로그인</button>
+              <button onClick={() => navigate("/login")}>로그인</button>
             </div>
+          </div>
+        )}
+
+        {/* ── 16-6) 간단한 토스트 메시지 표시 ───────────────────── */}
+        {showToast && (
+          <div className={styles.toastWrapper}>
+            <div className={styles.toast}>{toastMsg}</div>
           </div>
         )}
       </div>
