@@ -6,7 +6,7 @@ import styles from "../../assets/styles/ShortsVideoPage.module.css";
 import Header from "../../components/Header/Header";
 import SearchBar from "../../components/MainSearchBar/SearchBar";
 
-// Icon imports
+// Icon imports (기존과 동일)
 import arrowIcon from "../../assets/images/arrow.png";
 import starOutlinedIcon from "../../assets/images/b_star.png";
 import thumbDownOutlinedIcon from "../../assets/images/b_thumbdowm.png";

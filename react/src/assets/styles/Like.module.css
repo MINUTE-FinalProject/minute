@@ -45,6 +45,12 @@
   color: #333;
   flex: 1;
   margin-right: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;  
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal; 
 }
 
 .header {
@@ -229,27 +235,5 @@
 }
 
 .newFolderButton:hover {
-  background-color: #e0e0e0;
-}
-
-.optionsContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.optionButton {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  background-color: #f7f7f7;
-  text-align: center;
-  cursor: pointer;
-  font-size: 14px;
-  border-radius: 6px;
-  transition: background-color 0.2s;
-}
-
-.optionButton:hover {
   background-color: #e0e0e0;
 }
