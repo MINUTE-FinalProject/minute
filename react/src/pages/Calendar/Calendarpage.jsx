@@ -70,57 +70,29 @@ function CalendarPage2() {
     fetchAll();
   }, [selectedDate, token]);
 
-  // 컴포넌트 최상단(훅 선언 직후)에 추가
-  // const fetchPlans = () => {
-  //   fetch(`http://localhost:8080/api/v1/plans?date=${selectedDate}`, {
-  //     headers: { Authorization: `Bearer ${token}` },
-  //   })
-  //     .then(res => {
-  //       if (!res.ok) throw new Error(res.status);
-  //       return res.json();
-  //     })
-  //     .then(data => {
-  //       console.log(data);
-  //       // PlanResponseDTO 배열 그대로 받는다고 가정
-  //       setPlans(data);
-  //     })
-  //     .catch(console.error);
-  // };
-
-
-
-
-  // 날짜 변경마다 Plan+Checklist 재조회
-  // useEffect(() => {
-  //   if(!token) return;
-  //   // Plan 목록
-  //   fetch(`http://localhost:8080/api/v1/calendar/details?date=${selectedDate}`, {
-  //     headers: { Authorization: `Bearer ${token}` },
-  //   })
-  //     .then(res => {
-  //       if (!res.ok) throw new Error(res.status);
-  //       return res.json();
-  //     })
-  //     .then(data => setPlans(Array.isArray(data.plans) ? data.plans : []))
-  //     .catch(console.error);
-
-    // Checklist (캘린더 상세) 조회
-    // fetch(`http://localhost:8080/api/v1/mypage/plans?date=${selectedDate}`, {
-    //   headers: { Authorization: `Bearer ${token}` },
-    // })
-    //   .then(res => res.json())
-    //   .then(data => {
-    //     setChecklists(
-    //       data.checklists.map(c => ({
-    //         id: c.checklistId,
-    //         planId: c.planId,
-    //         text: c.itemContent,
-    //         checked: c.isChecked,
-    //       }))
-    //     );
-    //   })
-    //   .catch(console.error);
-  // }, [selectedDate, token]);
+  const toggleChecklist = (id, newChecked) => {
+    console.log("toggleChecklist", id, newChecked, selectedDate);
+    const item = checklists.find(c => c.id === id);
+    fetch(`http://localhost:8080/api/v1/checklists/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        planId:     item.planId,       // null 혹은 숫자
+        travelDate: selectedDate,
+        itemContent:item.text,
+        isChecked:  newChecked,
+      }),
+    })
+    .then(r => {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    })
+    .then(fetchAll)
+    .catch(console.error);
+  };
 
   // Plan CRUD 함수
   const createPlan = () => {
@@ -223,7 +195,6 @@ function CalendarPage2() {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        planId: editPlanId,
         travelDate: selectedDate,
         itemContent: newItemText,
         isChecked: false,
@@ -287,27 +258,6 @@ function CalendarPage2() {
     }
     setIsAddingPlan(true);
   };
-
-  // const addPlan = () => {
-  //   if (!newPlan.title.trim()) {
-  //     setIsAddingPlan(false);
-  //     return;
-  //   }
-  //   if (editPlanId) {
-  //     setPlans((prev) =>
-  //       prev.map((p) => (p.id === editPlanId ? { ...p, ...newPlan } : p))
-  //     );
-  //   } else {
-  //     setPlans((prev) => [
-  //       ...prev,
-  //       { id: Date.now(), date: selectedDate, ...newPlan, color: "#FADADD" },
-  //     ]);
-  //   }
-  //   setEditPlanId(null);
-  //   setIsAddingPlan(false);
-  // };
-  // const removePlan = (id) =>
-  //   setPlans((prev) => prev.filter((p) => p.id !== id));
   
   const todaysPlans = plans.filter((p) => p.travelDate === selectedDate);
   
@@ -470,7 +420,11 @@ function CalendarPage2() {
                       ) : (
                         <>
                           <label>
-                            <input type="checkbox" />
+                            <input 
+                              type="checkbox"
+                              checked={it.checked}
+                              onChange={() => toggleChecklist(it.id, !it.checked)} 
+                            />
                             <span>{it.text}</span>
                           </label>
                           <div className={styles.listActions}>
