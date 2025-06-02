@@ -114,23 +114,23 @@ function App() {
           <Route path="freeboard" element={<div className="mainContentWithFixedHeader"><FreeBoard /></div>} />
           <Route path="freeboardDetail/:postId" element={<div className="mainContentWithFixedHeader"><FreeboardDetail /></div>} />
           {/* 👇 자유게시판 글쓰기 페이지에 ProtectedRoute 적용 */}
-          <Route 
-            path="freeboardWrite" 
+          <Route
+            path="freeboardWrite"
             element={
               <ProtectedRoute> {/* ProtectedRoute로 감싸기 */}
                 <div className="mainContentWithFixedHeader"><FreeboardWrite /></div>
               </ProtectedRoute>
-            } 
+            }
           />
 
           {/* 👇 자유게시판 글수정 페이지에 ProtectedRoute 적용 */}
-          <Route 
-            path="freeboardEdit/:postId" 
+          <Route
+            path="freeboardEdit/:postId"
             element={
               <ProtectedRoute> {/* ProtectedRoute로 감싸기 */}
                 <div className="mainContentWithFixedHeader"><FreeboardEdit /></div>
               </ProtectedRoute>
-            } 
+            }
           />
 
           <Route path="admin" element={<AdminLayout />}>
@@ -184,11 +184,10 @@ function App() {
         <Route path="like" element={<div className="mypage1"><Like /></div>} />
 
         <Route path="/login" element={<LoginPage />} />
-        
-        <Route path="shorts" element={<ShortsVideoPage />} />
 
-        {/* 좋아요 or 시청한 기록 페이지에서 영상 클릭 시 숏츠 페이지로 이동 */}
-        <Route path="/shorts/:videoId" element={<ShortsVideoPage />} />
+        <Route path="shorts" element={<ShortsVideoPage />} />
+        <Route path="/shorts/video/:videoId" element={<ShortsVideoPage />} />
+
         <Route path="/*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
