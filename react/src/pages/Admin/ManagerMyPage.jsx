@@ -43,16 +43,28 @@ const ManagerMyPage = () => {
 
           <main className={styles.mypage}>
             <h2>마이페이지</h2>
-            <div className={styles.box}>
-             <div className={styles.img}><img className={styles.img2} src={`http://localhost:8080${userInfo?.profileImage||"프로필이미지"}?t=${Date.now()}`}
-                 alt="프로필" /></div>
+           <div className={styles.box}>
+              <div className={styles.img}>
+                <img 
+                  className={styles.img2} 
+                  src={`http://localhost:8080${userInfo?.profileImage || "프로필이미지"}?t=${Date.now()}`} 
+                  alt="프로필" 
+                />
+              </div>
               <div>
-                <p>{userInfo?.userName || "이름"}관리자 님</p>
+                <p>{userInfo?.userName || "이름"} 관리자 님</p>
                 <p>{userInfo?.userEmail || "이메일"}</p>
                 <p>{userInfo?.userPhone || "전화번호"}</p>
-                <button><Link to="/checkinfo">정보수정</Link></button>
+                <div className={styles.buttons}>
+                  <button>
+                    <Link to="/checkinfo">정보 수정</Link>
+                  </button>
+                  <button>
+                    <Link to="/">사용자 페이지</Link>
+                  </button>
+                </div>
               </div>
-            </div>
+          </div>
             <div className={styles.stats}>
               <div>회원수<br /><strong>52명</strong></div>
               <div>문의수<br /><strong>19건</strong></div>
