@@ -132,7 +132,6 @@ function Search() {
           )}
         </div>
       </div>
-    </>
   );
 }
 

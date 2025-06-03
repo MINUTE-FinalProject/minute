@@ -313,7 +313,6 @@ function ShortsVideoPage() {
       
       // const apiItems = Array.isArray(apiVideos) ? apiVideos : []; // YouTube API 직접 호출 시
       // const allItems = [...dbItems, ...apiItems];
-      const allItems = [...dbItems]; // 현재는 DB shorts만 사용
 
       const allItems = [...dbItems, ...apiItems];
 
