@@ -1,93 +1,156 @@
-// src/pages/Admin/Notice/ManagerNoticeDetail.jsx (또는 해당 파일의 실제 경로)
+// src/pages/Admin/Notice/ManagerNoticeDetail.jsx
+import axios from 'axios'; // axios import
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+// 경로 확인: 현재 파일 위치에 따라 ../../../assets/... 등으로 변경될 수 있습니다.
 import styles from '../../assets/styles/ManagerNoticeDetail.module.css';
-import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
+import Modal from '../../components/Modal/Modal';
 
-const sampleNotices = {
-    'sticky': { id: 'sticky', isImportant: true, title: '이벤트 당첨자 발표 안내 (필독)', author: '관리자', views: 1024, createdAt: '2025.05.10', content: "안녕하세요. 사용자 여러분께 안내 말씀드립니다.\n\n보다 안정적인 서비스 제공을 위해 아래와 같이 서버 점검을 실시할 예정입니다.\n점검 시간 동안에는 서비스 이용이 일시적으로 중단될 수 있으니 양해 부탁드립니다.\n\n- 점검 일시: 2025년 5월 15일 (목) 02:00 ~ 04:00 (2시간)\n- 점검 내용: 서버 안정화 및 성능 개선 작업\n\n항상 최선을 다하는 서비스가 되겠습니다.\n감사합니다." },
-    '1': { id: '1', isImportant: false, title: '첫 번째 일반 공지사항입니다.', author: '관리자', views: 123, createdAt: '2025.05.02', content: "첫 번째 공지사항의 내용입니다. \n\n상세 내용을 확인해주세요." },
-    '2': { id: '2', isImportant: true, title: '두 번째 중요 공지사항입니다.', author: '관리자', views: 456, createdAt: '2025.05.01', content: "두 번째 중요 공지사항의 내용입니다. \n\n필독 바랍니다." },
-};
-
-const getNoticeById = (id) => {
-    return sampleNotices[id] || null;
+// 데이터 로드 실패 또는 ID 없을 시 보여줄 기본값 (오류 상황 대체용)
+const FALLBACK_NOTICE = {
+    id: 'error',
+    isImportant: false,
+    title: '오류',
+    author: '시스템',
+    views: 0,
+    createdAt: 'N/A',
+    content: "공지사항 정보를 불러오는 데 실패했습니다."
 };
 
 function ManagerNoticeDetail() {
     const { id: noticeIdFromUrl } = useParams();
     const navigate = useNavigate();
+    
     const [notice, setNotice] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isActionLoading, setIsActionLoading] = useState(false); // 수정/삭제 액션 로딩
 
-    // 모달 상태 관리
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalProps, setModalProps] = useState({
-        title: '',
-        message: '',
-        onConfirm: null,
-        confirmText: '확인',
-        cancelText: null,
-        type: 'default',
-        confirmButtonType: 'primary',
-        cancelButtonType: 'secondary'
+        title: '', message: '', onConfirm: null, confirmText: '확인',
+        cancelText: null, type: 'default', confirmButtonType: 'primary',
+        cancelButtonType: 'secondary', onClose: () => setIsModalOpen(false)
     });
 
+    const getToken = () => localStorage.getItem('token');
+
     useEffect(() => {
-        setLoading(true);
-        setTimeout(() => { 
-            let fetchedNotice = getNoticeById(noticeIdFromUrl);
-            
-            if (!fetchedNotice) {
-                fetchedNotice = sampleNotices['sticky'] || Object.values(sampleNotices).find(n => n !== null);
-                if (!fetchedNotice) {
-                    console.error("No notices available in sampleNotices.");
+        setIsLoading(true);
+        if (noticeIdFromUrl && !isNaN(Number(noticeIdFromUrl))) {
+            const fetchNoticeDetail = async () => {
+                try {
+                    // GET /api/notices/{id}는 permitAll이므로 토큰 없이 요청 가능
+                    const response = await axios.get(`/api/notices/${noticeIdFromUrl}`);
+                    const data = response.data; // NoticeDetailResponseDTO
+
+                    const dateObj = new Date(data.noticeCreatedAt);
+                    const formattedDate = `${dateObj.getFullYear()}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.${String(dateObj.getDate()).padStart(2, '0')}`;
+
+                    setNotice({
+                        id: data.noticeId,
+                        isImportant: data.noticeIsImportant,
+                        title: data.noticeTitle,
+                        author: data.authorNickname, // 또는 data.authorId
+                        views: data.noticeViewCount,
+                        createdAt: formattedDate,
+                        content: data.noticeContent,
+                        rawCreatedAt: data.noticeCreatedAt // 수정 페이지로 넘길 원본 날짜 (필요시)
+                    });
+                } catch (error) {
+                    console.error("Error fetching notice detail:", error);
+                    setNotice(FALLBACK_NOTICE);
+                    setModalProps({
+                        title: "데이터 로드 실패",
+                        message: error.response?.data?.message || "공지사항 정보를 불러오는 데 실패했습니다.",
+                        type: "error",
+                        confirmText: "목록으로",
+                        confirmButtonType: 'blackButton',
+                        onConfirm: () => { setIsModalOpen(false); navigate('/admin/managerNotice'); },
+                        onClose: () => { setIsModalOpen(false); navigate('/admin/managerNotice'); }
+                    });
+                    setIsModalOpen(true);
+                } finally {
+                    setIsLoading(false);
                 }
-            }
-            setNotice(fetchedNotice);
-            setLoading(false);
-        }, 300);
-    }, [noticeIdFromUrl]);
+            };
+            fetchNoticeDetail();
+        } else {
+            console.warn("Invalid noticeIdFromUrl:", noticeIdFromUrl);
+            setNotice(FALLBACK_NOTICE);
+            setIsLoading(false);
+            setModalProps({
+                title: "잘못된 접근",
+                message: "유효하지 않은 공지사항 ID 입니다.",
+                type: "warning",
+                confirmText: "목록으로",
+                confirmButtonType: 'blackButton',
+                onConfirm: () => { setIsModalOpen(false); navigate('/admin/managerNotice'); },
+                onClose: () => { setIsModalOpen(false); navigate('/admin/managerNotice'); }
+            });
+            setIsModalOpen(true);
+        }
+    }, [noticeIdFromUrl, navigate]);
 
     const handleEdit = () => {
-        if (!notice || !notice.id) {
+        if (!notice || notice.id === 'error') {
             setModalProps({
-                title: "오류",
-                message: "수정할 공지사항 정보가 유효하지 않습니다.",
-                confirmText: "확인",
-                type: "adminError", // 관리자용 에러 타입
-                confirmButtonType: 'primary'
+                title: "오류", message: "수정할 공지사항 정보가 유효하지 않습니다.",
+                type: "error", confirmButtonType: 'blackButton', onConfirm: () => setIsModalOpen(false), onClose: () => setIsModalOpen(false)
             });
             setIsModalOpen(true);
             return;
         }
-        navigate(`/admin/managerNoticeEdit/${notice.id}`);
+        // 수정 페이지로 상태 전달 (선택적, API 재호출이 일반적)
+        navigate(`/admin/managerNoticeEdit/${notice.id}`, { state: { noticeData: notice } });
     };
 
-    // --- 공지사항 삭제 처리 (Modal 적용) ---
-    const processDeleteNotice = () => {
-        console.log(`Delete notice ID: ${notice.id}, Title: ${notice.title}`);
-        // TODO: API로 실제 삭제 요청
+    const processDeleteNotice = async () => {
+        if (!notice || notice.id === 'error') return;
 
-        setModalProps({
-            title: "삭제 완료",
-            message: `공지사항 "${notice.title}" (ID: ${notice.id})이(가) 성공적으로 삭제되었습니다.`,
-            confirmText: "목록으로 이동",
-            type: "adminSuccess", // 관리자용 성공 타입 (핑크 버튼을 원하시면 'success')
-            confirmButtonType: 'primary',
-            onConfirm: () => navigate('/admin/notice')
-        });
-        setIsModalOpen(true); // 성공 알림 모달 다시 열기
+        const token = getToken();
+        if (!token) {
+            setModalProps({ title: "인증 오류", message: "로그인이 필요합니다. 다시 로그인해주세요.", type: "error", confirmButtonType: 'blackButton', onConfirm: () => {setIsModalOpen(false); navigate('/login');}, onClose: () => setIsModalOpen(false) });
+            setIsModalOpen(true);
+            return;
+        }
+        
+        setIsActionLoading(true);
+        try {
+            await axios.delete(`/api/notices/${notice.id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setModalProps({
+                title: "삭제 완료",
+                message: `공지사항 "${notice.title}" (ID: ${notice.id})이(가) 성공적으로 삭제되었습니다.`,
+                type: "success", // Modal 컴포넌트가 success 타입 스타일을 지원해야 함
+                confirmText: "목록으로 이동",
+                confirmButtonType: 'blackButton',
+                onConfirm: () => { setIsModalOpen(false); navigate('/admin/managerNotice'); },
+                onClose: () => { setIsModalOpen(false); navigate('/admin/managerNotice'); }
+            });
+            setIsModalOpen(true);
+        } catch (error) {
+            console.error("Error deleting notice:", error);
+            setModalProps({
+                title: "삭제 실패",
+                message: error.response?.data?.message || "공지사항 삭제 중 오류가 발생했습니다.",
+                type: "error",
+                confirmText: "확인",
+                confirmButtonType: 'blackButton',
+                onConfirm: () => setIsModalOpen(false),
+                onClose: () => setIsModalOpen(false)
+            });
+            setIsModalOpen(true);
+        } finally {
+            setIsActionLoading(false);
+        }
     };
 
     const handleDelete = () => {
-        if (!notice || !notice.id) {
-            setModalProps({
-                title: "오류",
-                message: "삭제할 공지사항 정보가 유효하지 않습니다.",
-                confirmText: "확인",
-                type: "adminError",
-                confirmButtonType: 'primary'
+        if (!notice || notice.id === 'error') {
+             setModalProps({
+                title: "오류", message: "삭제할 공지사항 정보가 유효하지 않습니다.",
+                type: "error", confirmButtonType: 'blackButton', onConfirm: () => setIsModalOpen(false), onClose: () => setIsModalOpen(false)
             });
             setIsModalOpen(true);
             return;
@@ -95,35 +158,36 @@ function ManagerNoticeDetail() {
         setModalProps({
             title: "공지사항 삭제 확인",
             message: `공지사항 "${notice.title}" (ID: ${notice.id})을(를) 정말 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`,
-            onConfirm: processDeleteNotice,
+            type: "warning", // Modal 컴포넌트가 warning 타입 스타일을 지원해야 함
             confirmText: "삭제",
             cancelText: "취소",
-            type: "adminConfirm", // 또는 'adminWarning'
-            confirmButtonType: 'danger'
+            confirmButtonType: 'redButton',
+            cancelButtonType: 'grayButton',
+            onConfirm: () => { 
+                // setIsModalOpen(false); // processDeleteNotice에서 다시 모달을 띄우므로, 여기서는 닫지 않음.
+                processDeleteNotice();
+            },
+            onClose: () => setIsModalOpen(false)
         });
         setIsModalOpen(true);
     };
 
-    if (loading) {
+    if (isLoading) {
         return (
             <div className={styles.container}>
-                <main className={styles.managerContent}>
-                    <p>공지사항을 불러오는 중입니다...</p>
-                </main>
+                <main className={styles.managerContent}><p>공지사항을 불러오는 중입니다...</p></main>
             </div>
         );
     }
 
-    if (!notice) {
+    if (!notice || notice.id === 'error') { // 로딩 완료 후에도 notice가 없거나 FALLBACK_NOTICE인 경우
         return (
             <div className={styles.container}>
                 <main className={styles.managerContent}>
                     <div className={styles.pageHeader}>
-                        <Link to="/admin/notice" className={styles.toListLink}>
-                            <h1>공지사항 관리</h1>
-                        </Link>
+                        <Link to="/admin/managerNotice" className={styles.toListLink}><h1>공지사항 관리</h1></Link>
                     </div>
-                    <p>표시할 공지사항 데이터가 없습니다. (ID: {noticeIdFromUrl})</p>
+                    <p>공지사항 정보를 찾을 수 없거나 불러오는 데 실패했습니다. (ID: {noticeIdFromUrl || 'N/A'})</p>
                 </main>
             </div>
         );
@@ -134,7 +198,7 @@ function ManagerNoticeDetail() {
             <div className={styles.container}>
                 <main className={styles.managerContent}>
                     <div className={styles.pageHeader}>
-                        <Link to="/admin/notice" className={styles.toListLink}>
+                        <Link to="/admin/managerNotice" className={styles.toListLink}>
                             <h1>공지사항 관리</h1>
                         </Link>
                     </div>
@@ -155,26 +219,26 @@ function ManagerNoticeDetail() {
                         </div>
 
                         <div className={styles.contentBody}>
-                            {notice.content.split('\n').map((line, index) => (
+                            {typeof notice.content === 'string' ? notice.content.split('\n').map((line, index) => (
                                 <React.Fragment key={index}>
                                     {line}
                                     {index < notice.content.split('\n').length - 1 && <br />}
                                 </React.Fragment>
-                            ))}
+                            )) : notice.content}
                         </div>
                     </div>
 
                     <div className={styles.actionsContainer}>
                         <div> 
-                            <button onClick={handleEdit} className={`${styles.actionButton} ${styles.editButton}`}>수정</button>
-                            <button onClick={handleDelete} className={`${styles.actionButton} ${styles.deleteButton}`}>삭제</button>
+                            <button onClick={handleEdit} className={`${styles.actionButton} ${styles.editButton}`} disabled={isActionLoading}>수정</button>
+                            <button onClick={handleDelete} className={`${styles.actionButton} ${styles.deleteButton}`} disabled={isActionLoading}>삭제</button>
                         </div>
                     </div>
                 </main>
             </div>
             <Modal
                 isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+                // onClose는 modalProps에 포함되어 있음
                 {...modalProps}
             />
         </>
