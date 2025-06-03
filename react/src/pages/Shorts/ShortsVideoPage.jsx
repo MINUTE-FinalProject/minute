@@ -205,7 +205,6 @@ function ShortsVideoPage() {
       setOriginalShorts(incomingList);
 
       if (paramVideoId) {
-        // paramVideoId에 해당하는 인덱스를 찾아 currentOriginalIdx에 설정
         const idx = incomingList.findIndex((item) => {
           const id = item?.id?.videoId || item?.videoId || null;
           return id === paramVideoId;
@@ -218,11 +217,11 @@ function ShortsVideoPage() {
     }
 
     // (2) incomingList 없으면, DB/API에서 가져오기
-    const dbFetch = fetch(`/api/v1/youtube/db/shorts?maxResults=15`)
+    const dbFetch = fetch(`/api/v1/youtube/db/shorts?maxResults=20`)
       .then((res) => (res.ok ? res.json() : []))
       .catch(() => []);
 
-    const apiFetch = fetch(`/api/v1/youtube/shorts?maxResults=15`)
+    const apiFetch = fetch(`/api/v1/youtube/shorts?maxResults=20`)
       .then((res) => (res.ok ? res.json() : []))
       .catch(() => []);
 
@@ -247,26 +246,47 @@ function ShortsVideoPage() {
       const apiItems = Array.isArray(apiVideos) ? apiVideos : [];
 
       const allItems = [...dbItems, ...apiItems];
-      setOriginalShorts(allItems);
 
+     // paramVideoId가 있는데 allItems 안에 없다면, 강제로 맨 앞에 추가
       if (paramVideoId) {
         const idx = allItems.findIndex((item) => {
           const id = item?.id?.videoId || item?.videoId || null;
           return id === paramVideoId;
         });
-        setCurrentOriginalIdx(idx !== -1 ? idx : 0);
-      } else {
-        setCurrentOriginalIdx(0);
+
+        if (idx === -1) {
+          // “videoId:paramVideoId”만으로 최소한 플레어가 로드되도록 빈 틀 하나 생성
+          allItems.unshift({
+            id: { videoId: paramVideoId },
+            snippet: {
+              title: "",
+              description: "",
+              thumbnails: { medium: { url: "" } },
+            },
+          });
+          setOriginalShorts(allItems);
+          setCurrentOriginalIdx(0);
+          return;
+        } else {
+          setOriginalShorts(allItems);
+          setCurrentOriginalIdx(idx);
+          return;
+        }
       }
+
+      // paramVideoId가 없으면 그냥 0으로 세팅
+      setOriginalShorts(allItems);
+      setCurrentOriginalIdx(0);
     });
   }, [paramVideoId, incomingList]);
+
 
   // ────────────────────────────────────────────────────
   // 10) 세 번째 useEffect: “시청 기록 저장”
   //     • isLoggedIn && originalShorts 준비된 상태에서, currentOriginalIdx 변화 시마다 호출
   //────────────────────────────────────────────────────
   useEffect(() => {
-    if (!isLoggedIn) return;
+    // if (!isLoggedIn) return;
     if (!originalShorts.length) return;
 
     const userId = localStorage.getItem("userId");
@@ -277,6 +297,8 @@ function ShortsVideoPage() {
       null;
     if (!id) return;
 
+    // (1) 로그인 사용자만 시청 기록 저장
+    if (isLoggedIn && userId && token) {
     axios
       .post(
         `/api/v1/auth/${userId}/watch-history`,
@@ -289,7 +311,18 @@ function ShortsVideoPage() {
         }
       )
       .catch((err) => console.error("시청 기록 저장 실패", err));
-  }, [currentOriginalIdx, originalShorts, isLoggedIn]);
+    }
+     // (2) 조회수 증가용 GET 요청 (로그인 여부 상관없이 보냄)
+      axios
+     .get(userId ? `/api/v1/videos/${id}?userId=${userId}` : `/api/v1/videos/${id}`)
+     .then((res) => {
+       // 증가된 views 값이 포함된 응답 DTO가 돌아옵니다.
+       console.log("[조회수 증가 후 DTO]", res.data);
+     })
+     .catch((err) => {
+       console.error("조회수 증가 API 호출 실패", err);
+     });
+  }, [currentOriginalIdx, originalShorts]);
 
   // ────────────────────────────────────────────────────
   // 11) 좋아요 클릭 핸들러
@@ -300,6 +333,7 @@ function ShortsVideoPage() {
     const currentVideoId = currentItem.id?.videoId || currentItem.videoId;
     if (!currentVideoId) return;
 
+    // 로그인 상태 체크
     if (!isLoggedIn) {
       setIsLoginModalOpen(true);
       return;
@@ -606,7 +640,13 @@ function ShortsVideoPage() {
           <div className={styles.loginModalOverlay} onClick={() => setIsLoginModalOpen(false)}>
             <div className={styles.loginModal} onClick={(e) => e.stopPropagation()}>
               <h2>로그인이 필요합니다</h2>
-              <button onClick={() => navigate("/login")}>로그인</button>
+              <button
+                onClick={() =>
+                  navigate("/login", {
+                    state: { from: location.pathname + location.search },
+                  })
+                }
+              >로그인</button>
             </div>
           </div>
         )}

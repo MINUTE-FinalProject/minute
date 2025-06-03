@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import img from "../../assets/images/loginBg1.png";
 import styles from "../../assets/styles/LoginPage.module.css";
 
@@ -10,6 +10,10 @@ function LoginPage() {
   const [userPw, setUserPw] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // 로그인 전 받았던 “from” 경로가 없으면 기본 루트("/")로 보낸다
+  const from = location.state?.from || "/";
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -30,6 +34,7 @@ function LoginPage() {
       localStorage.setItem("userId", userId);
       localStorage.setItem("token", token);
 
+
       // 사용자 정보 조회
       const userInfoRes = await axios.get(
         `http://localhost:8080/api/v1/user/${userId}`,
@@ -44,9 +49,11 @@ function LoginPage() {
       if (data.code === "SU") {
         const userRole = data.role ?? "USER"; 
         if (userRole === "ADMIN") {
-          navigate("/admin"); // 관리자 페이지로 이동
+          navigate("/admin",{ replace: true }); // 관리자 페이지로 이동
         } else {
           navigate("/"); // 일반 사용자 홈으로 이동
+            // 로그인 성공 후, 원래 페이지로 되돌려 보낸다
+          navigate(from, { replace: true });
         }
       } else {
         setErrorMsg("사용자 정보를 불러오는 데 실패했습니다.");

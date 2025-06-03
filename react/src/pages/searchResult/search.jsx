@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import styles from "../../assets/styles/search.module.css";
 import SearchBar from "../../components/MainSearchBar/SearchBar";
+import { Link, useLocation } from "react-router-dom";
 
 function Search() {
   const [videos, setVideos] = useState([]); // 영상
@@ -10,8 +11,9 @@ function Search() {
   const [currentPage, setCurrentPage] = useState(1); // 페이지 수 기본 첫번째
   const itemsPerPage = 20; // 20개씩 보여주고
 
+  const location = useLocation();
   // url 쿼리에서 검색어 추출
-  const queryParams = new URLSearchParams(window.location.search);
+  const queryParams = new URLSearchParams(location.search);
   const query = queryParams.get("query") || "";
 
   // 검색어가 바뀔 때마다 API 호출
@@ -21,19 +23,32 @@ function Search() {
       return;
     }
     setLoading(true);
+    setError(null);
+
+    const token = localStorage.getItem("token");
+    const config = {
+      params: { keyword: query },
+      ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
+    };
+
     axios
-      .get("/api/v1/videos", { params: { keyword: query } })
-        const token = localStorage.getItem("token");
-        axios.get("/api/v1/videos", {
-          params: { keyword: query },
-          headers: { Authorization: `Bearer ${token}` }
-        })
-      .then((res) => setVideos(res.data))
-      .catch((err) => setError(err))
-      .finally(() => setLoading(false));
-    setCurrentPage(1);
+      .get("/api/v1/videos", config)
+      .then((res) => {
+        setVideos(res.data || []);
+      })
+      .catch((err) => {
+        console.error("검색 API 호출 실패:", err);
+        setError(err);
+        setVideos([]);
+      })
+      .finally(() => {
+        setLoading(false);
+        // 검색어가 바뀔 때마다 항상 1페이지로 초기화
+        setCurrentPage(1);
+      });
   }, [query]);
 
+  // 페이지네이션 계산
   const totalItems = videos.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startIdx = (currentPage - 1) * itemsPerPage;
@@ -65,21 +80,31 @@ function Search() {
                 </h2>
               )}
               <div className={styles.grid}>
-                {currentItems.map((video) => (
-                  <div key={video.videoId} className={styles.gridItem}>
-                     <div className={styles.thumbnailWrapper}>
-                      <img
-                        src={video.thumbnailUrl}
-                        alt={video.videoTitle}
-                        className={styles.thumbnail}
-                      />
-                      </div>
-                       <div className={styles.textWrapper}>
-                      <h3>{video.videoTitle}</h3>
-                      <p>{video.channelName}</p>
-                    </div>
+              {currentItems.map((video) => (
+                <Link
+                  key={video.videoId}
+                  to={`/shorts/${video.videoId}`}
+                  state={{
+                     // 숏츠페이지에서 검색 페이지로 돌아올 때 (검색결과 기억한 상태)
+                    origin: location.pathname + location.search,
+                    // 전체 영상 목록
+                    list: videos
+                  }}
+                  className={styles.gridItem}
+                >
+                  <div className={styles.thumbnailWrapper}>
+                    <img
+                      src={video.thumbnailUrl}
+                      alt={video.videoTitle}
+                      className={styles.thumbnail}
+                    />
                   </div>
-                ))}
+                  <div className={styles.textWrapper}>
+                    <h3>{video.videoTitle}</h3>
+                    {/* <p>{video.channelName}</p> */}
+                  </div>
+                </Link>
+              ))}
               </div>
               {totalPages > 1 && (
                 <div className={styles.pagination}>
