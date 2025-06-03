@@ -4,7 +4,7 @@
   height: 45px;
   top: 0;
   background-color: rgba(116, 116, 116, 0.4);
-  z-index: 10;
+  z-index: 1001;
 }
 .container {
   width: 90%;

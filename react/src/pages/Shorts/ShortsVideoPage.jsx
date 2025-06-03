@@ -1,5 +1,3 @@
-// src/pages/ShortsVideoPage.jsx
-
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
@@ -29,6 +27,9 @@ function ShortsVideoPage() {
   // 3) 좋아요/싫어요 맵
   const [likes, setLikes] = useState({});
   const [dislikes, setDislikes] = useState({});
+
+  // 현재 재생 중인 영상의 좋아요 개수
+  const [currentLikeCount, setCurrentLikeCount] = useState(0);
 
   // ────────────────────────────────────────────────────
   // 4) “원본 숏츠 목록(originalShorts)” + “현재 인덱스(currentOriginalIdx)”
@@ -280,7 +281,7 @@ function ShortsVideoPage() {
     });
   }, [paramVideoId, incomingList]);
 
-
+  
   // ────────────────────────────────────────────────────
   // 10) 세 번째 useEffect: “시청 기록 저장”
   //     • isLoggedIn && originalShorts 준비된 상태에서, currentOriginalIdx 변화 시마다 호출
@@ -312,19 +313,21 @@ function ShortsVideoPage() {
       )
       .catch((err) => console.error("시청 기록 저장 실패", err));
     }
-     // (2) 조회수 증가용 GET 요청 (로그인 여부 상관없이 보냄)
-      axios
-     .get(userId ? `/api/v1/videos/${id}?userId=${userId}` : `/api/v1/videos/${id}`)
-     .then((res) => {
-       // 증가된 views 값이 포함된 응답 DTO가 돌아옵니다.
-       console.log("[조회수 증가 후 DTO]", res.data);
-     })
-     .catch((err) => {
-       console.error("조회수 증가 API 호출 실패", err);
-     });
+     // (2) 조회수 증가 + 좋아요 개수까지 같이 내려주는 GET 요청
+     axios
+          .get(userId ? `/api/v1/videos/${id}?userId=${userId}` : `/api/v1/videos/${id}`)
+          .then((res) => {
+            // res.data에 { videoId, videoTitle, …, views, likes, … } 형태로 온다고 가정
+            const dto = res.data;
+            // 좋아요 개수 저장
+            setCurrentLikeCount(dto.likes || 0);
+          })
+          .catch((err) => {
+            console.error("조회수 증가 + 좋아요 개수 API 호출 실패", err);
+          });
   }, [currentOriginalIdx, originalShorts]);
 
-  // ────────────────────────────────────────────────────
+    // ────────────────────────────────────────────────────
   // 11) 좋아요 클릭 핸들러
   //────────────────────────────────────────────────────
   const handleThumbUpClick = async () => {
@@ -340,43 +343,65 @@ function ShortsVideoPage() {
     }
 
     const userId = localStorage.getItem("userId");
-    const token = localStorage.getItem("token");
+    const token  = localStorage.getItem("token");
     const isNowLiked = !!likes[currentVideoId];
+    const isNowDisliked = !!dislikes[currentVideoId];
 
     try {
       if (!isNowLiked) {
-        // 좋아요 추가
+        // ── (A) UI: 좋아요 바로 추가 & 좋아요 개수 +1 ──
+        setLikes(prev => ({ ...prev, [currentVideoId]: true }));
+        setCurrentLikeCount(prev => prev + 1);
+
+        // (B) API: 실제 좋아요 등록 요청
         await axios.post(
           `/api/v1/auth/${userId}/videos/${currentVideoId}/like`,
           null,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setLikes((prev) => ({ ...prev, [currentVideoId]: true }));
 
-        // 이미 싫어요(관심 없음) 상태였다면 해제
-        if (dislikes[currentVideoId]) {
-          setDislikes((prev) => {
+        // ── (C) 만약 이전에 싫어요 상태였다면, 싫어요 해제 및 (옵션) 좋아요 개수 조정 ──
+        if (isNowDisliked) {
+          setDislikes(prev => {
             const copy = { ...prev };
             delete copy[currentVideoId];
             return copy;
           });
         }
-      } else {
-        // 좋아요 해제
-        await axios.delete(
-          `/api/v1/auth/${userId}/videos/${currentVideoId}/like`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setLikes((prev) => {
-          const copy = { ...prev };
-          delete copy[currentVideoId];
-          return copy;
-        });
+        } else {
+          // ── (A) UI: 좋아요 해제 & 좋아요 개수 -1 ──
+          setLikes(prev => {
+            const copy = { ...prev };
+            delete copy[currentVideoId];
+            return copy;
+          });
+          setCurrentLikeCount(prev => (prev > 0 ? prev - 1 : 0));
+
+          // (B) API: 실제 좋아요 취소 요청
+          await axios.delete(
+            `/api/v1/auth/${userId}/videos/${currentVideoId}/like`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+        }
+      } catch (err) {
+        console.error("좋아요 API 에러", err);
+        // 실패 시, 로컬 상태 복구
+        if (!isNowLiked) {
+          // 좋아요 등록 실패 → 다시 좋아요 해제 & 개수 감소
+          setLikes(prev => {
+            const copy = { ...prev };
+            delete copy[currentVideoId];
+            return copy;
+          });
+          setCurrentLikeCount(prev => (prev > 0 ? prev - 1 : 0));
+        } else {
+          // 좋아요 취소 실패 → 다시 좋아요 추가 & 개수 증가
+          setLikes(prev => ({ ...prev, [currentVideoId]: true }));
+          setCurrentLikeCount(prev => prev + 1);
+        }
+        openToast("좋아요 처리 중 오류가 발생했습니다.");
       }
-    } catch (err) {
-      console.error("좋아요 API 에러", err);
-    }
-  };
+    };
 
   // ────────────────────────────────────────────────────
   // 12) 싫어요 클릭 핸들러 (비파괴적으로 동작)
@@ -542,7 +567,13 @@ function ShortsVideoPage() {
                     onClick={handleThumbUpClick}
                     className={styles.reactionIcon}
                   />
-                  <span className={styles.reactionLabel}>좋아요</span>
+                   {currentLikeCount > 0 ? (
+                  <span className={styles.reactionLabel}>
+                     {currentLikeCount.toLocaleString()}
+                  </span>
+                  ) : (
+                    <span className={styles.reactionLabel}>좋아요</span>
+                  )}
                 </li>
 
                 {/* 관심 없음(싫어요) */}
