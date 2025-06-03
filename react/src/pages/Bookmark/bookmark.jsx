@@ -32,10 +32,9 @@ const Bookmark = () => {
 
     // --- 데이터 로딩 useEffect ---
     useEffect(() => {
-        // 폴더 목록을 불러올 때 썸네일 정보도 함께 가져옵니다.
         apiClient.get("/folder")
             .then((res) => {
-                console.log("폴더 데이터 수신:", res.data); // ✨ 수신 데이터 확인용 로그
+                console.log("폴더 데이터 수신:", res.data);
                 setFolders(Array.isArray(res.data) ? res.data : []);
             })
             .catch((err) => console.error("***** 폴더 목록 로딩 오류 *****:", err));
@@ -62,21 +61,23 @@ const Bookmark = () => {
     }, [urlFolderId, navigate]);
 
     // --- 클릭 및 이벤트 핸들러 ---
+    
+    // ▼▼▼▼▼ 여기가 핵심 수정 부분입니다 ▼▼▼▼▼
     const handleVideoClick = (video) => {
-        console.log("페이지 이동 시도. 전달된 비디오 객체:", video);
-        if (!video) {
-            console.error("클릭 이벤트는 발생했으나, video 객체가 존재하지 않습니다.");
-            return;
-        }
         const videoId = video.videoId || video.video_id || video.youtubeVideoId;
         if (videoId) {
-            const destination = `/shorts/video/${videoId}`;
-            console.log(`성공! 다음 주소로 이동합니다: ${destination}`);
-            navigate(destination);
+            // navigate 하면서 현재 폴더의 영상 목록(selectedFolderVideos)을 state로 함께 전달합니다.
+            // ShortsVideoPage에서는 이 목록을 'incomingList'라는 이름으로 받게 됩니다.
+            navigate(`/shorts/video/${videoId}`, { 
+                state: { 
+                    list: selectedFolderVideos 
+                } 
+            });
         } else {
-            console.error("ID를 찾을 수 없는 영상 객체입니다. 객체의 키를 확인해주세요:", video);
+            console.error("ID를 찾을 수 없는 영상 객체입니다:", video);
         }
     };
+    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
     const handleFolderClick = (folderId) => {
         if (typeof folderId === 'undefined' || folderId === null) return;
@@ -126,7 +127,10 @@ const Bookmark = () => {
                     setFolders((prev) => [res.data, ...prev]);
                     handleAddModalCancel();
                 })
-                .catch((err) => console.error("***** 폴더 추가 실패 *****:", err));
+                .catch((err) => {
+                    console.error("***** 폴더 추가 실패 *****:", err);
+                    alert("폴더 추가에 실패했습니다.");
+                });
         }
     };
     const handleOpenOptionsModal = (folderId) => {
@@ -144,6 +148,7 @@ const Bookmark = () => {
         setIsRenameModalOpen(false);
         setFolderIdPendingAction(null);
     };
+
     const handleRenameModalSubmit = () => {
         const newName = renameFolderName.trim().slice(0, 10);
         if (newName && folderIdPendingAction !== null) {
@@ -154,10 +159,12 @@ const Bookmark = () => {
                 })
                 .catch((err) => {
                     console.error("***** 폴더 이름 변경 실패 *****:", err);
+                    alert("이름 변경에 실패했습니다. 다시 로그인 후 시도해주세요.");
                     handleRenameModalCancel();
                 });
         }
     };
+
     const handleDeleteFolder = () => {
         setIsOptionsModalOpen(false);
         setIsDeleteModalOpen(true);
@@ -166,22 +173,30 @@ const Bookmark = () => {
         setIsDeleteModalOpen(false);
         setFolderIdPendingAction(null);
     };
+
     const handleDeleteModalSubmit = () => {
         const idToDelete = folderIdPendingAction;
-        if (idToDelete === null) return;
+        if (idToDelete === null) {
+            console.error("삭제할 폴더 ID가 없습니다. 상태가 초기화된 것 같습니다.");
+            return;
+        }
         apiClient.delete(`/folder/${idToDelete}`)
             .then(() => {
                 setFolders((prev) => prev.filter((f) => f.folderId !== idToDelete));
-                if (urlFolderId && parseInt(urlFolderId) === idToDelete) navigate("/bookmark");
+                if (urlFolderId && parseInt(urlFolderId, 10) === idToDelete) {
+                    navigate("/bookmark", { replace: true });
+                }
                 handleDeleteModalCancel();
+                alert("폴더가 삭제되었습니다.");
             })
             .catch((err) => {
                 console.error("***** 폴더 삭제 실패 *****:", err);
+                alert("폴더 삭제에 실패했습니다. 다시 로그인 후 시도해주세요.");
                 handleDeleteModalCancel();
             });
     };
 
-    const currentFolderName = urlFolderId ? folders.find(f => f.folderId === parseInt(urlFolderId))?.folderName || "" : "";
+    const currentFolderName = urlFolderId ? folders.find(f => f.folderId === parseInt(urlFolderId, 10))?.folderName || "" : "";
 
     return (
         <>
@@ -225,12 +240,10 @@ const Bookmark = () => {
                                         })
                                     )
                                 ) : (
-                                    // ✨ 여기가 폴더 목록을 표시하는 부분입니다.
                                     folders.map((f) => (
                                         <div key={f.folderId} className={bookmarkStyle.bookmarkItem} onClick={() => handleFolderClick(f.folderId)}>
                                             <div className={bookmarkStyle.bookmarkCard}>
                                                 <div className={bookmarkStyle.placeholderImage}>
-                                                    {/* ✨ [수정됨] f.randomThumbnailUrl이 있으면 이미지, 없으면 파란 배경 표시 */}
                                                     {f.randomThumbnailUrl ? (
                                                         <img 
                                                             src={f.randomThumbnailUrl} 
@@ -251,13 +264,23 @@ const Bookmark = () => {
                                 )}
                             </section>
 
-                            {/* 이하 모달들은 변경 없습니다. */}
+                            {/* 이하 모달들 */}
                             <Modal isOpen={isAddModalOpen} onClose={handleAddModalCancel} title="폴더 추가" onConfirm={handleAddModalSubmit} confirmText="확인" cancelText="취소">
                                 <input type="text" value={newFolderName} onChange={(e) => setNewFolderName(e.target.value)} maxLength={10} placeholder="폴더 이름을 입력하세요 (최대 10자)" className={bookmarkStyle.modalInput}/>
                             </Modal>
-                            <Modal isOpen={isOptionsModalOpen} onClose={() => { setIsOptionsModalOpen(false); setFolderIdPendingAction(null); }} title="폴더 옵션" confirmText="이름 변경" cancelText="삭제" onConfirm={handleOpenRenameModal} onCancel={handleDeleteFolder}>
+                            
+                            <Modal 
+                                isOpen={isOptionsModalOpen} 
+                                onClose={() => setIsOptionsModalOpen(false)}
+                                title="폴더 옵션" 
+                                confirmText="이름 변경" 
+                                cancelText="삭제" 
+                                onConfirm={handleOpenRenameModal} 
+                                onCancel={handleDeleteFolder}
+                            >
                                 <p>폴더에 대한 작업을 선택하세요.</p>
                             </Modal>
+
                             <Modal isOpen={isRenameModalOpen} onClose={handleRenameModalCancel} title="폴더 이름 변경" onConfirm={handleRenameModalSubmit} confirmText="변경" cancelText="취소">
                                 <input type="text" value={renameFolderName} onChange={(e) => setRenameFolderName(e.target.value)} maxLength={10} placeholder="새 폴더 이름을 입력하세요 (최대 10자)" className={bookmarkStyle.modalInput}/>
                             </Modal>

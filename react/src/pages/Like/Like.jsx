@@ -10,7 +10,7 @@ const GAP = 20;
 const VISIBLE_COUNT = 6;
 const SCROLL_STEP = VIDEO_WIDTH + GAP;
 
-export default function Like() {
+function Like() {
   const navigate = useNavigate();
   const [likedVideos, setLikedVideos] = useState([]);
   const [recentWatched, setRecentWatched] = useState([]);
@@ -41,7 +41,7 @@ export default function Like() {
     // 좋아요 영상 가져오기 (원래대로)
     axios
       .get(`/api/v1/auth/${userId}/likes`, { headers: { Authorization: `Bearer ${token}` } })
-      .then(res => setLikedVideos(res.data))
+      .then(res => setLikedVideos(res.data || []))
       .catch(err => console.error("좋아요 영상 API 에러:", err));
 
     // 시청 기록 가져오기 + 중복 제거 + 정렬
@@ -75,14 +75,32 @@ export default function Like() {
     container.scrollTo({ left: Math.min(Math.max(newScrollLeft, 0), maxScrollLeft), behavior: 'smooth' });
   };
 
-  // 삭제 (좋아요 or 시청기록)
+  const closeAllModals = () => {
+    setModal({ show: false, index: -1, type: null, videoId: null });
+  };
+
   const handleDelete = async () => {
-    const { index, type } = modal;
-    const list = type === "like" ? likedVideos : recentWatched;
-    const videoId = list[index]?.videoId;
-    if (!videoId) return;
+    const { type, videoId: videoIdToDelete } = modal; // videoId 직접 사용
+
+    if (!videoIdToDelete || !type) {
+      console.error("삭제할 영상의 ID 또는 타입 정보가 없습니다.");
+      closeAllModals();
+      return;
+    }
+
+    let url = "";
+    if (type === "like") {
+      url = `/api/v1/auth/${userId}/videos/${videoIdToDelete}/like`;
+    } else if (type === "history") {
+      url = `/api/v1/auth/${userId}/watch-history/${videoIdToDelete}`;
+    } else {
+      console.error("알 수 없는 삭제 타입입니다:", type);
+      closeAllModals();
+      return;
+    }
 
     try {
+      await axios.delete(url, { headers: { Authorization: `Bearer ${token}` } });
       if (type === "like") {
         setLikedVideos(prev => prev.filter(video => video.videoId !== videoIdToDelete));
         showToast("좋아요 목록에서 삭제되었습니다.");
@@ -97,53 +115,23 @@ export default function Like() {
     closeAllModals();
   };
 
-  const openFolderModal = () => {
-    if (folders.length === 0) setCreateFolderModal(true);
-    else setFolderModal(true);
-    setModal({ show: false, index: -1, type: null });
-  };
-
-  const handleSaveBookmark = () => {
-    if (!selectedFolderId) {
-      setBookmarkMsg(true);
-      return;
+  // 최근선택 시 7일이내 필터링
+  const getFilteredVideos = () => {
+    if (filter === "최근") {
+      const oneWeekAgo = new Date(); // 지금 이 시각
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7); // 7일 전 이 시각까지 포함
+  
+      return likedVideos
+        .filter(video => new Date(video.createdAt) >= oneWeekAgo)
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
-    // TODO: POST 북마크 API with userId, videoId, selectedFolderId
-    console.log(`북마크 저장 folderId=${selectedFolderId}`);
-    setBookmarkMsg(true);
-    setFolderModal(false);
+    return likedVideos;
   };
-
-  const handleCreateFolder = () => {
-    if (!newFolderName.trim()) {
-      setBookmarkMsg(true);
-      return;
-    }
-    const id = folders.length ? Math.max(...folders.map(f => f.id)) + 1 : 1;
-    setFolders(prev => [...prev, { id, name: newFolderName.trim() }]);
-    setNewFolderName("");
-    setCreateFolderModal(false);
-    setFolderModal(true);
-  };
-
-  const closeAllModals = () => {
-    setModal({ show: false, index: -1, type: null });
-    setFolderModal(false);
-    setCreateFolderModal(false);
-    setBookmarkMsg(false);
-    setSelectedFolderId(null);
-    setNewFolderName("");
-  };
-
-  const getFilteredVideos = () =>
-    filter === "최근"
-      ? [...likedVideos].sort((a, b) => new Date(b.likedAt) - new Date(a.likedAt))
-      : likedVideos;
 
   const renderVideos = (videoList, containerId, type) => (
-    <div className={likeStyle.videoListWrapper}>
+    <div className={styles.videoListWrapper}>
       {videoList.length > VISIBLE_COUNT && (
-        <button className={likeStyle.arrow} onClick={() => scroll(containerId, -1)}>‹</button>
+        <button className={styles.arrow} onClick={() => scroll(containerId, -1)}>‹</button>
       )}
       <div className={styles.videoList} id={containerId}>
         {videoList.map((video, idx) => (
@@ -183,18 +171,18 @@ export default function Like() {
   );
 
   return (
-    <div className={likeStyle.wrapper}>
+    <div className={styles.wrapper}>
       <MypageNav />
-      <div className={likeStyle.mainContent}>
-        <h1 className={likeStyle.header}>좋아요 한 영상</h1>
-        <div className={likeStyle.filterMenu}>
+      <div className={styles.mainContent}>
+        <h1 className={styles.header}>좋아요 한 영상</h1>
+        <div className={styles.filterMenu}>
           {['전체', '최근'].map(f => (
-            <button key={f} className={`${likeStyle.filterButton} ${filter === f ? likeStyle.active : ''}`} onClick={() => setFilter(f)}>
+            <button key={f} className={`${styles.filterButton} ${filter === f ? styles.active : ''}`} onClick={() => setFilter(f)}>
               {f}
             </button>
           ))}
         </div>
-        {getFilteredVideos().length ? renderVideos(getFilteredVideos(), 'likedVideoList', 'like') : <p className={likeStyle.noData}>좋아요 한 영상이 없습니다.</p>}
+        {getFilteredVideos().length > 0 ? renderVideos(getFilteredVideos(), 'likedVideoList', 'like') : <p className={styles.noData}>좋아요 한 영상이 없습니다.</p>}
 
         <h2 className={styles.sectionTitle}>최근 시청한 영상</h2>
         {recentWatched.length
@@ -237,3 +225,4 @@ export default function Like() {
     </div>
   );
 }
+export default Like;
