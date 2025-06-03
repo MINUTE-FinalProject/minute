@@ -115,7 +115,8 @@ function Mypage2() {
               <div className={styles.profile}>
                 <h1 className={styles.profileNickName}>{userInfo?.userNickName|| "닉네임"} 님</h1>
                 <div className={styles.profileImg}>
-                  <img src={userInfo?.profileImage || "/src/assets/images/cute.png"} alt="프로필 이미지" />
+                  <img  src={`http://localhost:8080${userInfo?.profileImage||"프로필이미지"}?t=${Date.now()}`}
+                 alt="프로필" />
                 </div>
               </div>
 

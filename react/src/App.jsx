@@ -139,7 +139,7 @@ function App() {
             <Route path="users" element={<ManagerUsers />} />
             <Route path="reportedmember-detail/:id" element={<ReportedMemberDetail />} />
             <Route path="reportedmembers" element={<ReportedMembers />} />
-            <Route path="member-detail/:id" element={<MemberDetail />} />
+            <Route path="member-detail/:userId" element={<MemberDetail />} />
 
             <Route path="managerFreeboard" element={<ManagerFreeboard />} />
             <Route path="managerFreeboardDetail/:postId" element={<ManagerFreeboardDetail />} />

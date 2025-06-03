@@ -1,6 +1,6 @@
+import { Link } from 'react-router-dom';
 import img from '../../assets/images/key.png';
 import styles from '../../assets/styles/FindPwd.module.css';
-
 function SuccessPwd() {
     return (
          <div className={styles.pageWrapper}>
@@ -15,7 +15,9 @@ function SuccessPwd() {
                 <h1 className={styles.title3f}>로그인 후 MIN:UTE의 다양한 서비스를 이용하세요🍀</h1>
 
                 <form className={styles.formf}>
+                    <Link to="/login">
                     <button className={styles.login_btn}>Login</button>
+                    </Link>
                 </form>
             </div>
         </div>
