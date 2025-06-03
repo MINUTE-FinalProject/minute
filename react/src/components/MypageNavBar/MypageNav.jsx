@@ -77,9 +77,6 @@ function MypageNav() {
                     <div className={styles.menuItem}>
                         <a onClick={handleMonthly}>월별추천</a>
                     </div>
-                    <div className={styles.menuItem}>
-                        <Link to="/shorts" onClick={() => setIsOpen(false)}>숏츠</Link>
-                    </div>
                 </nav>
             </div>
         </div>
