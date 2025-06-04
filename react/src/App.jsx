@@ -179,8 +179,7 @@ function App() {
         <Route path="qnaDetail" element={<div className="mypage1"><QnaDetail /></div>} />
         <Route path="qnaDetail/:id" element={<div className="mypage1"><QnaDetail /></div>} />
         <Route path="qnaWrite" element={<div className="mypage1"><QnaWrite /></div>} />
-        <Route path="qnaEdit" element={<div className="mypage1"><QnaEdit /></div>} />
-        <Route path="qnaEdit/:id" element={<div className="mypage1"><QnaEdit /></div>} />
+        <Route path="qnaEdit/:qnaId" element={<div className="mypage1"><QnaEdit /></div>} />
         <Route path="like" element={<div className="mypage1"><Like /></div>} />
 
         <Route path="/login" element={<LoginPage />} />
