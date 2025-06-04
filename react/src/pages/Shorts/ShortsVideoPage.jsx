@@ -22,7 +22,10 @@ function ShortsVideoPage() {
   // location.state가 undefined일 수 있으므로 || {} 로 기본값 처리
   // **한 번만 디스트럭처링**: origin은 가급적 pageOriginFromState라는 이름으로 재명명해서 사용하고,
   // list도 incomingListFromState라는 이름 하나로만 꺼냅니다.
-  const { origin: pageOriginFromState, list: incomingListFromState } = location.state || {};
+  // const { origin: pageOriginFromState, list: incomingListFromState } = location.state || {};
+
+  // RegionPage에서 state.shorts, state.startIdx 이런 식으로 보냈다면 아래처럼 읽어옵니다.
+ const { shorts: incomingListFromState, startIdx: incomingStartIdx, origin: pageOriginFromState } = location.state || {};
 
   // 2) 로그인 여부
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -205,19 +208,39 @@ function ShortsVideoPage() {
   //    ⇒ paramVideoId 또는 incomingListFromState가 바뀔 때마다 재실행
   useEffect(() => {
     // 먼저 location.state로부터 들어온 목록을 사용할 수 있는지 확인
+    // if (Array.isArray(incomingListFromState) && incomingListFromState.length > 0) {
+    //   setOriginalShorts(incomingListFromState);
+
+    //   let initialIdx = 0;
+    //   if (paramVideoId) {
+    //     const idx = incomingListFromState.findIndex((item) => {
+    //       const id = item?.id?.videoId || item?.videoId || null;
+    //       return id === paramVideoId;
+    //     });
+    //     initialIdx = idx !== -1 ? idx : 0;
+    //   }
+
+    //   if (currentOriginalIdx !== initialIdx) {
+    //     setCurrentOriginalIdx(initialIdx);
+    //   }
+    //   return;
+    // }
+        // 1) RegionPage에서 넘긴 shorts 배열(shorts: incomingListFromState)이 있는지 확인
     if (Array.isArray(incomingListFromState) && incomingListFromState.length > 0) {
       setOriginalShorts(incomingListFromState);
 
-      let initialIdx = 0;
-      if (paramVideoId) {
-        const idx = incomingListFromState.findIndex((item) => {
-          const id = item?.id?.videoId || item?.videoId || null;
-          return id === paramVideoId;
-        });
-        initialIdx = idx !== -1 ? idx : 0;
-      }
-
-      if (currentOriginalIdx !== initialIdx) {
+      // 2) startIdx가 있으면 그대로, 없으면 paramVideoId 기반으로 인덱스 계산
+      if (typeof incomingStartIdx === "number" && incomingStartIdx >= 0) {
+        setCurrentOriginalIdx(incomingStartIdx);
+      } else {
+        let initialIdx = 0;
+        if (paramVideoId) {
+          const idx = incomingListFromState.findIndex((item) => {
+            const id = item?.id?.videoId || item?.videoId || null;
+            return id === paramVideoId;
+          });
+          initialIdx = idx !== -1 ? idx : 0;
+        }
         setCurrentOriginalIdx(initialIdx);
       }
       return;
@@ -270,7 +293,7 @@ function ShortsVideoPage() {
       setOriginalShorts(allItems);
       setCurrentOriginalIdx(0);
     });
-  }, [paramVideoId, incomingListFromState]);
+  }, [paramVideoId, incomingListFromState, incomingStartIdx]);
 
   // ────────────────────────────────────────────────────
   // 10) 세 번째 useEffect: “시청 기록 저장” + 조회수·좋아요 개수 가져오기

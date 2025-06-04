@@ -91,6 +91,7 @@ function Search() {
                 <Link
                   key={video.videoId}
                   to={`/shorts/${video.videoId}`}
+                  replace
                   state={{
                     origin: location.pathname + location.search,
                     list: videos,
