@@ -188,7 +188,7 @@ function ShortsVideoPage() {
 
       // 북마크 목록
       axios
-        .get(`/api/bookmarks/user/mine`, { headers })
+        .get(`/api/v1/bookmarks/user/mine`, { headers })
         .then((res) => {
           const bookmarkMap = {};
           res.data.forEach((videoDto) => {
