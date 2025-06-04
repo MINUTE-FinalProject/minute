@@ -32,7 +32,8 @@ const Bookmark = () => {
 
     // --- 데이터 로딩 useEffect ---
     useEffect(() => {
-        apiClient.get("/folder")
+        // 폴더 목록 로딩: /api/v1/folder
+        apiClient.get("/v1/folder")
             .then((res) => {
                 console.log("폴더 데이터 수신:", res.data);
                 setFolders(Array.isArray(res.data) ? res.data : []);
@@ -48,7 +49,8 @@ const Bookmark = () => {
                 return;
             }
             setSelectedFolderId(id);
-            apiClient.get(`/folder/${id}/videos`)
+            // 특정 폴더의 영상 목록 로딩: /api/v1/bookmarks/folder/{folderId}/videos
+            apiClient.get(`/v1/bookmarks/folder/${id}/videos`)
                 .then((res) => setSelectedFolderVideos(Array.isArray(res.data) ? res.data : []))
                 .catch((err) => {
                     console.error(`폴더 ID ${id}의 영상 목록 로딩 실패:`, err);
@@ -62,12 +64,9 @@ const Bookmark = () => {
 
     // --- 클릭 및 이벤트 핸들러 ---
     
-    // ▼▼▼▼▼ 여기가 핵심 수정 부분입니다 ▼▼▼▼▼
     const handleVideoClick = (video) => {
         const videoId = video.videoId || video.video_id || video.youtubeVideoId;
         if (videoId) {
-            // navigate 하면서 현재 폴더의 영상 목록(selectedFolderVideos)을 state로 함께 전달합니다.
-            // ShortsVideoPage에서는 이 목록을 'incomingList'라는 이름으로 받게 됩니다.
             navigate(`/shorts/video/${videoId}`, { 
                 state: { 
                     list: selectedFolderVideos 
@@ -77,7 +76,6 @@ const Bookmark = () => {
             console.error("ID를 찾을 수 없는 영상 객체입니다:", video);
         }
     };
-    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
     const handleFolderClick = (folderId) => {
         if (typeof folderId === 'undefined' || folderId === null) return;
@@ -98,7 +96,8 @@ const Bookmark = () => {
         if (!videoToDelete || !urlFolderId) return;
         const videoIdToDelete = videoToDelete.videoId || videoToDelete.video_id || videoToDelete.youtubeVideoId;
         
-        apiClient.delete(`/bookmarks/folder/${urlFolderId}/video/${videoIdToDelete}`)
+        // 북마크 삭제: /api/v1/bookmarks/folder/{folderId}/video/{videoId}
+        apiClient.delete(`/v1/bookmarks/folder/${urlFolderId}/video/${videoIdToDelete}`)
             .then(() => {
                 setSelectedFolderVideos(prev => prev.filter(v => (v.videoId || v.video_id || v.youtubeVideoId) !== videoIdToDelete));
                 alert("북마크에서 삭제되었습니다.");
@@ -122,7 +121,8 @@ const Bookmark = () => {
     const handleAddModalSubmit = () => {
         const name = newFolderName.trim().slice(0, 10);
         if (name) {
-            apiClient.post("/folder", { folderName: name })
+            // 폴더 추가: /api/v1/folder
+            apiClient.post("/v1/folder", { folderName: name })
                 .then((res) => {
                     setFolders((prev) => [res.data, ...prev]);
                     handleAddModalCancel();
@@ -152,7 +152,8 @@ const Bookmark = () => {
     const handleRenameModalSubmit = () => {
         const newName = renameFolderName.trim().slice(0, 10);
         if (newName && folderIdPendingAction !== null) {
-            apiClient.put(`/folder/${folderIdPendingAction}`, { folderName: newName })
+            // 폴더 이름 변경: /api/v1/folder/{folderId}
+            apiClient.put(`/v1/folder/${folderIdPendingAction}`, { folderName: newName })
                 .then(() => {
                     setFolders((prev) => prev.map((f) => f.folderId === folderIdPendingAction ? { ...f, folderName: newName } : f));
                     handleRenameModalCancel();
@@ -180,7 +181,8 @@ const Bookmark = () => {
             console.error("삭제할 폴더 ID가 없습니다. 상태가 초기화된 것 같습니다.");
             return;
         }
-        apiClient.delete(`/folder/${idToDelete}`)
+        // 폴더 삭제: /api/v1/folder/{folderId}
+        apiClient.delete(`/v1/folder/${idToDelete}`)
             .then(() => {
                 setFolders((prev) => prev.filter((f) => f.folderId !== idToDelete));
                 if (urlFolderId && parseInt(urlFolderId, 10) === idToDelete) {
@@ -213,54 +215,54 @@ const Bookmark = () => {
                             <section className={bookmarkStyle.bookmarkGrid}>
                                 {isLoading ? <div className={bookmarkStyle.loading}>로딩 중...</div>
                                 : urlFolderId ? (
-                                    selectedFolderVideos.length === 0 ? <div className={bookmarkStyle.emptyState}>이 폴더에 영상이 없습니다.</div>
-                                    : (
-                                        selectedFolderVideos.map((video, index) => {
-                                            const videoId = video.videoId || video.video_id || video.youtubeVideoId;
-                                            const videoTitle = video.videoTitle || video.title;
-                                            const thumbnailUrl = video.thumbnailUrl || video.thumbnail_url;
+                                        selectedFolderVideos.length === 0 ? <div className={bookmarkStyle.emptyState}>이 폴더에 영상이 없습니다.</div>
+                                        : (
+                                            selectedFolderVideos.map((video, index) => {
+                                                const videoId = video.videoId || video.video_id || video.youtubeVideoId;
+                                                const videoTitle = video.videoTitle || video.title;
+                                                const thumbnailUrl = video.thumbnailUrl || video.thumbnail_url;
 
-                                            return (
-                                                <div key={videoId || `video-${index}`} className={bookmarkStyle.bookmarkItem}>
-                                                    <div className={bookmarkStyle.bookmarkCard} onClick={() => handleVideoClick(video)}>
-                                                        <div className={bookmarkStyle.placeholderImage}>
-                                                            {thumbnailUrl ? (
-                                                                <img src={thumbnailUrl} alt={videoTitle} style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>
-                                                            ) : <div className={bookmarkStyle.defaultThumbnail}></div>}
+                                                return (
+                                                    <div key={videoId || `video-${index}`} className={bookmarkStyle.bookmarkItem}>
+                                                        <div className={bookmarkStyle.bookmarkCard} onClick={() => handleVideoClick(video)}>
+                                                            <div className={bookmarkStyle.placeholderImage}>
+                                                                {thumbnailUrl ? (
+                                                                    <img src={thumbnailUrl} alt={videoTitle} style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>
+                                                                ) : <div className={bookmarkStyle.defaultThumbnail}></div>}
+                                                            </div>
+                                                        </div>
+                                                        <div className={bookmarkStyle.bookmarkFooter}>
+                                                            <div className={bookmarkStyle.bookmarkTitle}>{videoTitle || "제목 없음"}</div>
+                                                            <div className={bookmarkStyle.bookmarkOptions} onClick={(e) => { e.stopPropagation(); handleOpenDeleteVideoModal(video); }}>
+                                                                ⋯
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div className={bookmarkStyle.bookmarkFooter}>
-                                                        <div className={bookmarkStyle.bookmarkTitle}>{videoTitle || "제목 없음"}</div>
-                                                        <div className={bookmarkStyle.bookmarkOptions} onClick={(e) => { e.stopPropagation(); handleOpenDeleteVideoModal(video); }}>
-                                                            ⋯
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })
-                                    )
+                                                );
+                                            })
+                                        )
                                 ) : (
-                                    folders.map((f) => (
-                                        <div key={f.folderId} className={bookmarkStyle.bookmarkItem} onClick={() => handleFolderClick(f.folderId)}>
-                                            <div className={bookmarkStyle.bookmarkCard}>
-                                                <div className={bookmarkStyle.placeholderImage}>
-                                                    {f.randomThumbnailUrl ? (
-                                                        <img 
-                                                            src={f.randomThumbnailUrl} 
-                                                            alt={`${f.folderName} 썸네일`} 
-                                                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                                        />
-                                                    ) : (
-                                                        <div style={{width: '100%', height: '100%', backgroundColor: '#00bcd4'}}></div>
-                                                    )}
+                                        folders.map((f) => (
+                                            <div key={f.folderId} className={bookmarkStyle.bookmarkItem} onClick={() => handleFolderClick(f.folderId)}>
+                                                <div className={bookmarkStyle.bookmarkCard}>
+                                                    <div className={bookmarkStyle.placeholderImage}>
+                                                        {f.randomThumbnailUrl ? (
+                                                            <img 
+                                                                src={f.randomThumbnailUrl} 
+                                                                alt={`${f.folderName} 썸네일`} 
+                                                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                            />
+                                                        ) : (
+                                                            <div style={{width: '100%', height: '100%', backgroundColor: '#00bcd4'}}></div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className={bookmarkStyle.bookmarkFooter}>
+                                                    <div className={bookmarkStyle.bookmarkTitle}>{f.folderName}</div>
+                                                    <div className={bookmarkStyle.bookmarkOptions} onClick={(e) => { e.stopPropagation(); handleOpenOptionsModal(f.folderId); }}>⋯</div>
                                                 </div>
                                             </div>
-                                            <div className={bookmarkStyle.bookmarkFooter}>
-                                                <div className={bookmarkStyle.bookmarkTitle}>{f.folderName}</div>
-                                                <div className={bookmarkStyle.bookmarkOptions} onClick={(e) => { e.stopPropagation(); handleOpenOptionsModal(f.folderId); }}>⋯</div>
-                                            </div>
-                                        </div>
-                                    ))
+                                        ))
                                 )}
                             </section>
 
