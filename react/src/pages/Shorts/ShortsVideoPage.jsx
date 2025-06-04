@@ -382,56 +382,67 @@ function ShortsVideoPage() {
       openToast("좋아요 처리 중 오류가 발생했습니다.");
     }
   };
-
-  // ────────────────────────────────────────────────────
-  // 12) 싫어요 클릭 핸들러
+// 관심없음
   const handleThumbDownClick = async () => {
     const currentItem = originalShorts[currentOriginalIdx];
     if (!currentItem) return;
-    const currentVideoId = currentItem.id?.videoId || currentItem.videoId;
-    if (!currentVideoId) return;
-
+    const videoId = currentItem.id?.videoId || currentItem.videoId;
+    if (!videoId) return;
+  
     if (!isLoggedIn) {
       setIsLoginModalOpen(true);
       return;
     }
-
+  
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
-    const isNowDisliked = !!dislikes[currentVideoId];
-    const isNowLiked = !!likes[currentVideoId];
-
+    const isNowDisliked = !!dislikes[videoId];
+    const isNowLiked = !!likes[videoId];
+  
     try {
+      // ← 반드시 POST 한 번만 호출해서 토글 처리하도록 백엔드 로직에 맞춤
+      const response = await axios.post(
+        `/api/v1/auth/${userId}/videos/${videoId}/dislike`,
+        null,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  
+      // response 상태 코드가 204라면 정상 처리된 것입니다.
+      console.log('싫어요 토글 응답:', response.status, response.data);
+  
       if (!isNowDisliked) {
-        await axios.post(
-          `/api/v1/auth/${userId}/videos/${currentVideoId}/dislike`,
-          null,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setDislikes((prev) => ({ ...prev, [currentVideoId]: true }));
+        // (1) 기존에 싫어요가 없었다면 → 이제 싫어요 “등록”
+        setDislikes(prev => ({ ...prev, [videoId]: true }));
+        // (2) 만약 좋아요가 켜진 상태였다면 좋아요 해제 + 좋아요 카운트 -1
         if (isNowLiked) {
-          setLikes((prev) => {
+          setLikes(prev => {
             const copy = { ...prev };
-            delete copy[currentVideoId];
+            delete copy[videoId];
             return copy;
           });
+          setCurrentLikeCount(prev => (prev > 0 ? prev - 1 : 0));
         }
       } else {
-        await axios.delete(
-          `/api/v1/auth/${userId}/videos/${currentVideoId}/dislike`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setDislikes((prev) => {
+        // (3) 기존에 싫어요가 켜져 있었다면 → 이제 싫어요 “해제”
+        setDislikes(prev => {
           const copy = { ...prev };
-          delete copy[currentVideoId];
+          delete copy[videoId];
           return copy;
         });
       }
     } catch (err) {
-      console.error("싫어요 API 에러", err);
-      openToast("오류가 발생했습니다.");
+      // err.response 가 있는지 확인하고 전체를 찍어 봅니다.
+      console.error('싫어요 토글 API 에러 전체:', err);
+      if (err.response) {
+        console.error('→ status:', err.response.status);
+        console.error('→ data:', err.response.data);
+        openToast(err.response.data?.message || '관심 없음 처리 중 오류가 발생했습니다.');
+      } else {
+        openToast('서버와 통신 중 오류가 발생했습니다.');
+      }
     }
   };
+  
 
   // ────────────────────────────────────────────────────
   // 13) 북마크 관련 핸들러
@@ -449,7 +460,6 @@ function ShortsVideoPage() {
         })
         .catch((err) => {
           console.error("북마크 폴더 불러오기 실패", err);
-          openToast("폴더를 불러오는 데 실패했습니다.");
         });
     }
     setIsFolderOpen((prev) => !prev);
@@ -470,7 +480,6 @@ function ShortsVideoPage() {
       await handleSaveFolder(newFolder); // 새 폴더에 바로 저장
     } catch (err) {
       console.error("새 폴더 생성 실패", err);
-      openToast("폴더 생성에 실패했습니다.");
     }
   };
 
@@ -479,7 +488,6 @@ function ShortsVideoPage() {
     if (!currentItem || !folder) return;
     const currentVideoId = currentItem.id?.videoId || currentItem.videoId;
     if (!currentVideoId) {
-      openToast("오류: 비디오 ID 없음");
       return;
     }
 
@@ -492,10 +500,8 @@ function ShortsVideoPage() {
       });
       setBookmarkedVideos((prev) => ({ ...prev, [currentVideoId]: true }));
       setIsFolderOpen(false);
-      openToast(`'${folder.folderName}' 폴더에 저장했습니다.`);
     } catch (err) {
       console.error("북마크 저장 실패", err.response?.data || err.message);
-      openToast(err.response?.data?.message || "북마크 저장에 실패했습니다.");
     }
   };
 
