@@ -443,7 +443,7 @@ function ShortsVideoPage() {
     if (folders.length === 0) {
       const token = localStorage.getItem("token");
       axios
-        .get(`/api/folder`, { headers: { Authorization: `Bearer ${token}` } })
+        .get(`/api/v1/folder`, { headers: { Authorization: `Bearer ${token}` } })
         .then((res) => {
           setFolders(res.data);
         })
@@ -460,7 +460,7 @@ function ShortsVideoPage() {
     const token = localStorage.getItem("token");
     try {
       const res = await axios.post(
-        `/api/folder`,
+        `/api/v1/folder`,
         { folderName: newFolderName.trim() },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -487,7 +487,7 @@ function ShortsVideoPage() {
     const requestDto = { folderId: folder.folderId, videoId: currentVideoId };
 
     try {
-      await axios.post(`/api/bookmarks`, requestDto, {
+      await axios.post(`/api/v1/bookmarks`, requestDto, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBookmarkedVideos((prev) => ({ ...prev, [currentVideoId]: true }));
