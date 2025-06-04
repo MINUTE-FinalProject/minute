@@ -44,13 +44,16 @@ const ManagerMyPage = () => {
           <main className={styles.mypage}>
             <h2>마이페이지</h2>
            <div className={styles.box}>
-              <div className={styles.img}>
-                <img 
-                  className={styles.img2} 
-                  src={`http://localhost:8080${userInfo?.profileImage || "프로필이미지"}?t=${Date.now()}`} 
-                  alt="프로필" 
-                />
-              </div>
+              <div
+                className={styles.img2}
+                style={{
+                  backgroundImage: `url(${
+                    userInfo?.profileImage
+                      ? `http://localhost:8080${userInfo.profileImage}`
+                      : "프로필 사진을 지정해 보세요"
+                  })`,
+                }}
+              />
               <div>
                 <p>{userInfo?.userName || "이름"} 관리자 님</p>
                 <p>{userInfo?.userEmail || "이메일"}</p>

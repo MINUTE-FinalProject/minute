@@ -76,10 +76,12 @@
   width: 180px;
   height: 180px;
   border-radius: 50%;
-  object-fit: cover; /* 이미지 비율 유지하며 채우기 */
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   margin-right: 60px;
   border: 4px solid transparent;
-  background: linear-gradient(white, white) padding-box,
+  background: linear-gradient(black, black) padding-box,
               linear-gradient(135deg, #4a4a4a, #000) border-box;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s ease, box-shadow 0.3s ease;

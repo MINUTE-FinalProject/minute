@@ -8,8 +8,8 @@ import HeaderStyle from "./Header.module.css";
 
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userId, setUserId] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(null);
+  const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
 
   //토큰으로 로그인 상태 관리
@@ -68,12 +68,10 @@ useEffect(() => {
           <HamburgerMenu isOpen={isOpen} setIsOpen={setIsOpen} />
         </div>
         <div className={HeaderStyle.auth}>
-          {isLoggedIn ? (
+          {isLoggedIn === null ? null : isLoggedIn ? (
             <>
-            <p className={HeaderStyle.id}>{userId}님 환영합니다!</p>
-              <p onClick={handleLogout} className={HeaderStyle.logout}>
-                로그아웃
-              </p>
+              <p className={HeaderStyle.id}>{userId}님 환영합니다!</p>
+              <p onClick={handleLogout} className={HeaderStyle.logout}>로그아웃</p>
               <Link to="/mypage">
                 <p className={HeaderStyle.mypage}>마이페이지</p>
               </Link>
@@ -88,6 +86,7 @@ useEffect(() => {
               </Link>
             </>
           )}
+
         </div>
       </div>
     </div>
