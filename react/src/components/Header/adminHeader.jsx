@@ -5,8 +5,8 @@ import logo from "../../assets/images/LO3.png";
 import HeaderStyle from "./adminHeader.module.css"; // CSS 모듈 경로 확인
 
 function AdminHeader() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userId, setUserId] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(null);
+  const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
 
 
@@ -73,27 +73,26 @@ useEffect(() => {
           </Link>
         </div>
         <div className={HeaderStyle.auth}>
-          {isLoggedIn ? (
+          {isLoggedIn === null || userId === null ? null : isLoggedIn ? (
             <>
-          <p className={HeaderStyle.welcomeMessage}>{userId}관리자님 환영합니다!</p>
-          <p
-            onClick={handleLogout}
-            onKeyDown={handleLogoutKeyPress} // 키보드 이벤트 핸들러 추가
-            className={HeaderStyle.logoutLink} // 스타일링을 위한 클래스
-            role="button" // 의미론적으로 버튼임을 명시
-            tabIndex={0}  // 키보드 포커스를 받을 수 있도록 설정
-          >
-            로그아웃
-          </p>
-          
-          </>
-          ) : (
-           <>
-            <Link to="/login">
-            <p className={HeaderStyle.login}>로그인</p>
-            </Link>
+              <p className={HeaderStyle.welcomeMessage}>
+                {userId} 관리자님 환영합니다!
+              </p>
+              <p
+                onClick={handleLogout}
+                onKeyDown={handleLogoutKeyPress}
+                className={HeaderStyle.logoutLink}
+                role="button"
+                tabIndex={0}
+              >
+                로그아웃
+              </p>
             </>
-            )}
+          ) : (
+            <Link to="/login">
+              <p className={HeaderStyle.login}>로그인</p>
+            </Link>
+          )}
         </div>
       </div>
     </div>

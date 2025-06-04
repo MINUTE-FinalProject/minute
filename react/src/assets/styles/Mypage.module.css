@@ -113,6 +113,28 @@
   text-align: center;
 }
 
+.defaultProfile {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  display: flex;
+  flex-direction: column; /* 줄바꿈을 고려한 컬럼 플렉스 */
+  justify-content: center;
+  align-items: center;
+  color: #666;
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.4; /* 줄간격 약간 조정 */
+  padding: 0 10px; /* 좌우 패딩만 줘서 높이 문제 해결 */
+  box-sizing: border-box;
+  white-space: pre-line;
+  user-select: none; /* 선택 방지 (선택가능하게 할거면 제거) */
+}
+
 .planWrap {
   width: 100%;
   display: flex;
