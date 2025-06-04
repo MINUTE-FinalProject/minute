@@ -1,166 +1,208 @@
-// src/pages/Admin/Qna/ManagerQna.jsx (또는 해당 파일의 실제 경로)
-import { useEffect, useState } from 'react'; // React import 추가
-import { useNavigate } from 'react-router-dom';
-import reportOffIcon from '../../assets/images/able-alarm.png';
-import reportOnIcon from '../../assets/images/disable-alarm.png';
+// src/pages/Admin/Qna/ManagerQna.jsx
+import axios from 'axios'; // axios import
+import { useCallback, useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom'; // useSearchParams 추가
+import reportOffIcon from '../../assets/images/able-alarm.png'; // 신고 없음 또는 조치 가능
+import reportOnIcon from '../../assets/images/disable-alarm.png'; // 신고 있음 또는 조치 완료
 import searchButtonIcon from '../../assets/images/search_icon.png';
 import styles from '../../assets/styles/ManagerQna.module.css';
-import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
+import Modal from '../../components/Modal/Modal';
 import Pagination from '../../components/Pagination/Pagination';
-
-const generateInitialQnaData = (count = 42) => {
-    // ... (기존 generateInitialQnaData 함수 내용 유지)
-    const data = [];
-    const answerStatuses = ['답변완료', '미답변'];
-    for (let i = 0; i < count; i++) {
-        const userReported = i % 10 === 0;
-        const adminActioned = userReported && (i + 1) % 2 === 0;
-        data.push({
-            qnaId: i + 1,
-            NO: count - i,
-            ID: `user${1000 + i}`,
-            닉네임: `문의자${i + 1}`,
-            제목: `문의사항 제목입니다 - 테스트 ${i + 1}`,
-            작성일: `2025.05.${String(15 - (i % 15)).padStart(2, '0')}`,
-            isReportedBySomeone: userReported,
-            adminActionedOnReport: adminActioned,
-            답변상태: answerStatuses[i % answerStatuses.length],
-        });
-    }
-    return data;
-};
 
 function ManagerQna() {
     const navigate = useNavigate();
-    const [allQnaData, setAllQnaData] = useState([]);
-    const [qnaListToDisplay, setQnaListToDisplay] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [searchParams, setSearchParams] = useSearchParams(); // URL 쿼리 파라미터 사용
+
+    const [qnaPage, setQnaPage] = useState(null); // API 응답 Page 객체 전체를 저장
+    const [isLoading, setIsLoading] = useState(true);
+    
+    // 필터 상태: URL 쿼리 파라미터에서 초기값 가져오기
+    const [filters, setFilters] = useState({
+        startDate: searchParams.get('startDate') || '',
+        endDate: searchParams.get('endDate') || '',
+        statusFilter: searchParams.get('statusFilter') || 'all', // 백엔드는 PENDING, ANSWERED
+        searchTerm: searchParams.get('searchTerm') || ''
+    });
+    const currentPageForApi = parseInt(searchParams.get('page') || '0', 10); // API는 0-indexed
     const itemsPerPage = 10;
-    const [dateRange, setDateRange] = useState({ start: '', end: '' });
-    const [statusFilter, setStatusFilter] = useState('all');
-    const [searchTerm, setSearchTerm] = useState('');
 
     // 모달 상태 관리
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalProps, setModalProps] = useState({
-        title: '',
-        message: '',
-        onConfirm: null,
-        confirmText: '확인',
-        cancelText: null,
-        type: 'default',
-        confirmButtonType: 'primary',
+        title: '', message: '', onConfirm: null, confirmText: '확인',
+        cancelText: null, type: 'default', confirmButtonType: 'primary',
         cancelButtonType: 'secondary'
     });
 
-    useEffect(() => {
-        const loadedQnaData = generateInitialQnaData();
-        setAllQnaData(loadedQnaData);
-    }, []);
+    const fetchManagerQnaData = useCallback(async (currentFilters, page) => {
+        setIsLoading(true);
+        const token = localStorage.getItem('token');
 
-    useEffect(() => {
-        let filteredData = [...allQnaData];
-        if (dateRange.start && dateRange.end) {
-            filteredData = filteredData.filter(qna => {
-                const qnaDate = new Date(qna.작성일.replace(/\./g, '-'));
-                const startDate = new Date(dateRange.start);
-                const endDate = new Date(dateRange.end);
-                return qnaDate >= startDate && qnaDate <= endDate;
+        if (!token) {
+            setIsLoading(false);
+            setModalProps({
+                title: "인증 오류", message: "관리자 로그인이 필요합니다.",
+                confirmText: "확인", type: "adminError", confirmButtonType: 'primary',
+                onConfirm: () => { setIsModalOpen(false); navigate('/login'); } // 관리자 로그인 페이지로?
             });
+            setIsModalOpen(true);
+            return;
         }
-        if (statusFilter !== 'all') {
-            filteredData = filteredData.filter(qna => qna.답변상태 === statusFilter);
-        }
-        if (searchTerm.trim()) {
-            const lowerSearchTerm = searchTerm.toLowerCase().trim();
-            filteredData = filteredData.filter(qna =>
-                qna.ID.toLowerCase().includes(lowerSearchTerm) ||
-                qna.닉네임.toLowerCase().includes(lowerSearchTerm) ||
-                qna.제목.toLowerCase().includes(lowerSearchTerm)
-            );
-        }
-        filteredData.sort((a, b) => b.qnaId - a.qnaId);
-        setQnaListToDisplay(filteredData);
-        setCurrentPage(1);
-    }, [dateRange, statusFilter, searchTerm, allQnaData]);
+        
+        // 프론트 필터 값을 API 요청 파라미터로 변환
+        const apiStatusFilter = currentFilters.statusFilter === 'all' ? undefined : currentFilters.statusFilter;
 
-    // --- 문의 신고 조치 핸들러 (Modal 적용) ---
-    const processQnaReportAction = (qnaIdToUpdate) => {
-        setAllQnaData(prevQnaData =>
-            prevQnaData.map(qna =>
-                qna.qnaId === qnaIdToUpdate
-                ? { ...qna, adminActionedOnReport: true, isReportedBySomeone: true }
-                : qna
-            )
-        );
-        // TODO: API로 실제 DB 업데이트
-        setModalProps({
-            title: '조치 완료',
-            message: `문의 ID ${qnaIdToUpdate}에 대해 성공적으로 조치했습니다.`,
-            confirmText: '확인',
-            type: 'adminSuccess', // 핑크 버튼 원하시면 'success'
-            confirmButtonType: 'primary'
-        });
-        setIsModalOpen(true);
+        try {
+            const params = {
+                page: page,
+                size: itemsPerPage,
+                sort: 'inquiryCreatedAt,desc', // 기본 정렬
+                searchTerm: currentFilters.searchTerm || undefined,
+                statusFilter: apiStatusFilter,
+                startDate: currentFilters.startDate || undefined,
+                endDate: currentFilters.endDate || undefined,
+            };
+
+            const response = await axios.get('/api/v1/admin/qna', { // 관리자 API 경로
+                headers: { 'Authorization': `Bearer ${token}` },
+                params
+            });
+            setQnaPage(response.data);
+        } catch (error) {
+            console.error("Error fetching manager Q&A data:", error);
+            let errorMessage = "문의 목록을 불러오는 중 문제가 발생했습니다.";
+            if (error.response) {
+                if (error.response.status === 401) errorMessage = "인증에 실패했습니다. 다시 로그인해주세요.";
+                else if (error.response.status === 403) errorMessage = "접근 권한이 없습니다.";
+                else if (error.response.data && error.response.data.message) errorMessage = error.response.data.message;
+            }
+            setModalProps({
+                title: "오류 발생", message: errorMessage, confirmText: "확인",
+                type: "adminError", confirmButtonType: 'primary',
+                onConfirm: () => {
+                    setIsModalOpen(false);
+                    if (error.response && (error.response.status === 401 || error.response.status === 403)) navigate('/login'); // 또는 관리자 홈
+                }
+            });
+            setIsModalOpen(true);
+            setQnaPage(null);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [itemsPerPage, navigate]);
+
+    useEffect(() => {
+        const newFilters = {
+            startDate: searchParams.get('startDate') || '',
+            endDate: searchParams.get('endDate') || '',
+            statusFilter: searchParams.get('statusFilter') || 'all',
+            searchTerm: searchParams.get('searchTerm') || ''
+        };
+        setFilters(newFilters);
+        const newCurrentPage = parseInt(searchParams.get('page') || '0', 10);
+        fetchManagerQnaData(newFilters, newCurrentPage);
+    }, [searchParams, fetchManagerQnaData]);
+
+    const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        setFilters(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleQnaReportAction = (e, qnaId) => {
-        e.stopPropagation(); 
+    const handleSearch = (e) => {
+        e.preventDefault();
+        const newSearchParams = new URLSearchParams();
+        if (filters.startDate) newSearchParams.set('startDate', filters.startDate);
+        if (filters.endDate) newSearchParams.set('endDate', filters.endDate);
+        if (filters.statusFilter && filters.statusFilter !== 'all') newSearchParams.set('statusFilter', filters.statusFilter);
+        if (filters.searchTerm) newSearchParams.set('searchTerm', filters.searchTerm);
+        newSearchParams.set('page', '0'); // 검색 시 항상 첫 페이지로
+        setSearchParams(newSearchParams);
+    };
 
-        const qnaToUpdate = allQnaData.find(q => q.qnaId === qnaId);
+    const handlePageChange = (pageNumber) => { // Pagination 컴포넌트는 0-indexed 페이지 반환 가정
+        const newSearchParams = new URLSearchParams(searchParams);
+        newSearchParams.set('page', pageNumber.toString());
+        setSearchParams(newSearchParams);
+    };
+    
+    // 관리자가 QnA 신고 생성/접수 처리
+    const handleAdminReportQna = async (qnaIdToReport) => {
+        const token = localStorage.getItem('token');
+        if (!token) { /* 인증 오류 처리 */ return; }
 
-        if (!qnaToUpdate) {
+        try {
+            await axios.post(`/api/v1/admin/qna/${qnaIdToReport}/reports`, {}, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
             setModalProps({
-                title: '오류',
-                message: '해당 문의를 찾을 수 없습니다.',
-                confirmText: '확인',
-                type: 'adminError',
-                confirmButtonType: 'primary'
+                title: '신고 접수 완료',
+                message: `문의 ID ${qnaIdToReport}에 대한 신고가 성공적으로 접수되었습니다.`,
+                confirmText: '확인', type: 'adminSuccess', confirmButtonType: 'primary',
+                onConfirm: () => {
+                    setIsModalOpen(false);
+                    fetchManagerQnaData(filters, currentPageForApi); // 목록 새로고침
+                }
+            });
+            setIsModalOpen(true);
+        } catch (error) {
+            console.error("Error reporting QnA by admin:", error);
+            let errorMessage = `문의 ID ${qnaIdToReport} 신고 처리 중 오류가 발생했습니다.`;
+            if (error.response) {
+                if (error.response.status === 401 || error.response.status === 403) errorMessage = "권한이 없습니다.";
+                else if (error.response.status === 404) errorMessage = "해당 문의를 찾을 수 없습니다.";
+                else if (error.response.status === 409) errorMessage = "이미 관리자가 신고한 문의입니다."; // IllegalStateException
+                else if (error.response.data && error.response.data.message) errorMessage = error.response.data.message;
+            }
+            setModalProps({
+                title: "신고 처리 실패", message: errorMessage, confirmText: "확인",
+                type: "adminError", confirmButtonType: 'primary',
+                onConfirm: () => setIsModalOpen(false)
+            });
+            setIsModalOpen(true);
+        }
+    };
+
+
+    const confirmAdminReportQna = (e, qnaId, isAlreadyReportedByAdmin) => {
+        e.stopPropagation();
+        
+        if (isAlreadyReportedByAdmin) { // 이 부분은 reportCount > 0 이고, 그 신고가 관리자에 의한 것인지 확인해야 함.
+                                      // 단순 reportCount > 0 만으로는 부족. API 응답에 관리자 신고 여부 필요 또는 가정.
+                                      // 우선 reportCount > 0 이면 관리자가 신고했다고 가정하고 처리. (백엔드에서 중복 신고 방지)
+            setModalProps({
+                title: '알림', message: `문의 ID ${qnaId}는 이미 신고된 내역이 있습니다.`,
+                confirmText: '확인', type: 'adminInfo', confirmButtonType: 'primary',
+                onConfirm: () => setIsModalOpen(false)
             });
             setIsModalOpen(true);
             return;
         }
 
-        if (qnaToUpdate.adminActionedOnReport) {
-            setModalProps({
-                title: '알림',
-                message: `문의 ID ${qnaId}는 이미 관리자가 조치한 문의입니다. 추가 조치가 불가능합니다.`,
-                confirmText: '확인',
-                type: 'adminWarning',
-                confirmButtonType: 'primary'
-            });
-            setIsModalOpen(true);
-            return;
-        }
-
-        let confirmMessage = `문의 ID ${qnaId}`;
-        if (qnaToUpdate.isReportedBySomeone) {
-            confirmMessage += ` (사용자 신고됨)`;
-        } else {
-            confirmMessage += ` (사용자 신고 없음)`;
-        }
-        confirmMessage += `에 대해 "관리자 조치함"으로 상태를 변경하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`;
-
         setModalProps({
-            title: '신고 조치 확인',
-            message: confirmMessage,
-            onConfirm: () => processQnaReportAction(qnaId),
-            confirmText: '조치 실행',
-            cancelText: '취소',
-            type: 'adminConfirm', // 또는 'adminWarning'
-            confirmButtonType: 'danger'
+            title: '문의 신고 확인',
+            message: `문의 ID ${qnaId}를 신고 처리하시겠습니까?`,
+            onConfirm: () => handleAdminReportQna(qnaId),
+            confirmText: '신고 실행', cancelText: '취소',
+            type: 'adminConfirm', confirmButtonType: 'danger',
+            onCancel: () => setIsModalOpen(false)
         });
         setIsModalOpen(true);
     };
 
-    const totalPages = Math.ceil(qnaListToDisplay.length / itemsPerPage);
-    const indexOfLastQna = currentPage * itemsPerPage;
-    const indexOfFirstQna = indexOfLastQna - itemsPerPage;
-    const currentDisplayedQnaItems = qnaListToDisplay.slice(indexOfFirstQna, indexOfLastQna);
-    const handlePageChange = (pageNumber) => { setCurrentPage(pageNumber); };
 
     const handleRowClick = (qnaId) => {
         navigate(`/admin/managerQnaDetail/${qnaId}`);
+    };
+    
+    const getStatusText = (status) => { // API 응답의 PENDING, ANSWERED 사용
+        if (status === 'PENDING') return '미답변';
+        if (status === 'ANSWERED') return '답변완료';
+        return status;
+    };
+
+    const formatDate = (dateString) => {
+        if (!dateString) return '';
+        return new Date(dateString).toLocaleDateString('ko-KR'); // 시간 제외 날짜만
     };
 
     return (
@@ -168,99 +210,96 @@ function ManagerQna() {
             <div className={styles.container}>
                 <main className={styles.qnaContent}>
                     <h1 className={styles.pageTitle}>문의 관리</h1>
-                    <div className={styles.filterBar}>
+                    <form onSubmit={handleSearch} className={styles.filterBar}>
                         <input
-                            type="date"
+                            type="date" name="startDate"
                             className={styles.filterElement}
-                            value={dateRange.start}
-                            onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
+                            value={filters.startDate}
+                            onChange={handleFilterChange}
                         />
                         <span className={styles.dateSeparator}>~</span>
                         <input
-                            type="date"
+                            type="date" name="endDate"
                             className={styles.filterElement}
-                            value={dateRange.end}
-                            onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
+                            value={filters.endDate}
+                            onChange={handleFilterChange}
                         />
                         <select
+                            name="statusFilter"
                             className={`${styles.filterElement} ${styles.filterSelect}`}
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
+                            value={filters.statusFilter}
+                            onChange={handleFilterChange}
                         >
                             <option value="all">답변상태 (전체)</option>
-                            <option value="답변완료">답변완료</option>
-                            <option value="미답변">미답변</option>
+                            <option value="ANSWERED">답변완료</option>
+                            <option value="PENDING">미답변</option>
                         </select>
                         <input
-                            type="text"
+                            type="text" name="searchTerm"
                             placeholder="ID, 닉네임, 제목 검색"
                             className={`${styles.filterElement} ${styles.filterSearchInput}`}
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            value={filters.searchTerm}
+                            onChange={handleFilterChange}
                         />
-                        <button type="button" className={styles.filterSearchButton}>
+                        <button type="submit" className={styles.filterSearchButton} disabled={isLoading}>
                             <img src={searchButtonIcon} alt="검색" className={styles.searchIcon} />
                         </button>
-                    </div>
+                    </form>
                     <table className={styles.qnaTable}>
                         <thead>
                             <tr>
-                                <th>NO</th><th>ID</th><th>닉네임</th>
+                                <th>NO</th><th>작성자ID</th><th>닉네임</th>
                                 <th className={styles.titleHeaderColumn}>제목</th>
                                 <th>작성일</th><th>신고</th><th>답변상태</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {currentDisplayedQnaItems.length > 0 ? (
-                                currentDisplayedQnaItems.map((qna) => (
-                                    <tr key={qna.qnaId} onClick={() => handleRowClick(qna.qnaId)} className={styles.clickableRow}>
-                                        <td>{qna.NO}</td>
-                                        <td>{qna.ID}</td>
-                                        <td>{qna.닉네임}</td>
+                            {isLoading ? (
+                                <tr><td colSpan="7" style={{ textAlign: "center" }}>로딩 중...</td></tr>
+                            ) : qnaPage && qnaPage.content && qnaPage.content.length > 0 ? (
+                                qnaPage.content.map((qna, index) => (
+                                    <tr key={qna.inquiryId} onClick={() => handleRowClick(qna.inquiryId)} className={styles.clickableRow}>
+                                        <td>{qnaPage.totalElements - (qnaPage.number * qnaPage.size) - index}</td>
+                                        <td>{qna.authorUserId}</td>
+                                        <td>{qna.authorNickname}</td>
                                         <td className={styles.titleDataColumn}>
-                                            {qna.제목}
+                                            {qna.inquiryTitle} {qna.hasAttachments && "📎"}
                                         </td>
-                                        <td>{qna.작성일}</td>
+                                        <td>{formatDate(qna.inquiryCreatedAt)}</td>
                                         <td>
                                             <button
-                                                onClick={(e) => handleQnaReportAction(e, qna.qnaId)}
-                                                className={`${styles.iconButton} ${qna.adminActionedOnReport ? styles.reportActioned : ''}`} // 'reportActioned' 클래스명 확인 및 필요시 CSS 추가
-                                                title={
-                                                    qna.adminActionedOnReport
-                                                    ? `관리자가 조치 완료한 문의입니다.`
-                                                    : (qna.isReportedBySomeone
-                                                        ? `사용자 신고 접수됨 (클릭하여 조치)`
-                                                        : "신고된 내역 없음 (관리자가 직접 조치 가능)")
-                                                }
-                                                disabled={qna.adminActionedOnReport}
+                                                onClick={(e) => confirmAdminReportQna(e, qna.inquiryId, qna.reportCount > 0)}
+                                                className={`${styles.iconButton} ${qna.reportCount > 0 ? styles.reportActioned : ''}`}
+                                                title={qna.reportCount > 0 ? `신고 ${qna.reportCount}건 접수됨` : "신고된 내역 없음 (클릭하여 신고)"}
+                                                // disabled={qna.reportCount > 0} // 이미 신고된 건에 대해 또 신고 못하게 하려면
                                             >
                                                 <img
-                                                    src={(qna.isReportedBySomeone || qna.adminActionedOnReport) ? reportOnIcon : reportOffIcon}
-                                                    alt="신고 조치 상태"
+                                                    src={qna.reportCount > 0 ? reportOnIcon : reportOffIcon}
+                                                    alt="신고 상태"
                                                     className={styles.buttonIcon}
                                                 />
                                             </button>
                                         </td>
                                         <td>
                                             <button
-                                                className={`${styles.statusButton} ${qna.답변상태 === '답변완료' ? styles.answeredStatus : styles.unansweredStatus}`}
+                                                className={`${styles.statusButton} ${qna.inquiryStatus === 'ANSWERED' ? styles.answeredStatus : styles.unansweredStatus}`}
                                                 disabled 
                                                 onClick={(e) => e.stopPropagation()}
                                             >
-                                                {qna.답변상태}
+                                                {getStatusText(qna.inquiryStatus)}
                                             </button>
                                         </td>
                                     </tr>
                                 ))
-                            ) : ( <tr><td colSpan="7">표시할 문의사항이 없습니다.</td></tr> )}
+                            ) : ( <tr><td colSpan="7" style={{ textAlign: "center" }}>{isModalOpen ? "오류로 인해 내용을 표시할 수 없습니다." : "표시할 문의사항이 없습니다."}</td></tr> )}
                         </tbody>
                     </table>
                     <div className={styles.pagination}>
-                         {totalPages > 0 && (
+                         {!isModalOpen && qnaPage && qnaPage.totalPages > 0 && qnaPage.content?.length > 0 && (
                             <Pagination
-                                currentPage={currentPage}
-                                totalPages={totalPages}
-                                onPageChange={handlePageChange}
+                                currentPage={qnaPage.number} // 0-indexed
+                                totalPages={qnaPage.totalPages}
+                                onPageChange={handlePageChange} // 0-indexed 페이지로 호출
                             />
                         )}
                     </div>
