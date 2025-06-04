@@ -149,7 +149,7 @@ function App() {
             <Route path="managerNoticeWrite" element={<ManagerNoticeWrite />} />
 
             <Route path="managerQna" element={<ManagerQna />} />
-            <Route path="managerQnaDetail/:id" element={<ManagerQnaDetail />} />
+            <Route path="managerQnaDetail/:qnaId" element={<ManagerQnaDetail />} />
 
             <Route path="reportedposts" element={<ReportedPosts />} />
           </Route>
