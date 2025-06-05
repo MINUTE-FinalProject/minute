@@ -1,11 +1,13 @@
 // src/pages/QnA/QnaEdit.jsx
-import axios from 'axios'; // 페이지마다 직접 임포트
+import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import xIcon from '../../assets/images/x.png';
 import qnaEditStyle from '../../assets/styles/qnaEdit.module.css';
 import Modal from '../../components/Modal/Modal';
 import MypageNav from '../../components/MypageNavBar/MypageNav';
+
+const API_BASE_URL = "/api/v1"; // 프록시 설정을 활용하기 위해 상대 경로로 변경
 
 const EMPTY_QNA_FOR_EDIT = {
     title: '',
@@ -41,7 +43,7 @@ function QnaEdit() {
     const [modalProps, setModalProps] = useState({
         title: '', message: '', onConfirm: null, confirmText: '확인',
         cancelText: null, type: 'default', confirmButtonType: 'primary',
-        cancelButtonType: 'secondary'
+        cancelButtonType: 'secondary', onCancel: () => setIsModalOpen(false)
     });
 
     // 기존 QnA 데이터 로드 함수
@@ -73,7 +75,8 @@ function QnaEdit() {
         }
 
         try {
-            const response = await axios.get(`/api/v1/qna/${id}`, {
+            // ⭐ 수정: QnA 상세 조회 API 엔드포인트로 변경
+            const response = await axios.get(`${API_BASE_URL}/qna/${id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             console.log("[QnaEdit fetchQnaDataForEdit] API Response:", response.data);
@@ -258,7 +261,8 @@ function QnaEdit() {
         });
 
         try {
-            const response = await axios.put(`/api/v1/qna/${qnaId}`, formData, {
+            // ⭐ 수정: QnA 수정 API 엔드포인트로 변경
+            const response = await axios.put(`${API_BASE_URL}/qna/${qnaId}`, formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     // Content-Type은 FormData 사용 시 axios가 자동으로 설정
