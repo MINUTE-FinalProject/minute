@@ -47,7 +47,7 @@ function NoticeDetail() {
             const fetchNoticeByIdFromAPI = async (idToFetch) => {
                 console.log("Fetching API for noticeId:", idToFetch); 
                 try {
-                    const response = await axios.get(`/api/notices/${idToFetch}`);
+                    const response = await axios.get(`/api/v1/notices/${idToFetch}`);
                     const data = response.data; 
 
                     const dateObj = new Date(data.noticeCreatedAt);
