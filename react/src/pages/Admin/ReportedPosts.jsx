@@ -139,13 +139,14 @@ function ReportedPosts() {
                             isItemHiddenBoolean: item.hidden === true,
                         };
                     } else if (tab === 'qna') {
-                        rawDateValue = item.originalPostDate || item.inquiryCreatedAt || item.createdAt; 
-                        specificProps = {
-                            id: item.id, 
-                            itemType: item.itemType || '문의',
-                            originalPostId: item.id, 
-                            titleOrContentSnippet: item.titleOrContentSnippet, 
-                        };
+    rawDateValue = item.originalPostDate || item.inquiryCreatedAt || item.createdAt;
+    specificProps = {
+        id: item.id,
+        // itemType: item.itemType || '문의', // 기존 코드
+        itemType: '문의', // 수정된 코드: 'qna' 탭의 아이템 타입을 항상 '문의'로 통일
+        originalPostId: item.id,
+        titleOrContentSnippet: item.titleOrContentSnippet,
+    };
                     }
                     return {
                         ...commonProps,
