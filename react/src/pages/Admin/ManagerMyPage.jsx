@@ -8,22 +8,24 @@ const ManagerMyPage = () => {
 
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
+  const [totalUsersCount, setTotalUsersCount] = useState(0);
+  const [reportedUsersCount, setReportedUsersCount] = useState(0);
 
   //사용자 정보 조회
   useEffect(() => {
-    axios.get(`http://localhost:8080/api/v1/user/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`, 
-      },withCredentials: true
-    })
+  // 사용자 정보 요청
+  axios.get(`http://localhost:8080/api/v1/user/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    withCredentials: true
+  })
     .then(res => {
       const data = res.data;
-
-      
-      if (data.code === "SU") { 
+      if (data.code === "SU") {
         setUserInfo({
           userName: data.userName,
-          userNickName: data.userNickName,       
+          userNickName: data.userNickName,
           userPhone: data.userPhone,
           profileImage: data.profileImage,
           userEmail: data.userEmail
@@ -33,7 +35,22 @@ const ManagerMyPage = () => {
       }
     })
     .catch(() => alert("서버와 연결 실패"));
-  }, [userId, token]);
+
+  // 전체 회원 수 요청
+  axios.get("http://localhost:8080/api/v1/user/all")
+    .then(res => {
+      const userList = res.data.body.userList || [];
+      setTotalUsersCount(userList.length);
+
+      // 신고 회원 수 계산
+      const reportedCount = userList.filter(user => (user.userReport || 0) >= 1).length;
+      setReportedUsersCount(reportedCount);
+    })
+    .catch(err => {
+      console.error("회원 목록 조회 실패:", err);
+    });
+}, [userId, token]);
+
 
   return (
     <>
@@ -69,11 +86,12 @@ const ManagerMyPage = () => {
               </div>
           </div>
             <div className={styles.stats}>
-              <div>회원수<br /><strong>52명</strong></div>
-              <div>문의수<br /><strong>19건</strong></div>
-              <div>답변대기<br /><strong>3건</strong></div>
-              <div>신고회원<br /><strong>5명</strong></div>
+              <div>회원수<br /><strong>{totalUsersCount}명</strong></div>
+              <div>문의수<br /><strong>19건</strong></div> 
+              <div>답변대기<br /><strong>3건</strong></div> 
+              <div>신고회원<br /><strong>{reportedUsersCount}명</strong></div>
             </div>
+
             
           </main>
         </div>
