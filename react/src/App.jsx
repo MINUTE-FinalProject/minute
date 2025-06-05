@@ -176,7 +176,6 @@ function App() {
         <Route path="calendar" element={<div className="mypage1"><CalendarPage /></div>} />
 
         <Route path="qna" element={<div className="mypage1"><Qna /></div>} />
-        <Route path="qnaDetail" element={<div className="mypage1"><QnaDetail /></div>} />
         <Route path="qnaDetail/:id" element={<div className="mypage1"><QnaDetail /></div>} />
         <Route path="qnaWrite" element={<div className="mypage1"><QnaWrite /></div>} />
         <Route path="qnaEdit/:qnaId" element={<div className="mypage1"><QnaEdit /></div>} />

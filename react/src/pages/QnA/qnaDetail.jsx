@@ -1,10 +1,12 @@
 // src/pages/QnA/qnaDetail.jsx
-import axios from 'axios'; // axios 직접 임포트
+import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import qnaDetailStyle from '../../assets/styles/qnaDetail.module.css';
 import Modal from '../../components/Modal/Modal';
 import MypageNav from '../../components/MypageNavBar/MypageNav';
+
+const API_BASE_URL = "/api/v1"; // 프록시 설정을 활용하기 위해 상대 경로로 변경
 
 function QnaDetail() {
     const { id: qnaId } = useParams();
@@ -50,7 +52,8 @@ function QnaDetail() {
         }
         
         try {
-            const response = await axios.get(`/api/v1/qna/${qnaId}`, {
+            // ⭐ 수정: QnA 상세 조회 API 엔드포인트로 변경
+            const response = await axios.get(`${API_BASE_URL}/qna/${qnaId}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             console.log("[QnaDetail fetchQnaDetail] API Response:", response.data);
@@ -189,17 +192,14 @@ function QnaDetail() {
                             </div>
 
                             {userQuestion.attachments && userQuestion.attachments.length > 0 && (
-                                <div className={qnaDetailStyle.imgSection}> {/* 이 div는 유지해도 무방 */}
+                                <div className={qnaDetailStyle.imgSection}>
                                     <p className={qnaDetailStyle.attachmentTitle}>첨부 이미지:</p>
-                                    {/* 👇 이 div의 클래스명을 qnaDetailStyle.img 로 변경 */}
                                     <div className={qnaDetailStyle.img}> 
                                         {userQuestion.attachments.map((att, index) => (
                                             <a href={att.fileUrl} key={att.imgId || `img-${index}`} target="_blank" rel="noopener noreferrer" className={qnaDetailStyle.imageLink}>
-                                                {/* 👇 img 태그의 className 제거 또는 qnaDetailStyle.img 내부의 img로 인식되도록 함 */}
                                                 <img 
                                                     src={att.fileUrl} 
                                                     alt={att.originalFilename || `첨부이미지 ${index + 1}`} 
-                                                    // className={qnaDetailStyle.attachedImage} // 이 클래스 제거
                                                 />
                                             </a>
                                         ))}
