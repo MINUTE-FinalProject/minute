@@ -137,7 +137,7 @@ function App() {
           <Route path="admin" element={<AdminLayout />}>
             <Route index element={<ManagerMyPage />} />
             <Route path="users" element={<ManagerUsers />} />
-            <Route path="reportedmember-detail/:id" element={<ReportedMemberDetail />} />
+            <Route path="reportedmember-detail/:userId" element={<ReportedMemberDetail />} />
             <Route path="reportedmembers" element={<ReportedMembers />} />
             <Route path="member-detail/:userId" element={<MemberDetail />} />
 
