@@ -1,184 +1,239 @@
 // src/pages/Admin/Notice/ManagerNoticeEdit.jsx
-import axios from 'axios'; // axios import
-import { useEffect, useState } from 'react'; // React import
+import axios from 'axios';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-// 경로 확인: 현재 파일 위치에 따라 ../../../assets/... 등으로 변경될 수 있습니다.
+// 경로 확인: 실제 프로젝트 구조에 맞게 ../../../assets/... 등으로 변경될 수 있습니다.
 import styles from '../../assets/styles/ManagerNoticeEdit.module.css';
 import Modal from '../../components/Modal/Modal';
 
+const API_BASE_URL = "/api/v1";
+
 function ManagerNoticeEdit() {
-    const { id: noticeIdFromUrl } = useParams();
+    const { id: noticeId } = useParams(); // URL 파라미터에서 noticeId를 가져옵니다.
     const navigate = useNavigate();
 
     const [isImportant, setIsImportant] = useState(false);
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     
-    const [originalPostData, setOriginalPostData] = useState({ 
-        title: '', content: '', isImportant: false,
-        author: "", views: 0, createdAt: "", rawCreatedAt: null // 원본 날짜 저장용
-    });
-
+    // 원본 데이터 보관용 (수정 여부 확인 및 취소 시 복원, UI 표시용)
+    const [originalPostData, setOriginalPostData] = useState(null); 
     const [isLoading, setIsLoading] = useState(true); // 페이지 초기 데이터 로딩
     const [isSubmitting, setIsSubmitting] = useState(false); // 폼 제출 로딩
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalProps, setModalProps] = useState({
-        title: '', message: '', onConfirm: null, confirmText: '확인',
-        cancelText: null, type: 'default', confirmButtonType: 'primary',
-        cancelButtonType: 'secondary', onClose: () => setIsModalOpen(false)
-    });
+    // 모달 상태 관리
+    const [isModalOpen, setIsModalOpen] = useState({ state: false, config: {} });
 
-    const getToken = () => localStorage.getItem('token');
+    const getToken = () => localStorage.getItem("token");
 
-    useEffect(() => {
+    const fetchNoticeDataForEdit = useCallback(async () => {
         setIsLoading(true);
-        if (!noticeIdFromUrl || isNaN(Number(noticeIdFromUrl))) {
-            setModalProps({
-                title: "잘못된 접근", message: "유효하지 않은 공지사항 ID 입니다.", type: "error",
-                confirmText: "목록으로", confirmButtonType: 'blackButton',
-                onConfirm: () => { setIsModalOpen(false); navigate('/admin/managerNotice'); },
-                onClose: () => { setIsModalOpen(false); navigate('/admin/managerNotice'); }
-            });
-            setIsModalOpen(true);
+        const token = getToken();
+        if (!token) {
             setIsLoading(false);
+            setIsModalOpen({ 
+                state: true, 
+                config: { 
+                    title: "인증 오류", 
+                    message: "관리자 로그인이 필요합니다. 로그인 페이지로 이동합니다.", 
+                    confirmText: "확인",
+                    onConfirm: () => { setIsModalOpen({ state: false, config: {} }); navigate("/login"); }, 
+                    type: 'error' 
+                } 
+            });
             return;
         }
 
-        const fetchNoticeData = async () => {
-            try {
-                // GET /api/notices/{id}는 permitAll이므로 토큰 없이 요청 가능
-                const response = await axios.get(`/api/notices/${noticeIdFromUrl}`);
-                const data = response.data; // NoticeDetailResponseDTO
-
-                const dateObj = new Date(data.noticeCreatedAt);
-                const formattedDate = `${dateObj.getFullYear()}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.${String(dateObj.getDate()).padStart(2, '0')}`;
-
-                setTitle(data.noticeTitle);
-                setContent(data.noticeContent);
-                setIsImportant(data.noticeIsImportant);
-                setOriginalPostData({
-                    title: data.noticeTitle,
-                    content: data.noticeContent,
-                    isImportant: data.noticeIsImportant,
-                    author: data.authorNickname,
-                    views: data.noticeViewCount,
-                    createdAt: formattedDate,
-                    rawCreatedAt: data.noticeCreatedAt // 원본 날짜 저장
-                });
-
-            } catch (error) {
-                console.error("Error fetching notice for edit:", error);
-                setModalProps({
-                    title: "데이터 로드 실패", 
-                    message: error.response?.data?.message || "공지사항 정보를 불러오는 데 실패했습니다.",
-                    type: "error", confirmText: "목록으로", confirmButtonType: 'blackButton',
-                    onConfirm: () => { setIsModalOpen(false); navigate('/admin/managerNotice'); },
-                    onClose: () => { setIsModalOpen(false); navigate('/admin/managerNotice'); }
-                });
-                setIsModalOpen(true);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchNoticeData();
-    }, [noticeIdFromUrl, navigate]);
-
-    const handleSubmit = async (e) => { // async 추가
-        e.preventDefault();
-        if (!title.trim()) {
-            setModalProps({
-                title: "입력 오류", message: "제목을 입력해주세요.", type: "adminWarning",
-                confirmButtonType: 'primary', onClose: () => setIsModalOpen(false)
+        if (!noticeId || noticeId.trim() === "" || isNaN(Number(noticeId))) {
+            setIsLoading(false);
+            setIsModalOpen({ 
+                state: true, 
+                config: { 
+                    title: "오류", 
+                    message: "수정할 공지사항 ID가 유효하지 않습니다. 목록으로 돌아갑니다.", 
+                    confirmText: "확인",
+                    type: 'error', 
+                    onConfirm: () => { setIsModalOpen({ state: false, config: {} }); navigate('/admin/managerNotice'); } 
+                } 
             });
-            setIsModalOpen(true);
+            return;
+        }
+
+        try {
+            const response = await axios.get(`${API_BASE_URL}/notices/${noticeId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = response.data;
+            
+            const dateObj = new Date(data.noticeCreatedAt);
+            const formattedDate = `${dateObj.getFullYear()}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.${String(dateObj.getDate()).padStart(2, '0')}`;
+
+            setTitle(data.noticeTitle);
+            setContent(data.noticeContent);
+            setIsImportant(data.noticeIsImportant);
+            setOriginalPostData({ // 원본 데이터 저장
+                title: data.noticeTitle,
+                content: data.noticeContent,
+                isImportant: data.noticeIsImportant,
+                author: data.authorNickname, // API 응답 필드명 확인 필요
+                views: data.noticeViewCount,
+                createdAt: formattedDate,
+                rawCreatedAt: data.noticeCreatedAt // 원본 날짜 (필요시)
+            });
+        } catch (error) {
+            console.error("Error fetching notice for edit:", error);
+            const errorMsg = error.response?.data?.message || "공지사항 정보를 불러오는 데 실패했습니다.";
+            setIsModalOpen({ 
+                state: true, 
+                config: { 
+                    title: "데이터 로딩 실패", 
+                    message: errorMsg + " 목록으로 돌아갑니다.", 
+                    confirmText: "확인",
+                    type: 'error', 
+                    onConfirm: () => { setIsModalOpen({ state: false, config: {} }); navigate('/admin/managerNotice'); } 
+                } 
+            });
+            setOriginalPostData(null); // 에러 발생 시 데이터 초기화
+        } finally {
+            setIsLoading(false);
+        }
+    }, [noticeId, navigate]);
+
+    useEffect(() => {
+        fetchNoticeDataForEdit();
+    }, [fetchNoticeDataForEdit]);
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        if (!title.trim()) {
+            setIsModalOpen({ 
+                state: true, 
+                config: { 
+                    title: "입력 오류", 
+                    message: "제목을 입력해주세요.", 
+                    confirmText: "확인", 
+                    type: "warning", 
+                    onConfirm: () => setIsModalOpen({ state: false, config: {} }) 
+                } 
+            });
             return;
         }
         if (!content.trim()) {
-            setModalProps({
-                title: "입력 오류", message: "내용을 입력해주세요.", type: "adminWarning",
-                confirmButtonType: 'primary', onClose: () => setIsModalOpen(false)
+            setIsModalOpen({ 
+                state: true, 
+                config: { 
+                    title: "입력 오류", 
+                    message: "내용을 입력해주세요.", 
+                    confirmText: "확인", 
+                    type: "warning", 
+                    onConfirm: () => setIsModalOpen({ state: false, config: {} }) 
+                } 
             });
-            setIsModalOpen(true);
             return;
         }
 
         const token = getToken();
         if (!token) {
-            setModalProps({
-                title: '인증 오류', message: '로그인이 필요합니다. 다시 로그인해주세요.',
-                type: 'error', confirmText: '로그인으로 이동', confirmButtonType: 'blackButton',
-                onConfirm: () => { setIsModalOpen(false); navigate('/login'); },
-                onClose: () => setIsModalOpen(false)
+            setIsModalOpen({ 
+                state: true, 
+                config: { 
+                    title: "인증 오류", 
+                    message: "관리자 로그인이 필요합니다.", 
+                    confirmText: "로그인으로 이동",
+                    onConfirm: () => { setIsModalOpen({ state: false, config: {} }); navigate("/login"); }, 
+                    type: 'error' 
+                } 
             });
-            setIsModalOpen(true);
+            return;
+        }
+
+        // 변경 사항이 있는지 확인
+        if (originalPostData && title === originalPostData.title && content === originalPostData.content && isImportant === originalPostData.isImportant) {
+            setIsModalOpen({ 
+                state: true, 
+                config: { 
+                    title: '변경 없음', 
+                    message: '수정된 내용이 없습니다.', 
+                    confirmText: "확인",
+                    type: 'info', 
+                    onConfirm: () => setIsModalOpen({ state: false, config: {} }) 
+                } 
+            });
             return;
         }
 
         setIsSubmitting(true);
         try {
-            const updatedData = {
-                noticeTitle: title,
-                noticeContent: content,
-                noticeIsImportant: isImportant
-            };
-            // API 호출: PUT /api/notices/{id}
-            const response = await axios.put(`/api/notices/${noticeIdFromUrl}`, updatedData, {
-                headers: { Authorization: `Bearer ${token}` }
+            await axios.put(`${API_BASE_URL}/notices/${noticeId}`, 
+                { noticeTitle: title, noticeContent: content, noticeIsImportant: isImportant },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setIsModalOpen({
+                state: true,
+                config: {
+                    title: "수정 완료", 
+                    message: "공지사항이 성공적으로 수정되었습니다.", 
+                    confirmText: "상세보기로 이동",
+                    type: "success", 
+                    onConfirm: () => { 
+                        setIsModalOpen({ state: false, config: {} }); 
+                        navigate(`/admin/managerNoticeDetail/${noticeId}`); 
+                    }
+                }
             });
-
-            if (response.status === 200) {
-                setModalProps({
-                    title: "수정 완료", message: "공지사항이 성공적으로 수정되었습니다.",
-                    type: "adminSuccess", confirmText: "상세보기로 이동", confirmButtonType: 'primary',
-                    onConfirm: () => { setIsModalOpen(false); navigate(`/admin/managerNoticeDetail/${noticeIdFromUrl}`); },
-                    onClose: () => { setIsModalOpen(false); navigate(`/admin/managerNoticeDetail/${noticeIdFromUrl}`); }
-                });
-                setIsModalOpen(true);
-                 // 수정 성공 시 originalPostData도 업데이트 (선택적)
-                setOriginalPostData(prev => ({
-                    ...prev,
-                    title: title,
-                    content: content,
-                    isImportant: isImportant
-                }));
-            }
+            // 수정 성공 시 originalPostData도 현재 값으로 업데이트
+            setOriginalPostData(prev => ({
+                ...prev, // author, views, createdAt 등 기존 정보 유지
+                title: title,
+                content: content,
+                isImportant: isImportant
+            }));
         } catch (error) {
-            console.error("Error updating notice:", error);
-            setModalProps({
-                title: "수정 실패", 
-                message: error.response?.data?.message || "공지사항 수정 중 오류가 발생했습니다.",
-                type: "adminError", confirmButtonType: 'primary', onClose: () => setIsModalOpen(false)
+            console.error('Error updating notice:', error);
+            const errorMsg = error.response?.data?.message || '공지사항 수정 중 오류가 발생했습니다.';
+            setIsModalOpen({ 
+                state: true, 
+                config: { 
+                    title: '수정 실패', 
+                    message: errorMsg, 
+                    confirmText: "확인",
+                    type: 'error', 
+                    onConfirm: () => setIsModalOpen({ state: false, config: {} }) 
+                } 
             });
-            setIsModalOpen(true);
         } finally {
             setIsSubmitting(false);
         }
     };
 
     const handleCancel = () => {
-        const hasChanges = title !== originalPostData.title ||
-                           content !== originalPostData.content ||
-                           isImportant !== originalPostData.isImportant;
+        const hasChanges = originalPostData && (title !== originalPostData.title ||
+                                              content !== originalPostData.content ||
+                                              isImportant !== originalPostData.isImportant);
 
         const navigateBack = () => {
-            if (noticeIdFromUrl) {
-                navigate(`/admin/managerNoticeDetail/${noticeIdFromUrl}`);
+            if (noticeId) {
+                navigate(`/admin/managerNoticeDetail/${noticeId}`);
             } else {
                 navigate('/admin/managerNotice'); 
             }
         };
 
         if (hasChanges) {
-            setModalProps({
-                title: "수정 취소", message: "변경사항이 저장되지 않았습니다.\n정말로 수정을 취소하시겠습니까?",
-                confirmText: "예, 취소합니다", cancelText: "계속 수정",
-                onConfirm: () => { setIsModalOpen(false); navigateBack(); },
-                type: "adminConfirm", confirmButtonType: 'redButton', cancelButtonType: 'grayButton',
-                onClose: () => setIsModalOpen(false)
+            setIsModalOpen({
+                state: true,
+                config: {
+                    title: "수정 취소",
+                    message: "변경사항이 저장되지 않았습니다.\n정말로 수정을 취소하시겠습니까?",
+                    confirmText: "예, 취소합니다",
+                    cancelText: "계속 수정",
+                    onConfirm: () => { setIsModalOpen({ state: false, config: {} }); navigateBack(); },
+                    onCancel: () => setIsModalOpen({ state: false, config: {} }),
+                    type: "warning",
+                    confirmButtonType: 'danger',
+                    cancelButtonType: 'secondary'
+                }
             });
-            setIsModalOpen(true);
         } else {
             navigateBack();
         }
@@ -192,13 +247,17 @@ function ManagerNoticeEdit() {
         );
     }
     
-    if (!originalPostData.author && !isLoading) { // 데이터 로드 실패 또는 없는 ID
+    // 초기 로딩 에러 또는 데이터를 찾지 못한 경우
+    if (!originalPostData && !isLoading) {
+        // fetchNoticeDataForEdit에서 이미 모달로 에러 메시지를 띄우고 navigate를 처리할 수 있음
+        // 이 경우, 여기서는 추가적인 UI 렌더링 없이 null을 반환하여 모달만 보이게 하거나
+        // 또는 아래와 같이 명시적인 오류 페이지를 보여줄 수 있음
         return (
-             <div className={styles.container}>
+            <div className={styles.container}>
                 <main className={styles.editContentCard}>
-                     <div className={styles.pageHeader}><h1 className={styles.pageTitleText}>공지사항 수정</h1></div>
+                    <div className={styles.pageHeader}><h1 className={styles.pageTitleText}>공지사항 수정</h1></div>
                     <p style={{ color: 'red', textAlign: 'center', marginTop: '20px' }}>
-                        공지사항(ID: {noticeIdFromUrl}) 정보를 찾을 수 없거나 불러오는 데 실패했습니다.
+                        공지사항(ID: {noticeId}) 정보를 찾을 수 없거나 불러오는 데 실패했습니다.
                     </p>
                     <div className={styles.actionsBar} style={{justifyContent: 'center'}}>
                         <button type="button" className={`${styles.actionButton} ${styles.cancelButton}`} onClick={() => navigate('/admin/managerNotice')}>목록으로</button>
@@ -231,9 +290,9 @@ function ManagerNoticeEdit() {
                                 </label>
                             </div>
                             <div className={styles.rightMeta}>
-                                <span>작성자: {originalPostData.author}</span>
-                                <span>조회수: {originalPostData.views}</span>
-                                <span>작성일: {originalPostData.createdAt}</span>
+                                <span>작성자: {originalPostData?.author || 'N/A'}</span>
+                                <span>조회수: {originalPostData?.views || 0}</span>
+                                <span>작성일: {originalPostData?.createdAt || 'N/A'}</span>
                             </div>
                         </div>
                         
@@ -271,17 +330,18 @@ function ManagerNoticeEdit() {
                             <button 
                                 type="submit" 
                                 className={`${styles.actionButton} ${styles.submitButton}`}
-                                disabled={isSubmitting}
+                                disabled={isSubmitting || !title.trim() || !content.trim()} // 기본 유효성 검사도 버튼 비활성화에 포함
                             >
-                                {isSubmitting ? '수정 중...' : '수정 완료'}
+                                {isSubmitting ? "수정 중..." : "수정 완료"}
                             </button>
                         </div>
                     </form>
                 </main>
             </div>
             <Modal
-                isOpen={isModalOpen}
-                {...modalProps} // onClose는 modalProps에 포함되어 있음
+                isOpen={isModalOpen.state}
+                onClose={() => setIsModalOpen({ state: false, config: {} })}
+                {...isModalOpen.config}
             />
         </>
     );

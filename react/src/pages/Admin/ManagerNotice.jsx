@@ -1,12 +1,17 @@
 // src/pages/Admin/Notice/ManagerNotice.jsx
 
-import axios from 'axios'; // axios import
+import axios from 'axios';
+import qs from 'qs'; // qs 라이브러리 임포트
+
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import searchButtonIcon from "../../assets/images/search_icon.png"; // 경로 수정 가능성 (상위 폴더 depth)
-import styles from '../../assets/styles/ManagerNotice.module.css'; // 경로 수정 가능성
+// 이미지 경로와 CSS 모듈 경로는 실제 프로젝트 구조에 맞게 확인 및 수정해주세요.
+import searchButtonIcon from "../../assets/images/search_icon.png"; 
+import styles from '../../assets/styles/ManagerNotice.module.css'; 
 import Modal from '../../components/Modal/Modal';
 import Pagination from '../../components/Pagination/Pagination';
+
+const API_BASE_URL = "/api/v1";
 
 function ManagerNotice() {
     const navigate = useNavigate();
@@ -16,81 +21,96 @@ function ManagerNotice() {
     const [inputDateRange, setInputDateRange] = useState({ start: '', end: '' });
     const [inputImportanceFilter, setInputImportanceFilter] = useState('all');
 
-    // --- API 호출 시 실제 사용될 "적용된" 필터 상태 ---
+    // --- API 요청용 상태 ---
     const [appliedSearchTerm, setAppliedSearchTerm] = useState('');
     const [appliedDateRange, setAppliedDateRange] = useState({ start: '', end: '' });
     const [appliedImportanceFilter, setAppliedImportanceFilter] = useState('all');
 
-    // --- 목록 및 페이징 상태 ---
+    // --- 데이터 및 페이징 상태 ---
     const [noticesToDisplay, setNoticesToDisplay] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
     const itemsPerPage = 10;
+
+    // --- 로딩 상태 ---
     const [isLoading, setIsLoading] = useState(false);
-    const [isActionLoading, setIsActionLoading] = useState(false); // 개별 액션 로딩 상태
+    const [isActionLoading, setIsActionLoading] = useState(false);
 
     // --- 모달 상태 ---
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalProps, setModalProps] = useState({
-        title: '', message: '', onConfirm: null, confirmText: '확인',
-        cancelText: null, type: 'default', confirmButtonType: 'primary',
-        cancelButtonType: 'secondary', onClose: () => setIsModalOpen(false)
-    });
-    
-    const getToken = () => localStorage.getItem('token');
+    const [isModalOpen, setIsModalOpen] = useState({ state: false, config: {} });
 
-    // API 호출 함수
+    const getToken = () => localStorage.getItem("token");
+
     const fetchAdminNotices = useCallback(async () => {
         setIsLoading(true);
         const apiPage = currentPage - 1;
-        let apiUrl = `/api/notices?page=${apiPage}&size=${itemsPerPage}`;
+
+        const params = {
+            page: apiPage,
+            size: itemsPerPage,
+            sort: [
+                'noticeIsImportant,desc',
+                'noticeCreatedAt,desc'
+            ],
+        };
 
         if (appliedSearchTerm.trim() !== "") {
-            apiUrl += `&searchKeyword=${encodeURIComponent(appliedSearchTerm.trim())}`;
+            params.searchKeyword = appliedSearchTerm.trim();
         }
         if (appliedImportanceFilter === 'important') {
-            apiUrl += `&isImportant=true`;
+            params.isImportant = true;
         } else if (appliedImportanceFilter === 'general') {
-            apiUrl += `&isImportant=false`;
+            params.isImportant = false;
         }
         if (appliedDateRange.start) {
-            try {
-                const startDate = new Date(appliedDateRange.start);
-                startDate.setHours(0, 0, 0, 0);
-                apiUrl += `&dateFrom=${startDate.toISOString().split('.')[0]}`;
-            } catch (e) { console.error("Invalid start date format for API:", appliedDateRange.start, e); }
+            params.dateFrom = `${appliedDateRange.start}T00:00:00`;
         }
         if (appliedDateRange.end) {
-            try {
-                const endDate = new Date(appliedDateRange.end);
-                endDate.setHours(23, 59, 59, 999);
-                apiUrl += `&dateTo=${endDate.toISOString().split('.')[0]}`;
-            } catch (e) { console.error("Invalid end date format for API:", appliedDateRange.end, e); }
+            params.dateTo = `${appliedDateRange.end}T23:59:59`;
         }
-        
-        // GET 요청은 일반적으로 토큰이 필수는 아니지만, 관리자 섹션임을 감안하여 추가 가능 (선택적)
-        // const token = getToken();
-        // const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+        const token = getToken();
+        if (!token) {
+            setIsLoading(false);
+            setIsModalOpen({
+                state: true,
+                config: {
+                    title: "인증 오류",
+                    message: "관리자 로그인이 필요합니다. 로그인 페이지로 이동합니다.",
+                    confirmText: "확인",
+                    onConfirm: () => { setIsModalOpen({ state: false, config: {} }); navigate("/login"); },
+                    type: 'error'
+                }
+            });
+            return;
+        }
 
         try {
-            // const response = await axios.get(apiUrl, { headers });
-            const response = await axios.get(apiUrl); // GET은 permitAll이므로 토큰 없이 요청
+            const response = await axios.get(`${API_BASE_URL}/notices`, {
+                headers: { 'Authorization': `Bearer ${token}` },
+                params: params,
+                paramsSerializer: params => {
+                    return qs.stringify(params, { arrayFormat: 'repeat' })
+                }
+            });
             const data = response.data;
 
-            let generalNoticeCounterBase = (data.currentPage - 1) * data.size; // API가 반환하는 currentPage(1-based)와 size 사용
-            let generalNoticeIndex = 0;
+            // 일반 공지 번호는 API에서 반환된 현재 페이지를 기준으로 계산하거나,
+            // 요청 시 사용한 currentPage를 기준으로 계산할 수 있습니다.
+            // 여기서는 요청 시 사용한 currentPage(1-based)를 기준으로 합니다.
+            let generalNoticeCounter = (currentPage - 1) * itemsPerPage;
             
             const mappedNotices = data.content.map(notice => {
                 const dateObj = new Date(notice.noticeCreatedAt);
-                const formattedDate = `${dateObj.getFullYear().toString().slice(2)}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.${String(dateObj.getDate()).padStart(2, '0')}`;
+                const formattedDate = `${String(dateObj.getFullYear()).slice(2)}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.${String(dateObj.getDate()).padStart(2, '0')}`;
                 
                 let displayNoToShow;
                 if (notice.noticeIsImportant) {
                     displayNoToShow = '중요';
                 } else {
-                    generalNoticeIndex++;
-                    displayNoToShow = generalNoticeCounterBase + generalNoticeIndex;
+                    generalNoticeCounter++;
+                    displayNoToShow = generalNoticeCounter;
                 }
 
                 return {
@@ -101,32 +121,42 @@ function ManagerNotice() {
                     title: notice.noticeTitle,
                     date: formattedDate,
                     isImportant: notice.noticeIsImportant,
-                    viewCount: notice.noticeViewCount // 조회수 추가 (필요시)
+                    viewCount: notice.noticeViewCount
                 };
             });
 
             setNoticesToDisplay(mappedNotices);
             setTotalPages(data.totalPages);
             setTotalElements(data.totalElements);
+            // API 응답의 currentPage가 0-based이면 data.number + 1 등으로 변환 필요
+            // 현재는 API 응답의 currentPage가 1-based라고 가정
+            setCurrentPage(data.currentPage); 
 
         } catch (error) {
             console.error("Error fetching admin notices:", error);
-            setModalProps({
-                title: "오류",
-                message: error.response?.data?.message || error.message || "공지사항 목록을 불러오는 중 오류가 발생했습니다.",
-                type: "error",
-                confirmText: "확인",
-                confirmButtonType: 'blackButton',
-                onConfirm: () => setIsModalOpen(false),
-                onClose: () => setIsModalOpen(false)
+            const errorMsg = error.response?.data?.message || "공지사항 목록을 불러오는 데 실패했습니다.";
+            setIsModalOpen({
+                state: true,
+                config: {
+                    title: "오류 발생",
+                    message: errorMsg,
+                    confirmText: "확인",
+                    type: 'error',
+                    onConfirm: () => {
+                        setIsModalOpen({ state: false, config: {} });
+                        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+                            navigate('/login');
+                        }
+                    }
+                }
             });
-            setIsModalOpen(true);
             setNoticesToDisplay([]);
             setTotalPages(0);
+            setTotalElements(0);
         } finally {
             setIsLoading(false);
         }
-    }, [currentPage, appliedSearchTerm, appliedImportanceFilter, appliedDateRange]); // itemsPerPage 제거 (상수)
+    }, [currentPage, appliedSearchTerm, appliedImportanceFilter, appliedDateRange, navigate, itemsPerPage]); // itemsPerPage는 상수지만 명시적으로 포함
 
     useEffect(() => {
         fetchAdminNotices();
@@ -136,11 +166,7 @@ function ManagerNotice() {
         setAppliedSearchTerm(inputSearchTerm);
         setAppliedImportanceFilter(inputImportanceFilter);
         setAppliedDateRange(inputDateRange);
-        if (currentPage === 1) {
-            fetchAdminNotices(); // 이미 1페이지면 바로 호출
-        } else {
-            setCurrentPage(1); // 페이지 변경이 useEffect 트리거
-        }
+        setCurrentPage(1); 
     };
     
     const handlePageChange = (pageNumber) => {
@@ -153,22 +179,20 @@ function ManagerNotice() {
     const handleToggleImportant = async (id, currentIsImportant) => {
         const token = getToken();
         if (!token) {
-            setModalProps({ title: "인증 오류", message: "로그인이 필요합니다.", type: "error", confirmButtonType: 'blackButton', onConfirm: () => setIsModalOpen(false), onClose: () => setIsModalOpen(false) });
-            setIsModalOpen(true);
+            setIsModalOpen({ state: true, config: { title: "인증 오류", message: "관리자 로그인이 필요합니다.", confirmText: "확인", onConfirm: () => { setIsModalOpen({ state: false, config: {} }); navigate("/login"); }, type: 'error' } });
             return;
         }
         setIsActionLoading(true);
         try {
-            await axios.patch(`/api/notices/${id}/importance`, 
+            await axios.patch(`${API_BASE_URL}/notices/${id}/importance`, 
                 { noticeIsImportant: !currentIsImportant },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-            setModalProps({ title: "성공", message: "중요도가 변경되었습니다.", type: "success", confirmButtonType: 'blackButton', onConfirm: () => { setIsModalOpen(false); fetchAdminNotices(); }, onClose: () => { setIsModalOpen(false); fetchAdminNotices(); } });
-            setIsModalOpen(true);
+            setIsModalOpen({ state: true, config: { title: "변경 완료", message: "공지사항 중요도가 성공적으로 변경되었습니다.", confirmText: "확인", type: "success", onConfirm: () => { setIsModalOpen({ state: false, config: {} }); fetchAdminNotices(); } } });
         } catch (error) {
             console.error("Error toggling importance:", error);
-            setModalProps({ title: "오류", message: error.response?.data?.message || "중요도 변경 중 오류 발생", type: "error", confirmButtonType: 'blackButton', onConfirm: () => setIsModalOpen(false), onClose: () => setIsModalOpen(false) });
-            setIsModalOpen(true);
+            const errorMsg = error.response?.data?.message || "중요도 변경에 실패했습니다.";
+            setIsModalOpen({ state: true, config: { title: "오류", message: errorMsg, confirmText: "확인", type: "error", onConfirm: () => setIsModalOpen({ state: false, config: {} }) } });
         } finally {
             setIsActionLoading(false);
         }
@@ -177,65 +201,60 @@ function ManagerNotice() {
     const processDeleteNotice = async (idToDelete) => {
         const token = getToken();
         if (!token) {
-            setModalProps({ title: "인증 오류", message: "로그인이 필요합니다.", type: "error", confirmButtonType: 'blackButton', onConfirm: () => setIsModalOpen(false), onClose: () => setIsModalOpen(false) });
-            setIsModalOpen(true);
+            setIsModalOpen({ state: true, config: { title: "인증 오류", message: "관리자 로그인이 필요합니다.", confirmText: "확인", onConfirm: () => { setIsModalOpen({ state: false, config: {} }); navigate("/login"); }, type: 'error' } });
             return;
         }
         setIsActionLoading(true);
         try {
-            await axios.delete(`/api/notices/${idToDelete}`, {
+            await axios.delete(`${API_BASE_URL}/notices/${idToDelete}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setModalProps({ title: "성공", message: "공지사항이 삭제되었습니다.", type: "success", confirmButtonType: 'blackButton', 
-                onConfirm: () => { 
-                    setIsModalOpen(false); 
-                    // 현재 페이지의 아이템이 모두 삭제되었을 경우 페이지 조정
-                    if (noticesToDisplay.length === 1 && currentPage > 1) {
-                        setCurrentPage(currentPage - 1);
-                    } else {
-                        fetchAdminNotices();
-                    }
-                },
-                onClose: () => { 
-                    setIsModalOpen(false); 
-                    if (noticesToDisplay.length === 1 && currentPage > 1) {
-                        setCurrentPage(currentPage - 1);
-                    } else {
-                        fetchAdminNotices();
-                    }
-                }
+            setIsModalOpen({ 
+                state: true, 
+                config: { 
+                    title: "삭제 완료", 
+                    message: "공지사항이 성공적으로 삭제되었습니다.", 
+                    confirmText: "확인", 
+                    type: "success", 
+                    onConfirm: () => { 
+                        setIsModalOpen({ state: false, config: {} }); 
+                        if (noticesToDisplay.length === 1 && currentPage > 1) {
+                            setCurrentPage(currentPage - 1);
+                        } else {
+                            fetchAdminNotices();
+                        }
+                    } 
+                } 
             });
-            setIsModalOpen(true);
         } catch (error) {
             console.error("Error deleting notice:", error);
-            setModalProps({ title: "오류", message: error.response?.data?.message || "삭제 중 오류 발생", type: "error", confirmButtonType: 'blackButton', onConfirm: () => setIsModalOpen(false), onClose: () => setIsModalOpen(false) });
-            setIsModalOpen(true);
+            const errorMsg = error.response?.data?.message || "공지사항 삭제에 실패했습니다.";
+            setIsModalOpen({ state: true, config: { title: "오류", message: errorMsg, confirmText: "확인", type: "error", onConfirm: () => setIsModalOpen({ state: false, config: {} }) } });
         } finally {
             setIsActionLoading(false);
         }
     };
     
     const handleDelete = (id, noticeTitle) => {
-        setModalProps({
-            title: "삭제 확인",
-            message: `"${noticeTitle}" 공지사항을 정말 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`,
-            type: "warning",
-            confirmText: "삭제",
-            cancelText: "취소",
-            confirmButtonType: 'redButton', //  'dangerButton' or 'redButton'
-            cancelButtonType: 'grayButton',
-            onConfirm: () => { 
-                // setIsModalOpen(false); // processDeleteNotice 내부에서 모달을 다시 열 수 있으므로 여기서 닫지 않거나, processDeleteNotice 성공/실패 시 명확히 제어
-                processDeleteNotice(id); 
-            },
-            onClose: () => setIsModalOpen(false)
+        setIsModalOpen({
+            state: true,
+            config: {
+                title: `공지사항 삭제 확인`,
+                message: `공지사항 "${noticeTitle}" (ID: ${id})을(를) 정말 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`,
+                onConfirm: () => { 
+                    // processDeleteNotice 내부에서 최종 모달을 띄우므로, 여기서는 바로 닫지 않아도 됨.
+                    // 또는 여기서 닫고 processDeleteNotice에서 다시 띄우도록 명확히 구분.
+                    // setIsModalOpen({ state: false, config: {} }); // <--- 필요시 이 줄의 주석 해제
+                    processDeleteNotice(id); 
+                },
+                confirmText: '삭제', 
+                cancelText: '취소',
+                type: 'warning', 
+                confirmButtonType: 'danger',
+                onCancel: () => setIsModalOpen({ state: false, config: {} })
+            }
         });
-        setIsModalOpen(true);
     };
-
-    // asset 경로 수정 (상위 폴더 depth 고려)
-    // 예: "../../assets/images/search_icon.png" -> "../../../assets/images/search_icon.png"
-    // 스타일 경로도 마찬가지로 수정 필요할 수 있음
 
     return (
         <>
@@ -267,13 +286,13 @@ function ManagerNotice() {
                     </div>
 
                     {(isLoading || isActionLoading) && <p style={{ textAlign: 'center', margin: '20px' }}>{isActionLoading ? '처리 중입니다...' : '목록을 불러오는 중입니다...'}</p>}
-                    {!isLoading && !isActionLoading && noticesToDisplay.length === 0 && (
+                    {!isLoading && !isActionLoading && totalElements === 0 && (
                         <div style={{ textAlign: 'center', margin: '20px', padding: '20px', border: '1px solid #eee' }}>
                             표시할 공지사항이 없습니다. 다른 검색 조건으로 시도해보세요.
                         </div>
                     )}
                     
-                    {!isLoading && noticesToDisplay.length > 0 && (
+                    {!isLoading && !isActionLoading && totalElements > 0 && (
                         <table className={styles.noticeTable}>
                             <thead>
                                 <tr>
@@ -320,7 +339,7 @@ function ManagerNotice() {
                         <Link to="/admin/managerNoticeWrite" className={`${styles.actionButton} ${styles.writeButton}`}>작성</Link>
                     </div>
 
-                    {totalPages > 1 && !isLoading && (
+                    {totalPages > 1 && !isLoading && !isActionLoading && (
                         <div className={styles.pagination}>
                             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
                         </div>
@@ -328,10 +347,9 @@ function ManagerNotice() {
                 </main>
             </div>
             <Modal
-                isOpen={isModalOpen}
-                // onClose는 modalProps에 이미 포함되어 있거나, Modal 컴포넌트 자체적으로 닫기 버튼을 가질 수 있음
-                // 필요시: onClose={() => setIsModalOpen(false)}
-                {...modalProps}
+                isOpen={isModalOpen.state}
+                onClose={() => setIsModalOpen({ state: false, config: {} })}
+                {...isModalOpen.config}
             />
         </>
     );
