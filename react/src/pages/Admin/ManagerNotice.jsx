@@ -1,5 +1,7 @@
 // src/pages/Admin/Notice/ManagerNotice.jsx
 
+import axios from 'axios';
+import qs from 'qs'; // qs 라이브러리 임포트
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import searchButtonIcon from "../../assets/images/search_icon.png";
@@ -7,20 +9,19 @@ import styles from '../../assets/styles/ManagerNotice.module.css';
 import Modal from '../../components/Modal/Modal';
 import Pagination from '../../components/Pagination/Pagination';
 
+const API_BASE_URL = "/api/v1";
+
 function ManagerNotice() {
     const navigate = useNavigate();
 
-    // --- UI 입력용 상태 (사용자가 직접 변경하는 값) ---
     const [inputSearchTerm, setInputSearchTerm] = useState('');
     const [inputDateRange, setInputDateRange] = useState({ start: '', end: '' });
     const [inputImportanceFilter, setInputImportanceFilter] = useState('all');
 
-    // --- API 호출 시 실제 사용될 "적용된" 필터 상태 ---
     const [appliedSearchTerm, setAppliedSearchTerm] = useState('');
     const [appliedDateRange, setAppliedDateRange] = useState({ start: '', end: '' });
     const [appliedImportanceFilter, setAppliedImportanceFilter] = useState('all');
 
-    // --- 목록 및 페이징 상태 ---
     const [noticesToDisplay, setNoticesToDisplay] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
@@ -28,66 +29,76 @@ function ManagerNotice() {
     const itemsPerPage = 10;
     const [isLoading, setIsLoading] = useState(false);
 
-    // --- 모달 상태 ---
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalProps, setModalProps] = useState({
-        title: '', message: '', onConfirm: null, confirmText: '확인',
-        cancelText: null, type: 'default', confirmButtonType: 'primary',
-        cancelButtonType: 'secondary'
-    });
+    const [isModalOpen, setIsModalOpen] = useState({ state: false, config: {} });
 
-    // API 호출 함수
+    const getToken = () => localStorage.getItem("token");
+
     const fetchAdminNotices = useCallback(async () => {
         setIsLoading(true);
-        const apiPage = currentPage - 1; // API는 0-based 페이지
-        let apiUrl = `/api/notices?page=${apiPage}&size=${itemsPerPage}`;
+        const apiPage = currentPage - 1;
 
-        // "적용된" 필터 값들을 사용하여 URL 구성
+        const params = {
+            page: apiPage,
+            size: itemsPerPage,
+            sort: [
+                'noticeIsImportant,desc',
+                'noticeCreatedAt,desc'
+            ],
+        };
+
         if (appliedSearchTerm.trim() !== "") {
-            apiUrl += `&searchKeyword=${encodeURIComponent(appliedSearchTerm.trim())}`;
+            params.searchKeyword = appliedSearchTerm.trim();
         }
         if (appliedImportanceFilter === 'important') {
-            apiUrl += `&isImportant=true`;
+            params.isImportant = true;
         } else if (appliedImportanceFilter === 'general') {
-            apiUrl += `&isImportant=false`;
+            params.isImportant = false;
         }
         if (appliedDateRange.start) {
-            try {
-                const startDate = new Date(appliedDateRange.start);
-                startDate.setHours(0, 0, 0, 0);
-                apiUrl += `&dateFrom=${startDate.toISOString().split('.')[0]}`;
-            } catch (e) { console.error("Invalid start date format for API:", appliedDateRange.start, e); }
+            params.dateFrom = `${appliedDateRange.start}T00:00:00`;
         }
         if (appliedDateRange.end) {
-            try {
-                const endDate = new Date(appliedDateRange.end);
-                endDate.setHours(23, 59, 59, 999);
-                apiUrl += `&dateTo=${endDate.toISOString().split('.')[0]}`;
-            } catch (e) { console.error("Invalid end date format for API:", appliedDateRange.end, e); }
+            params.dateTo = `${appliedDateRange.end}T23:59:59`;
         }
 
-        // console.log("Fetching URL:", apiUrl); // 디버깅용
+        const token = getToken();
+        if (!token) {
+            setIsLoading(false);
+            setIsModalOpen({
+                state: true,
+                config: {
+                    title: "인증 오류",
+                    message: "관리자 로그인이 필요합니다.",
+                    onConfirm: () => { setIsModalOpen({ state: false, config: {} }); navigate("/login"); },
+                    type: 'error'
+                }
+            });
+            return;
+        }
 
         try {
-            const response = await fetch(apiUrl);
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ message: `HTTP error! status: ${response.status}` }));
-                throw new Error(errorData.message);
-            }
-            const data = await response.json();
+            // ⭐ 수정: axios.get 호출 시 paramsSerializer를 함수 형태로 명시적으로 전달
+            // 이렇게 하면 Axios가 qs.stringify를 사용하여 쿼리 파라미터를 직렬화합니다.
+            const response = await axios.get(`${API_BASE_URL}/notices`, {
+                headers: { 'Authorization': `Bearer ${token}` },
+                params: params,
+                paramsSerializer: params => {
+                    return qs.stringify(params, { arrayFormat: 'repeat' })
+                }
+            });
+            const data = response.data;
 
-            let generalNoticeCounterBase = (currentPage - 1) * itemsPerPage;
-            let generalNoticeIndex = 0;
+            let generalNoticeCounter = (currentPage - 1) * itemsPerPage; 
             const mappedNotices = data.content.map(notice => {
                 const dateObj = new Date(notice.noticeCreatedAt);
-                const formattedDate = `${dateObj.getFullYear().toString().slice(2)}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.${String(dateObj.getDate()).padStart(2, '0')}`;
+                const formattedDate = `${String(dateObj.getFullYear()).slice(2)}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.${String(dateObj.getDate()).padStart(2, '0')}`;
                 
                 let displayNoToShow;
                 if (notice.noticeIsImportant) {
                     displayNoToShow = '중요';
                 } else {
-                    generalNoticeIndex++;
-                    displayNoToShow = generalNoticeCounterBase + generalNoticeIndex;
+                    generalNoticeCounter++;
+                    displayNoToShow = generalNoticeCounter;
                 }
 
                 return {
@@ -104,33 +115,46 @@ function ManagerNotice() {
             setNoticesToDisplay(mappedNotices);
             setTotalPages(data.totalPages);
             setTotalElements(data.totalElements);
+            setCurrentPage(data.currentPage);
 
         } catch (error) {
             console.error("Error fetching admin notices:", error);
-            setModalProps({ /* ... 오류 모달 설정 ... */ });
-            setIsModalOpen(true);
+            const errorMsg = error.response?.data?.message || "공지사항 목록을 불러오는 데 실패했습니다.";
+            setIsModalOpen({
+                state: true,
+                config: {
+                    title: "오류 발생",
+                    message: errorMsg,
+                    confirmText: "확인",
+                    type: 'error',
+                    onConfirm: () => {
+                        setIsModalOpen({ state: false, config: {} });
+                        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+                            navigate('/login');
+                        }
+                    }
+                }
+            });
             setNoticesToDisplay([]);
             setTotalPages(0);
+            setTotalElements(0);
+            setCurrentPage(1);
         } finally {
             setIsLoading(false);
         }
-    }, [currentPage, itemsPerPage, appliedSearchTerm, appliedImportanceFilter, appliedDateRange]);
+    }, [currentPage, itemsPerPage, appliedSearchTerm, appliedImportanceFilter, appliedDateRange, navigate]);
 
-    // "적용된" 필터 또는 현재 페이지가 변경될 때 데이터 다시 불러오기
     useEffect(() => {
         fetchAdminNotices();
-    }, [fetchAdminNotices]); // fetchAdminNotices는 useCallback으로 감싸져 있고, 그 의존성에 applied* 상태들이 포함됨
+    }, [fetchAdminNotices]);
 
-    // "검색" 버튼 클릭 핸들러
     const handleSearchOrFilterClick = () => {
         setAppliedSearchTerm(inputSearchTerm);
         setAppliedImportanceFilter(inputImportanceFilter);
         setAppliedDateRange(inputDateRange);
-        // 검색 시에는 항상 첫 페이지부터 결과를 보여주도록 설정
         if (currentPage === 1) {
-            // 이미 1페이지면, applied* 상태 변경만으로 useEffect가 트리거되어 fetchAdminNotices 호출
         } else {
-            setCurrentPage(1); // currentPage 변경이 useEffect를 트리거
+            setCurrentPage(1);
         }
     };
     
@@ -141,25 +165,109 @@ function ManagerNotice() {
     const handleRowClick = (noticeId) => { navigate(`/admin/managerNoticeDetail/${noticeId}`); };
     const handleEdit = (id) => { navigate(`/admin/managerNoticeEdit/${id}`); };
 
-    // --- 중요도 변경, 삭제 핸들러 (API 호출 준비) ---
     const handleToggleImportant = async (id, currentIsImportant) => {
-        // TODO: API 호출 (PATCH /api/notices/{id}/importance) 및 목록 새로고침 (fetchAdminNotices())
-        console.log(`Toggle importance for ID: ${id}. API call pending.`);
-        alert("중요도 변경 API 연동 후 목록 새로고침 필요");
+        const token = getToken();
+        if (!token) {
+            setIsModalOpen({
+                state: true,
+                config: {
+                    title: "인증 오류",
+                    message: "관리자 로그인이 필요합니다.",
+                    onConfirm: () => { setIsModalOpen({ state: false, config: {} }); navigate("/login"); },
+                    type: 'error'
+                }
+            });
+            return;
+        }
+
+        try {
+            await axios.patch(`${API_BASE_URL}/notices/${id}/importance`, 
+                { noticeIsImportant: !currentIsImportant },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setIsModalOpen({
+                state: true,
+                config: {
+                    title: "변경 완료",
+                    message: "공지사항 중요도가 성공적으로 변경되었습니다.",
+                    confirmText: "확인",
+                    type: "success",
+                    onConfirm: () => { setIsModalOpen({ state: false, config: {} }); fetchAdminNotices(); }
+                }
+            });
+        } catch (error) {
+            console.error("Error toggling importance:", error);
+            const errorMsg = error.response?.data?.message || "중요도 변경에 실패했습니다.";
+            setIsModalOpen({
+                state: true,
+                config: {
+                    title: "오류",
+                    message: errorMsg,
+                    confirmText: "확인",
+                    type: "error",
+                    onConfirm: () => setIsModalOpen({ state: false, config: {} })
+                }
+            });
+        }
     };
 
     const processDeleteNotice = async (idToDelete) => {
-        // TODO: API 호출 (DELETE /api/notices/{idToDelete}) 및 목록 새로고침 (fetchAdminNotices())
-        console.log(`Delete notice ID: ${idToDelete}. API call pending.`);
-        alert("삭제 API 연동 후 목록 새로고침 필요");
+        const token = getToken();
+        if (!token) {
+            setIsModalOpen({
+                state: true,
+                config: {
+                    title: "인증 오류",
+                    message: "관리자 로그인이 필요합니다.",
+                    onConfirm: () => { setIsModalOpen({ state: false, config: {} }); navigate("/login"); },
+                    type: 'error'
+                }
+            });
+            return;
+        }
+
+        try {
+            await axios.delete(`${API_BASE_URL}/notices/${idToDelete}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setIsModalOpen({
+                state: true,
+                config: {
+                    title: "삭제 완료",
+                    message: "공지사항이 성공적으로 삭제되었습니다.",
+                    confirmText: "확인",
+                    type: "success",
+                    onConfirm: () => { setIsModalOpen({ state: false, config: {} }); fetchAdminNotices(); }
+                }
+            });
+        } catch (error) {
+            console.error("Error deleting notice:", error);
+            const errorMsg = error.response?.data?.message || "공지사항 삭제에 실패했습니다.";
+            setIsModalOpen({
+                state: true,
+                config: {
+                    title: "오류",
+                    message: errorMsg,
+                    confirmText: "확인",
+                    type: "error",
+                    onConfirm: () => setIsModalOpen({ state: false, config: {} })
+                }
+            });
+        }
     };
     
     const handleDelete = (id, noticeTitle) => {
-        setModalProps({ /* ... 삭제 확인 모달 설정 ... */
-            onConfirm: () => { processDeleteNotice(id); setIsModalOpen(false); },
-            onClose: () => setIsModalOpen(false)
+        setIsModalOpen({
+            state: true,
+            config: {
+                title: `공지사항 삭제 확인`,
+                message: `공지사항 "${noticeTitle}" (ID: ${id})을(를) 정말 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`,
+                onConfirm: () => { setIsModalOpen({ state: false, config: {} }); processDeleteNotice(id); },
+                confirmText: '삭제', cancelText: '취소',
+                type: 'warning', confirmButtonType: 'danger',
+                onCancel: () => setIsModalOpen({ state: false, config: {} })
+            }
         });
-        setIsModalOpen(true);
     };
 
     return (
@@ -168,7 +276,6 @@ function ManagerNotice() {
                 <main className={styles.managerContent}>
                     <h1 className={styles.pageTitle}>공지사항 관리</h1>
                     <div className={styles.filterBar}>
-                        {/* UI 입력 필드들은 input* 상태와 연결 */}
                         <input type="date" className={styles.filterElement} value={inputDateRange.start} onChange={(e) => setInputDateRange(prev => ({ ...prev, start: e.target.value }))} />
                         <span className={styles.dateSeparator}>~</span>
                         <input type="date" className={styles.filterElement} value={inputDateRange.end} onChange={(e) => setInputDateRange(prev => ({ ...prev, end: e.target.value }))} />
@@ -186,23 +293,20 @@ function ManagerNotice() {
                             value={inputSearchTerm} 
                             onChange={(e) => setInputSearchTerm(e.target.value)} 
                         />
-                        {/* 검색 버튼은 handleSearchOrFilterClick 호출 */}
                         <button type="button" className={styles.filterSearchButton} onClick={handleSearchOrFilterClick}>
                             <img src={searchButtonIcon} alt="검색" className={styles.searchIcon} />
                         </button>
                     </div>
 
-                    {/* ... (테이블 및 나머지 JSX는 이전과 거의 동일, noticesToDisplay 사용) ... */}
                     {isLoading && <p style={{ textAlign: 'center', margin: '20px' }}>목록을 불러오는 중입니다...</p>}
-                    {!isLoading && noticesToDisplay.length === 0 && (
+                    {!isLoading && totalElements === 0 && (
                         <div style={{ textAlign: 'center', margin: '20px', padding: '20px', border: '1px solid #eee' }}>
                             표시할 공지사항이 없습니다. 다른 검색 조건으로 시도해보세요.
                         </div>
                     )}
                     
-                    {!isLoading && noticesToDisplay.length > 0 && (
+                    {!isLoading && totalElements > 0 && (
                         <table className={styles.noticeTable}>
-                            {/* thead 생략 - 이전과 동일 */}
                             <thead>
                                 <tr>
                                     <th>NO/중요</th>
@@ -252,10 +356,11 @@ function ManagerNotice() {
                     )}
                 </main>
             </div>
+            {/* Modal 컴포넌트에 isModalOpen.state와 isModalOpen.config를 전달 */}
             <Modal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                {...modalProps}
+                isOpen={isModalOpen.state}
+                onClose={() => setIsModalOpen({ state: false, config: {} })}
+                {...isModalOpen.config}
             />
         </>
     );
