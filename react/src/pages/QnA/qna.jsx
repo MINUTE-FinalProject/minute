@@ -1,117 +1,136 @@
-// src/pages/QnA/qna.js (또는 해당 파일의 실제 경로)
-import { useEffect, useState } from 'react'; // React import 추가
-import { Link, useNavigate } from 'react-router-dom';
+// src/pages/QnA/Qna.jsx (또는 실제 파일 경로)
+import axios from 'axios'; // 페이지마다 직접 임포트
+import { useCallback, useEffect, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import searchButtonIcon from "../../assets/images/search_icon.png";
 import qnaStyle from "../../assets/styles/qna.module.css";
-import Modal from '../../components/Modal/Modal'; // Modal 컴포넌트 import
+import Modal from '../../components/Modal/Modal';
 import MypageNav from '../../components/MypageNavBar/MypageNav';
-import Pagination from "../../components/Pagination/Pagination";
-
-const LOGGED_IN_USER_AUTHOR_NAME = '김*진';
-
-const generateInitialQnaData = (count = 25) => {
-    // ... (기존 generateInitialQnaData 함수 내용 유지)
-    const items = [];
-    const statuses = ['완료', '대기'];
-    const authors = ['김*진', '이*서', '박*훈', '최*아', '정*원', '김*진', '정*원']; 
-    for (let i = 0; i < count; i++) {
-        items.push({
-            id: `qna-${i + 1}`,
-            status: statuses[i % statuses.length],
-            author: authors[i % authors.length],
-            title: `문의사항 ${i + 1}: ${i % 3 === 0 ? '결제 관련 문의입니다.' : (i % 3 === 1 ? '서비스 이용 중 궁금한 점이 있습니다.' : '기타 문의 드립니다.')}`,
-            date: `25.04.${String(28 - (i % 28)).padStart(2, '0')}`,
-        });
-    }
-    return items;
-};
+import Pagination from "../../components/Pagination/Pagination"; // Pagination 컴포넌트 경로 확인
 
 function Qna() {
-    const [allQnaItems, setAllQnaItems] = useState([]); 
-    const [qnaToDisplay, setQnaToDisplay] = useState([]); 
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const itemsPerPage = 8;
-    const navigate = useNavigate(); 
+    const [qnaPage, setQnaPage] = useState(null); // API 응답 Page 객체 전체를 저장
+    const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    // 모달 상태 관리
+    // 모달 상태
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalProps, setModalProps] = useState({
-        title: '',
-        message: '',
-        onConfirm: null,
-        confirmText: '확인',
-        cancelText: null,
-        type: 'default',
-        confirmButtonType: 'primary',
-        cancelButtonType: 'secondary'
+        title: '', message: '', onConfirm: null, confirmText: '확인',
+        cancelText: null, type: 'default', confirmButtonType: 'primary', cancelButtonType: 'secondary'
     });
 
-    useEffect(() => {
-        // API 호출 시뮬레이션 및 에러 처리 예시
-        const MOCK_API_QNA_LIST_SHOULD_FAIL = false; // 이 값을 true로 바꾸면 에러 모달 테스트 가능
+    // 필터 상태: URL 쿼리 파라미터에서 초기값 가져오기
+    const [filters, setFilters] = useState({
+        startDate: searchParams.get('startDate') || '',
+        endDate: searchParams.get('endDate') || '',
+        status: searchParams.get('status') || '', // 백엔드는 "PENDING", "ANSWERED"
+        searchTerm: searchParams.get('searchTerm') || ''
+    });
+    const currentPage = parseInt(searchParams.get('page') || '0', 10); // 백엔드는 0-indexed
+    const itemsPerPage = 8; // 백엔드에 size로 전달될 값
 
-        const fetchQnaData = async () => {
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    if (MOCK_API_QNA_LIST_SHOULD_FAIL) {
-                        reject(new Error("서버에서 문의 목록을 불러오는 데 실패했습니다."));
-                    } else {
-                        const loadedQnaData = generateInitialQnaData();
-                        resolve(loadedQnaData);
-                    }
-                }, 500); // 0.5초 딜레이
+    const fetchQnaData = useCallback(async (currentFilters, page) => {
+        setIsLoading(true);
+        const token = localStorage.getItem('token'); // 토큰 가져오기
+
+        if (!token) {
+            setIsLoading(false);
+            setModalProps({
+                title: "인증 오류", message: "로그인이 필요합니다. 로그인 페이지로 이동합니다.",
+                confirmText: "확인", type: "error", confirmButtonType: 'blackButton',
+                onConfirm: () => { setIsModalOpen(false); navigate('/login'); }
             });
-        };
-
-        fetchQnaData()
-            .then(loadedQnaData => {
-                setAllQnaItems(loadedQnaData);
-                // 초기 필터링 (내 문의만)은 allQnaItems 설정 후 다른 useEffect에서 처리되거나 여기서 바로 처리
-                const myInquiries = loadedQnaData.filter(item => item.author === LOGGED_IN_USER_AUTHOR_NAME);
-                setQnaToDisplay(myInquiries); // 필터된 데이터로 qnaToDisplay 설정
-            })
-            .catch(error => {
-                console.error("Error fetching Q&A data:", error);
-                setModalProps({
-                    title: "오류 발생",
-                    message: error.message || "문의 목록을 불러오는 중 문제가 발생했습니다.\n잠시 후 다시 시도해주세요.",
-                    confirmText: "확인",
-                    type: "error", 
-                    confirmButtonType: 'blackButton', // 사용자용 에러 모달 확인 버튼은 검정색
-                    onConfirm: () => { /* 필요시 특정 동작, 예: 메인 페이지로 이동 navigate('/') */ }
-                });
-                setIsModalOpen(true);
-                setQnaToDisplay([]); // 에러 발생 시 빈 목록 표시
-            });
-    }, []); // 마운트 시 한 번만 실행
-
-    useEffect(() => {
-        if (qnaToDisplay.length > 0) {
-            const calculatedTotalPages = Math.ceil(qnaToDisplay.length / itemsPerPage);
-            setTotalPages(calculatedTotalPages);
-            if (currentPage > calculatedTotalPages && calculatedTotalPages > 0) {
-                setCurrentPage(1);
-            } else if (calculatedTotalPages === 0 && qnaToDisplay.length === 0) { 
-                setCurrentPage(1);
-                setTotalPages(1); 
-            }
-        } else { 
-            setTotalPages(1);
-            setCurrentPage(1);
+            setIsModalOpen(true);
+            return;
         }
-    }, [qnaToDisplay, itemsPerPage, currentPage]);
 
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentDisplayedQnaItems = qnaToDisplay.slice(indexOfFirstItem, indexOfLastItem);
+        try {
+            const params = {
+                page: page,
+                size: itemsPerPage,
+                sort: 'inquiryCreatedAt,desc',
+                searchTerm: currentFilters.searchTerm || undefined, // 빈 문자열이면 파라미터에서 제외
+                statusFilter: currentFilters.status || undefined,
+                startDate: currentFilters.startDate || undefined,
+                endDate: currentFilters.endDate || undefined,
+            };
 
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
+            const response = await axios.get('/api/v1/qna', {
+                headers: { 'Authorization': `Bearer ${token}` },
+                params // params 객체를 여기에 전달
+            });
+            setQnaPage(response.data);
+        } catch (error) {
+            console.error("Error fetching Q&A data:", error);
+            let errorMessage = "문의 목록을 불러오는 중 문제가 발생했습니다.";
+            if (error.response) {
+                if (error.response.status === 401) {
+                    errorMessage = "인증에 실패했습니다. 다시 로그인해주세요.";
+                    // 추가적으로 로그인 페이지로 보내는 로직
+                } else if (error.response.data && error.response.data.message) {
+                    errorMessage = error.response.data.message;
+                }
+            }
+            setModalProps({
+                title: "오류 발생", message: errorMessage, confirmText: "확인",
+                type: "error", confirmButtonType: 'blackButton',
+                onConfirm: () => {
+                    setIsModalOpen(false);
+                    if (error.response && error.response.status === 401) navigate('/login');
+                }
+            });
+            setIsModalOpen(true);
+            setQnaPage(null);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [itemsPerPage, navigate]);
+
+    useEffect(() => {
+        // URL 쿼리 파라미터가 변경될 때마다 필터 상태를 업데이트하고 데이터를 다시 가져옴
+        const newFilters = {
+            startDate: searchParams.get('startDate') || '',
+            endDate: searchParams.get('endDate') || '',
+            status: searchParams.get('status') || '',
+            searchTerm: searchParams.get('searchTerm') || ''
+        };
+        setFilters(newFilters);
+        const newCurrentPage = parseInt(searchParams.get('page') || '0', 10);
+        fetchQnaData(newFilters, newCurrentPage);
+    }, [searchParams, fetchQnaData]); // searchParams가 변경될 때마다 실행
+
+    const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        setFilters(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        const newSearchParams = new URLSearchParams();
+        if (filters.startDate) newSearchParams.set('startDate', filters.startDate);
+        if (filters.endDate) newSearchParams.set('endDate', filters.endDate);
+        if (filters.status) newSearchParams.set('status', filters.status);
+        if (filters.searchTerm) newSearchParams.set('searchTerm', filters.searchTerm);
+        newSearchParams.set('page', '0'); // 검색 시 항상 첫 페이지로
+        setSearchParams(newSearchParams);
+    };
+
+    const handlePageChange = (pageNumber) => { // Pagination 컴포넌트가 0-indexed 페이지를 반환한다고 가정
+        const newSearchParams = new URLSearchParams(searchParams);
+        newSearchParams.set('page', pageNumber.toString());
+        setSearchParams(newSearchParams);
     };
 
     const handleRowClick = (qnaId) => {
-        navigate(`/qnaDetail/${qnaId}`); 
+        navigate(`/qnaDetail/${qnaId}`);
+    };
+
+    const getStatusText = (status) => {
+        if (status === 'PENDING') return '대기';
+        if (status === 'ANSWERED') return '완료';
+        return status; // 혹시 모를 다른 상태값
     };
 
     return (
@@ -121,35 +140,32 @@ function Qna() {
                 <div className={qnaStyle.container}>
                     <div className={qnaStyle.inner}>
                         <div className={qnaStyle.title}>
-                            <Link to="/qna" className={qnaStyle.pageTitleLink}>
-                                <h1>Q&A</h1>
-                            </Link>
+                            <Link to="/qna" className={qnaStyle.pageTitleLink}><h1>Q&A</h1></Link>
                         </div>
 
-                        <div className={qnaStyle.searchbar}>
-                            <input type="date" className={qnaStyle.dateFilter} />
-                            <span className={qnaStyle.dateSeparator}>~</span> 
-                            <input type="date" className={qnaStyle.dateFilter} />
-                            <select className={qnaStyle.statusSelect}>
+                        <form onSubmit={handleSearch} className={qnaStyle.searchbar}>
+                            <input type="date" name="startDate" value={filters.startDate} onChange={handleFilterChange} className={qnaStyle.dateFilter} />
+                            <span className={qnaStyle.dateSeparator}>~</span>
+                            <input type="date" name="endDate" value={filters.endDate} onChange={handleFilterChange} className={qnaStyle.dateFilter} />
+                            <select name="status" value={filters.status} onChange={handleFilterChange} className={qnaStyle.statusSelect}>
                                 <option value="">상태 (전체)</option>
-                                <option value="completed">완료</option>
-                                <option value="pending">대기</option>
+                                <option value="ANSWERED">완료</option>
+                                <option value="PENDING">대기</option>
                             </select>
                             <div className={qnaStyle.searchInputGroup}>
                                 <input
                                     type="text"
+                                    name="searchTerm"
                                     placeholder="검색어를 입력하세요"
+                                    value={filters.searchTerm}
+                                    onChange={handleFilterChange}
                                     className={qnaStyle.searchInput}
                                 />
-                                <button type="button" className={qnaStyle.searchBtn}>
-                                    <img
-                                        src={searchButtonIcon}
-                                        alt="검색"
-                                        className={qnaStyle.searchIcon}
-                                    />
+                                <button type="submit" className={qnaStyle.searchBtn} disabled={isLoading}>
+                                    <img src={searchButtonIcon} alt="검색" className={qnaStyle.searchIcon} />
                                 </button>
                             </div>
-                        </div>
+                        </form>
 
                         <table className={qnaStyle.table}>
                             <thead>
@@ -161,54 +177,43 @@ function Qna() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {currentDisplayedQnaItems.length > 0 ? (
-                                    currentDisplayedQnaItems.map(qna => (
-                                        <tr key={qna.id} onClick={() => handleRowClick(qna.id)} className={qnaStyle.clickableRow}>
+                                {isLoading ? (
+                                    <tr><td colSpan="4" style={{ textAlign: "center" }}>로딩 중...</td></tr>
+                                ) : qnaPage && qnaPage.content && qnaPage.content.length > 0 ? (
+                                    qnaPage.content.map(qna => (
+                                        <tr key={qna.inquiryId} onClick={() => handleRowClick(qna.inquiryId)} className={qnaStyle.clickableRow}>
                                             <td>
-                                                <span
-                                                    className={`${qnaStyle.statusBadge} ${qna.status === '완료' ? qnaStyle.completed : qnaStyle.pending}`}
-                                                >
-                                                    {qna.status}
+                                                <span className={`${qnaStyle.statusBadge} ${qna.inquiryStatus === 'ANSWERED' ? qnaStyle.completed : qnaStyle.pending}`}>
+                                                    {getStatusText(qna.inquiryStatus)}
                                                 </span>
                                             </td>
-                                            <td>{qna.author}</td>
+                                            <td>{qna.authorNickname}</td>
                                             <td className={qnaStyle.tableTitleCell}>
-                                                <Link 
-                                                    to={`/qnaDetail/${qna.id}`} 
-                                                    className={qnaStyle.titleLink}
-                                                    onClick={(e) => e.stopPropagation()} 
-                                                >
-                                                    {qna.title}
+                                                <Link to={`/qnaDetail/${qna.inquiryId}`} className={qnaStyle.titleLink} onClick={(e) => e.stopPropagation()}>
+                                                    {qna.inquiryTitle} {qna.hasAttachments && "📎"}
                                                 </Link>
                                             </td>
-                                            <td>{qna.date}</td>
+                                            <td>{new Date(qna.inquiryCreatedAt).toLocaleDateString()}</td>
                                         </tr>
                                     ))
                                 ) : (
-                                    <tr>
-                                        <td colSpan="4">
-                                            {isModalOpen ? "오류로 인해 내용을 표시할 수 없습니다." : "등록된 문의사항이 없습니다."}
-                                        </td>
-                                    </tr>
+                                    <tr><td colSpan="4" style={{ textAlign: "center" }}>{isModalOpen ? "오류로 인해 내용을 표시할 수 없습니다." : "등록된 문의사항이 없습니다."}</td></tr>
                                 )}
                             </tbody>
                         </table>
 
                         <div className={qnaStyle.bottomControls}>
                             <div className={qnaStyle.paginationContainerInBottomControls}>
-                                {/* 모달이 열려있지 않고, 페이지가 있을 때만 페이지네이션 표시 */}
-                                {!isModalOpen && totalPages > 1 && qnaToDisplay.length > 0 && (
+                                {!isModalOpen && qnaPage && qnaPage.totalPages > 0 && qnaPage.content?.length > 0 && (
                                     <Pagination
-                                        currentPage={currentPage}
-                                        totalPages={totalPages}
-                                        onPageChange={handlePageChange}
+                                        currentPage={qnaPage.number} // 백엔드에서 받은 현재 페이지 (0-indexed)
+                                        totalPages={qnaPage.totalPages}
+                                        onPageChange={handlePageChange} // 페이지 변경 시 0-indexed 페이지 번호로 호출
                                     />
                                 )}
                             </div>
                             <div className={qnaStyle.writeButtonContainerInBottomControls}>
-                                <Link to="/qnaWrite" className={qnaStyle.writeButton}>
-                                    작성
-                                </Link>
+                                <Link to="/qnaWrite" className={qnaStyle.writeButton}>작성</Link>
                             </div>
                         </div>
                     </div>

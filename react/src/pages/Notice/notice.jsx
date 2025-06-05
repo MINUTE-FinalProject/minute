@@ -34,7 +34,7 @@ function Notice() {
                 // const response = await axios.get(`http://localhost:8080/api/notices?page=${currentPage - 1}&size=${itemsPerPage}`);
 
                 // vite.config.js 프록시 설정 활용 (권장)
-                const response = await axios.get(`/api/notices?page=${currentPage - 1}&size=${itemsPerPage}`);
+                const response = await axios.get(`/api/v1/notices?page=${currentPage - 1}&size=${itemsPerPage}`);
 
                 // axios는 응답 데이터를 response.data에 담아줍니다.
                 const data = response.data; // PageResponseDTO<NoticeListResponseDTO> 형태의 응답
