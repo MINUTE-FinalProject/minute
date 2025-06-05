@@ -12,9 +12,19 @@ function FindID() {
 
   const navigate = useNavigate();
 
+  const isFormValid =
+    email &&
+    name &&
+    phone;
+
   const handleFindId = async (e) => {
     e.preventDefault();
     setError('');
+
+    if (!isFormValid) {
+      setErrorMessage('정보를 모두 입력해주세요.');
+      return;
+    }
 
     try {
       const response = await axios.post('http://localhost:8080/api/v1/auth/find-id', {
@@ -52,7 +62,11 @@ function FindID() {
             <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} className={styles.textBox2} />
 
             {error && <p className={styles.err}>{error}</p>}
-            <button type="submit" className={styles.submitBtn}>아이디 찾기</button>
+            <button
+              type="submit"
+              className={`${styles.submitBtn} ${isFormValid ? styles.active : styles.disabled}`}
+              disabled={!isFormValid}
+            >아이디 찾기</button>
 
             {foundId && <p className={styles.resultMsg}>찾은 아이디: <strong>{foundId}</strong></p>}
             
