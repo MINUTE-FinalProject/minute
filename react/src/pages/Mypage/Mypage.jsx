@@ -13,6 +13,8 @@ function Mypage2() {
   const token = localStorage.getItem('token');
   const userId = localStorage.getItem('userId'); 
   const [userInfo, setUserInfo] = useState(null);
+  const [imgError, setImgError] = useState(false);
+  const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
     axios.get(`http://localhost:8080/api/v1/user/${userId}`, {
@@ -104,6 +106,15 @@ function Mypage2() {
     .catch(err => console.error("마이페이지 일정 불러오기 실패", err));
 }, [selectedDate, token]);
 
+ // 이미지 유효성 검사 함수
+  const hasValidImage = (img) => {
+    return img && typeof img === "string" && img.trim() !== "" && img.trim() !== "null" && img.trim() !== "undefined";
+  };
+
+  if (!userInfo) {
+    return <div>로딩중...</div>;
+  }
+
   return (
     <>
     <MypageNav/>
@@ -113,9 +124,20 @@ function Mypage2() {
           <div className={styles.profileWrap}>
             <div className={styles.profileContent}>
               <div className={styles.profile}>
-                <h1 className={styles.profileNickName}>{userInfo?.userNickName || "닉네임"}</h1>
+                <h1 className={styles.profileNickName}>{userInfo?.userNickName|| "닉네임"} 님</h1>
                 <div className={styles.profileImg}>
-                  <img src={userInfo?.profileImage || "/src/assets/images/cute.png"} alt="프로필 이미지" />
+                  {(!imgError && (hasValidImage(profileImage) || hasValidImage(userInfo.profileImage))) ? (
+                                  <img
+                                    className={styles.img2}
+                                    src={hasValidImage(profileImage) ? profileImage : `http://localhost:8080${userInfo.profileImage}?t=${Date.now()}`}
+                                    alt="프로필"
+                                    onError={() => setImgError(true)}
+                                  />
+                                ) : (
+                                  <div className={styles.defaultProfile}>
+                                    프로필 사진을<br />업로드 하세요
+                                  </div>
+                                )}
                 </div>
               </div>
 

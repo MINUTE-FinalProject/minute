@@ -21,12 +21,9 @@ export default function FiveDayForecast() {
     navigator.geolocation.getCurrentPosition(async ({ coords }) => {
       try {
         const { latitude, longitude } = coords;
-        const key = import.meta.env.VITE_OWM_KEY;
 
         const res = await fetch(
-          `https://api.openweathermap.org/data/2.5/forecast` +
-          `?lat=${latitude}&lon=${longitude}` +
-          `&units=metric&lang=kr&appid=${key}`
+          `/api/v1/weather/forecast?lat=${latitude}&lon=${longitude}`
         );
         if (!res.ok) throw new Error();
         const data = await res.json();

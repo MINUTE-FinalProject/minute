@@ -91,6 +91,7 @@ function App() {
           <Route path="healing" element={<HealingPage />} />
           <Route path="mountain" element={<MountainPage />} />
           <Route path="themepark" element={<ThemeParkPage />} />
+          <Route path="/shorts/:videoId" element={<ShortsVideoPage />} />
           <Route path="search" element={<Search />} />
 
           <Route path="area">
@@ -114,31 +115,31 @@ function App() {
           <Route path="freeboard" element={<div className="mainContentWithFixedHeader"><FreeBoard /></div>} />
           <Route path="freeboardDetail/:postId" element={<div className="mainContentWithFixedHeader"><FreeboardDetail /></div>} />
           {/* 👇 자유게시판 글쓰기 페이지에 ProtectedRoute 적용 */}
-          <Route 
-            path="freeboardWrite" 
+          <Route
+            path="freeboardWrite"
             element={
               <ProtectedRoute> {/* ProtectedRoute로 감싸기 */}
                 <div className="mainContentWithFixedHeader"><FreeboardWrite /></div>
               </ProtectedRoute>
-            } 
+            }
           />
 
           {/* 👇 자유게시판 글수정 페이지에 ProtectedRoute 적용 */}
-          <Route 
-            path="freeboardEdit/:postId" 
+          <Route
+            path="freeboardEdit/:postId"
             element={
               <ProtectedRoute> {/* ProtectedRoute로 감싸기 */}
                 <div className="mainContentWithFixedHeader"><FreeboardEdit /></div>
               </ProtectedRoute>
-            } 
+            }
           />
 
           <Route path="admin" element={<AdminLayout />}>
             <Route index element={<ManagerMyPage />} />
             <Route path="users" element={<ManagerUsers />} />
-            <Route path="reportedmember-detail/:id" element={<ReportedMemberDetail />} />
+            <Route path="reportedmember-detail/:userId" element={<ReportedMemberDetail />} />
             <Route path="reportedmembers" element={<ReportedMembers />} />
-            <Route path="member-detail/:id" element={<MemberDetail />} />
+            <Route path="member-detail/:userId" element={<MemberDetail />} />
 
             <Route path="managerFreeboard" element={<ManagerFreeboard />} />
             <Route path="managerFreeboardDetail/:postId" element={<ManagerFreeboardDetail />} />
@@ -182,8 +183,10 @@ function App() {
         <Route path="like" element={<div className="mypage1"><Like /></div>} />
 
         <Route path="/login" element={<LoginPage />} />
-        
+
         <Route path="shorts" element={<ShortsVideoPage />} />
+        <Route path="/shorts/video/:videoId" element={<ShortsVideoPage />} />
+
         <Route path="/*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

@@ -103,11 +103,12 @@ function SearchBar({showTitle=true, compact = false, className = '', textboxClas
     // 검색한건 다 저장
     await saveSearch(kw);
 
-    // 지역 페이지 이동
-    const region = regionList.find(r => r.name === kw);
+    // region에 해당하면 지역 페이지로, 아니라면 일반 검색 결과로
+    const region = regionList.find((r) => r.name === kw);
 
      if (region && token) {
       // 로그인 상태 && 지역명인 경우 지역 페이지로
+      // replace: true 옵션을 주면 “현재 히스토리”를 대체
       navigate(`/area/${region.slug}`);
     } else {
       // 로그인 안 했거나 일반 검색어인 경우 결과 페이지로

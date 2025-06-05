@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "../../assets/styles/RollingCardSlider.module.css";
 
-const RollingCardSlider = ({ region, setModalVideoId }) => {
+const RollingCardSlider = ({ region }) => {
   const sliderRef = useRef(null);
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
@@ -23,7 +26,7 @@ const RollingCardSlider = ({ region, setModalVideoId }) => {
       });
   }, [region]);
 
-  // 드래그 슬라이드 (생략 가능, 기존과 동일)
+  // 드래그 슬라이드(생략 가능)
   const isDragging = useRef(false);
   const startX = useRef(0);
   const scrollLeft = useRef(0);
@@ -50,6 +53,17 @@ const RollingCardSlider = ({ region, setModalVideoId }) => {
     sliderRef.current.scrollBy({ left: 180, behavior: "smooth" });
   };
 
+  // 카드 클릭 → ShortsVideoPage로 이동
+  const handleCardClick = (idx) => {
+    navigate("/shorts", {
+      state: {
+        list: videos,
+        origin: region,
+        startIdx: idx,
+      },
+    });
+  };
+
   // 빈 카드(로딩/오류)
   const placeholderCards = [...Array(10).keys()].map((i) => (
     <div key={i} className={styles.card}>
@@ -60,12 +74,8 @@ const RollingCardSlider = ({ region, setModalVideoId }) => {
   return (
     <div className={styles.sliderWrapper}>
       <div className={styles.arrowGroup}>
-        <button className={styles.navButton} onClick={handleScrollLeft}>
-          ◀
-        </button>
-        <button className={styles.navButton} onClick={handleScrollRight}>
-          ▶
-        </button>
+        <button className={styles.navButton} onClick={handleScrollLeft}>◀</button>
+        <button className={styles.navButton} onClick={handleScrollRight}>▶</button>
       </div>
       <div
         className={styles.slider}
@@ -84,7 +94,7 @@ const RollingCardSlider = ({ region, setModalVideoId }) => {
                     key={i}
                     className={styles.card}
                     style={{ cursor: "pointer" }}
-                    onClick={() => setModalVideoId(item.id?.videoId)} // 👈 클릭시 모달
+                    onClick={() => handleCardClick(i)}
                   >
                     {item.snippet?.thumbnails?.medium?.url ? (
                       <img

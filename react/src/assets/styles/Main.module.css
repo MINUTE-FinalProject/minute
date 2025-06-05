@@ -16,7 +16,7 @@ img {
 
 .videoList {
   width: 100%;
-  margin-top: 520px;
+  margin-top: 150px;
   padding: 62px;
   width: 100%;
   max-width: 1200px;
@@ -95,4 +95,36 @@ img {
 
 .loadMoreButton:hover {
   background-color: #333;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;         
+  font-weight: 600;          
+  margin: 16px 0 8px 8px;   
+  color: #fff;             
+  border-left: 4px solid #ff3366; 
+  padding-left: 8px;        
+}
+
+.loadingWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px; 
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 6px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #ff3366; 
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* 스피너 회전 애니메이션 */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

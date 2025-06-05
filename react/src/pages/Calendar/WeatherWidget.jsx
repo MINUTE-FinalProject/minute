@@ -21,30 +21,25 @@ export default function WeatherWidget() {
     }
     navigator.geolocation.getCurrentPosition(async ({ coords }) => {
       const { latitude, longitude } = coords;
-      const key = import.meta.env.VITE_OWM_KEY;
       try {
         // Geocoding API 예시
         const geoRes = await fetch(
-          `https://api.openweathermap.org/geo/1.0/reverse` +
-          `?lat=${latitude}&lon=${longitude}&limit=1&appid=${key}`
+          `/api/v1/weather/geocode?lat=${latitude}&lon=${longitude}`
         );
-        if (!geoRes.ok) throw new Error("geocode 실패");
         const [geo] = await geoRes.json();
-        // 가능하면 로컬네임 중 영어(en)을 우선, 아니면 기본 name
         const cityName = geo.local_names?.en || geo.name;
+        setCity(cityName);
 
         // 현재 날씨
         const wRes = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}` +
-          `&units=metric&lang=kr&appid=${key}`
+          `/api/v1/weather/current?lat=${latitude}&lon=${longitude}`
         );
         if (!wRes.ok) throw new Error();
         const wData = await wRes.json();
 
         // 5일 예보 (3시간 단위)
         const fRes = await fetch(
-          `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}` +
-          `&units=metric&lang=kr&appid=${key}`
+          `/api/v1/weather/forecast?lat=${latitude}&lon=${longitude}`
         );
         if (!fRes.ok) throw new Error();
         const fData = await fRes.json();

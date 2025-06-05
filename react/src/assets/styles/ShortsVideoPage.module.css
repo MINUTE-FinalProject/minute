@@ -31,7 +31,6 @@
 
 .mainContent {
   position: relative;
-  /* 꼭 필요 */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -43,7 +42,6 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  /* z-index: -1; */
 }
 
 .shortVideo {
@@ -65,19 +63,24 @@
   border: 1px solid #ddd;
   border-radius: 20px;
 }
-/* Reaction icons: 비디오 영역 바깥에 고정 */
+
+
 .reactionWrap {
   position: absolute;
-  bottom: 100px;
-  /* 비디오 하단에서 30px 위 */
-  right: -80px;
-  /* 비디오 오른쪽 영역 바깥으로 */
+  bottom: 100px;      
+  right: -80px;      
   display: flex;
   flex-direction: column;
-  gap: 16px;
+}
+
+.reactionWrap ul {
+  display: flex;
+  flex-direction: column;
+  gap: 40px; 
 }
 
 .reactionWrap li {
+  position: relative;     
   width: 56px;
   height: 56px;
   background: #f5f5f5;
@@ -87,6 +90,7 @@
   justify-content: center;
   cursor: pointer;
   transition: background 0.2s;
+  overflow: visible;
 }
 
 .reactionWrap li:hover {
@@ -98,23 +102,27 @@
   height: 30px;
 }
 
-/* Arrow controls: 영상 우측 바깥에 고정, contentWrap 밖으로 분리 */
+.reactionLabel {
+  position: absolute;            
+  top: calc(56px + 5px);        
+  left: 50%;                     
+  transform: translateX(-50%);  
+  font-size: 12px;
+  font-weight: 700;
+  color: #333;
+  user-select: none;
+  white-space: nowrap;   
+  z-index: 10;        
+}
+
 .arrowWrap {
-  position: absolute;
-  top: 50%;
-  right: 150px;
-  /* 영상 오른쪽 바깥으로 충분히 이동 */
+  position: fixed;  
+  top: 50%;           
+  right: 50px;          
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   gap: 50px;
-  z-index: 0;
-}
-
-.arrowWrap ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
 }
 
 .arrowWrap li {
