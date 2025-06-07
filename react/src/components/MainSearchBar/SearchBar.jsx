@@ -31,6 +31,8 @@ function SearchBar({showTitle=true, compact = false, className = '', textboxClas
   
   const token = localStorage.getItem("token") || "";
   const userId = localStorage.getItem("userId") || "";
+  const isLoggedIn = Boolean(token && userId);
+
   const containerRef = useRef(null); // 검색창 영역, 바깥영역 클릭했을 때 드롭다운을 닫기 위해 
   const navigate = useNavigate();
 
@@ -55,6 +57,24 @@ function SearchBar({showTitle=true, compact = false, className = '', textboxClas
 
   // 검색창 클릭시 최근,인기검색어 조회
   const loadSuggestions = async() => {
+    // 로그인 안된 경우 최근 검색어,
+    if (!isLoggedIn) {
+      // 비로그인 시: popular만 빈 배열이 아닌, API에서 받아오도록
+    setRecent([]);    // 최근 검색어는 무조건 빈 배열
+    
+    try {
+      const res = await axios.get("/api/v1/search/popular");
+      // 백엔드에 popular 전용 엔드포인트를 하나 추가했다 가정
+      setPopular(Array.isArray(res.data) ? res.data.slice(0, 5) : []);
+    } catch (err) {
+      console.error("인기 검색어 조회 실패", err);
+      setPopular([]);
+    } finally {
+      setOpen(true);
+    }
+    return;
+  }
+    // 로그인: recent + popular 둘 다 가져오기
     try {
     
       const res = await axios.get("/api/v1/search/suggestions", {
@@ -82,7 +102,7 @@ function SearchBar({showTitle=true, compact = false, className = '', textboxClas
       setOpen(true);
     }
   }
- 
+
   // 검색 기록 저장 
   const saveSearch = async(term) => {
     try{
