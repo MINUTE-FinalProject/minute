@@ -153,7 +153,7 @@ function ManagerFreeboardDetail() {
             const data = response.data;
             setPost(prevPost => ({
                 ...prevPost,
-                isLikedByCurrentUser: data.likedByCurrentUser,
+                likedByCurrentUser: data.likedByCurrentUser,
                 postLikeCount: data.currentLikeCount,
             }));
         } catch (err) { 
@@ -215,7 +215,7 @@ function ManagerFreeboardDetail() {
             });
             const data = response.data;
             setComments(prevComments => prevComments.map(c => 
-                c.commentId === commentId ? { ...c, isLikedByCurrentUser: data.likedByCurrentUser, commentLikeCount: data.currentLikeCount } : c
+                c.commentId === commentId ? { ...c, likedByCurrentUser: data.likedByCurrentUser, commentLikeCount: data.currentLikeCount } : c
             ));
         } catch (err) { 
             setModalProps({ title: "오류", message: err.response?.data?.message || "댓글 좋아요 처리에 실패했습니다.", type: 'error' });
@@ -328,7 +328,7 @@ function ManagerFreeboardDetail() {
             );
             const updatedComment = response.data; 
             setComments(prevComments =>
-                prevComments.map(c => (c.commentId === commentId ? { ...updatedComment, isLikedByCurrentUser: c.isLikedByCurrentUser, reportedByCurrentUser: c.reportedByCurrentUser } : c))
+                prevComments.map(c => (c.commentId === commentId ? { ...updatedComment, likedByCurrentUser: c.likedByCurrentUser, reportedByCurrentUser: c.reportedByCurrentUser } : c))
             );
             setEditingCommentId(null);
             setCurrentEditText('');
@@ -436,11 +436,11 @@ function ManagerFreeboardDetail() {
                             <div className={styles.postStats}>
                                 <button
                                     onClick={handlePostLikeClickByAdmin}
-                                    className={`${styles.iconButton} ${post.isLikedByCurrentUser ? styles.liked : ''}`}
-                                    title={post.isLikedByCurrentUser ? "좋아요 취소 (관리자)" : "좋아요 (관리자)"}
+                                    className={`${styles.iconButton} ${post.likedByCurrentUser ? styles.liked : ''}`}
+                                    title={post.likedByCurrentUser ? "좋아요 취소 (관리자)" : "좋아요 (관리자)"}
                                     disabled={!isUserLoggedIn()} 
                                 >
-                                    <img src={post.isLikedByCurrentUser ? likeOnIcon : likeOffIcon} alt="좋아요 상태" className={styles.buttonIcon}/>
+                                    <img src={post.likedByCurrentUser ? likeOnIcon : likeOffIcon} alt="좋아요 상태" className={styles.buttonIcon}/>
                                 </button>
                                 <span className={styles.countText}>{post.postLikeCount}</span>
                                 <span className={styles.countText}>조회수: {post.postViewCount}</span>
@@ -541,11 +541,11 @@ function ManagerFreeboardDetail() {
                                                 <div>
                                                     <button 
                                                         onClick={() => handleCommentLikeToggleByAdmin(comment.commentId)} 
-                                                        className={`${styles.iconButton} ${comment.isLikedByCurrentUser ? styles.liked : ''}`}
-                                                        title={comment.isLikedByCurrentUser ? "좋아요 취소" : "좋아요"}
+                                                        className={`${styles.iconButton} ${comment.likedByCurrentUser ? styles.liked : ''}`}
+                                                        title={comment.likedByCurrentUser ? "좋아요 취소" : "좋아요"}
                                                         disabled={!isUserLoggedIn()}
                                                     >
-                                                        <img src={comment.isLikedByCurrentUser ? likeOnIcon : likeOffIcon} alt="댓글 좋아요" className={styles.buttonIcon}/>
+                                                        <img src={comment.likedByCurrentUser ? likeOnIcon : likeOffIcon} alt="댓글 좋아요" className={styles.buttonIcon}/>
                                                     </button>
                                                     <span className={styles.countText}>{comment.commentLikeCount}</span>
                                                 </div>

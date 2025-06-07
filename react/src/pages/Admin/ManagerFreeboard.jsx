@@ -169,7 +169,7 @@ function ManagerFreeboard() {
                 if (item[currentItemIdField] === itemId) {
                     return {
                         ...item,
-                        isLikedByCurrentUser: data.likedByCurrentUser,
+                        likedByCurrentUser: data.likedByCurrentUser,
                         ...(itemType === "comment" 
                             ? { commentLikeCount: data.currentLikeCount } 
                             : { postLikeCount: data.currentLikeCount })
@@ -305,7 +305,7 @@ function ManagerFreeboard() {
                                         ? (item.commentContent?.length > 20 ? `${item.commentContent.substring(0,20)}...` : item.commentContent)
                                         : (item.postTitle?.length > 30 ? `${item.postTitle.substring(0,30)}...` : item.postTitle);
                                     
-                                    const isLikedByAdmin = item.isLikedByCurrentUser || false; 
+                                    const isLikedByAdmin = item.likedByCurrentUser || false; 
                                     const isReportedByAdmin = item.reportedByCurrentUser || false; // 백엔드 DTO 필드명 reportedByCurrentUser 가정
 
                                     return (
