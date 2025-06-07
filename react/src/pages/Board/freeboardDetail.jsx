@@ -152,7 +152,7 @@ function FreeboardDetail() {
             const data = response.data;
             setPost(prevPost => ({
                 ...prevPost,
-                isLikedByCurrentUser: data.likedByCurrentUser,
+                likedByCurrentUser: data.likedByCurrentUser,
                 postLikeCount: data.currentLikeCount,
             }));
         } catch (err) { 
@@ -239,7 +239,7 @@ function FreeboardDetail() {
             });
             const data = response.data;
             setComments(prevComments => prevComments.map(c => 
-                c.commentId === commentId ? { ...c, isLikedByCurrentUser: data.likedByCurrentUser, commentLikeCount: data.currentLikeCount } : c
+                c.commentId === commentId ? { ...c, likedByCurrentUser: data.likedByCurrentUser, commentLikeCount: data.currentLikeCount } : c
             ));
         } catch (err) { 
             setModalProps({ title: "오류", message: err.response?.data?.message || "댓글 좋아요 처리에 실패했습니다.", type: 'error' });
@@ -381,7 +381,7 @@ function FreeboardDetail() {
             );
             // 수정된 댓글 정보(response.data)로 comments 상태 업데이트
             setComments(prevComments =>
-                prevComments.map(c => c.commentId === commentId ? {...c, ...response.data, isLikedByCurrentUser: c.isLikedByCurrentUser } : c) // 좋아요 상태는 유지
+                prevComments.map(c => c.commentId === commentId ? {...c, ...response.data, likedByCurrentUser: c.likedByCurrentUser } : c) // 좋아요 상태는 유지
             );
             setEditingCommentId(null);
             return true;
@@ -436,11 +436,11 @@ function FreeboardDetail() {
                         <div className={freeboardDetailStyle.postStats}>
                             <button
                                 onClick={handlePostLikeClick}
-                                className={`${freeboardDetailStyle.iconButton} ${post.isLikedByCurrentUser ? freeboardDetailStyle.liked : ''}`}
-                                title={post.isLikedByCurrentUser ? "좋아요 취소" : "좋아요"}
+                                className={`${freeboardDetailStyle.iconButton} ${post.likedByCurrentUser ? freeboardDetailStyle.liked : ''}`}
+                                title={post.likedByCurrentUser ? "좋아요 취소" : "좋아요"}
                                 disabled={!isUserLoggedIn()}
                             >
-                                <img src={post.isLikedByCurrentUser ? likeOnIcon : likeOffIcon} alt="좋아요" className={freeboardDetailStyle.buttonIcon} />
+                                <img src={post.likedByCurrentUser ? likeOnIcon : likeOffIcon} alt="좋아요" className={freeboardDetailStyle.buttonIcon} />
                             </button>
                             <span className={freeboardDetailStyle.countText}>좋아요: {post.postLikeCount}</span>
                             <span className={freeboardDetailStyle.countText}>조회수: {post.postViewCount}</span>
@@ -543,11 +543,11 @@ function FreeboardDetail() {
                                         <div>
                                             <button
                                                 onClick={() => handleCommentLikeToggle(comment.commentId)}
-                                                className={`${freeboardDetailStyle.iconButton} ${comment.isLikedByCurrentUser ? freeboardDetailStyle.liked : ''}`}
-                                                title={comment.isLikedByCurrentUser ? "좋아요 취소" : "좋아요"}
+                                                className={`${freeboardDetailStyle.iconButton} ${comment.likedByCurrentUser ? freeboardDetailStyle.liked : ''}`}
+                                                title={comment.likedByCurrentUser ? "좋아요 취소" : "좋아요"}
                                                 disabled={!isUserLoggedIn()}
                                             >
-                                                <img src={comment.isLikedByCurrentUser ? likeOnIcon : likeOffIcon} alt="댓글 좋아요" className={freeboardDetailStyle.buttonIcon}/>
+                                                <img src={comment.likedByCurrentUser ? likeOnIcon : likeOffIcon} alt="댓글 좋아요" className={freeboardDetailStyle.buttonIcon}/>
                                             </button>
                                             <span className={freeboardDetailStyle.countText}>{comment.commentLikeCount}</span>
                                         </div>
