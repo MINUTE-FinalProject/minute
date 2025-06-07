@@ -88,7 +88,7 @@ const ManagerMyPage = () => {
             <div className={styles.stats}>
               <div>회원수<br /><strong>{totalUsersCount}명</strong></div>
               <div>문의수<br /><strong>19건</strong></div> 
-              <div>답변대기<br /><strong>3건</strong></div> 
+              <div>공지사항수<br /><strong>3건</strong></div> 
               <div>신고회원<br /><strong>{reportedUsersCount}명</strong></div>
             </div>
 
