@@ -375,7 +375,7 @@ function FreeBoard() {
                                     const date = formatDate(isCommentViewInMyActivity ? item.commentCreatedAt : item.postCreatedAt);
                                     const views = isCommentViewInMyActivity ? "-" : (item.postViewCount !== undefined ? item.postViewCount : "-");
                                     const likes = isCommentViewInMyActivity ? (item.commentLikeCount || 0) : (item.postLikeCount || 0);
-                                    const isLiked = item.isLikedByCurrentUser || false;
+                                    const isLiked = item.likedByCurrentUser || false;
 
                                     // 신고 가능 여부 및 상태 결정
                                     let canReport = false;
