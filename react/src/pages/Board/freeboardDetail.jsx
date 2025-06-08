@@ -136,10 +136,20 @@ function FreeboardDetail() {
     };
 
     const handlePostLikeClick = async () => {
+        // [최종 수정] 비로그인 시 모달 호출
         if (!isUserLoggedIn()) { 
-            setModalProps({ title: "로그인 필요", message: "좋아요는 로그인 후 가능합니다.", type: 'warning', onConfirm: () => navigate("/login")});
-            setIsModalOpen(true); return; 
+            setModalProps({
+                title: "로그인 필요",
+                message: "좋아요는 로그인 후 가능합니다.",
+                type: 'warning',
+                confirmText: "로그인",
+                cancelText: "취소",
+                onConfirm: () => navigate("/login")
+            });
+            setIsModalOpen(true);
+            return; 
         }
+
         if (!post) return;
         try {
             const token = getToken();
@@ -172,6 +182,7 @@ function FreeboardDetail() {
         }
     };
     const handlePostReportClick = () => {
+        // [최종 수정] 핸들러 내부에 이미 로그인 체크 로직이 있으므로 그대로 사용
         if (!isUserLoggedIn()) {
             setModalProps({ title: "로그인 필요", message: "신고는 로그인 후 가능합니다.", type: 'warning', onConfirm: () => navigate("/login")});
             setIsModalOpen(true); return; 
@@ -225,9 +236,18 @@ function FreeboardDetail() {
     };
 
     const handleCommentLikeToggle = async (commentId) => {
+        // [최종 수정] 비로그인 시 모달 호출
         if (!isUserLoggedIn()) { 
-            setModalProps({ title: "로그인 필요", message: "좋아요는 로그인 후 가능합니다.", type: 'warning', onConfirm: () => navigate("/login")});
-            setIsModalOpen(true); return; 
+            setModalProps({
+                title: "로그인 필요",
+                message: "좋아요는 로그인 후 가능합니다.",
+                type: 'warning',
+                confirmText: "로그인",
+                cancelText: "취소",
+                onConfirm: () => navigate("/login")
+            });
+            setIsModalOpen(true);
+            return; 
         }
         try {
             const token = getToken();
@@ -258,6 +278,7 @@ function FreeboardDetail() {
         }
     };
     const handleCommentReportClick = (comment) => {
+        // [최종 수정] 핸들러 내부에 이미 로그인 체크 로직이 있으므로 그대로 사용
         if (!isUserLoggedIn()) {
             setModalProps({ title: "로그인 필요", message: "신고는 로그인 후 가능합니다.", type: 'warning', onConfirm: () => navigate("/login")});
             setIsModalOpen(true); return;
@@ -291,13 +312,10 @@ function FreeboardDetail() {
             setModalProps({ title: '삭제 완료', message: '댓글이 삭제되었습니다.', type: 'success', confirmButtonType: 'primary' });
             setIsModalOpen(true);
             
-            // 댓글 삭제 후 현재 페이지 댓글 목록 새로고침
             const newTotalElements = Math.max(0, (commentPageInfo.totalElements || 0) - 1);
-            const currentTotalPages = commentPageInfo.totalPages;
             const newTotalPages = Math.ceil(newTotalElements / commentsPerPage);
 
             let pageToFetch = commentPageInfo.currentPage;
-            // 현재 페이지의 마지막 댓글을 삭제해서 페이지가 없어지는 경우
             if (pageToFetch > newTotalPages && newTotalPages > 0) {
                 pageToFetch = newTotalPages;
             }
@@ -328,6 +346,7 @@ function FreeboardDetail() {
 
     const handleCommentFormSubmit = async (event) => {
         event.preventDefault();
+        // [최종 수정] 핸들러 내부에 이미 로그인 체크 로직이 있으므로 그대로 사용
         if (!isUserLoggedIn()) { 
             setModalProps({ title: "로그인 필요", message: "댓글 작성은 로그인 후 가능합니다.", type: 'warning', onConfirm: () => navigate("/login")});
             setIsModalOpen(true); return; 
@@ -432,14 +451,14 @@ function FreeboardDetail() {
                                 onClick={handlePostLikeClick}
                                 className={`${freeboardDetailStyle.iconButton} ${post.likedByCurrentUser ? freeboardDetailStyle.liked : ''}`}
                                 title={post.likedByCurrentUser ? "좋아요 취소" : "좋아요"}
-                                disabled={!isUserLoggedIn()}
                             >
                                 <img src={post.likedByCurrentUser ? likeOnIcon : likeOffIcon} alt="좋아요" className={freeboardDetailStyle.buttonIcon} />
                             </button>
                             <span className={freeboardDetailStyle.countText}>좋아요: {post.postLikeCount}</span>
                             <span className={freeboardDetailStyle.countText}>조회수: {post.postViewCount}</span>
                         </div>
-                        {isUserLoggedIn() && !isPostAuthor && (
+                        {/* [최종 수정] 로그인 여부와 상관없이 내가 쓴 글이 아니면 신고 버튼 표시 */}
+                        {!isPostAuthor && (
                              <button
                                 onClick={handlePostReportClick}
                                 className={`${freeboardDetailStyle.iconButton} ${post.reportedByCurrentUser ? freeboardDetailStyle.reported : ''}`}
@@ -470,9 +489,9 @@ function FreeboardDetail() {
                         value={commentInput}
                         onChange={handleCommentInputChange}
                         rows="3"
-                        disabled={!isUserLoggedIn()}
                     />
-                    <button type="submit" className={freeboardDetailStyle.commentSubmitButton} disabled={!isUserLoggedIn() || !commentInput.trim()}>등록</button>
+                    {/* [최종 수정] 로그인 여부 체크 제거. 입력 내용 여부만 확인 */}
+                    <button type="submit" className={freeboardDetailStyle.commentSubmitButton} disabled={!commentInput.trim()}>등록</button>
                 </form>
 
                 <div className={freeboardDetailStyle.commentListContainer}>
@@ -542,13 +561,13 @@ function FreeboardDetail() {
                                                 onClick={() => handleCommentLikeToggle(comment.commentId)}
                                                 className={`${freeboardDetailStyle.iconButton} ${comment.likedByCurrentUser ? freeboardDetailStyle.liked : ''}`}
                                                 title={comment.likedByCurrentUser ? "좋아요 취소" : "좋아요"}
-                                                disabled={!isUserLoggedIn()}
                                             >
                                                 <img src={comment.likedByCurrentUser ? likeOnIcon : likeOffIcon} alt="댓글 좋아요" className={freeboardDetailStyle.buttonIcon}/>
                                             </button>
                                             <span className={freeboardDetailStyle.countText}>{comment.commentLikeCount}</span>
                                         </div>
-                                        {isUserLoggedIn() && !isOwnComment && !isAdminComment && (
+                                        {/* [최종 수정] 로그인 여부와 상관없이 내 댓글이나 관리자 댓글이 아니면 신고 버튼 표시 */}
+                                        {!isOwnComment && !isAdminComment && (
                                             <button
                                                 onClick={() => handleCommentReportClick(comment)}
                                                 className={`${freeboardDetailStyle.iconButton} ${isCommentReportedByCurrentUser ? freeboardDetailStyle.reported : ''}`}
