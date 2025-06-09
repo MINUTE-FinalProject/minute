@@ -85,7 +85,7 @@
 }
 
 .pagination button:hover {
-  background-color: #a3bffa;
+  background-color: #fcacc0;
   color: white;
   transform: translateY(-2px);
 }
