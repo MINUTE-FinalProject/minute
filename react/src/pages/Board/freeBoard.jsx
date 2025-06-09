@@ -1,7 +1,7 @@
 // src/pages/FreeBoard/FreeBoard.jsx
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import banner from "../../assets/images/banner.png";
 import FreeBoardStyle from "../../assets/styles/freeboard.module.css";
 
@@ -17,7 +17,13 @@ import likeOnIcon from "../../assets/images/thumbup.png";
 const API_BASE_URL = "http://localhost:8080/api/v1";
 
 function FreeBoard() {
-    const [activeTab, setActiveTab] = useState("all"); // "all", "myActivity"
+    const [searchParams] = useSearchParams(); // URL 파라미터를 읽기 위한 Hook
+
+    const [activeTab, setActiveTab] = useState(() => {
+        // URL에 'tab' 파라미터가 'myActivity'이면 'myActivity'를, 아니면 'all'을 기본값으로 설정
+        return searchParams.get('tab') === 'myActivity' ? 'myActivity' : 'all';
+    });
+
     const [items, setItems] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -285,8 +291,8 @@ function FreeBoard() {
     const handleRowClick = (item) => {
         const isCommentView = activeTab === "myActivity" && myContentType === "myComments";
         if (isCommentView) {
-            if (item.originalPostId) {
-                navigate(`/freeboardDetail/${item.originalPostId}?commentId=${item.commentId}`);
+            if (item.postId) {
+                navigate(`/freeboardDetail/${item.postId}?commentId=${item.commentId}`);
             } else {
                 console.warn("Original post ID not found for this comment, cannot navigate.");
             }
@@ -405,9 +411,9 @@ function FreeBoard() {
                                             <td>{itemId}</td>
                                             <td>{typeText}</td>
                                             <td className={FreeBoardStyle["post-title"]} onClick={(e) => { e.stopPropagation(); handleRowClick(item); }}>
-                                                <Link to={isCommentViewInMyActivity ? `/freeboardDetail/${item.originalPostId}?commentId=${item.commentId}` : `/freeboardDetail/${item.postId}`}>
+                                                <Link to={isCommentViewInMyActivity ? `/freeboardDetail/${item.postId}?commentId=${item.commentId}` : `/freeboardDetail/${item.postId}`}>
                                                     {displayTitle}
-                                                    {isCommentViewInMyActivity && item.originalPostTitle && <span className={FreeBoardStyle["comment-original-post"]}> (원본글: {item.originalPostTitle?.length > 10 ? item.originalPostTitle.substring(0, 10) + "..." : item.originalPostTitle})</span>}
+                                                    {isCommentViewInMyActivity && item.postTitle && <span className={FreeBoardStyle["comment-original-post"]}> (원본글: {item.postTitle?.length > 10 ? item.postTitle.substring(0, 10) + "..." : item.postTitle})</span>}
                                                 </Link>
                                             </td>
                                             <td>{author}</td>
@@ -428,13 +434,13 @@ function FreeBoard() {
                                             <td>
                                                 {/* 신고 버튼 렌더링 조건:
                                                     1. "내 활동" 탭이 아닐 때 (즉, "전체 목록" 탭일 때)
-                                                       AND 내 글이 아닐 때 신고 버튼을 보여준다.
+                                                        AND 내 글이 아닐 때 신고 버튼을 보여준다.
                                                     2. "내 활동" 탭의 "내 게시글" 보기일 때는 내 글이므로 신고 버튼을 보여주지 않는다. (canReport = false)
                                                     3. "내 활동" 탭의 "내 댓글" 보기일 때는 신고 버튼을 보여주지 않는다. (canReport = false)
                                                 */}
                                                 {/* "전체 목록" 탭이고, "게시글"이며, "내 글"이 아닐 때만 신고 버튼을 활성화된 형태로 고려.
-        그 외 (내 활동 탭 전체, 전체 목록 탭의 내 글)는 "-" 표시.
-    */}
+                                                   그 외 (내 활동 탭 전체, 전체 목록 탭의 내 글)는 "-" 표시.
+                                                */}
                                                 {(canReport && !isMyActivityTab && !isCommentViewInMyActivity) ? (
                                                     <button
                                                         className={`${FreeBoardStyle["report-button"]} ${isAlreadyReportedByMe ? FreeBoardStyle.toggled : ""}`}
