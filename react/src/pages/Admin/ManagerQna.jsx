@@ -119,9 +119,10 @@ function ManagerQna() {
         setSearchParams(newSearchParams);
     };
 
-    const handlePageChange = (pageNumber) => { // Pagination 컴포넌트는 0-indexed 페이지 반환 가정
+    // [수정 1] UI에서 받은 페이지 번호(1-indexed)에서 1을 빼서 URL 파라미터(0-indexed)로 설정합니다.
+    const handlePageChange = (pageNumber) => {
         const newSearchParams = new URLSearchParams(searchParams);
-        newSearchParams.set('page', pageNumber.toString());
+        newSearchParams.set('page', (pageNumber - 1).toString());
         setSearchParams(newSearchParams);
     };
     
@@ -166,9 +167,7 @@ function ManagerQna() {
     const confirmAdminReportQna = (e, qnaId, isAlreadyReportedByAdmin) => {
         e.stopPropagation();
         
-        if (isAlreadyReportedByAdmin) { // 이 부분은 reportCount > 0 이고, 그 신고가 관리자에 의한 것인지 확인해야 함.
-                                      // 단순 reportCount > 0 만으로는 부족. API 응답에 관리자 신고 여부 필요 또는 가정.
-                                      // 우선 reportCount > 0 이면 관리자가 신고했다고 가정하고 처리. (백엔드에서 중복 신고 방지)
+        if (isAlreadyReportedByAdmin) {
             setModalProps({
                 title: '알림', message: `문의 ID ${qnaId}는 이미 신고된 내역이 있습니다.`,
                 confirmText: '확인', type: 'adminInfo', confirmButtonType: 'primary',
@@ -271,7 +270,6 @@ function ManagerQna() {
                                                 onClick={(e) => confirmAdminReportQna(e, qna.inquiryId, qna.reportCount > 0)}
                                                 className={`${styles.iconButton} ${qna.reportCount > 0 ? styles.reportActioned : ''}`}
                                                 title={qna.reportCount > 0 ? `신고 ${qna.reportCount}건 접수됨` : "신고된 내역 없음 (클릭하여 신고)"}
-                                                // disabled={qna.reportCount > 0} // 이미 신고된 건에 대해 또 신고 못하게 하려면
                                             >
                                                 <img
                                                     src={qna.reportCount > 0 ? reportOnIcon : reportOffIcon}
@@ -297,9 +295,10 @@ function ManagerQna() {
                     <div className={styles.pagination}>
                          {!isModalOpen && qnaPage && qnaPage.totalPages > 0 && qnaPage.content?.length > 0 && (
                             <Pagination
-                                currentPage={qnaPage.number} // 0-indexed
+                                // [수정 2] API에서 받은 0-indexed 페이지 번호에 1을 더해서 UI에 표시합니다.
+                                currentPage={qnaPage.number + 1}
                                 totalPages={qnaPage.totalPages}
-                                onPageChange={handlePageChange} // 0-indexed 페이지로 호출
+                                onPageChange={handlePageChange}
                             />
                         )}
                     </div>
