@@ -215,7 +215,7 @@ function FreeBoard() {
                 if (item[currentItemIdField] === itemId) {
                     return {
                         ...item,
-                        isLikedByCurrentUser: data.likedByCurrentUser,
+                        likedByCurrentUser: data.likedByCurrentUser,
                         ...(itemType === "comment"
                             ? { commentLikeCount: data.currentLikeCount }
                             : { postLikeCount: data.currentLikeCount })
@@ -239,7 +239,7 @@ function FreeBoard() {
             });
             setItems(prevItems => prevItems.map(p =>
                 p.postId === postIdToReport // 게시글 신고만 처리
-                    ? { ...p, isReportedByCurrentUser: true }
+                    ? { ...p, reportedByCurrentUser: true }
                     : p
             ));
             setModalProps({
@@ -266,7 +266,7 @@ function FreeBoard() {
         }
 
         const postToReport = items.find(p => p.postId === postId && !(activeTab === "myActivity" && myContentType === "myComments"));
-        if (postToReport && postToReport.isReportedByCurrentUser) {
+        if (postToReport && postToReport.reportedByCurrentUser) {
             setModalProps({
                 title: "알림", message: "이미 신고한 게시글입니다.",
                 confirmText: "확인", type: "warning", confirmButtonType: 'primary'
