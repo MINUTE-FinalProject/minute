@@ -29,7 +29,7 @@ function Qna() {
         searchTerm: searchParams.get('searchTerm') || ''
     });
     const currentPage = parseInt(searchParams.get('page') || '0', 10); // 백엔드는 0-indexed
-    const itemsPerPage = 8; // 백엔드에 size로 전달될 값
+    const itemsPerPage = 15; // 백엔드에 size로 전달될 값
 
     const fetchQnaData = useCallback(async (currentFilters, page) => {
         setIsLoading(true);
