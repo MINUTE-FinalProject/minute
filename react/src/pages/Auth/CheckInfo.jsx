@@ -49,10 +49,17 @@ function CheckInfo() {
       });
 
       if (response.data.code === "SU") {
-        const fileName = response.data.fileName;
+        // const fileName = response.data.fileName;
+        const fileName = response.data.data;
         const imageUrl = `http://localhost:8080/upload/${fileName}?t=${Date.now()}`;
         setProfileImage(imageUrl);
-        setUserInfo(prev => ({ ...prev, profileImage: `/upload/${fileName}` }));
+        // setUserInfo(prev => ({ ...prev, profileImage: `/upload/${fileName}` }));
+         // ✅ userInfo 갱신
+          setUserInfo((prev) => ({
+            ...prev,
+            profileImage: `/upload/${fileName}`, // DB에 저장된 경로 (t=... 은 붙이지 않음)
+          }));
+          setImgError(false);
         alert("프로필 이미지가 업데이트되었습니다!");
       } else {
         alert("업로드 실패");
@@ -147,6 +154,7 @@ function CheckInfo() {
             <div className={styles.img}>
               {(!imgError && (hasValidImage(profileImage) || hasValidImage(userInfo.profileImage))) ? (
                 <img
+                  key={profileImage || `http://localhost:8080${userInfo.profileImage}?t=${Date.now()}`}
                   className={styles.img2}
                   src={hasValidImage(profileImage) ? profileImage : `http://localhost:8080${userInfo.profileImage}?t=${Date.now()}`}
                   alt="프로필"

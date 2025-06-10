@@ -40,6 +40,7 @@ function SearchBar({showTitle=true, compact = false, className = '', textboxClas
   const [recent,setRecent] = useState([]); // 최근 검색어 리스트 
   const [popular, setPopular] = useState([]); // 인기 검색어 리스트
   const [open, setOpen] = useState(false);  // 드롭다운 여부
+  const [isSearching, setIsSearching] = useState(false);  // 검색여부
 
   // container , textbox 클래스 조합
    const containerClass = [
@@ -105,6 +106,7 @@ function SearchBar({showTitle=true, compact = false, className = '', textboxClas
 
   // 검색 기록 저장 
   const saveSearch = async(term) => {
+    console.log("saveSearch 호출", term); 
     try{
       await axios.post("/api/v1/search",
         {userId, keyword:term},
@@ -117,9 +119,17 @@ function SearchBar({showTitle=true, compact = false, className = '', textboxClas
 
   // 검색 실행 또는 지역 페이지로 이동
   const handleSearchTerm = async(term) => {
+    // 중복 호출 가드
+    if (isSearching) return;
+    setIsSearching(true);
+
+    console.log("handleSearchTerm 호출");
     const kw = term ? term.trim() : searchInput.trim();
-    if(!kw) return;
-    
+     if (!kw) {
+      setIsSearching(false);
+      return;
+    }
+    try {
     // 검색한건 다 저장
     await saveSearch(kw);
 
@@ -134,8 +144,12 @@ function SearchBar({showTitle=true, compact = false, className = '', textboxClas
       // 로그인 안 했거나 일반 검색어인 경우 결과 페이지로
       navigate(`/search?query=${encodeURIComponent(kw)}`);
     }  
+    // 입력값 유지 및 드롭다운 닫기
     setSearchInput(kw);
     setOpen(false);
+    } finally {
+      setIsSearching(false);
+    }
   };
 
    // 특정 검색 기록 삭제
@@ -176,7 +190,12 @@ function SearchBar({showTitle=true, compact = false, className = '', textboxClas
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           onFocus={loadSuggestions}
-          onKeyDown={e=> e.key === "Enter" && handleSearchTerm()}
+          // onKeyDown={e=> e.key === "Enter" && handleSearchTerm()}
+          onKeyUp={e => {
+            if (e.key === "Enter") {
+              handleSearchTerm();
+            }
+          }}
         />
         {open && (
           <div className={divStyle.dropdown}>
